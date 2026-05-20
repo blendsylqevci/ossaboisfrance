@@ -585,6 +585,12 @@ Rekomandimi:
 - Implemented fixed width (920px) and fixed height (520px) layout on desktop for the material info pop-up modal, centering image content and enabling scrollbars for long text content to prevent modal scaling based on uploaded image dimensions.
 - Designed and built a premium mobile layout for the house configurator matching the Swedish bottom-sheet pattern: locked viewport height (`100dvh`), fixed top image stage (`38dvh`), rounded bottom-sheet drawer with a drag handle for scrollable options, and sticky price footer bar at the bottom.
 - Implemented a full-screen zoom lightbox overlay in `HouseConfigurator.tsx` triggered by a circular expand button on both desktop and mobile.
+- Redesigned the `/checkout` page to present a premium, multi-step localized experience complete with simulated processing states, success screens, and trust badges (10-Year CCMI, RE2020, PEFC).
+- Relocated detailed configuration option list and structural parameters into the right sidebar summary section.
+- Adjusted right sidebar layout width on the checkout page to `540px` to match the configurator split-mode menu width.
+- Updated transportation and logistics estimated time of delivery to 3-4 weeks.
+- Verified build and static generation using `npm run build`.
+
 
 
 

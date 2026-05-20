@@ -1031,23 +1031,7 @@ img {
   }
   
   .archive-sticky-nav-container {
-    display: block;
-    position: sticky;
-    top: 64px;
-    padding: 10px 0;
-    z-index: 40;
-    background: rgba(255, 255, 255, 0.95);
-    border-bottom: 1px solid rgba(21, 23, 17, 0.08);
-  }
-  
-  .archive-sticky-nav {
-    gap: 20px;
-    padding: 0 4px;
-  }
-  
-  .archive-sticky-nav a {
-    font-size: 13.5px;
-    padding: 4px 0;
+    display: none !important;
   }
   
   .archive-commitments-section {

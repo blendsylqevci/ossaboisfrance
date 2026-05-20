@@ -95,27 +95,7 @@ export function HouseConfigurator({ config }: HouseConfiguratorProps) {
     });
   }, []);
 
-  const handleInterestSubmit = useCallback((e: React.FormEvent) => {
-    e.preventDefault();
-    setFormStatus("success");
-    setFormFields({
-      emri: "",
-      mbiemri: "",
-      orari: "",
-      kontaktimi: "",
-      prefix: "+33",
-      telefon: "",
-      email: "",
-      kodiPostar: "",
-      qyteti: "",
-      adresa: "",
-      mesazh: "",
-      pranoje: false
-    });
-    setTimeout(() => {
-      setFormStatus("idle");
-    }, 5000);
-  }, []);
+
 
   const selectedSize = useMemo(
     () => config.sizes.find((size) => size.id === selection.size) ?? config.sizes[0],
@@ -254,6 +234,83 @@ export function HouseConfigurator({ config }: HouseConfiguratorProps) {
   }, [selectedOptions, selectedSize.price]);
 
   const total = priceBreakdown.reduce((sum, item) => sum + item.value, 0);
+
+  const handleInterestSubmit = useCallback((e: React.FormEvent) => {
+    e.preventDefault();
+
+    const hasCustomMaterials = config.categories.some((category) => {
+      const selectedOptionId = (selection as any)[category.id];
+      const defaultOptionId = (config.defaultSelection as any)[category.id];
+      return selectedOptionId !== defaultOptionId;
+    });
+
+    let detailsText = "";
+    if (hasCustomMaterials) {
+      detailsText = `Modèle de maison : ${config.name} (${selectedSize.label})\n\n`;
+      detailsText += `Options de matériaux sélectionnées :\n`;
+      
+      config.categories.forEach((category) => {
+        const selectedOptionId = (selection as any)[category.id];
+        if (selectedOptionId) {
+          const option = category.options.find((o) => o.id === selectedOptionId);
+          if (option) {
+            detailsText += `- ${category.label} : ${option.label}\n`;
+          }
+        }
+      });
+      
+      detailsText += `\nPrix total estimé : € ${formatPrice(total)}\n`;
+    } else {
+      detailsText = `Modèle de maison : ${config.name} (${selectedSize.label})\n`;
+    }
+
+    const emailBody = `Bonjour Ossa Bois France,
+
+Une nouvelle expression d'intérêt a été envoyée pour un projet de maison.
+
+Détails du client :
+- Prénom : ${formFields.emri}
+- Nom : ${formFields.mbiemri}
+- Téléphone : ${formFields.prefix} ${formFields.telefon}
+- E-mail : ${formFields.email}
+- Horaire souhaité : ${formFields.orari || "Non spécifié"}
+- Mode de contact préféré : ${formFields.kontaktimi || "Non spécifié"}
+- Adresse : ${formFields.adresa || "Non spécifiée"}, ${formFields.kodiPostar} ${formFields.qyteti}
+
+Message du client :
+${formFields.mesazh || "Aucun message."}
+
+Configuration de la maison :
+${detailsText}
+
+Cordialement,
+L'équipe Ossa Bois France`;
+
+    const mailtoUrl = `mailto:sylqevciblendi@gmail.com?subject=${encodeURIComponent(
+      `Expression d'intérêt - ${config.name}`
+    )}&body=${encodeURIComponent(emailBody)}`;
+    
+    window.location.href = mailtoUrl;
+
+    setFormStatus("success");
+    setFormFields({
+      emri: "",
+      mbiemri: "",
+      orari: "",
+      kontaktimi: "",
+      prefix: "+33",
+      telefon: "",
+      email: "",
+      kodiPostar: "",
+      qyteti: "",
+      adresa: "",
+      mesazh: "",
+      pranoje: false
+    });
+    setTimeout(() => {
+      setFormStatus("idle");
+    }, 5000);
+  }, [config, selection, selectedSize, total, formFields]);
   const primaryCategories = renderedCategories.filter((category) => !config.optionalCategoryIds.includes(category.id));
   const optionalCategories = renderedCategories.filter((category) => config.optionalCategoryIds.includes(category.id));
 
@@ -540,9 +597,9 @@ export function HouseConfigurator({ config }: HouseConfiguratorProps) {
 
               {/* Expression of Interest Form */}
               <div className="interest-form-container">
-                <h2 className="interest-form-title">Dërgoni shprehje interesi</h2>
+                <h2 className="interest-form-title">Envoyer une expression d'intérêt</h2>
                 <p className="interest-form-subtitle">
-                  Ne e bëjmë të lehtë dhe të përshtatshme për ju. Plotësoni formën më poshtë dhe ne do t'ju kontaktojmë për t'iu përgjigjur të gjitha pyetjeve tuaja. Kjo shprehje interesi është plotësisht pa obligim.
+                  Nous rendons les choses simples et pratiques pour vous. Remplissez le formulaire ci-dessous et nous vous contacterons pour répondre à toutes vos questions. Cette demande d'intérêt est entièrement gratuite et sans engagement.
                 </p>
                 
                 <form onSubmit={handleInterestSubmit} className="interest-form">
@@ -550,7 +607,7 @@ export function HouseConfigurator({ config }: HouseConfiguratorProps) {
                     <div className="form-group">
                       <input
                         type="text"
-                        placeholder="Emri"
+                        placeholder="Prénom"
                         required
                         value={formFields.emri}
                         onChange={(e) => setFormFields({ ...formFields, emri: e.target.value })}
@@ -559,7 +616,7 @@ export function HouseConfigurator({ config }: HouseConfiguratorProps) {
                     <div className="form-group">
                       <input
                         type="text"
-                        placeholder="Mbiemri"
+                        placeholder="Nom"
                         required
                         value={formFields.mbiemri}
                         onChange={(e) => setFormFields({ ...formFields, mbiemri: e.target.value })}
@@ -575,10 +632,10 @@ export function HouseConfigurator({ config }: HouseConfiguratorProps) {
                           value={formFields.orari}
                           onChange={(e) => setFormFields({ ...formFields, orari: e.target.value })}
                         >
-                          <option value="">Orari i preferuar</option>
-                          <option value="Kurdo">Kurdo</option>
-                          <option value="Mëngjes">Mëngjes</option>
-                          <option value="Pasdite">Pasdite</option>
+                          <option value="">Horaire souhaité</option>
+                          <option value="Kurdo">À tout moment</option>
+                          <option value="Mëngjes">Matin</option>
+                          <option value="Pasdite">Après-midi</option>
                         </select>
                       </div>
                     </div>
@@ -589,8 +646,8 @@ export function HouseConfigurator({ config }: HouseConfiguratorProps) {
                           value={formFields.kontaktimi}
                           onChange={(e) => setFormFields({ ...formFields, kontaktimi: e.target.value })}
                         >
-                          <option value="">Mënyra e kontaktit</option>
-                          <option value="Telefon">Telefon</option>
+                          <option value="">Mode de contact préféré</option>
+                          <option value="Telefon">Téléphone</option>
                           <option value="E-mail">E-mail</option>
                         </select>
                       </div>
@@ -613,7 +670,7 @@ export function HouseConfigurator({ config }: HouseConfiguratorProps) {
                       </div>
                       <input
                         type="tel"
-                        placeholder="Numri i telefonit"
+                        placeholder="Numéro de téléphone"
                         required
                         value={formFields.telefon}
                         onChange={(e) => setFormFields({ ...formFields, telefon: e.target.value })}
@@ -634,7 +691,7 @@ export function HouseConfigurator({ config }: HouseConfiguratorProps) {
                     <div className="form-group">
                       <input
                         type="text"
-                        placeholder="Kodi postar"
+                        placeholder="Code postal"
                         required
                         value={formFields.kodiPostar}
                         onChange={(e) => setFormFields({ ...formFields, kodiPostar: e.target.value })}
@@ -643,7 +700,7 @@ export function HouseConfigurator({ config }: HouseConfiguratorProps) {
                     <div className="form-group">
                       <input
                         type="text"
-                        placeholder="Qyteti"
+                        placeholder="Ville"
                         required
                         value={formFields.qyteti}
                         onChange={(e) => setFormFields({ ...formFields, qyteti: e.target.value })}
@@ -654,7 +711,7 @@ export function HouseConfigurator({ config }: HouseConfiguratorProps) {
                   <div className="form-group-full">
                     <input
                       type="text"
-                      placeholder="Adresa"
+                      placeholder="Adresse"
                       value={formFields.adresa}
                       onChange={(e) => setFormFields({ ...formFields, adresa: e.target.value })}
                     />
@@ -662,7 +719,7 @@ export function HouseConfigurator({ config }: HouseConfiguratorProps) {
 
                   <div className="form-group-full">
                     <textarea
-                      placeholder="Shkruani mesazhin tuaj këtu..."
+                      placeholder="Écrivez votre message ici..."
                       value={formFields.mesazh}
                       onChange={(e) => setFormFields({ ...formFields, mesazh: e.target.value })}
                     />
@@ -677,18 +734,18 @@ export function HouseConfigurator({ config }: HouseConfiguratorProps) {
                         onChange={(e) => setFormFields({ ...formFields, pranoje: e.target.checked })}
                       />
                       <span className="checkbox-text">
-                        Unë pranoj përpunimin e të dhënave të mia personale sipas politikës së privatësisë.
+                        J'accepte le traitement de mes données personnelles conformément à la politique de confidentialité.
                       </span>
                     </label>
                   </div>
 
                   <button type="submit" className="interest-submit-button">
-                    Dërgoni shprehje interesi
+                    Envoyer l'expression d'intérêt
                   </button>
 
                   {formStatus === "success" && (
                     <div className="form-success-msg">
-                      Faleminderit! Shprehja juaj e interesit u dërgua me sukses. Ne do t'ju kontaktojmë së shpejti.
+                      Merci ! Votre expression d'intérêt a été envoyée avec succès. Nous vous contacterons très prochainement.
                     </div>
                   )}
                 </form>

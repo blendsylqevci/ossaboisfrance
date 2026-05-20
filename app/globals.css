@@ -3975,6 +3975,7 @@ img {
 .form-group input,
 .form-group select,
 .phone-number-group input,
+.form-group-full input,
 .form-group-full textarea {
   width: 100%;
   padding: 12px 16px;
@@ -3990,6 +3991,7 @@ img {
 .form-group input:focus,
 .form-group select:focus,
 .phone-number-group input:focus,
+.form-group-full input:focus,
 .form-group-full textarea:focus {
   border-color: #4e9280;
   box-shadow: 0 0 0 3px rgba(78, 146, 128, 0.15);

@@ -203,7 +203,7 @@ export const asebraKulmConfiguratorData: HouseConfiguratorData = {
   id: "asebra-me-kulm",
   name: "Asebra avec Toit",
   category: "Maison plain pied",
-  subheading: "Asebra avec Toit - Une architecture plain-pied élégante surmontée d'une toiture à pans traditionnelle.",
+  subheading: "Découvrez l'élégance intemporelle d'une maison de plain-pied à ossature bois haut de gamme, couronnée d'une magnifique toiture traditionnelle à double pente. Alliant design contemporain, volumes ouverts et haute performance thermique conforme RE2020, le modèle Asebra avec Toit offre un cadre de vie exceptionnel et durable, entièrement configurable.",
   description:
     "Le modèle Asebra avec Toit allie les espaces de vie spacieux et ouverts de plain-pied de la gamme Asebra au charme intemporel d'une toiture à double pente. Cette conception offre une allure classique tout en bénéficiant de notre technologie moderne d'ossature bois et d'une performance énergétique de premier plan (conforme RE2020).",
   specification:

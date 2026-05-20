@@ -41,7 +41,7 @@ export function ProductsGrid({ houses, locale }: ProductsGridProps) {
                 
                 <div className="prod-card-footer">
                   {(() => {
-                    const formattedPrice = formatArchiveStartingPrice(house.price60x160);
+                    const formattedPrice = formatArchiveStartingPrice(house.price60x160 ?? null);
                     return formattedPrice ? (
                       <div className="prod-card-price-row">
                         <span className="prod-price-label">À partir de</span>

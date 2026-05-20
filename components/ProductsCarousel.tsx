@@ -73,7 +73,7 @@ export function ProductsCarousel({ houses, locale }: ProductsCarouselProps) {
           }}
         >
           {houses.map((house) => {
-            const price = formatArchiveStartingPrice(house.price60x160);
+            const price = formatArchiveStartingPrice(house.price60x160 ?? null);
             return (
               <div
                 className="prod-slider-slide"

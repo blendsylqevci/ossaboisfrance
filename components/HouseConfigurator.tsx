@@ -44,22 +44,78 @@ export function HouseConfigurator({ config }: HouseConfiguratorProps) {
   const [selection, setSelection] = useState(config.defaultSelection);
   const [breakdownOpen, setBreakdownOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"description" | "specification">("description");
+  const [layoutMode, setLayoutMode] = useState<"split" | "narrow" | "clean">("split");
   const [facadeWarning, setFacadeWarning] = useState("");
-  const [imageZoomOpen, setImageZoomOpen] = useState(false);
   const [materialModal, setMaterialModal] = useState<{
     category: ConfigCategory;
     option: ConfigOption;
     unitPrice: number;
   } | null>(null);
+  const [formFields, setFormFields] = useState({
+    emri: "",
+    mbiemri: "",
+    orari: "",
+    kontaktimi: "",
+    prefix: "+33",
+    telefon: "",
+    email: "",
+    kodiPostar: "",
+    qyteti: "",
+    adresa: "",
+    mesazh: "",
+    pranoje: false
+  });
+  const [formStatus, setFormStatus] = useState<"idle" | "success" | "error">("idle");
 
   useEffect(() => {
     setSelection(config.defaultSelection);
     setBreakdownOpen(false);
     setActiveTab("description");
     setFacadeWarning("");
-    setImageZoomOpen(false);
     setMaterialModal(null);
+    setLayoutMode("split");
   }, [config.id, config.defaultSelection]);
+
+  useEffect(() => {
+    if (layoutMode === "clean") {
+      document.documentElement.classList.add("layout-clean-mode");
+    } else {
+      document.documentElement.classList.remove("layout-clean-mode");
+    }
+    return () => {
+      document.documentElement.classList.remove("layout-clean-mode");
+    };
+  }, [layoutMode]);
+
+  const handleLayoutToggle = useCallback(() => {
+    setLayoutMode((prev) => {
+      if (prev === "split") return "narrow";
+      if (prev === "narrow") return "clean";
+      return "split";
+    });
+  }, []);
+
+  const handleInterestSubmit = useCallback((e: React.FormEvent) => {
+    e.preventDefault();
+    setFormStatus("success");
+    setFormFields({
+      emri: "",
+      mbiemri: "",
+      orari: "",
+      kontaktimi: "",
+      prefix: "+33",
+      telefon: "",
+      email: "",
+      kodiPostar: "",
+      qyteti: "",
+      adresa: "",
+      mesazh: "",
+      pranoje: false
+    });
+    setTimeout(() => {
+      setFormStatus("idle");
+    }, 5000);
+  }, []);
 
   const selectedSize = useMemo(
     () => config.sizes.find((size) => size.id === selection.size) ?? config.sizes[0],
@@ -387,73 +443,257 @@ export function HouseConfigurator({ config }: HouseConfiguratorProps) {
   }
 
   return (
-    <div className="house-builder-container">
+    <div className={`house-builder-container layout-${layoutMode}`}>
       <div className="house-product-page">
         <div className="house-main-section">
           <div className="house-image-section">
-            <div className="house-header-left">
-              <h1 className="house-title">{config.name}</h1>
-              <div className="house-description">{config.subheading}</div>
-            </div>
             <div className="house-main-image">
-              <button
-                type="button"
-                className="house-stage-zoom-trigger"
-                aria-label="Agrandir l'image"
-                onClick={() => setImageZoomOpen(true)}
-              >
-                ⤢
-              </button>
-              <div
-                className="house-stage-click-area"
-                role="button"
-                tabIndex={0}
-                aria-label="Agrandir l'image"
-                onClick={() => setImageZoomOpen(true)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault();
-                    setImageZoomOpen(true);
-                  }
-                }}
-              >
-                {renderLayerStage()}
-              </div>
+              {renderLayerStage()}
             </div>
           </div>
 
           <div className="house-details-section">
-            <div className="house-option-group">
-              <h3 className="option-group-title">Structure en ossature bois</h3>
-              <div className="size-options">
-                {config.sizes.map((size) => (
-                  <div className="size-option-wrapper" key={size.id}>
-                    <label className="size-option">
-                      <input
-                        type="radio"
-                        name="house_size"
-                        value={size.id}
-                        checked={selection.size === size.id}
-                        onChange={() => selectSize(size)}
-                      />
-                      <div className="size-option-content">
-                        <div className="option-check">{checkIcon()}</div>
-                        <div className="option-details">
-                          <span className="option-name">{size.label}</span>
+            <button
+              type="button"
+              className={`sidebar-toggle-handle mode-${layoutMode}`}
+              onClick={handleLayoutToggle}
+              title="Changer de disposition"
+              aria-label="Changer de disposition"
+            >
+              <div className="handle-line" />
+              <div className="handle-line" />
+            </button>
+            <div className="details-scrollable-content">
+              <div className="house-header-left">
+                <h1 className="house-title">{config.name}</h1>
+                <div className="house-description">{config.subheading}</div>
+              </div>
+              <div className="house-option-group">
+                <h3 className="option-group-title">Structure en ossature bois</h3>
+                <div className="size-options">
+                  {config.sizes.map((size) => (
+                    <div className="size-option-wrapper" key={size.id}>
+                      <label className="size-option">
+                        <input
+                          type="radio"
+                          name="house_size"
+                          value={size.id}
+                          checked={selection.size === size.id}
+                          onChange={() => selectSize(size)}
+                        />
+                        <div className="size-option-content">
+                          <div className="option-check">{checkIcon()}</div>
+                          <div className="option-details">
+                            <span className="option-name">{size.label}</span>
+                          </div>
                         </div>
+                      </label>
+                    </div>
+                  ))}
+                </div>
+                <div className="size-info-div">
+                  <span>
+                    {config.structureInfo}
+                  </span>
+                </div>
+              </div>
+
+              {primaryCategories.map((category) => renderOptionCategory(category))}
+              {optionalCategories.map((category) => renderOptionCategory(category, "optional-option-group"))}
+
+              <div className="house-details-tabs">
+                <div className="tab-buttons">
+                  <button
+                    className={`tab-button${activeTab === "description" ? " active" : ""}`}
+                    type="button"
+                    onClick={() => setActiveTab("description")}
+                  >
+                    Description
+                  </button>
+                  <button
+                    className={`tab-button${activeTab === "specification" ? " active" : ""}`}
+                    type="button"
+                    onClick={() => setActiveTab("specification")}
+                  >
+                    Specification
+                  </button>
+                </div>
+                <div className="tab-content">
+                  <div className={`tab-pane${activeTab === "description" ? " active" : ""}`}>
+                    <div className="description-content">{config.description}</div>
+                  </div>
+                  <div className={`tab-pane${activeTab === "specification" ? " active" : ""}`}>
+                    <div className="specification-content">
+                      <p>{config.specification}</p>
+                      <div className="perdhesa-table">
+                        {Object.entries(config.perdhesa).map(([key, value]) => (
+                          <div className="perdhesa-row" key={key}>
+                            <span>{key.replaceAll("_", " ")}</span>
+                            <strong>{value} m2</strong>
+                          </div>
+                        ))}
                       </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Expression of Interest Form */}
+              <div className="interest-form-container">
+                <h2 className="interest-form-title">Dërgoni shprehje interesi</h2>
+                <p className="interest-form-subtitle">
+                  Ne e bëjmë të lehtë dhe të përshtatshme për ju. Plotësoni formën më poshtë dhe ne do t'ju kontaktojmë për t'iu përgjigjur të gjitha pyetjeve tuaja. Kjo shprehje interesi është plotësisht pa obligim.
+                </p>
+                
+                <form onSubmit={handleInterestSubmit} className="interest-form">
+                  <div className="form-row-2">
+                    <div className="form-group">
+                      <input
+                        type="text"
+                        placeholder="Emri"
+                        required
+                        value={formFields.emri}
+                        onChange={(e) => setFormFields({ ...formFields, emri: e.target.value })}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <input
+                        type="text"
+                        placeholder="Mbiemri"
+                        required
+                        value={formFields.mbiemri}
+                        onChange={(e) => setFormFields({ ...formFields, mbiemri: e.target.value })}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-row-2">
+                    <div className="form-group">
+                      <div className="select-wrapper">
+                        <select
+                          required
+                          value={formFields.orari}
+                          onChange={(e) => setFormFields({ ...formFields, orari: e.target.value })}
+                        >
+                          <option value="">Orari i preferuar</option>
+                          <option value="Kurdo">Kurdo</option>
+                          <option value="Mëngjes">Mëngjes</option>
+                          <option value="Pasdite">Pasdite</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div className="form-group">
+                      <div className="select-wrapper">
+                        <select
+                          required
+                          value={formFields.kontaktimi}
+                          onChange={(e) => setFormFields({ ...formFields, kontaktimi: e.target.value })}
+                        >
+                          <option value="">Mënyra e kontaktit</option>
+                          <option value="Telefon">Telefon</option>
+                          <option value="E-mail">E-mail</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="form-row-2">
+                    <div className="form-group form-row-phone">
+                      <div className="select-wrapper">
+                        <select
+                          value={formFields.prefix}
+                          onChange={(e) => setFormFields({ ...formFields, prefix: e.target.value })}
+                        >
+                          <option value="+33">+33</option>
+                          <option value="+355">+355</option>
+                          <option value="+383">+383</option>
+                          <option value="+41">+41</option>
+                          <option value="+49">+49</option>
+                        </select>
+                      </div>
+                      <input
+                        type="tel"
+                        placeholder="Numri i telefonit"
+                        required
+                        value={formFields.telefon}
+                        onChange={(e) => setFormFields({ ...formFields, telefon: e.target.value })}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <input
+                        type="email"
+                        placeholder="E-mail"
+                        required
+                        value={formFields.email}
+                        onChange={(e) => setFormFields({ ...formFields, email: e.target.value })}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-row-2">
+                    <div className="form-group">
+                      <input
+                        type="text"
+                        placeholder="Kodi postar"
+                        required
+                        value={formFields.kodiPostar}
+                        onChange={(e) => setFormFields({ ...formFields, kodiPostar: e.target.value })}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <input
+                        type="text"
+                        placeholder="Qyteti"
+                        required
+                        value={formFields.qyteti}
+                        onChange={(e) => setFormFields({ ...formFields, qyteti: e.target.value })}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-group-full">
+                    <input
+                      type="text"
+                      placeholder="Adresa"
+                      value={formFields.adresa}
+                      onChange={(e) => setFormFields({ ...formFields, adresa: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="form-group-full">
+                    <textarea
+                      placeholder="Shkruani mesazhin tuaj këtu..."
+                      value={formFields.mesazh}
+                      onChange={(e) => setFormFields({ ...formFields, mesazh: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="form-agreement">
+                    <label className="checkbox-label">
+                      <input
+                        type="checkbox"
+                        required
+                        checked={formFields.pranoje}
+                        onChange={(e) => setFormFields({ ...formFields, pranoje: e.target.checked })}
+                      />
+                      <span className="checkbox-text">
+                        Unë pranoj përpunimin e të dhënave të mia personale sipas politikës së privatësisë.
+                      </span>
                     </label>
                   </div>
-                ))}
-              </div>
-              <div className="size-info-div">
-                <span>
-                  {config.structureInfo}
-                </span>
+
+                  <button type="submit" className="interest-submit-button">
+                    Dërgoni shprehje interesi
+                  </button>
+
+                  {formStatus === "success" && (
+                    <div className="form-success-msg">
+                      Faleminderit! Shprehja juaj e interesit u dërgua me sukses. Ne do t'ju kontaktojmë së shpejti.
+                    </div>
+                  )}
+                </form>
               </div>
             </div>
-
-            {primaryCategories.map((category) => renderOptionCategory(category))}
 
             <div className="price-calculator">
               <div className="price-total-section">
@@ -492,69 +732,9 @@ export function HouseConfigurator({ config }: HouseConfiguratorProps) {
                 </div>
               ) : null}
             </div>
-
-            {optionalCategories.map((category) => renderOptionCategory(category, "optional-option-group"))}
-          </div>
-        </div>
-
-        <div className="house-details-tabs">
-          <div className="tab-buttons">
-            <button
-              className={`tab-button${activeTab === "description" ? " active" : ""}`}
-              type="button"
-              onClick={() => setActiveTab("description")}
-            >
-              Description
-            </button>
-            <button
-              className={`tab-button${activeTab === "specification" ? " active" : ""}`}
-              type="button"
-              onClick={() => setActiveTab("specification")}
-            >
-              Specification
-            </button>
-          </div>
-          <div className="tab-content">
-            <div className={`tab-pane${activeTab === "description" ? " active" : ""}`}>
-              <div className="description-content">{config.description}</div>
-            </div>
-            <div className={`tab-pane${activeTab === "specification" ? " active" : ""}`}>
-              <div className="specification-content">
-                <p>{config.specification}</p>
-                <div className="perdhesa-table">
-                  {Object.entries(config.perdhesa).map(([key, value]) => (
-                    <div className="perdhesa-row" key={key}>
-                      <span>{key.replaceAll("_", " ")}</span>
-                      <strong>{value} m2</strong>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
-      {imageZoomOpen ? (
-        <div
-          className="image-zoom-backdrop"
-          role="presentation"
-          onMouseDown={(event) => {
-            if (event.target === event.currentTarget) setImageZoomOpen(false);
-          }}
-        >
-          <div className="image-zoom-modal" role="dialog" aria-modal="true" aria-label="Image agrandie">
-            <button
-              type="button"
-              className="image-zoom-close"
-              aria-label="Fermer"
-              onClick={() => setImageZoomOpen(false)}
-            >
-              ×
-            </button>
-            {renderLayerStage("image-zoom-stage")}
-          </div>
-        </div>
-      ) : null}
       {materialModal ? (
         <div
           className="material-modal-backdrop"

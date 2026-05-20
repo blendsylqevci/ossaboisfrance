@@ -602,20 +602,9 @@ Rekomandimi:
 - Refined input group and label spacing specifically for mobile screens in the checkout page to provide standard, elegant spacing (24px) between stacked inputs.
 - Restructured and styled the order product recap card on mobile, keeping it inline (row layout) with the image on the left, details in the center, and price on the right instead of stacking them vertically.
 - Verified build and static generation using `npm run build`.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+- Completely redesigned B2B page (`/fr/b2b`), Contact page (`/fr/contact`), and Réalisations page (`/fr/realisations`) to feature professional typography, clean grids, custom forms (like file upload widget), and interactive components.
+- Resolved page transition viewport offset jumps on route change by removing global `scroll-behavior: smooth` from `globals.css` and setting `window.history.scrollRestoration = "manual"` inside the router.
+- Prevented initial tab mount auto-scrolling inside `FeaturedProductsSection.tsx` via component mount state tracking.
+- Re-architected header language switcher into a horizontal capsule-styled segmented control with active/inactive state animations.
+- Refined French homepage copy and stats widget rendering to achieve full visual column coverage and premium editorial density.
+- Replaced the Qui Sommes-Nous page single wood construction graphic with an interactive 12-stage construction process grid (3 columns x 4 rows) for desktop, configured to hide on mobile viewports for cleaner page lengths.

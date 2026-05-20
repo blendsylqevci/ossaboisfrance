@@ -690,6 +690,26 @@ img {
   color: #5E6F4F;
 }
 
+.sticky-nav-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: #5E6F4F;
+  background: rgba(94, 111, 79, 0.08);
+  padding: 2px 7px;
+  border-radius: 999px;
+  margin-left: 6px;
+  vertical-align: middle;
+  transition: all 0.2s ease;
+}
+
+.archive-sticky-nav a:hover .sticky-nav-count {
+  background: #5E6F4F;
+  color: var(--white);
+}
+
 /* Commitments Section */
 .archive-commitments-section {
   padding: 80px 0;

@@ -173,11 +173,11 @@ export function HousesArchive({ locale }: HousesArchiveProps) {
         <div className="container">
           <div className="archive-sticky-nav">
             {houseArchiveCategories.map((category) => {
-              const houses = houseArchiveItems.filter((house) => house.category === category.sourceCategory);
-              if (houses.length === 0) return null;
+              const count = houseArchiveItems.filter((house) => house.category === category.sourceCategory).length;
+              if (count === 0) return null;
               return (
                 <a href={`#${category.id}`} key={category.id}>
-                  {category.title}
+                  {category.title} <span className="sticky-nav-count">{count}</span>
                 </a>
               );
             })}

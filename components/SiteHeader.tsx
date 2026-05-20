@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -19,12 +20,19 @@ const houseNav = [
 
 export function SiteHeader({ locale }: SiteHeaderProps) {
   const pathname = usePathname();
+  const mobileMenuRef = useRef<HTMLDetailsElement>(null);
 
   const isActive = (path: string) => {
     if (path === "") {
       return pathname === `/${locale}` || pathname === `/${locale}/` || pathname === "/" || pathname === "";
     }
     return pathname.includes(`/${locale}/${path}`) || pathname.includes(`/${path}`);
+  };
+
+  const closeMobileMenu = () => {
+    if (mobileMenuRef.current) {
+      mobileMenuRef.current.removeAttribute("open");
+    }
   };
 
   return (
@@ -76,14 +84,14 @@ export function SiteHeader({ locale }: SiteHeaderProps) {
           <Link className="button secondary header-contact-btn" href={`/${locale}/contact`}>
             Contactez-Nous
           </Link>
-          <details className="mobile-menu">
+          <details className="mobile-menu" ref={mobileMenuRef}>
             <summary aria-label="Ouvrir le menu">
               <span />
               <span />
               <span />
             </summary>
             <div className="mobile-menu-panel">
-              <Link href={`/${locale}`}>Accueil</Link>
+              <Link href={`/${locale}`} onClick={closeMobileMenu}>Accueil</Link>
               <details className="mobile-menu-submenu">
                 <summary className="mobile-submenu-trigger">
                   <span>Modèles de Maisons</span>
@@ -92,25 +100,25 @@ export function SiteHeader({ locale }: SiteHeaderProps) {
                   </svg>
                 </summary>
                 <div className="mobile-submenu-content">
-                  <Link href={`/${locale}/maisons`} className="mobile-submenu-all-link">
+                  <Link href={`/${locale}/maisons`} className="mobile-submenu-all-link" onClick={closeMobileMenu}>
                     Tous les modèles
                   </Link>
                   {houseNav.map((item) => (
-                    <Link key={item.href} href={`/${locale}/${item.href}`}>
+                    <Link key={item.href} href={`/${locale}/${item.href}`} onClick={closeMobileMenu}>
                       {item.label}
                     </Link>
                   ))}
                 </div>
               </details>
-              <Link href={`/${locale}/qui-sommes-nous`}>Qui Sommes-Nous</Link>
-              <Link href={`/${locale}/b2b`}>B2B</Link>
-              <Link href={`/${locale}/realisations`}>Réalisations</Link>
-              <Link className="mobile-menu-contact" href={`/${locale}/contact`}>
+              <Link href={`/${locale}/qui-sommes-nous`} onClick={closeMobileMenu}>Qui Sommes-Nous</Link>
+              <Link href={`/${locale}/b2b`} onClick={closeMobileMenu}>B2B</Link>
+              <Link href={`/${locale}/realisations`} onClick={closeMobileMenu}>Réalisations</Link>
+              <Link className="mobile-menu-contact" href={`/${locale}/contact`} onClick={closeMobileMenu}>
                 Contactez-Nous
               </Link>
               <div className="mobile-locale-switcher">
                 {locales.map((item) => (
-                  <Link key={item} href={`/${item}`} className={item === locale ? "active" : ""}>
+                  <Link key={item} href={`/${item}`} className={item === locale ? "active" : ""} onClick={closeMobileMenu}>
                     {localeLabels[item].toUpperCase()}
                   </Link>
                 ))}

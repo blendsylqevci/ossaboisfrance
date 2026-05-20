@@ -178,6 +178,15 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     price60x160: 28693
   },
   {
+    slug: "maison-enea-me-kulm",
+    title: "Enea avec Toit",
+    category: "Maison plein pied",
+    description:
+      "Le modèle Enea avec Toit allie l'efficacité d'un plan de plain-pied à l'élégance rassurante d'une toiture traditionnelle à double pente.",
+    image: "/images/houses/maison enea me kulm/enea me kulm 7.jpg",
+    price60x160: 1
+  },
+  {
     slug: "mairie",
     title: "MAIRIE",
     category: "Maison plein pied",

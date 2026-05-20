@@ -99,10 +99,14 @@ export function HouseConfigurator({ config }: HouseConfiguratorProps) {
 
 
 
-  const selectedSize = useMemo(
-    () => config.sizes.find((size) => size.id === selection.size) ?? config.sizes[0],
-    [config.sizes, selection.size]
-  );
+  const selectedSize = useMemo(() => {
+    const rawSize = config.sizes.find((size) => size.id === selection.size) ?? config.sizes[0];
+    const marginMultiplier = 1 + (config.marginPercent ?? 40) / 100;
+    return {
+      ...rawSize,
+      price: rawSize.price * marginMultiplier
+    };
+  }, [config.sizes, selection.size, config.marginPercent]);
 
   // Determine effective roof area (fallback to kulmi if pllaka_e_kulmit is 0)
   const roofArea = useMemo(() => {

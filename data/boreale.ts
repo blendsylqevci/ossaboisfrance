@@ -28,13 +28,13 @@ const borealeSizes: SizeOption[] = [
   {
     id: "60x160",
     label: "60x160",
-    price: 38446.8,
+    price: 27462,
     image: borealeDefaultImage
   },
   {
     id: "60x200",
     label: "60x200",
-    price: 40546.8,
+    price: 28962,
     image: borealeDefaultImage
   }
 ];

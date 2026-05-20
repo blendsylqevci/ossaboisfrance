@@ -52,13 +52,13 @@ export const ambreHouse = {
     {
       id: "60x160",
       label: "60x160",
-      price: 36379,
+      price: 25985,
       image: "/images/houses/ambre/7 ambre.jpg"
     },
     {
       id: "60x200",
       label: "60x200",
-      price: 42180,
+      price: 30129,
       image: "/images/houses/ambre/10 ambre.jpg"
     }
   ] satisfies SizeOption[]

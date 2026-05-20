@@ -21,13 +21,13 @@ const maisonCalmeSizes: SizeOption[] = [
   {
     id: "60x160",
     label: "60x160",
-    price: 43808.8,
+    price: 31292,
     image: "https://ossaboisfrance.com/wp-content/uploads/2025/12/7-CALME-scaled.jpg"
   },
   {
     id: "60x200",
     label: "60x200",
-    price: 45908.8,
+    price: 32792,
     image: "https://ossaboisfrance.com/wp-content/uploads/2025/12/7-CALME-scaled.jpg"
   }
 ];

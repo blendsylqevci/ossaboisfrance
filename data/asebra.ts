@@ -23,13 +23,13 @@ const asebraSizes: SizeOption[] = [
   {
     id: "60x160",
     label: "60x160",
-    price: 40170.2,
+    price: 28693,
     image: asebraDefaultImage
   },
   {
     id: "60x200",
     label: "60x200",
-    price: 42270.2,
+    price: 30193,
     image: asebraDefaultImage
   }
 ];

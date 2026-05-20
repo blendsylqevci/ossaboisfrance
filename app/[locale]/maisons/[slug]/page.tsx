@@ -10,7 +10,7 @@ type HouseDetailPageProps = {
 
 export function generateStaticParams() {
   return houseArchiveItems
-    .filter((house) => !["ambre", "ambre-sans-faitage", "maison-calme", "asebra", "boreale", "asebra-me-kulm"].includes(house.slug))
+    .filter((house) => !["ambre", "ambre-sans-faitage", "maison-calme", "asebra", "boreale", "asebra-me-kulm", "maison-enea-me-kulm"].includes(house.slug))
     .map((house) => ({
       slug: house.slug
     }));
@@ -20,7 +20,7 @@ export default async function HouseDetailPage({ params }: HouseDetailPageProps) 
   const { locale, slug } = await params;
   const house = findArchiveHouse(slug);
 
-  if (!house || ["ambre", "ambre-sans-faitage", "maison-calme", "asebra", "boreale", "asebra-me-kulm"].includes(house.slug)) {
+  if (!house || ["ambre", "ambre-sans-faitage", "maison-calme", "asebra", "boreale", "asebra-me-kulm", "maison-enea-me-kulm"].includes(house.slug)) {
     notFound();
   }
 

@@ -24,9 +24,19 @@ export function FeaturedProductsSection({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [houseInitialIndex, setHouseInitialIndex] = useState(0);
   const activeTabRef = useRef<HTMLButtonElement | null>(null);
+  const prevIndexRef = useRef<number | undefined>(undefined);
 
   // Scroll active tab into view on mobile
   useEffect(() => {
+    if (prevIndexRef.current === undefined) {
+      prevIndexRef.current = currentIndex;
+      return;
+    }
+    if (prevIndexRef.current === currentIndex) {
+      return;
+    }
+    prevIndexRef.current = currentIndex;
+
     if (activeTabRef.current) {
       activeTabRef.current.scrollIntoView({
         behavior: "smooth",

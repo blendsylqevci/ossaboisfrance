@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -22,6 +22,27 @@ export function SiteHeader({ locale }: SiteHeaderProps) {
   const pathname = usePathname();
   const mobileMenuRef = useRef<HTMLDetailsElement>(null);
 
+  // Disable default browser scroll restoration on mount
+  useEffect(() => {
+    if (typeof window !== "undefined" && "scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
+    }
+  }, []);
+
+  // Force scroll to top on homepage path changes
+  useEffect(() => {
+    if (pathname === `/${locale}` || pathname === `/${locale}/` || pathname === "/") {
+      window.scrollTo(0, 0);
+    }
+  }, [pathname, locale]);
+
+  const handleLogoClick = (e: React.MouseEvent) => {
+    if (pathname === `/${locale}` || pathname === `/${locale}/` || pathname === "/") {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   const isActive = (path: string) => {
     if (path === "") {
       return pathname === `/${locale}` || pathname === `/${locale}/` || pathname === "/" || pathname === "";
@@ -38,11 +59,11 @@ export function SiteHeader({ locale }: SiteHeaderProps) {
   return (
     <header className="site-header">
       <div className="container header-inner">
-        <Link href={`/${locale}`} className="brand-link" aria-label="Ossa Bois France">
+        <Link href={`/${locale}`} className="brand-link" aria-label="Ossa Bois France" onClick={handleLogoClick}>
           <Image src="/images/brand/ossa-bois-logo.png" alt="" width={86} height={78} priority />
         </Link>
         <nav className="main-nav" aria-label="Navigation principale">
-          <Link href={`/${locale}`} className={isActive("") ? "active" : ""}>
+          <Link href={`/${locale}`} className={isActive("") ? "active" : ""} onClick={handleLogoClick}>
             Accueil
           </Link>
           
@@ -117,11 +138,13 @@ export function SiteHeader({ locale }: SiteHeaderProps) {
                 Contactez-Nous
               </Link>
               <div className="mobile-locale-switcher">
-                {locales.map((item) => (
-                  <Link key={item} href={`/${item}`} className={item === locale ? "active" : ""} onClick={closeMobileMenu}>
-                    {localeLabels[item].toUpperCase()}
-                  </Link>
-                ))}
+                <div className="mobile-locale-switcher-inner">
+                  {locales.map((item) => (
+                    <Link key={item} href={`/${item}`} className={item === locale ? "active" : ""} onClick={closeMobileMenu}>
+                      {localeLabels[item].toUpperCase()}
+                    </Link>
+                  ))}
+                </div>
               </div>
             </div>
           </details>

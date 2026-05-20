@@ -6,6 +6,7 @@ import { HeroCarousel } from "@/components/HeroCarousel";
 import { ReviewsCarousel } from "@/components/ReviewsCarousel";
 import { CollaboratorsCarousel } from "@/components/CollaboratorsCarousel";
 import { FeaturedProductsSection } from "@/components/FeaturedProductsSection";
+import { AboutStats } from "@/components/AboutStats";
 
 type HomePageProps = {
   params: Promise<{ locale: Locale }>;
@@ -147,33 +148,17 @@ export default async function HomePage({ params }: HomePageProps) {
           <div className="about-right-col">
             <div className="about-editorial-text">
               <p>
-                Ossa Bois France est une entreprise spécialisée dans la fabrication de maisons modulaires à ossature bois. <br />
-                Avec des bureaux en France et une usine de production moderne au Kosovo, nous concevons et réalisons des constructions durables, rapides et entièrement personnalisées.
+                Ossa Bois France réinvente l’habitat individuel et collectif à travers une approche moderne, écologique et hautement performante de la construction en bois. Forts de notre expertise d’ingénierie et de notre savoir-faire industriel, nous concevons des structures d'exception qui allient design contemporain, durabilité environnementale et confort de vie inégalé.
               </p>
               <p>
-                Nous accompagnons nos clients dans toute l’Europe, en offrant un service complet : <br />
-                conception, fabrication, transport et installation sur site. <br />
-                Notre priorité est la qualité, la précision et le respect des délais.
+                De la conception sur-mesure à la fabrication de haute précision dans nos ateliers de pointe, chaque projet bénéficie d'un suivi rigoureux. Grâce à une logistique intégrée et des équipes d'assemblage qualifiées, nous garantissons un accompagnement clé en main à travers toute l'Europe, éliminant les aléas des chantiers traditionnels en respectant strictement vos budgets et vos délais.
               </p>
               <p className="about-bold-highlight">
-                <strong>+30 ans d’expérience cumulée dans la construction modulaire</strong>
+                <strong>Une construction d'avenir, durable et certifiée, pour concrétiser vos projets architecturaux les plus exigeants.</strong>
               </p>
             </div>
 
-            <div className="about-stats-row">
-              <div className="about-stat-item">
-                <h3 className="stat-number">30+</h3>
-                <p className="stat-label">années d’expérience dans la construction modulaire</p>
-              </div>
-              <div className="about-stat-item">
-                <h3 className="stat-number">700+</h3>
-                <p className="stat-label">projets livrés en Europe</p>
-              </div>
-              <div className="about-stat-item">
-                <h3 className="stat-number">&nbsp;</h3>
-                <p className="stat-label">production rapide et contrôlée au Kosovo</p>
-              </div>
-            </div>
+            <AboutStats />
           </div>
         </div>
       </section>

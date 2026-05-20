@@ -151,6 +151,8 @@ needs confirmation:
 - The "Adresse" input field layout matches all other input styling.
 - Expression of Interest form submissions trigger a `mailto:sylqevciblendi@gmail.com` link containing the house model, selected custom materials (or only the house model if all selections are at default values), contact info, and custom message, without redirecting to the checkout page.
 - Future Resend integration will send background email notifications to both the admin (`sylqevciblendi@gmail.com`) and the client in their selected language.
+- Material pop-up modal is designed to have a fixed height of 520px and width of 920px on desktop to ensure visual consistency regardless of the image resolution.
+
 
 ## Configurator Completeness Checklist
 

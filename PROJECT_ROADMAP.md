@@ -582,4 +582,6 @@ Rekomandimi:
 - Configured Expression of Interest form to submit details using a pre-populated client-side mailto redirected to `sylqevciblendi@gmail.com`.
 - Structured mailto content to dynamically load model names, surfaces, contact info, messages, and selected options (only if they are non-default).
 - Prevented the Expression of Interest submit button from redirecting users to the checkout page.
+- Implemented fixed width (920px) and fixed height (520px) layout on desktop for the material info pop-up modal, centering image content and enabling scrollbars for long text content to prevent modal scaling based on uploaded image dimensions.
+
 

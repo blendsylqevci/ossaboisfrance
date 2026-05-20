@@ -821,9 +821,10 @@ img {
   width: 100%;
   background: #f4f4ef;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0; /* Full bleed: no padding */
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  padding: 0;
   order: -1;
   position: relative;
 }
@@ -833,10 +834,109 @@ img {
     height: 100%;
     position: relative;
     top: 0;
-    padding: 0; /* Full bleed: no padding */
+    padding: 0;
     order: 0;
   }
 }
+
+/* --- CONFIGURATOR TOP TABS BAR --- */
+.configurator-tabs-bar {
+  display: none;
+}
+
+.tabs-bar-left {
+  display: flex;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.9);
+  flex-shrink: 0;
+}
+
+.tabs-bar-menu {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none; /* Hide scrollbar Firefox */
+  -ms-overflow-style: none; /* Hide scrollbar IE/Edge */
+  flex-grow: 1;
+}
+
+.tabs-bar-menu::-webkit-scrollbar {
+  display: none; /* Hide scrollbar Chrome/Safari */
+}
+
+.config-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+@media (min-width: 992px) {
+  .config-tab-btn {
+    gap: 8px;
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+}
+
+.config-tab-btn svg {
+  stroke: currentColor;
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+}
+
+@media (min-width: 992px) {
+  .config-tab-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.config-tab-btn:hover {
+  color: #ffffff;
+}
+
+.config-tab-btn.active {
+  background: #ffffff;
+  color: #1e295d;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.configurator-tab-notice {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(30, 41, 93, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #ffffff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  z-index: 40;
+  pointer-events: none;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  animation: tabNoticeFadeIn 0.3s ease-out forwards;
+}
+
+@keyframes tabNoticeFadeIn {
+  from { opacity: 0; transform: translate(-50%, 10px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
 
 .house-header-left {
   margin-bottom: 24px;
@@ -862,7 +962,7 @@ img {
   position: relative;
   width: 100%;
   max-width: 100%;
-  height: 100%;
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -896,6 +996,10 @@ img {
 }
 
 .house-stage-zoom-trigger {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 50;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1027,8 +1131,8 @@ img {
 
   /* --- 1. SPLIT MODE (Default 2 columns, 480px width) --- */
   .layout-split .house-details-section {
-    width: 480px;
-    flex: 0 0 480px;
+    width: 420px;
+    flex: 0 0 420px;
   }
   .layout-split .house-options-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
@@ -1217,31 +1321,41 @@ img {
 
 .size-option-content {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  text-align: center;
-  min-height: 80px;
-  padding: 15px;
-  border: 2px solid #e2e8f0;
+  gap: 12px;
+  min-height: 72px;
+  border: 1px solid #e2e8f0;
   border-radius: 10px;
-  background: #f7fafc;
-  transition: all 0.2s ease;
+  background: #ffffff;
+  padding: 10px 16px;
+  transition: all 0.25s ease;
+  width: 100%;
 }
 
 .size-option:hover .size-option-content {
   border-color: #4e9280;
-  background: #ffffff;
 }
 
 .size-option input:checked + .size-option-content {
   border-color: #4e9280;
   background: #f0f7f5;
-  box-shadow: 0 4px 12px rgba(78, 146, 128, 0.15);
+  box-shadow: 0 4px 12px rgba(78, 146, 128, 0.1);
 }
 
 .size-option .option-check {
-  display: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.size-option input:checked + .size-option-content .option-check {
+  border-color: #4e9280;
+  background: #4e9280;
+}
+
+.size-option input:checked + .size-option-content .option-check svg {
+  opacity: 1;
 }
 
 .option-content {
@@ -4126,6 +4240,314 @@ img {
   .form-row-2 {
     grid-template-columns: 1fr;
     gap: 12px;
+  }
+}
+
+/* --- MOBILE LAYOUT - BOTTOM SHEET DRAWER DESIGN --- */
+.mobile-drawer-handle {
+  display: none;
+}
+
+.mobile-locale-switcher {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.mobile-locale-switcher a {
+  font-size: 14px;
+  font-weight: 600;
+  color: #718096;
+  text-decoration: none;
+}
+
+.mobile-locale-switcher a.active {
+  color: var(--brand, #4e9280);
+}
+
+@media (max-width: 991px) {
+  /* Narrow header on mobile and scale down logo */
+  .header-inner {
+    min-height: 64px !important;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+    gap: 12px !important;
+  }
+
+  .brand-link img {
+    height: 46px !important;
+    width: auto !important;
+  }
+
+  .header-actions {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    margin-left: auto !important;
+  }
+
+  /* Professional Hamburger Burger Menu styling and transitions */
+  .mobile-menu {
+    display: block !important;
+    margin: 0 !important;
+  }
+
+  .mobile-menu summary {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: flex-end !important;
+    gap: 4px !important;
+    width: 38px !important;
+    height: 38px !important;
+    border: none !important;
+    border-radius: 50% !important;
+    background: transparent !important;
+    cursor: pointer !important;
+    list-style: none !important;
+    padding: 0 10px !important;
+    transition: background-color 0.25s ease !important;
+  }
+
+  .mobile-menu summary:hover,
+  .mobile-menu[open] summary {
+    background: rgba(0, 0, 0, 0.04) !important;
+  }
+
+  .mobile-menu summary span {
+    display: block !important;
+    height: 1.5px !important;
+    background: var(--ink, #111827) !important;
+    border-radius: 1px !important;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+
+  /* Premium staggered line widths */
+  .mobile-menu summary span:nth-child(1) {
+    width: 18px !important;
+  }
+
+  .mobile-menu summary span:nth-child(2) {
+    width: 12px !important;
+  }
+
+  .mobile-menu summary span:nth-child(3) {
+    width: 18px !important;
+  }
+
+  .mobile-menu[open] summary span:nth-child(1) {
+    transform: translateY(5.5px) rotate(45deg) !important;
+    width: 18px !important;
+  }
+
+  .mobile-menu[open] summary span:nth-child(2) {
+    opacity: 0 !important;
+  }
+
+  .mobile-menu[open] summary span:nth-child(3) {
+    transform: translateY(-5.5px) rotate(-45deg) !important;
+    width: 18px !important;
+  }
+
+  /* Hide desktop-only header items to prevent wrapping and keep header clean */
+  .site-header .locale-switcher,
+  .site-header .header-contact-btn {
+    display: none !important;
+  }
+
+  /* Prevent scroll on body/page */
+  .house-builder-container {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  .house-product-page {
+    height: calc(100dvh - 64px) !important;
+    overflow: hidden;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: flex;
+    flex-direction: column;
+    background-color: #f4f4ef;
+  }
+
+  .house-main-section {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 0 !important;
+    min-height: 0;
+    position: relative !important;
+  }
+
+  .house-image-section {
+    position: relative;
+    top: 0 !important;
+    height: 38dvh;
+    min-height: 250px;
+    flex-shrink: 0;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #f4f4ef;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .house-stage-zoom-trigger {
+    top: 16px !important;
+    right: 16px !important;
+    width: 38px !important;
+    height: 38px !important;
+    position: absolute !important;
+  }
+
+  .house-main-image {
+    width: 100%;
+    height: 100%;
+    max-width: 100% !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 !important;
+  }
+
+  .house-layer-stage {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    aspect-ratio: 16 / 9;
+  }
+
+  /* Make rendering fill the box, cropping out sky and ground whitespace */
+  .house-layer-stage img {
+    object-fit: cover !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  /* Bottom sheet drawer styling - absolute positioning for smooth slides */
+  .house-details-section {
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    top: calc(max(38dvh, 250px) - 24px) !important;
+    z-index: 40 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    background: #ffffff !important;
+    border-top-left-radius: 24px;
+    border-top-right-radius: 24px;
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    margin: 0 !important;
+    transition: top 0.55s cubic-bezier(0.25, 1, 0.5, 1), border-radius 0.55s cubic-bezier(0.25, 1, 0.5, 1) !important;
+  }
+
+  .drawer-expanded .house-details-section {
+    top: 0 !important;
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+  }
+
+  .mobile-drawer-handle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 14px 0 8px;
+    background: #ffffff;
+    border-top-left-radius: 24px;
+    border-top-right-radius: 24px;
+    cursor: grab;
+    user-select: none;
+    flex-shrink: 0;
+    border-bottom: 1px solid #f1f5f9;
+  }
+  
+  .handle-bar {
+    width: 42px;
+    height: 4px;
+    background-color: #cbd5e1;
+    border-radius: 2px;
+  }
+
+  .details-scrollable-content {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 12px 20px 120px !important;
+  }
+
+  /* Hide split layout handle */
+  .sidebar-toggle-handle {
+    display: none !important;
+  }
+
+  /* Compact Option Cards on Mobile */
+  .option-content {
+    min-height: 60px !important;
+    padding: 8px 12px !important;
+    gap: 10px !important;
+  }
+  
+  .option-name {
+    font-size: 13px !important;
+  }
+
+  .option-mini-image {
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+  /* Vertical list size options on mobile */
+  .size-options {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  .size-option-content {
+    min-height: 60px !important;
+    padding: 8px 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+  }
+
+  /* Sticky price bar at the bottom of the drawer */
+  .price-calculator {
+    flex-shrink: 0;
+    position: relative;
+    background: #ffffff !important;
+    border-top: 1px solid #f1f5f9;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.04);
+    padding: 16px 20px !important;
+    z-index: 20;
+  }
+  
+  .price-breakdown {
+    position: absolute !important;
+    bottom: 100% !important;
+    left: 20px !important;
+    right: 20px !important;
+    width: auto !important;
+    max-width: none !important;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1) !important;
+    border-radius: 12px !important;
+    background: #ffffff !important;
+    margin-bottom: 8px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .house-product-page {
+    height: calc(100dvh - 76px);
   }
 }
 

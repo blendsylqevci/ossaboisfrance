@@ -583,5 +583,8 @@ Rekomandimi:
 - Structured mailto content to dynamically load model names, surfaces, contact info, messages, and selected options (only if they are non-default).
 - Prevented the Expression of Interest submit button from redirecting users to the checkout page.
 - Implemented fixed width (920px) and fixed height (520px) layout on desktop for the material info pop-up modal, centering image content and enabling scrollbars for long text content to prevent modal scaling based on uploaded image dimensions.
+- Designed and built a premium mobile layout for the house configurator matching the Swedish bottom-sheet pattern: locked viewport height (`100dvh`), fixed top image stage (`38dvh`), rounded bottom-sheet drawer with a drag handle for scrollable options, and sticky price footer bar at the bottom.
+- Implemented a full-screen zoom lightbox overlay in `HouseConfigurator.tsx` triggered by a circular expand button on both desktop and mobile.
+
 
 

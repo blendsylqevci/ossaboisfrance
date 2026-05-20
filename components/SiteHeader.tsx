@@ -96,6 +96,13 @@ export function SiteHeader({ locale }: SiteHeaderProps) {
               <Link className="mobile-menu-contact" href={`/${locale}/contact`}>
                 Contactez-Nous
               </Link>
+              <div className="mobile-locale-switcher">
+                {locales.map((item) => (
+                  <Link key={item} href={`/${item}`} className={item === locale ? "active" : ""}>
+                    {localeLabels[item].toUpperCase()}
+                  </Link>
+                ))}
+              </div>
             </div>
           </details>
         </div>

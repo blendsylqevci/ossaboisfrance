@@ -45,7 +45,9 @@ export function HouseConfigurator({ config }: HouseConfiguratorProps) {
   const [breakdownOpen, setBreakdownOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"description" | "specification">("description");
   const [layoutMode, setLayoutMode] = useState<"split" | "narrow" | "clean">("split");
+  const [isZoomed, setIsZoomed] = useState(false);
   const [facadeWarning, setFacadeWarning] = useState("");
+  const [isMobileDrawerExpanded, setIsMobileDrawerExpanded] = useState(false);
   const [materialModal, setMaterialModal] = useState<{
     category: ConfigCategory;
     option: ConfigOption;
@@ -501,12 +503,22 @@ L'équipe Ossa Bois France`;
 
   return (
     <div className={`house-builder-container layout-${layoutMode}`}>
-      <div className="house-product-page">
+      <div className={`house-product-page ${isMobileDrawerExpanded ? "drawer-expanded" : ""}`}>
         <div className="house-main-section">
           <div className="house-image-section">
             <div className="house-main-image">
               {renderLayerStage()}
             </div>
+            <button
+              type="button"
+              className="house-stage-zoom-trigger"
+              onClick={() => setIsZoomed(true)}
+              aria-label="Agrandir l'image"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
           </div>
 
           <div className="house-details-section">
@@ -520,6 +532,13 @@ L'équipe Ossa Bois France`;
               <div className="handle-line" />
               <div className="handle-line" />
             </button>
+            <div
+              className="mobile-drawer-handle"
+              onClick={() => setIsMobileDrawerExpanded(!isMobileDrawerExpanded)}
+              style={{ cursor: "pointer" }}
+            >
+              <div className="handle-bar" />
+            </div>
             <div className="details-scrollable-content">
               <div className="house-header-left">
                 <h1 className="house-title">{config.name}</h1>
@@ -825,6 +844,27 @@ L'équipe Ossa Bois France`;
                   "Information du materiau a completer depuis le CMS lors de la migration finale."}
               </p>
             </div>
+          </div>
+        </div>
+      ) : null}
+      {isZoomed ? (
+        <div
+          className="image-zoom-backdrop"
+          role="presentation"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setIsZoomed(false);
+          }}
+        >
+          <div className="image-zoom-modal">
+            <button
+              type="button"
+              className="image-zoom-close"
+              aria-label="Fermer"
+              onClick={() => setIsZoomed(false)}
+            >
+              ×
+            </button>
+            {renderLayerStage("image-zoom-stage")}
           </div>
         </div>
       ) : null}

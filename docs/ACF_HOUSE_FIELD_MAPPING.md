@@ -342,3 +342,46 @@ Source-backed exception:
 
 - WordPress XML has `enable_couverture_option = 1`, but the house has no confirmed `house_layers_couverture_*` values.
 - The live WordPress page does not render the Couverture section for `boreale`; the new frontend follows that behavior.
+
+### `asebra-me-kulm`
+
+Route: `/fr/maisons/asebra-me-kulm`
+
+Confirmed source values:
+
+| Field | Value |
+| --- | --- |
+| Title | Asebra avec Toit |
+| Category | Maison plain pied |
+| `price_60_x_160` | 28693 |
+| `price_60_x_200` | 30193 |
+| Frontend base price `60x160` | 40170.2 |
+| Frontend base price `60x200` | 42270.2 |
+| `perdhesa.bruto` | 117.86 |
+| `perdhesa.neto` | 103.6 |
+| `perdhesa.mure_te_jashtme` | 125 |
+| `perdhesa.mure_mbajtese` | 24 |
+| `perdhesa.mure_ndarese` | 74 |
+| `perdhesa.pllaka_e_kulmit` | 163 |
+| `windows.aluminium_price` | 7331 |
+| `windows.pvc_price` | 5778 |
+
+Confirmed flags:
+
+| Flag | Value | Frontend result |
+| --- | --- | --- |
+| `enable_roof_option` | 1 | Roof EPDM pare-pluie shown |
+| `enable_etancheite_option` | 1 | EPDM / pare-pluie shown |
+| `enable_etancheite_terrasse` | 0 | Terrace waterproofing hidden |
+| `enable_couverture_option` | 1 | Couverture (Tuiles / Bac Acier) shown |
+| `enable_faux_plafond_option` | 0 | Faux plafond hidden |
+
+Confirmed browser checks:
+
+- Initial route state shows only `bg` and `konstruksioni` active.
+- Initial route state selects only `60x160`.
+- Initial price is `€40 170,20`.
+- Selecting `Couverture Tuiles (Céramique)` activates `couverture_tuiles_gouttieres` and updates price.
+- Selecting `Couverture Bac Acier (Tôle)` activates `couverture_bac_acier_gouttieres` and updates price.
+- Selecting `Menuiseries Aluminium` activates `windows_aluminium` and updates price.
+

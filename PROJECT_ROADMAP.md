@@ -608,3 +608,8 @@ Rekomandimi:
 - Re-architected header language switcher into a horizontal capsule-styled segmented control with active/inactive state animations.
 - Refined French homepage copy and stats widget rendering to achieve full visual column coverage and premium editorial density.
 - Replaced the Qui Sommes-Nous page single wood construction graphic with an interactive 12-stage construction process grid (3 columns x 4 rows) for desktop, configured to hide on mobile viewports for cleaner page lengths.
+- Added `/fr/maisons/asebra-me-kulm` as the fourth real reusable configurator model with enabled roof and couverture options.
+- Configured the new Asebra me kulm model with base prices (€28,693 for 60x160 and €30,193 for 60x200) applying the required 40% margin.
+- Mapped all 15 visual layer PNG assets including the new roof couverture (Tuiles and Bac Acier) options and the underlayment pare-pluie.
+- Integrated the model into the dynamic search, archive, and slug redirection lists.
+- Verified successful Next.js static page generation and TypeScript type-checking using `npm run build`.

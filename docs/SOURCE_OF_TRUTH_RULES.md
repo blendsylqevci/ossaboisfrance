@@ -145,6 +145,8 @@ needs confirmation:
 - `boreale` is now the first confirmed complex configurator route: `/fr/maisons/boreale`.
 - `boreale` shows roof isolation and faux plafond because the flags and renderable `house_layers_*` keys exist.
 - `boreale` does not show Couverture even though `enable_couverture_option = 1`, because the confirmed WordPress/live page has no renderable `couverture_*` layer for this house.
+- `asebra-me-kulm` is now the fourth confirmed reusable configurator route: `/fr/maisons/asebra-me-kulm`.
+- `asebra-me-kulm` shows roof EPDM and couverture options (tuiles céramiques & bac acier) using confirmed layer assets, applying the 40% margin on the base structure prices (€28,693 * 1.4 for 60x160 and €30,193 * 1.4 for 60x200).
 - The five confirmed house model groups in the public menu/archive are: Maisons à toiture terrasse, Maisons à toiture terrasse avec étage, Maisons de plain-pied, Maisons avec combles aménageables, Maisons avec étage.
 - Shared configurator state must reset whenever `config.id` changes, so selected options/layers from one house cannot carry into another house.
 - The Expression of Interest form text is translated to French.

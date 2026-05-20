@@ -169,6 +169,15 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     price60x160: 16060
   },
   {
+    slug: "asebra-me-kulm",
+    title: "Asebra avec Toit",
+    category: "Maison plein pied",
+    description:
+      "Le modèle Asebra avec Toit allie les espaces de vie spacieux et ouverts de plain-pied de la gamme Asebra au charme intemporel d'une toiture à double pente.",
+    image: "/images/houses/asebra me kulm/asebra me kulm 7.jpg",
+    price60x160: 28693
+  },
+  {
     slug: "mairie",
     title: "MAIRIE",
     category: "Maison plein pied",

@@ -572,3 +572,14 @@ Rekomandimi:
 - Created `docs/HOUSE_CATEGORY_CONFIGURATOR_AUDIT.md` to lock the 5 public model groups and avoid guessing which houses can become configurators.
 - Confirmed current configurator-ready/implemented group: `ambre-sans-faitage`, `maison-calme`, `asebra`, and `boreale`; confirmed `a-frame-house` needs a dedicated layer audit before enabling.
 - Confirmed houses with missing prices or missing layers stay safe detail pages until their real source data is available.
+- Created public pages under Phase 3A: Homepage `/fr`, Contact `/fr/contact`, Qui Sommes-Nous `/fr/qui-sommes-nous`, B2B `/fr/b2b`, and Réalisations `/fr/realisations`.
+- Added CSS layout and styles in `app/globals.css` for carousels, testimonials, grids, forms, and responsive components.
+- Adjusted sidebar placement on desktop to row-reverse, shifting the sidebar to the left and rendering house models on the right side.
+- Fixed the sidebar toggle handle button to display correctly and remain interactive instead of being cut off.
+- Rectified `.price-breakdown` width issues in Clean Mode by styling the breakdown overlay to a fixed size of 360px.
+- Fully translated the Expression of Interest form title, subtitles, dropdown lists, checkboxes, and notifications to French.
+- Fixed layout styling of the "Adresse" field in `globals.css` by appending `.form-group-full input` selector properties.
+- Configured Expression of Interest form to submit details using a pre-populated client-side mailto redirected to `sylqevciblendi@gmail.com`.
+- Structured mailto content to dynamically load model names, surfaces, contact info, messages, and selected options (only if they are non-default).
+- Prevented the Expression of Interest submit button from redirecting users to the checkout page.
+

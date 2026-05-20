@@ -147,6 +147,10 @@ needs confirmation:
 - `boreale` does not show Couverture even though `enable_couverture_option = 1`, because the confirmed WordPress/live page has no renderable `couverture_*` layer for this house.
 - The five confirmed house model groups in the public menu/archive are: Maisons à toiture terrasse, Maisons à toiture terrasse avec étage, Maisons de plain-pied, Maisons avec combles aménageables, Maisons avec étage.
 - Shared configurator state must reset whenever `config.id` changes, so selected options/layers from one house cannot carry into another house.
+- The Expression of Interest form text is translated to French.
+- The "Adresse" input field layout matches all other input styling.
+- Expression of Interest form submissions trigger a `mailto:sylqevciblendi@gmail.com` link containing the house model, selected custom materials (or only the house model if all selections are at default values), contact info, and custom message, without redirecting to the checkout page.
+- Future Resend integration will send background email notifications to both the admin (`sylqevciblendi@gmail.com`) and the client in their selected language.
 
 ## Configurator Completeness Checklist
 

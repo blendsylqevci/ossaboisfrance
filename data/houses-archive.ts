@@ -326,7 +326,7 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     title: "Escape Villa avec Attique",
     category: "Maison toiture terrasse avec étage",
     description:
-      "L'Escape Villa avec Attique est une réalisation haut de gamme en ossature bois offrant une architecture à toiture terrasse avec des prestations modernes personnalisables.",
+      "Le modèle Escape Villa avec Attique incarne la modernité absolue avec son architecture contemporaine à toiture terrasse et son attique raffiné. Conçue sur une structure en ossature bois de haute performance thermique, elle propose des volumes intérieurs optimisés et baignés de lumière grâce à ses grandes menuiseries. Personnalisable selon vos souhaits avec un bardage mélèze ou un enduit blanc, elle garantit confort, élégance et durabilité conformes aux exigences environnementales RE2020.",
     image: "/images/houses/escape villa me atike/7 ESCAPE VILLA.jpg",
     price60x160: 1
   }

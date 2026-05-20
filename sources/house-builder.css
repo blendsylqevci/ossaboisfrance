@@ -1,0 +1,2605 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2869
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 /**\
+ * House Builder Custom Styles\
+ * Additional CSS for house builder functionality\
+ */\
+\
+/* Custom Header Styles */\
+\
+.custom-header \{\
+    background: #fff;\
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);\
+    position: fixed;\
+    top: 0;\
+    left: 0;\
+    right: 0;\
+    z-index: 1000;\
+    width: 100%;\
+\}\
+\
+.header-container \{\
+    max-width: 1200px;\
+    margin: 0 auto;\
+    padding: 0 20px;\
+\}\
+\
+.header-content \{\
+    display: flex;\
+    align-items: center;\
+    justify-content: space-between;\
+    padding: 15px 0;\
+\}\
+\
+/* Logo Section */\
+.site-branding \{\
+    display: flex;\
+    align-items: center;\
+\}\
+\
+.logo-container \{\
+    display: flex;\
+    align-items: center;\
+    gap: 15px;\
+\}\
+\
+.custom-logo \{\
+    height: 50px;\
+    width: auto;\
+\}\
+\
+.logo-text \{\
+    display: flex;\
+    flex-direction: column;\
+\}\
+\
+.site-title \{\
+    font-size: 24px;\
+    font-weight: bold;\
+    color: #1F4B43;\
+    margin: 0;\
+    line-height: 1.2;\
+\}\
+\
+.site-tagline \{\
+    font-size: 12px;\
+    color: #666;\
+    margin: 0;\
+    line-height: 1.2;\
+\}\
+\
+/* Navigation Menu */\
+.main-navigation \{\
+    flex: 1;\
+    display: flex;\
+    justify-content: center;\
+\}\
+\
+.nav-menu \{\
+    display: flex;\
+    list-style: none;\
+    margin: 0;\
+    padding: 0;\
+    gap: 40px;\
+\}\
+\
+.nav-menu li \{\
+    margin: 0;\
+\}\
+\
+.nav-menu a \{\
+    color: #1F4B43;\
+    text-decoration: none;\
+    font-weight: 500;\
+    font-size: 16px;\
+    transition: color 0.3s ease;\
+\}\
+\
+.nav-menu a:hover \{\
+    color: #445138;\
+\}\
+\
+/* Contact Button */\
+.header-cta \{\
+    display: flex;\
+    align-items: center;\
+\}\
+\
+.contact-button \{\
+    background: #445138;\
+    color: #fff;\
+    padding: 12px 24px;\
+    border-radius: 25px;\
+    text-decoration: none;\
+    font-weight: 500;\
+    font-size: 16px;\
+    transition: all 0.3s ease;\
+    border: none;\
+    cursor: pointer;\
+\}\
+\
+.contact-button:hover \{\
+    background: #1F4B43;\
+    color: #fff;\
+    text-decoration: none;\
+    transform: translateY(-2px);\
+    box-shadow: 0 4px 15px rgba(68, 81, 56, 0.3);\
+\}\
+\
+/* Mobile Menu Toggle */\
+.menu-toggle \{\
+    display: none;\
+    flex-direction: column;\
+    cursor: pointer;\
+    padding: 5px;\
+\}\
+\
+.menu-toggle span \{\
+    width: 25px;\
+    height: 3px;\
+    background: #1F4B43;\
+    margin: 3px 0;\
+    transition: 0.3s;\
+\}\
+\
+/* Mobile Responsive */\
+@media (max-width: 768px) \{\
+    .header-content \{\
+        padding: 10px 0;\
+    \}\
+    \
+    .logo-container \{\
+        gap: 10px;\
+    \}\
+    \
+    .custom-logo \{\
+        height: 40px;\
+    \}\
+    \
+    .site-title \{\
+        font-size: 20px;\
+    \}\
+    \
+    .site-tagline \{\
+        font-size: 11px;\
+    \}\
+    \
+    .main-navigation \{\
+        display: none;\
+    \}\
+    \
+    .menu-toggle \{\
+        display: flex;\
+    \}\
+    \
+    .nav-menu \{\
+        position: absolute;\
+        top: 100%;\
+        left: 0;\
+        right: 0;\
+        background: #fff;\
+        flex-direction: column;\
+        gap: 0;\
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);\
+        padding: 20px;\
+    \}\
+    \
+    .nav-menu li \{\
+        margin: 10px 0;\
+    \}\
+    \
+    .contact-button \{\
+        padding: 10px 20px;\
+        font-size: 14px;\
+    \}\
+\}\
+\
+/* Body padding to account for fixed header */\
+/* body \{\
+    padding-top: 80px;\
+\} */\
+\
+@media (max-width: 768px) \{\
+    body \{\
+        padding-top: 70px;\
+    \}\
+\}\
+\
+/* Price Calculator Styles */\
+.price-calculator \{\
+    margin: 20px 0;\
+\}\
+\
+.price-total \{\
+    font-size: 28px;\
+    font-weight: bold;\
+    color: #007cba;\
+    text-align: center;\
+    padding: 15px;\
+    border-radius: 5px;\
+\}\
+\
+.house-option-selector \{\
+    background: #f8f9fa;\
+    padding: 20px;\
+    border-radius: 8px;\
+    margin: 20px 0;\
+    border-left: 4px solid #007cba;\
+\}\
+\
+.house-option \{\
+    margin: 10px 0;\
+    padding: 10px;\
+    background: #fff;\
+    border-radius: 5px;\
+    border: 1px solid #ddd;\
+    cursor: pointer;\
+    transition: all 0.3s ease;\
+\}\
+\
+.house-option:hover \{\
+    border-color: #007cba;\
+    box-shadow: 0 2px 5px rgba(0,124,186,0.1);\
+\}\
+\
+.house-option input[type="radio"] \{\
+    margin-right: 10px;\
+\}\
+\
+.option-price \{\
+    float: right;\
+    font-weight: bold;\
+    color: #007cba;\
+\}\
+\
+/* Quote Form Styles */\
+.quote-form \{\
+    background: #f8f9fa;\
+    padding: 30px;\
+    border-radius: 8px;\
+    margin: 40px 0;\
+    border: 1px solid #ddd;\
+\}\
+\
+.quote-form .form-group \{\
+    margin-bottom: 20px;\
+\}\
+\
+.quote-form label \{\
+    display: block;\
+    margin-bottom: 5px;\
+    font-weight: bold;\
+    color: #333;\
+\}\
+\
+.quote-form input,\
+.quote-form select,\
+.quote-form textarea \{\
+    width: 100%;\
+    padding: 10px;\
+    border: 1px solid #ddd;\
+    border-radius: 5px;\
+    font-size: 16px;\
+\}\
+\
+.quote-form input:focus,\
+.quote-form select:focus,\
+.quote-form textarea:focus \{\
+    outline: none;\
+    border-color: #007cba;\
+    box-shadow: 0 0 5px rgba(0,124,186,0.3);\
+\}\
+\
+.quote-form .error \{\
+    border-color: #dc3545 !important;\
+    box-shadow: 0 0 5px rgba(220,53,69,0.3) !important;\
+\}\
+\
+.quote-form .success \{\
+    background: #d4edda;\
+    color: #155724;\
+    padding: 10px;\
+    border-radius: 5px;\
+    margin-top: 10px;\
+\}\
+\
+/* Gallery Styles */\
+.house-gallery \{\
+    display: grid;\
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));\
+    gap: 15px;\
+    margin: 30px 0;\
+\}\
+\
+.house-gallery img \{\
+    width: 100%;\
+    height: 200px;\
+    object-fit: cover;\
+    border-radius: 8px;\
+    cursor: pointer;\
+    transition: transform 0.3s ease;\
+\}\
+\
+.house-gallery img:hover \{\
+    transform: scale(1.05);\
+\}\
+\
+/* Lightbox Styles */\
+.lightbox \{\
+    position: fixed;\
+    top: 0;\
+    left: 0;\
+    width: 100%;\
+    height: 100%;\
+    background: rgba(0,0,0,0.9);\
+    display: flex;\
+    justify-content: center;\
+    align-items: center;\
+    z-index: 9999;\
+\}\
+\
+.lightbox-content \{\
+    position: relative;\
+    max-width: 90%;\
+    max-height: 90%;\
+\}\
+\
+.lightbox-content img \{\
+    max-width: 100%;\
+    max-height: 100%;\
+    border-radius: 8px;\
+\}\
+\
+.lightbox .close \{\
+    position: absolute;\
+    top: -40px;\
+    right: 0;\
+    color: #fff;\
+    font-size: 30px;\
+    cursor: pointer;\
+\}\
+\
+\
+.lightbox-2 \{\
+    position: fixed;\
+    top: 0;\
+    left: 0;\
+    width: 100%;\
+    height: 100%;\
+    background: rgba(0,0,0,0.9);\
+    display: none; /* hidden by default */\
+    justify-content: center;\
+    align-items: center;\
+    z-index: 9999;\
+\}\
+.lightbox-content-2 \{\
+    position: relative;\
+    max-width: 80%;\
+    max-height: 80%;\
+\}\
+\
+.lightbox-content-2 img \{\
+    max-width: 100%;\
+    max-height: 100%;\
+    border-radius: 8px;\
+\}\
+\
+.lightbox-2 .close \{\
+    position: absolute;\
+    top: 0px;\
+    right: 10px;\
+    color: #fff;\
+    font-size: 30px;\
+    cursor: pointer;\
+\}\
+\
+.lightbox-2.is-active \{\
+    display: flex; /* show when active */\
+\}\
+\
+/* Custom Footer Styles */\
+.custom-footer \{\
+    background-color: #1A1A1A;\
+    color: #fff;\
+    padding: 60px 0 20px;\
+    margin-top: 60px;\
+\}\
+\
+.custom-footer a \{\
+    color: #fff;\
+    text-decoration: none;\
+    transition: color 0.3s ease;\
+\}\
+\
+.custom-footer a:hover \{\
+    color: #445138;\
+\}\
+\
+.footer-container \{\
+    max-width: 1200px;\
+    margin: 0 auto;\
+    padding: 0 20px;\
+\}\
+\
+.footer-top \{\
+    display: grid;\
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));\
+    gap: 40px;\
+    margin-bottom: 40px;\
+\}\
+\
+.footer-column \{\
+    display: flex;\
+    flex-direction: column;\
+\}\
+\
+.footer-title \{\
+    color: #fff;\
+    font-size: 18px;\
+    font-weight: 600;\
+    margin-bottom: 20px;\
+    position: relative;\
+    padding-bottom: 10px;\
+\}\
+\
+.footer-title::after \{\
+    content: '';\
+    position: absolute;\
+    left: 0;\
+    bottom: 0;\
+    width: 40px;\
+    height: 2px;\
+    background-color: #445138;\
+\}\
+\
+/* Footer Branding */\
+.footer-logo \{\
+    display: flex;\
+    align-items: center;\
+    gap: 15px;\
+    margin-bottom: 20px;\
+\}\
+\
+.footer-logo-img \{\
+    height: 50px;\
+    width: auto;\
+\}\
+\
+.footer-logo-title \{\
+    color: #fff;\
+    font-size: 24px;\
+    font-weight: bold;\
+    margin: 0;\
+    line-height: 1.2;\
+\}\
+\
+.footer-logo-tagline \{\
+    color: rgba(255, 255, 255, 0.7);\
+    font-size: 14px;\
+    margin: 0;\
+    line-height: 1.2;\
+\}\
+\
+/* Footer Navigation */\
+.footer-menu \{\
+    list-style: none;\
+    margin: 0;\
+    padding: 0;\
+\}\
+\
+.footer-menu li \{\
+    margin-bottom: 12px;\
+\}\
+\
+.footer-menu a \{\
+    color: rgba(255, 255, 255, 0.8);\
+    font-size: 15px;\
+    transition: color 0.3s ease;\
+\}\
+\
+.footer-menu a:hover \{\
+    color: #445138;\
+\}\
+\
+/* Footer Contact */\
+.contact-info p,\
+.address-info p \{\
+    margin-bottom: 8px;\
+    color: rgba(255, 255, 255, 0.8);\
+    font-size: 15px;\
+\}\
+\
+.contact-info a,\
+.address-info a \{\
+    color: rgba(255, 255, 255, 0.8);\
+\}\
+\
+.contact-info a:hover,\
+.address-info a:hover \{\
+    color: #445138;\
+\}\
+\
+/* Footer Social Icons */\
+.social-icons \{\
+    display: flex;\
+    gap: 15px;\
+    margin-top: 10px;\
+\}\
+\
+.social-icons a \{\
+    display: flex;\
+    align-items: center;\
+    justify-content: center;\
+    width: 40px;\
+    height: 40px;\
+    border: 1px solid rgba(255, 255, 255, 0.3);\
+    border-radius: 50%;\
+    font-size: 16px;\
+    transition: all 0.3s ease;\
+\}\
+\
+.social-icons a:hover \{\
+    background-color: #445138;\
+    border-color: #445138;\
+    color: #fff;\
+\}\
+\
+/* Footer Bottom */\
+.footer-bottom \{\
+    text-align: center;\
+    padding-top: 30px;\
+    border-top: 1px solid rgba(255, 255, 255, 0.1);\
+    color: rgba(255, 255, 255, 0.6);\
+    font-size: 14px;\
+\}\
+\
+/* Mobile Footer */\
+@media (max-width: 768px) \{\
+    .custom-footer \{\
+        padding: 40px 0 20px;\
+    \}\
+    \
+    .footer-top \{\
+        grid-template-columns: 1fr;\
+        gap: 30px;\
+        text-align: center;\
+    \}\
+    \
+    .footer-logo \{\
+        justify-content: center;\
+    \}\
+    \
+    .footer-title::after \{\
+        left: 50%;\
+        transform: translateX(-50%);\
+    \}\
+    \
+    .social-icons \{\
+        justify-content: center;\
+    \}\
+\}\
+\
+/* Single House Template Styles - Matching Your Design */\
+.house-product-page \{\
+    padding: 40px 0;\
+    max-width: 1200px;\
+    margin: 0 auto;\
+\}\
+\
+.house-main-section \{\
+    display: grid;\
+    grid-template-columns: 1fr 1fr;\
+    gap: 60px;\
+    margin-bottom: 3%;\
+    align-items: start;\
+\}\
+\
+.house-image-section \{\
+    display: flex;\
+    flex-direction: column;\
+    gap: 30px;\
+\}\
+\
+/* Desktop only: Make image section sticky when scrolling within house-main-section */\
+@media (min-width: 769px) \{\
+    .house-main-section \{\
+        align-items: start;\
+        overflow: visible;\
+        position: relative;\
+    \}\
+    \
+    .house-image-section \{\
+        position: -webkit-sticky;\
+        position: sticky;\
+        top: 20px;\
+        align-self: start;\
+        height: fit-content;\
+        max-height: calc(100vh - 40px);\
+        z-index: 10;\
+        will-change: transform;\
+    \}\
+    \
+    .house-main-image \{\
+        position: relative;\
+        width: 100%;\
+    \}\
+\}\
+\
+.house-header-left \{\
+    margin-bottom: 20px;\
+\}\
+\
+.house-main-image \{\
+    width: 100%;\
+	cursor:zoom-in;;\
+    max-width: 600px;\
+\}\
+\
+.house-image \{\
+    width: 100%;\
+    height: auto;\
+    border-radius: 7px;\
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);\
+\}\
+\
+.house-details-section \{\
+    padding: 0;\
+\}\
+\
+.house-title \{\
+    font-size: 32px;\
+    font-weight: 500;\
+    color: #000;\
+    margin-bottom: 15px;\
+    line-height: 1.2;\
+\}\
+\
+.house-description \{\
+    color: #666;\
+    line-height: 1.6;\
+    font-size: 16px;\
+    \
+\}\
+\
+.option-group-title \{\
+    font-size: 24px;\
+    font-weight: 500;\
+    color: #000;\
+    margin-bottom: 15px;\
+    margin-top: 15px;\
+\}\
+\
+/* Size Options - Card Style */\
+.size-options \{\
+    display: flex;\
+    gap: 15px;\
+\}\
+\
+.size-option-wrapper \{\
+    flex: 1;\
+    display: flex;\
+    flex-direction: column;\
+    gap: 10px;\
+\}\
+\
+.size-option \{\
+    cursor: pointer;\
+\}\
+\
+.size-option input[type="radio"] \{\
+    display: none;\
+\}\
+\
+.size-option-content \{\
+    display: flex;\
+    align-items: center;\
+    gap: 15px;\
+    padding: 13px;\
+    background: #fff;\
+    border: 2px solid #e0e0e0;\
+    border-radius: 7px;\
+    transition: all 0.3s ease;\
+    position: relative;\
+\}\
+\
+.size-option input[type="radio"]:checked + .size-option-content \{\
+    border-color: #4CAF50;\
+    background: #F7FFFD;\
+\}\
+\
+\
+/* Size Info Divs */\
+.size-info-div \{\
+    display: flex;\
+    align-items: center;\
+    gap: 8px;\
+    padding: 10px 15px;\
+    background: #42AFF403;\
+    border: 1px solid #fc4545;\
+    border-radius: 7px;\
+    font-size: 14px;\
+    color: #fc4545;\
+    margin-top: 10px;\
+\}\
+\
+.tab-button:hover \{\
+    background: #181A20 !important;\
+    color: #fff !important;\
+\}\
+.size-info-div svg \{\
+    font-size: 30;\
+    width: 30px;\
+    height: 30px;\
+\}\
+#specification , #description \{\
+    padding-top: 20px;\
+\}\
+\
+/* Perdhesa Table Styles */\
+.perdhesa-table-section h4 \{\
+    color: #1F4B43;\
+    margin-bottom: 20px;\
+    font-size: 18px;\
+    font-weight: 600;\
+\}\
+\
+.perdhesa-table \{\
+    background: #fff;\
+    border-radius: 8px;\
+    overflow: hidden;\
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);\
+    border: 1px solid #e0e0e0;\
+\}\
+\
+.perdhesa-table-header \{\
+    display: grid;\
+    grid-template-columns: 2fr 1fr 1fr;\
+    background: #5E6F4F;\
+    color: #fff;\
+    font-weight: 600;\
+    font-size: 14px;\
+\}\
+\
+.perdhesa-table-row \{\
+    display: grid;\
+    grid-template-columns: 2fr 1fr 1fr;\
+    border-bottom: 1px solid #f0f0f0;\
+    transition: background-color 0.3s ease;\
+\}\
+\
+.perdhesa-table-row:last-child \{\
+    border-bottom: none;\
+\}\
+\
+.perdhesa-table-row:hover \{\
+    background-color: #f8f9fa;\
+\}\
+\
+.perdhesa-col-1,\
+.perdhesa-col-2,\
+.perdhesa-col-3 \{\
+    padding: 15px 20px;\
+    font-size: 14px;\
+    display: flex;\
+    align-items: center;\
+\}\
+\
+.perdhesa-col-1 \{\
+    font-weight: 500;\
+\}\
+\
+.perdhesa-col-2 \{\
+    font-weight: 600;\
+    justify-content: center;\
+\}\
+\
+.perdhesa-col-3 \{\
+    justify-content: center;\
+\}\
+\
+/* Mobile Responsive for Perdhesa Table */\
+@media (max-width: 768px) \{\
+    .perdhesa-table-section \{\
+        overflow-x: auto;\
+        -webkit-overflow-scrolling: touch;\
+        margin: 0 -20px;\
+        padding: 0 20px;\
+    \}\
+    \
+    .perdhesa-table \{\
+        /* min-width: 600px; */\
+        width: 100%;\
+    \}\
+    \
+    .perdhesa-table-header,\
+    .perdhesa-table-row \{\
+        /* All three columns same width on mobile */\
+        grid-template-columns: repeat(3, minmax(0, 130px));\
+    \}\
+    \
+    .perdhesa-col-1,\
+    .perdhesa-col-2,\
+    .perdhesa-col-3 \{\
+        padding: 10px 12px;\
+    \}\
+    /* Allow the first column to wrap so it doesn't force width; slightly smaller text */\
+    .perdhesa-col-1 \{ white-space: normal; font-size: 13px; \}\
+    .perdhesa-col-2, .perdhesa-col-3 \{ white-space: nowrap; \}\
+\}\
+/* Option Cards - Matching Figma Design */\
+.isolation-options,\
+.inner-isolation-options,\
+.outer-isolation-options,\
+.facade-options,\
+.roof-options,\
+.struktura-plloqes-options,\
+.izolimi-plloqes-options,\
+.dritaret-options,\
+.etancheite-options,\
+.toiture-options,\
+.etancheite-terrasse-options \{\
+    display: grid;\
+    grid-template-columns: 1fr 1fr;\
+    gap: 12px;\
+\}\
+\
+/* For size options, keep single column */\
+.size-options \{\
+    display: flex;\
+    gap: 12px;\
+\}\
+\
+.isolation-option,\
+.inner-isolation-option,\
+.outer-isolation-option,\
+.facade-option,\
+.roof-option,\
+.struktura-plloqes-option,\
+.izolimi-plloqes-option,\
+.dritaret-option,\
+.etancheite-option,\
+.toiture-option,\
+.etancheite-terrasse-option \{\
+    position: relative;\
+    cursor: pointer;\
+\}\
+\
+.isolation-option input[type="radio"],\
+.inner-isolation-option input[type="radio"],\
+.outer-isolation-option input[type="radio"],\
+.facade-option input[type="radio"],\
+.roof-option input[type="checkbox"],\
+.struktura-plloqes-option input[type="radio"],\
+.izolimi-plloqes-option input[type="radio"],\
+.dritaret-option input[type="radio"],\
+.etancheite-option input[type="checkbox"],\
+.toiture-option input[type="radio"],\
+.etancheite-terrasse-option input[type="radio"] \{\
+    display: none;\
+\}\
+.option-content \{\
+    display: flex;\
+    align-items: center;\
+    gap: 15px;\
+    padding: 5px 10px;\
+    background: #fff;\
+    border: 1px solid #E5E6E5;\
+    border-radius: 7px;\
+    transition: all 0.3s ease;\
+    position: relative;\
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);\
+\}\
+\
+/* Hover effect for all option types */\
+.isolation-option:hover .option-content,\
+.inner-isolation-option:hover .option-content,\
+.outer-isolation-option:hover .option-content,\
+.facade-option:hover .option-content,\
+.roof-option:hover .option-content,\
+.etancheite-option:hover .option-content,\
+.toiture-option:hover .option-content,\
+.struktura-plloqes-option:hover .option-content,\
+.izolimi-plloqes-option:hover .option-content,\
+.dritaret-option:hover .option-content \{\
+    border-color: #4CAF50;\
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);\
+\}\
+\
+.isolation-option input[type="radio"]:checked ~ .option-content,\
+.inner-isolation-option input[type="radio"]:checked ~ .option-content,\
+.outer-isolation-option input[type="radio"]:checked ~ .option-content,\
+.facade-option input[type="radio"]:checked ~ .option-content,\
+.roof-option input[type="checkbox"]:checked ~ .option-content,\
+.struktura-plloqes-option input[type="radio"]:checked ~ .option-content,\
+.izolimi-plloqes-option input[type="radio"]:checked ~ .option-content,\
+.dritaret-option input[type="radio"]:checked ~ .option-content,\
+.option-content.selected \{\
+    border-color: #4CAF50;\
+    background: #f8fff8;\
+\}\
+\
+.option-check \{\
+    width: 30px;\
+    height: 30px;\
+    background: #fff;\
+    border: 2px solid #e0e0e0;\
+    border-radius: 50%;\
+    display: flex;\
+    align-items: center;\
+    justify-content: center;\
+    opacity: 1;\
+    transition: all 0.3s ease;\
+    flex-shrink: 0;\
+\}\
+\
+.option-check svg \{\
+    width: 16px;\
+    height: 16px;\
+    opacity: 0;\
+    transition: opacity 0.3s ease;\
+\}\
+\
+.size-option input[type="radio"]:checked + .size-option-content .option-check,\
+.isolation-option input[type="radio"]:checked ~ .option-content .option-check,\
+.inner-isolation-option input[type="radio"]:checked ~ .option-content .option-check,\
+.outer-isolation-option input[type="radio"]:checked ~ .option-content .option-check,\
+.facade-option input[type="radio"]:checked ~ .option-content .option-check,\
+.roof-option input[type="checkbox"]:checked ~ .option-content .option-check,\
+.struktura-plloqes-option input[type="radio"]:checked ~ .option-content .option-check,\
+.izolimi-plloqes-option input[type="radio"]:checked ~ .option-content .option-check,\
+.dritaret-option input[type="radio"]:checked ~ .option-content .option-check,\
+.option-content.selected .option-check \{\
+    background: #4E9280;\
+    border-color: #4E9280;\
+\}\
+\
+.size-option input[type="radio"]:checked + .size-option-content .option-check svg,\
+.isolation-option input[type="radio"]:checked ~ .option-content .option-check svg,\
+.inner-isolation-option input[type="radio"]:checked ~ .option-content .option-check svg,\
+.outer-isolation-option input[type="radio"]:checked ~ .option-content .option-check svg,\
+.facade-option input[type="radio"]:checked ~ .option-content .option-check svg,\
+.roof-option input[type="checkbox"]:checked ~ .option-content .option-check svg,\
+.struktura-plloqes-option input[type="radio"]:checked ~ .option-content .option-check svg,\
+.izolimi-plloqes-option input[type="radio"]:checked ~ .option-content .option-check svg,\
+.dritaret-option input[type="radio"]:checked ~ .option-content .option-check svg,\
+.option-content.selected .option-check svg \{\
+    opacity: 1;\
+\}\
+\
+.option-mini-image \{\
+    width: 50px;\
+    height: 50px;\
+    object-fit: cover;\
+    border-radius: 7px;\
+    order: 2; /* Move to the right */\
+\}\
+\
+.option-mini-image-placeholder \{\
+    width: 50px;\
+    height: 50px;\
+    background: #f0f0f0;\
+    border: 1px solid #e0e0e0;\
+    border-radius: 7px;\
+    display: flex;\
+    align-items: center;\
+    justify-content: center;\
+    order: 2; /* Move to the right */\
+    font-size: 10px;\
+    color: #999;\
+    text-align: center;\
+    padding: 5px;\
+    box-sizing: border-box;\
+\}\
+\
+.option-details \{\
+    display: flex;\
+    flex-direction: column;\
+    gap: 4px;\
+    flex: 1;\
+    order: 1; /* Keep on the left */\
+\}\
+\
+.option-name \{\
+    font-size: 14px;\
+    font-weight: 500;\
+    color: #333;\
+\}\
+\
+.option-price \{\
+    font-size: 14px;\
+    font-weight: 600;\
+    color: #1F4B43;\
+\}\
+\
+.option-warning \{\
+    font-size: 12px;\
+    color: #666;\
+    margin-top: 5px;\
+    font-style: italic;\
+\}\
+\
+/* Facade Validation Warning */\
+.facade-validation-warning,\
+.roof-validation-warning \{\
+    display: flex;\
+    align-items: center;\
+    gap: 12px;\
+    margin-top: 15px;\
+    padding: 12px 16px;\
+    background: #FBEBEB4D;\
+    border: 1px solid #EB9292;\
+    border-radius: 7px;\
+    color: #EB9292;\
+    font-size: 14px;\
+    line-height: 1.4;\
+\}\
+\
+.facade-validation-warning svg,\
+.roof-validation-warning svg \{\
+    flex-shrink: 0;\
+\}\
+\
+.facade-validation-warning span,\
+.roof-validation-warning span \{\
+    color: #EB9292;\
+\}\
+\
+/* Price Calculator - Matching Your Design */\
+.price-calculator \{\
+    margin-top: 30px;\
+\}\
+\
+.price-total-section \{\
+    display: flex;\
+    align-items: center;\
+    justify-content: space-between;\
+    gap: 20px;\
+\}\
+\
+.price-total \{\
+    display: flex;\
+    align-items: center;\
+    gap: 5px;\
+    font-size: 24px;\
+    font-weight: 700;\
+    color: #000;\
+\}\
+\
+.price-label \{\
+    font-size: 18px;\
+\}\
+\
+.price-value \{\
+    font-size: 24px;\
+\}\
+\
+.price-dropdown \{\
+    margin-left: 10px;\
+    color: #666;\
+    cursor: pointer;\
+    display: flex;\
+    align-items: center;\
+\}\
+\
+.dropdown-arrow \{\
+    transition: transform 0.3s ease;\
+    transform: rotate(0deg);\
+    width: 20px;\
+    height: 10px;\
+    display: block;\
+\}\
+\
+.price-dropdown.active .dropdown-arrow \{\
+    transform: rotate(180deg);\
+\}\
+\
+.continue-button \{\
+    background: #181A20;\
+    color: #fff;\
+    border: none;\
+    padding: 12px 24px;\
+    border-radius: 7px;\
+    font-size: 14px;\
+    font-weight: 600;\
+    cursor: pointer;\
+    transition: all 0.3s ease;\
+    display: flex;\
+    align-items: center;\
+    gap: 8px;\
+\}\
+\
+.continue-button:hover \{\
+    background: #555;\
+    transform: translateY(-1px);\
+\}\
+\
+.continue-button i \{\
+    font-size: 12px;\
+\}\
+\
+/* Price Breakdown */\
+.price-breakdown \{\
+    margin-top: 20px;\
+    padding-top: 20px;\
+    border-top: 1px solid #e0e0e0;\
+\}\
+\
+.breakdown-item \{\
+    display: flex;\
+    justify-content: space-between;\
+    align-items: center;\
+    padding: 8px 0;\
+    border-bottom: 1px solid #f0f0f0;\
+\}\
+\
+.breakdown-item:last-child \{\
+    border-bottom: none;\
+\}\
+\
+.breakdown-total \{\
+    display: flex;\
+    justify-content: space-between;\
+    align-items: center;\
+    padding: 12px 0;\
+    border-top: 2px solid #e0e0e0;\
+    margin-top: 10px;\
+    font-weight: 700;\
+    font-size: 18px;\
+\}\
+\
+.breakdown-label \{\
+    color: #666;\
+    font-size: 14px;\
+\}\
+\
+.breakdown-value \{\
+    color: #000;\
+    font-weight: 600;\
+    font-size: 14px;\
+\}\
+\
+.breakdown-total .breakdown-label,\
+.breakdown-total .breakdown-value \{\
+    font-size: 18px;\
+    font-weight: 700;\
+\}\
+\
+/* Tabs Section */\
+.house-details-tabs \{\
+    margin-top: 30px;\
+\}\
+\
+.tab-buttons \{\
+    display: flex;\
+    border-bottom: 1px solid #e0e0e0;\
+ \
+    \
+\}\
+\
+.tab-button \{\
+    background: none;\
+    border: none;\
+    padding: 15px 0;\
+    margin-right: 30px;\
+    font-size: 16px;\
+    font-weight: 500;\
+    color: #666;\
+    cursor: pointer;\
+    border-bottom: 2px solid transparent;\
+    transition: all 0.3s ease;\
+    padding-left: 15px;\
+    padding-right: 15px;\
+\}\
+\
+.tab-button.active \{\
+    color: #1F4B43;\
+    border-bottom-color: #1F4B43;\
+\}\
+\
+.tab-pane \{\
+    display: none;\
+\}\
+\
+.tab-pane.active \{\
+    display: block;\
+\}\
+\
+.description-content \{\
+    display: grid;\
+    grid-template-columns: 1fr 1fr;\
+    gap: 40px;\
+    align-items: start;\
+\}\
+\
+.description-text \{\
+    line-height: 1.8;\
+    color: #161C2D;\
+    font-size: 16px;\
+\}\
+\
+.floor-plan-section \{\
+    display: flex;\
+    flex-direction: column;\
+    gap: 20px;\
+\}\
+\
+.floor-plan-image \{\
+    width: 100%;\
+    height: auto;\
+    border-radius: 8px;\
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);\
+\}\
+\
+.area-details \{\
+    background: #f8f9fa;\
+    padding: 20px;\
+    border-radius: 8px;\
+\}\
+\
+.area-details h4 \{\
+    color: #1F4B43;\
+    margin-bottom: 15px;\
+    font-size: 16px;\
+    font-weight: 600;\
+\}\
+\
+.area-table \{\
+    display: flex;\
+    flex-direction: column;\
+    gap: 6px;\
+\}\
+\
+.area-row \{\
+    display: flex;\
+    justify-content: space-between;\
+    padding: 4px 0;\
+    font-size: 14px;\
+    color: #666;\
+\}\
+\
+.area-row:first-child \{\
+    font-weight: 600;\
+    color: #333;\
+\}\
+\
+.specification-content \{\
+    display: grid;\
+    grid-template-columns: 1fr 1fr;\
+    gap: 40px;\
+    align-items: start;\
+    line-height: 1.8;\
+    color: #181A20;\
+    font-size: 16px;\
+\}\
+\
+/* Mobile Responsive */\
+@media (max-width: 768px) \{\
+    html \{\
+        scroll-behavior: smooth;\
+    \}\
+    \
+    .house-main-section \{\
+        grid-template-columns: 1fr;\
+        gap: 40px;\
+        position: relative;\
+    \}\
+    \
+    .house-image-section \{\
+        position: sticky;\
+        top: 0;\
+        background: #fff;\
+        z-index: 100;\
+        padding: 15px 0 20px 0;\
+        margin: -15px 0 20px 0;\
+        transition: padding 0.4s cubic-bezier(0.4, 0, 0.2, 1);\
+    \}\
+    \
+    .house-image-section.scrolled \{\
+        padding: 10px 0 10px 0;\
+    \}\
+    \
+    .house-header-left \{\
+        background: #fff;\
+        padding-bottom: 10px;\
+    \}\
+    \
+    .house-description \{\
+        max-height: 500px;\
+        opacity: 1;\
+        transform: translateY(0);\
+        transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), \
+                    transform 0.6s cubic-bezier(0.4, 0, 0.2, 1),\
+                    max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1),\
+                    margin 0.6s cubic-bezier(0.4, 0, 0.2, 1),\
+                    padding 0.6s cubic-bezier(0.4, 0, 0.2, 1);\
+        transform-origin: top;\
+        will-change: opacity, transform, max-height;\
+        overflow: hidden;\
+        display: block;\
+    \}\
+    \
+    .house-image-section.scrolled .house-description \{\
+        opacity: 0;\
+        transform: translateY(-15px);\
+        max-height: 0;\
+        margin-top: 0 !important;\
+        margin-bottom: 0 !important;\
+        padding-top: 0 !important;\
+        padding-bottom: 0 !important;\
+        pointer-events: none;\
+    \}\
+    \
+    .house-main-image \{\
+        background: #fff;\
+    \}\
+    \
+    .house-title \{\
+        font-size: 28px;\
+    \}\
+    \
+    .house-option-group \{\
+        padding: 15px;\
+    \}\
+    \
+    .option-content \{\
+        flex-direction: column;\
+        text-align: center;\
+        gap: 10px;\
+    \}\
+    \
+    .option-mini-image \{\
+        width: 80px;\
+        height: 80px;\
+    \}\
+    \
+    .description-content \{\
+        grid-template-columns: 1fr;\
+        gap: 30px;\
+    \}\
+    \
+    /* Make specification layout match description on mobile */\
+    .specification-content \{\
+        grid-template-columns: 1fr;\
+        gap: 30px;\
+    \}\
+    \
+    .tab-buttons \{\
+        flex-direction: column;\
+    \}\
+    \
+    .tab-button \{\
+        text-align: left;\
+        border-bottom: 1px solid #eee;\
+        border-left: 3px solid transparent;\
+    \}\
+    \
+    .tab-button.active \{\
+        border-left-color: #445138;\
+        border-bottom-color: #eee;\
+    \}\
+\}\
+\
+/* Option Modal Styles */\
+.option-modal \{\
+    position: fixed;\
+    top: 0;\
+    left: 0;\
+    width: 100%;\
+    height: 100%;\
+    background: rgba(0,0,0,0.8);\
+    display: flex;\
+    justify-content: center;\
+    align-items: center;\
+    z-index: 10000;\
+\}\
+\
+.modal-content \{\
+    background: #fff;\
+    padding: 30px;\
+    border-radius: 12px;\
+    max-height: 80vh;\
+    overflow-y: auto;\
+    position: relative;\
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);\
+    min-width: 50%;\
+	max-width:80%;\
+\}\
+\
+.modal-close \{\
+    position: absolute;\
+    top: 15px;\
+    right: 20px;\
+    font-size: 24px;\
+    cursor: pointer;\
+    color: #666;\
+    transition: color 0.3s ease;\
+\}\
+\
+.modal-close:hover \{\
+    color: #445138;\
+\}\
+\
+.modal-content h3 \{\
+    color: #1F4B43;\
+    margin-bottom: 20px;\
+    font-size: 24px;\
+\}\
+\
+.modal-content img \{\
+    width: 200px;\
+    height: auto;\
+    border-radius: 8px;\
+    margin-bottom: 20px;\
+\}\
+\
+.modal-content p \{\
+    line-height: 1.6;\
+    color: #666;\
+    font-size: 16px;\
+\}\
+[type=button]:focus, [type=button]:hover, [type=submit]:focus, [type=submit]:hover, button:focus, button:hover\{\
+    background:#181A20 !important;\
+    color:#fff !important;\
+    border:none !important;\
+\}\
+\
+@media(max-width:992px)\{\
+    .isolation-options\{\
+        grid-template-columns: 1fr;\
+    \}\
+    .option-content\{\
+        display: flex;\
+        justify-content: center;\
+        align-items: center;\
+        flex-direction: row;\
+        \
+    \}\
+    .option-details\{\
+        flex:auto;\
+    \}\
+    .option-mini-image\{\
+        width: 50px;\
+        height: 50px;\
+    \}\
+    #house-display-image\{\
+        max-width: 100%;\
+    \}\
+    .size-options \{\
+        display: flex;\
+        gap: 12px;\
+        flex-direction: column;\
+    \}\
+    .inner-isolation-options \{\
+        grid-template-columns: 1fr;\
+    \}\
+    .outer-isolation-options \{\
+        grid-template-columns: 1fr;\
+    \}\
+    .izolimi-plloqes-options \{\
+        grid-template-columns: 1fr;\
+    \}\
+    .facade-options \{\
+        grid-template-columns: 1fr;\
+    \}\
+    .roof-options \{\
+        grid-template-columns: 1fr;\
+    \}\
+    .struktura-plloqes-options \{\
+        grid-template-columns: 1fr;\
+    \}\
+    .dritaret-options \{\
+        grid-template-columns: 1fr;\
+    \}\
+    .house-option-group\{\
+        padding: 0;\
+    \}\
+    .option-group-title \{\
+        font-size: 20px;\
+      \
+    \}\
+    /* .specification-content\{\
+        display: flex;\
+        flex-direction: column;\
+        gap: 20px;\
+    \} */\
+  .house-details-tabs\{\
+    margin-top:20px;\
+  \}\
+  .house-main-section\{\
+    margin-bottom: 10px;\
+  \}\
+  .house-details-tabs .tab-buttons\{\
+    display: flex;\
+    flex-direction:row;\
+  \}\
+  .house-product-page\{\
+    padding-top:20px;\
+  \}\
+  .house-image\{\
+    height: 200px;\
+    object-fit: cover;\
+  \}\
+  .house-header-left\{\
+    padding-bottom: 0;\
+    margin-bottom: 0;\
+  \}\
+  .house-main-section \{\
+    grid-template-columns: 1fr;\
+    gap: 0px;\
+    position: relative;\
+\}\
+.house-image-section\{\
+    margin-bottom: 0px;\
+\}\
+.house-image-section\{\
+    gap:10px\
+\}\
+\}\
+\
+/* ============================================\
+   CUSTOM FONTS - PP Neue Montreal\
+   ============================================ */\
+/* Font family is loaded via @font-face in functions.php */\
+/* You can use font-family: "PP Neue Montreal" throughout your CSS */\
+\
+/* Apply PP Neue Montreal to Checkout Page */\
+.checkout-page,\
+.checkout-page *,\
+.checkout-page body,\
+.checkout-page input,\
+.checkout-page textarea,\
+.checkout-page select,\
+.checkout-page button,\
+.checkout-page label,\
+.checkout-page h1,\
+.checkout-page h2,\
+.checkout-page h3,\
+.checkout-page p,\
+.checkout-page span,\
+.checkout-page div \{\
+    font-family: "PP Neue Montreal", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;\
+\}\
+\
+/* Apply PP Neue Montreal to Single House Page */\
+.house-product-page,\
+.house-product-page *,\
+.house-product-page body,\
+.house-product-page input,\
+.house-product-page textarea,\
+.house-product-page select,\
+.house-product-page button,\
+.house-product-page label,\
+.house-product-page h1,\
+.house-product-page h2,\
+.house-product-page h3,\
+.house-product-page h4,\
+.house-product-page p,\
+.house-product-page span,\
+.house-product-page div \{\
+    font-family: "PP Neue Montreal", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;\
+\}\
+\
+/* ============================================\
+   CHECKOUT PAGE STYLING - CREATIVE & BRANDED\
+   ============================================ */\
+\
+/* Checkout Page Container */\
+.checkout-page \{\
+    background: linear-gradient(to bottom, #ffffff 0%, #f9faf9 100%);\
+    min-height: calc(100vh - 100px);\
+    padding: 20px 20px;\
+    position: relative;\
+\}\
+\
+/* Remove min-height when success message is shown */\
+.checkout-page.success-showing \{\
+    min-height: auto !important;\
+    padding-bottom: 40px !important;\
+\}\
+\
+/* Hide checkout content when success is shown */\
+.checkout-page.success-showing .checkout-content \{\
+    display: none !important;\
+\}\
+\
+.checkout-page.success-showing .checkout-title \{\
+    margin-bottom: 20px;\
+\}\
+\
+\
+\
+.checkout-container \{\
+    max-width: 1400px;\
+    margin: 0 auto;\
+    width: 100%;\
+    position: relative;\
+    z-index: 1;\
+\}\
+\
+/* Checkout Title - Creative Styling */\
+.checkout-title \{\
+    color: #181A20;\
+    font-size: 32px;\
+    font-weight: 500;\
+    margin: 0 0 12px 0;\
+    text-align: center;\
+    letter-spacing: -1px;\
+    position: relative;\
+    display: inline-block;\
+    width: 100%;\
+    font-family: "PP Neue Montreal", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;\
+\}\
+\
+\
+/* Checkout Content - Flex Row Layout with Creative Spacing */\
+.checkout-content \{\
+    display: flex;\
+    gap: 50px;\
+    align-items: flex-start;\
+    margin-bottom: 50px;\
+\}\
+\
+/* Adjust container when success is shown */\
+.checkout-page.success-showing .checkout-container \{\
+    display: flex;\
+    flex-direction: column;\
+    align-items: center;\
+    justify-content: flex-start;\
+\}\
+\
+/* Checkout Form Section */\
+.checkout-form-section \{\
+    flex: 1;\
+\}\
+\
+\
+\
+.form-section:last-of-type \{\
+    margin-bottom: 0;\
+\}\
+\
+/* Order Summary Card - Clean Minimal Design */\
+.order-summary-card \{\
+    /* background: #f7f7f7; */\
+    padding: 32px;\
+    border-radius: 12px;\
+    width: 30%;\
+    display: flex;\
+    flex-direction: column;\
+    border: 1px solid #e3e1e1;\
+    border-radius: 10px;\
+    box-shadow: 0 10px 40px rgba(24, 26, 32, 0.08),\
+        0 2px 8px rgba(68, 81, 56, 0.05),\
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);\
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);\
+    position: relative;\
+    overflow: hidden;\
+\}\
+\
+.order-summary-title \{\
+    color: #181A20;\
+    font-size: 24px;\
+    font-weight: 500;\
+    margin: 0 0 24px 0;\
+    letter-spacing: -0.5px;\
+\}\
+\
+/* Order Details - Clean Layout */\
+.order-details \{\
+    display: flex;\
+    flex-direction: column;\
+    gap: 0;\
+\}\
+\
+/* Product Item Section */\
+.order-product-item \{\
+    margin-bottom: 16px;\
+\}\
+\
+.order-product-details \{\
+    display: flex;\
+    align-items: flex-start;\
+    gap: 16px;\
+    margin-bottom: 16px;\
+\}\
+\
+.order-product-image \{\
+    width: 80px;\
+    height: 80px;\
+    flex-shrink: 0;\
+    border-radius: 8px;\
+    overflow: hidden;\
+    background: #ffffff;\
+\}\
+\
+.order-product-image img \{\
+    width: 100% !important;\
+    height: 100% !important;\
+    object-fit: cover !important;\
+    display: block !important;\
+\}\
+\
+/* Ensure image container always shows */\
+.order-product-image \{\
+    min-height: 80px;\
+    min-width: 80px;\
+    background: #f0f0f0;\
+\}\
+\
+.order-product-image img:not([src]),\
+.order-product-image img[src=""],\
+.order-product-image img[src="#"] \{\
+    display: none !important;\
+\}\
+\
+.order-product-info \{\
+    flex: 1;\
+    display: flex;\
+    flex-direction: column;\
+    gap: 4px;\
+\}\
+\
+.order-product-name \{\
+    font-size: 16px;\
+    font-weight: 600;\
+    color: #181A20;\
+    line-height: 1.4;\
+\}\
+\
+.order-product-qty \{\
+    font-size: 14px;\
+    color: #5E6F4F;\
+    font-weight: 400;\
+\}\
+\
+.order-product-price \{\
+    font-size: 16px;\
+    font-weight: 600;\
+    color: #181A20;\
+    white-space: nowrap;\
+\}\
+\
+/* Divider Lines */\
+.order-divider \{\
+    height: 1px;\
+    background: #D9D9D9;\
+    margin: 16px 0;\
+\}\
+\
+/* Price Rows */\
+.order-price-row \{\
+    display: flex;\
+    justify-content: space-between;\
+    align-items: center;\
+    padding: 8px 0;\
+\}\
+\
+.order-price-label \{\
+    font-size: 16px;\
+    color: #181A20;\
+    font-weight: 400;\
+\}\
+\
+.order-price-value \{\
+    font-size: 16px;\
+    color: #181A20;\
+    font-weight: 400;\
+    text-align: right;\
+\}\
+\
+.order-total-row \{\
+    padding: 12px 0;\
+\}\
+\
+.order-total-row .order-price-label \{\
+    font-weight: 700;\
+    font-size: 18px;\
+\}\
+\
+.order-total-row .order-price-value,\
+.order-total-price \{\
+    font-weight: 700;\
+    font-size: 18px;\
+    color: #181A20;\
+\}\
+\
+/* Order Summary Footer */\
+.order-summary-footer \{\
+    margin-top: auto;\
+\}\
+\
+.place-order-button \{\
+    width: 100% !important;\
+    max-width: 100% !important;\
+    background: #445138 !important;\
+    color: #ffffff !important;\
+    padding: 16px 24px !important;\
+    border: none !important;\
+    border-radius: 8px !important;\
+    font-size: 16px !important;\
+    font-weight: 600 !important;\
+    cursor: pointer !important;\
+    transition: background-color 0.2s ease !important;\
+    margin-bottom: 12px !important;\
+    box-sizing: border-box !important;\
+    display: block !important;\
+\}\
+\
+.place-order-button:hover \{\
+    background: #5E6F4F !important;\
+    color: #ffffff !important;\
+\}\
+\
+.place-order-button:active,\
+.place-order-button:focus \{\
+    background: #3a4530 !important;\
+    color: #ffffff !important;\
+    outline: none !important;\
+\}\
+\
+.terms-text \{\
+    font-size: 13px;\
+    color: #5E6F4F;\
+    text-align: center;\
+    margin: 0;\
+    line-height: 1.5;\
+\}\
+\
+/* Checkout Form Card - Enhanced Design */\
+.checkout-form-card \{\
+    background: linear-gradient(145deg, #ffffff 0%, #fafbfa 100%);\
+    border: 2px solid transparent;\
+    padding: 40px;\
+    box-shadow: \
+        0 10px 40px rgba(24, 26, 32, 0.08),\
+        0 2px 8px rgba(68, 81, 56, 0.05),\
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);\
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);\
+    position: relative;\
+    overflow: hidden;\
+    border-radius: 10px;\
+    border: 1px solid #e3e1e1;\
+\}\
+\
+.form-group-full \{\
+    width: 100%;\
+    margin-bottom: 10px;\
+\}\
+\
+\
+.checkout-form-card:hover \{\
+    transform: translateY(-4px);\
+    box-shadow: \
+        0 20px 60px rgba(24, 26, 32, 0.12),\
+        0 4px 16px rgba(68, 81, 56, 0.08),\
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);\
+    border-color: rgba(68, 81, 56, 0.2);\
+\}\
+\
+.form-title \{\
+    color: #181A20;\
+    font-size: 28px;\
+    font-weight: 500;\
+    position: relative;\
+    letter-spacing: -0.5px;\
+\}\
+.transportation-title \{\
+    color: #181A20;\
+    font-size: 22px;\
+    font-weight: 500;\
+    position: relative;\
+    letter-spacing: -0.5px;\
+\}\
+\
+\
+\
+/* Form Rows - 50/50 Layout */\
+.form-row \{\
+    display: flex;\
+    gap: 24px;\
+    margin-bottom: 28px;\
+\}\
+\
+.form-row:last-of-type \{\
+    margin-bottom: 28px;\
+\}\
+\
+\
+.form-group-half \{\
+    flex: 1;\
+    margin-bottom: 10px;\
+\}\
+\
+\
+\
+.form-label \{\
+    display: block;\
+    color: #181A20;\
+    font-size: 15px;\
+    font-weight: 500;\
+    margin-bottom: 12px;\
+    letter-spacing: 0.2px;\
+\}\
+\
+.form-label .required \{\
+    color: #445138;\
+    margin-left: 4px;\
+    font-weight: 800;\
+\}\
+\
+/* Form Inputs - CREATIVE with Border Radius */\
+.form-input,\
+.form-textarea \{\
+    width: 100%;\
+    padding: 18px 24px;\
+    border: 2px solid #D9D9D9;\
+    font-size: 16px;\
+    font-family: inherit;\
+    color: #181A20;\
+    background: #f7f7f7;\
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);\
+    box-sizing: border-box;\
+    box-shadow: \
+        0 2px 4px rgba(24, 26, 32, 0.04),\
+        inset 0 1px 2px rgba(255, 255, 255, 0.8);\
+        border-radius: 10px !important;\
+        border: 1px solid #e3e1e1;\
+\}\
+\
+.form-input:focus,\
+.form-textarea:focus \{\
+    outline: none;\
+    border-color: #445138;\
+    border-width: 2px;\
+    box-shadow: \
+        0 0 0 4px rgba(68, 81, 56, 0.12),\
+        0 4px 12px rgba(68, 81, 56, 0.1),\
+        inset 0 1px 2px rgba(255, 255, 255, 0.8);\
+    background: #ffffff;\
+    transform: translateY(-1px);\
+\}\
+\
+.form-input:hover,\
+.form-textarea:hover \{\
+    border-color: #5E6F4F;\
+    box-shadow: \
+        0 4px 8px rgba(24, 26, 32, 0.06),\
+        inset 0 1px 2px rgba(255, 255, 255, 0.8);\
+\}\
+\
+.form-input::placeholder,\
+.form-textarea::placeholder \{\
+    color: #5E6F4F;\
+    opacity: 0.5;\
+    font-weight: 400;\
+\}\
+\
+.form-textarea \{\
+    resize: vertical;\
+    min-height: 120px;\
+    line-height: 1.6;\
+    border-radius: 16px !important;\
+\}\
+\
+/* Transportation Section */\
+.transportation-section \{\
+    margin-top: 20px;\
+\}\
+\
+.transportation-option \{\
+    margin-top: 16px;\
+\}\
+\
+.transportation-label \{\
+    display: flex;\
+    align-items: center;\
+    gap: 16px;\
+    padding: 20px 24px;\
+    background: #f7f7f7;\
+    border: 2px solid #D9D9D9;\
+    border-radius: 10px;\
+    cursor: pointer;\
+    transition: all 0.3s ease;\
+    position: relative;\
+\}\
+\
+.transportation-label:hover \{\
+    border-color: #5E6F4F;\
+    background: #ffffff;\
+    box-shadow: 0 4px 12px rgba(24, 26, 32, 0.06);\
+\}\
+\
+.transportation-checkbox \{\
+    position: absolute;\
+    opacity: 0;\
+    width: 0;\
+    height: 0;\
+\}\
+\
+.transportation-custom-checkbox \{\
+    width: 24px;\
+    height: 24px;\
+    border: 2px solid #D9D9D9;\
+    border-radius: 6px;\
+    background: #ffffff;\
+    flex-shrink: 0;\
+    position: relative;\
+    transition: all 0.3s ease;\
+\}\
+\
+.transportation-checkbox:checked + .transportation-custom-checkbox \{\
+    background: #445138;\
+    border-color: #445138;\
+\}\
+\
+.transportation-checkbox:checked + .transportation-custom-checkbox::after \{\
+    content: '';\
+    position: absolute;\
+    left: 50%;\
+    top: 50%;\
+    transform: translate(-50%, -50%);\
+    width: 8px;\
+    height: 8px;\
+    background: #ffffff;\
+    border-radius: 2px;\
+\}\
+\
+.transportation-content \{\
+    display: flex;\
+    justify-content: space-between;\
+    align-items: center;\
+    flex: 1;\
+    gap: 16px;\
+\}\
+\
+.transportation-info \{\
+    display: flex;\
+    flex-direction: column;\
+    gap: 4px;\
+    flex: 1;\
+\}\
+\
+.transportation-name \{\
+    font-size: 16px;\
+    font-weight: 600;\
+    color: #181A20;\
+    letter-spacing: 0.2px;\
+\}\
+\
+.transportation-description \{\
+    font-size: 14px;\
+    color: #5E6F4F;\
+    font-weight: 400;\
+\}\
+\
+.transportation-price \{\
+    font-size: 16px;\
+    font-weight: 700;\
+    color: #181A20;\
+    white-space: nowrap;\
+\}\
+\
+.transportation-checkbox:checked ~ .transportation-content .transportation-price \{\
+    color: #445138;\
+\}\
+\
+.transportation-checkbox:checked ~ .transportation-content \{\
+    color: #445138;\
+\}\
+\
+/* When checkbox is checked, style the label */\
+.transportation-label:has(.transportation-checkbox:checked) \{\
+    border-color: #445138;\
+    background: rgba(68, 81, 56, 0.05);\
+\}\
+\
+/* Fallback for browsers that don't support :has() */\
+.transportation-label.checked \{\
+    border-color: #445138;\
+    background: rgba(68, 81, 56, 0.05);\
+\}\
+\
+/* Submit Button - Creative & Standout */\
+.submit-button \{\
+    width: 100% !important;\
+    background: linear-gradient(135deg, #181A20 0%, #2a2d36 100%) !important;\
+    color: #ffffff !important;\
+    padding: 20px 40px;\
+    border: none !important;\
+    border-radius: 0px !important;\
+    font-size: 18px;\
+    font-weight: 700;\
+    cursor: pointer;\
+    position: relative;\
+    overflow: hidden;\
+    letter-spacing: 0.8px;\
+    text-transform: uppercase;\
+    box-shadow: \
+        0 8px 24px rgba(24, 26, 32, 0.3),\
+        0 2px 8px rgba(24, 26, 32, 0.2),\
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);\
+    transition: none !important;\
+    transform: none !important;\
+\}\
+\
+/* Remove all hover effects */\
+.submit-button:hover \{\
+    background: #ffffff !important;\
+    color: #181A20 !important;\
+    transform: none !important;\
+    box-shadow: \
+        0 8px 24px rgba(24, 26, 32, 0.3),\
+        0 2px 8px rgba(24, 26, 32, 0.2),\
+        inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;\
+\}\
+\
+.submit-button:active \{\
+    background: linear-gradient(135deg, #181A20 0%, #2a2d36 100%) !important;\
+    color: #ffffff !important;\
+    transform: none !important;\
+    box-shadow: \
+        0 8px 24px rgba(24, 26, 32, 0.3),\
+        0 2px 8px rgba(24, 26, 32, 0.2),\
+        inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;\
+\}\
+\
+.submit-button:focus \{\
+    outline: none !important;\
+    background: linear-gradient(135deg, #181A20 0%, #2a2d36 100%) !important;\
+    color: #ffffff !important;\
+\}\
+\
+/* Success Message - Enhanced Creative Design */\
+.success-message \{\
+    display: none;\
+    background: linear-gradient(135deg, #445138 0%, #5E6F4F 100%);\
+    color: #ffffff;\
+    padding: 50px 40px;\
+    border-radius: 24px;\
+    text-align: center;\
+    box-shadow: \
+        0 20px 60px rgba(68, 81, 56, 0.4),\
+        0 8px 24px rgba(68, 81, 56, 0.25),\
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);\
+    margin: 50px auto 0;\
+    position: relative;\
+    overflow: hidden;\
+    max-width: 600px;\
+\}\
+\
+/* When success message is shown, reduce margins and adjust layout */\
+.success-message.show \{\
+    display: block;\
+    margin: 50px auto 0;\
+    margin-bottom: 0;\
+\}\
+\
+.success-message::before \{\
+    content: '';\
+    position: absolute;\
+    top: -50%;\
+    left: -50%;\
+    width: 200%;\
+    height: 200%;\
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);\
+    animation: pulse 3s ease-in-out infinite;\
+\}\
+\
+.success-message.show \{\
+    display: block;\
+    animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);\
+\}\
+\
+.success-icon \{\
+    width: 80px;\
+    height: 80px;\
+    background: rgba(255, 255, 255, 0.25);\
+    border-radius: 50%;\
+    display: flex;\
+    align-items: center;\
+    justify-content: center;\
+    font-size: 40px;\
+    margin: 0 auto 24px;\
+    border: 4px solid rgba(255, 255, 255, 0.4);\
+    box-shadow: \
+        0 8px 24px rgba(0, 0, 0, 0.2),\
+        inset 0 2px 8px rgba(255, 255, 255, 0.3);\
+    position: relative;\
+    z-index: 1;\
+    animation: scaleIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;\
+\}\
+\
+.success-message h3 \{\
+    font-size: 32px;\
+    font-weight: 800;\
+    margin: 0 0 16px 0;\
+    color: #ffffff;\
+    position: relative;\
+    z-index: 1;\
+    letter-spacing: -0.5px;\
+\}\
+\
+.success-message p \{\
+    font-size: 18px;\
+    margin: 0;\
+    opacity: 0.95;\
+    position: relative;\
+    z-index: 1;\
+\}\
+\
+@keyframes fadeInUp \{\
+    from \{\
+        opacity: 0;\
+        transform: translateY(30px);\
+    \}\
+    to \{\
+        opacity: 1;\
+        transform: translateY(0);\
+    \}\
+\}\
+\
+@keyframes scaleIn \{\
+    from \{\
+        opacity: 0;\
+        transform: scale(0.5);\
+    \}\
+    to \{\
+        opacity: 1;\
+        transform: scale(1);\
+    \}\
+\}\
+\
+@keyframes pulse \{\
+    0%, 100% \{\
+        opacity: 0.5;\
+    \}\
+    50% \{\
+        opacity: 1;\
+    \}\
+\}\
+\
+/* Error Message Styling */\
+.order-details p[style*="color: red"] \{\
+    color: #dc3545 !important;\
+    background: linear-gradient(135deg, #fff5f5 0%, #ffeaea 100%);\
+    padding: 20px 24px;\
+    border-radius: 16px !important;\
+    border: 2px solid #fecaca;\
+    font-size: 15px;\
+    margin: 0;\
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.1);\
+\}\
+\
+/* ============================================\
+   MOBILE RESPONSIVE STYLES\
+   ============================================ */\
+\
+@media (max-width: 968px) \{\
+    .checkout-content \{\
+        flex-direction: column-reverse;\
+        gap: 35px;\
+    \}\
+    \
+    .checkout-form-section \{\
+        width: 100%;\
+    \}\
+    \
+    .order-summary-card \{\
+        width: 100%;\
+        order: -1;\
+    \}\
+    \
+    .checkout-form-card \{\
+        flex: 1;\
+        width: 100%;\
+    \}\
+\}\
+\
+@media (max-width: 768px) \{\
+    .checkout-page \{\
+        padding: 30px 15px;\
+    \}\
+    \
+    .checkout-title \{\
+        font-size: 36px;\
+    \}\
+    \
+    .checkout-content \{\
+        gap: 30px;\
+        flex-direction: column-reverse;\
+    \}\
+    \
+    .checkout-form-section \{\
+        width: 100%;\
+    \}\
+    \
+    .order-summary-card \{\
+        width: 100%;\
+        order: -1;\
+        padding: 24px 20px;\
+        border-radius: 12px;\
+    \}\
+    \
+    .checkout-form-card \{\
+        padding: 32px 24px;\
+        border-radius: 20px;\
+    \}\
+    \
+    .order-summary-title \{\
+        font-size: 22px;\
+        margin-bottom: 20px;\
+    \}\
+    \
+    .order-product-image \{\
+        width: 70px;\
+        height: 70px;\
+    \}\
+    \
+    .order-product-name \{\
+        font-size: 15px;\
+    \}\
+    \
+    .order-product-qty \{\
+        font-size: 13px;\
+    \}\
+    \
+    .order-product-price \{\
+        font-size: 15px;\
+    \}\
+    \
+    .order-price-label,\
+    .order-price-value \{\
+        font-size: 15px;\
+    \}\
+    \
+    .order-total-row .order-price-label,\
+    .order-total-row .order-price-value \{\
+        font-size: 17px;\
+    \}\
+    \
+    .place-order-button \{\
+        padding: 14px 20px;\
+        font-size: 15px;\
+    \}\
+    \
+    .terms-text \{\
+        font-size: 13px;\
+    \}\
+    \
+    \
+    .transportation-label \{\
+        padding: 16px 20px;\
+    \}\
+    \
+    .transportation-name \{\
+        font-size: 15px;\
+    \}\
+    \
+    .transportation-description \{\
+        font-size: 13px;\
+    \}\
+    \
+    .transportation-price \{\
+        font-size: 15px;\
+    \}\
+    \
+    .order-summary-card::before,\
+    .checkout-form-card::before \{\
+        height: 4px;\
+    \}\
+    \
+    .order-summary-title,\
+    .form-title \{\
+        font-size: 24px;\
+        padding-bottom: 16px;\
+    \}\
+    \
+    .order-summary-title::after,\
+    .form-title::after \{\
+        width: 50px;\
+        height: 3px;\
+    \}\
+    \
+    .order-detail-item \{\
+        padding: 16px 20px;\
+        margin: 0 -20px;\
+        border-radius: 0px;\
+    \}\
+    \
+    .order-detail-item.order-total \{\
+        padding: 24px 20px;\
+        border-radius: 16px;\
+    \}\
+    \
+    .order-label \{\
+        font-size: 15px;\
+    \}\
+    \
+    .order-value \{\
+        font-size: 15px;\
+    \}\
+    \
+    .order-value.order-price \{\
+        font-size: 28px;\
+    \}\
+    \
+    .form-row \{\
+        flex-direction: column;\
+        gap: 0;\
+        margin-bottom: 0;\
+    \}\
+    \
+  \
+    \
+    .form-input,\
+    .form-textarea \{\
+        padding: 16px 20px;\
+        font-size: 15px;\
+        border-radius: 14px !important;\
+    \}\
+    \
+    .submit-button \{\
+        padding: 18px 32px;\
+        font-size: 17px;\
+        border-radius: 14px !important;\
+    \}\
+    \
+    .success-message \{\
+        padding: 40px 30px;\
+        border-radius: 20px;\
+    \}\
+    \
+    .checkout-page.success-showing \{\
+        padding: 30px 15px 40px;\
+        min-height: auto !important;\
+    \}\
+    \
+    .checkout-page.success-showing .checkout-title \{\
+        margin-bottom: 30px;\
+    \}\
+    \
+    .success-icon \{\
+        width: 70px;\
+        height: 70px;\
+        font-size: 36px;\
+    \}\
+    \
+    .success-message h3 \{\
+        font-size: 28px;\
+    \}\
+    \
+    .success-message p \{\
+        font-size: 16px;\
+    \}\
+\}\
+\
+@media (max-width: 480px) \{\
+    .checkout-page \{\
+        padding: 20px 12px;\
+    \}\
+    \
+    .checkout-title \{\
+        font-size: 32px;\
+    \}\
+    \
+    .order-summary-card \{\
+        width: 100%;\
+        padding: 20px 16px;\
+        border-radius: 12px;\
+    \}\
+    \
+    .checkout-form-card \{\
+        padding: 28px 20px;\
+        border-radius: 18px;\
+    \}\
+    \
+    .order-summary-title \{\
+        font-size: 20px;\
+        margin-bottom: 18px;\
+    \}\
+    \
+    .order-product-image \{\
+        width: 60px;\
+        height: 60px;\
+    \}\
+    \
+    .order-product-details \{\
+        gap: 12px;\
+    \}\
+    \
+    .order-product-name \{\
+        font-size: 14px;\
+    \}\
+    \
+    .order-product-qty \{\
+        font-size: 12px;\
+    \}\
+    \
+    .order-product-price \{\
+        font-size: 14px;\
+    \}\
+    \
+    .order-price-label,\
+    .order-price-value \{\
+        font-size: 14px;\
+    \}\
+    \
+    .order-total-row .order-price-label,\
+    .order-total-row .order-price-value \{\
+        font-size: 16px;\
+    \}\
+    \
+    .place-order-button \{\
+        padding: 14px 18px;\
+        font-size: 14px;\
+    \}\
+    \
+    .terms-text \{\
+        font-size: 13px;\
+    \}\
+    \
+    .form-title \{\
+        font-size: 22px;\
+        padding-bottom: 14px;\
+    \}\
+    \
+    .form-row \{\
+        flex-direction: column;\
+        gap: 0;\
+    \}\
+   \
+    \
+    .form-label \{\
+        font-size: 14px;\
+        margin-bottom: 10px;\
+    \}\
+    \
+    .form-input,\
+    .form-textarea \{\
+        padding: 14px 18px;\
+        font-size: 15px;\
+        border-radius: 12px !important;\
+    \}\
+    \
+    .submit-button \{\
+        padding: 16px 28px;\
+        font-size: 16px;\
+        border-radius: 12px !important;\
+        letter-spacing: 0.6px;\
+    \}\
+    \
+    .success-icon \{\
+        width: 64px;\
+        height: 64px;\
+        font-size: 32px;\
+        margin-bottom: 20px;\
+    \}\
+    \
+    .success-message \{\
+        padding: 35px 24px;\
+        border-radius: 18px;\
+        max-width: 100%;\
+    \}\
+    \
+    .checkout-page.success-showing \{\
+        padding: 20px 12px 30px;\
+        min-height: auto !important;\
+    \}\
+    \
+    .checkout-page.success-showing .checkout-title \{\
+        margin-bottom: 20px;\
+    \}\
+    \
+    .success-message h3 \{\
+        font-size: 24px;\
+    \}\
+    \
+    .success-message p \{\
+        font-size: 15px;\
+    \}\
+\}}

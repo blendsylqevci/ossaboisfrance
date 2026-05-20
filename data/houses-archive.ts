@@ -85,7 +85,7 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     description:
       "BORÉALE est une maison modulaire contemporaine de plain-pied, conçue avec une ossature bois robuste garantissant stabilité, durabilité et excellente performance thermique. Son architecture à toiture plate met en valeur des lignes modernes et épurées, permettant une intégration harmonieuse dans des environnements urbains ou résidentiels contemporains. Grâce à une préfabrication soignée en atelier, BORÉALE assure une installation rapide sur site.",
     image: "https://ossaboisfrance.com/wp-content/uploads/2025/12/7-boreale-scaled.jpg",
-    price60x160: 19616
+    price60x160: 27462
   },
   {
     slug: "maison-calme",
@@ -112,7 +112,7 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     description:
       "Le modèle Cotage Toiture Terrasse incarne une architecture moderne, épurée et chaleureuse, pensée pour un habitat fonctionnel.",
     image: "https://ossaboisfrance.com/wp-content/uploads/2026/05/5-cottage-scaled.jpg",
-    price60x160: null
+    price60x160: 23400
   },
   {
     slug: "diademe-toiture-terrasse",
@@ -121,7 +121,7 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     description:
       "Le modèle Diademe Toiture Terrasse reflète une vision contemporaine de l’habitat, où simplicité architecturale, élégance naturelle et confort moderne se rencontrent harmonieusement. Avec sa toiture terrasse aux lignes épurées et sa façade en bois naturel au style raffiné, cette maison offre une esthétique chaleureuse et intemporelle, parfaitement adaptée aux environnements modernes comme aux paysages naturels. Pensée pour maximiser la lumière naturelle et la fluidité des espaces.",
     image: "https://ossaboisfrance.com/wp-content/uploads/2026/05/7-diademe-scaled.jpg",
-    price60x160: null
+    price60x160: 26100
   },
   {
     slug: "emeraude-toiture-terrasse",
@@ -130,7 +130,7 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     description:
       "Le modèle Emeraude Toiture Terrasse incarne parfaitement l’équilibre entre modernité, sophistication architecturale et confort de vie haut de gamme. Avec ses lignes épurées, ses volumes harmonieux et sa toiture terrasse contemporaine, cette maison offre une esthétique raffinée pensée pour répondre aux exigences d’un mode de vie moderne et élégant. Disponible avec une finition façade moderne ou un habillage en bois naturel haut de gamme.",
     image: "https://ossaboisfrance.com/wp-content/uploads/2026/05/7-EMERAUDE-scaled.jpg",
-    price60x160: null
+    price60x160: 28800
   },
   {
     slug: "maison-emmy",
@@ -324,13 +324,14 @@ export const houseArchiveItems: HouseArchiveItem[] = [
 ];
 
 export function formatArchiveStartingPrice(price: number | null) {
-  if (!price) return null;
+  if (price === null || price === undefined) return null;
+  const priceWithMargin = price * 1.40;
 
-  return new Intl.NumberFormat("fr-FR", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-    useGrouping: true
-  }).format(price * 1.4);
+  // Format exactly with space as thousands separator and comma for decimals
+  const formatted = priceWithMargin.toFixed(2);
+  const [integerPart, decimalPart] = formatted.split(".");
+  const groupedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  return `${groupedInteger},${decimalPart}`;
 }
 
 export function findArchiveHouse(slug: string) {

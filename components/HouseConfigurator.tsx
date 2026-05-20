@@ -5,14 +5,12 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ConfigCategory, ConfigOption, HouseConfiguratorData, SizeOption } from "@/data/house-configurator";
 
-const euroFormatter = new Intl.NumberFormat("fr-FR", {
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
-  useGrouping: true
-});
-
 function formatPrice(value: number) {
-  return euroFormatter.format(value);
+  // Format exactly with space as thousands separator and comma for decimals
+  const formatted = value.toFixed(2);
+  const [integerPart, decimalPart] = formatted.split(".");
+  const groupedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  return `${groupedInteger},${decimalPart}`;
 }
 
 function checkIcon() {

@@ -182,9 +182,9 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     title: "Enea avec Toit",
     category: "Maison plein pied",
     description:
-      "Le modèle Enea avec Toit allie l'efficacité d'un plan de plain-pied à l'élégance rassurante d'une toiture traditionnelle à double pente.",
+      "Le modèle Enea avec Toit allie à la perfection l'optimisation des espaces de vie de plain-pied et l'élégance traditionnelle d'une toiture à double pente. Conçue avec une ossature bois haute performance et une isolation thermique avancée conforme à la RE2020, elle offre un cadre de vie sain, lumineux et durable.",
     image: "/images/houses/maison enea me kulm/enea me kulm 7.jpg",
-    price60x160: 1
+    price60x160: 27850
   },
   {
     slug: "mairie",

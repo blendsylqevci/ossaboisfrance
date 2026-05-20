@@ -26,13 +26,13 @@ const eneaKulmSizes: SizeOption[] = [
   {
     id: "60x160",
     label: "60x160",
-    price: 1, // placeholder 1 euro raw
+    price: 27850, // raw base price, will show 38,990 with 40% margin
     image: eneaKulmDefaultImage
   },
   {
     id: "60x200",
     label: "60x200",
-    price: 1, // placeholder 1 euro raw
+    price: 29300, // raw base price, will show 41,020 with 40% margin
     image: eneaKulmFinalImage
   }
 ];
@@ -203,9 +203,9 @@ export const eneaKulmConfiguratorData: HouseConfiguratorData = {
   id: "maison-enea-me-kulm",
   name: "Enea avec Toit",
   category: "Maison plain pied",
-  subheading: "Découvrez Maison Enea avec Toit, une architecture plain-pied moderne associant ossature bois durable et toiture traditionnelle à double pente.",
+  subheading: "Découvrez l'élégance moderne d'une maison de plain-pied d'exception à ossature bois, sublimée par une toiture traditionnelle à double pente. Conçue pour offrir des espaces intérieurs fluides et inondés de lumière, le modèle Enea avec Toit allie confort thermique RE2020 et design contemporain personnalisable.",
   description:
-    "Le modèle Enea avec Toit combine l'efficacité d'un plan de plain-pied à l'élégance rassurante d'une toiture à deux pans. Entièrement personnalisable, elle intègre des technologies d'isolation thermique de pointe conformes à la norme RE2020.",
+    "Le modèle Enea avec Toit réinterprète le charme intemporel de la maison individuelle de plain-pied. Son architecture associe la convivialité d'un grand espace de vie ouvert à l'efficacité énergétique d'une isolation bois multicouche de pointe. Entièrement configurable, elle s'adapte à vos envies : choix des isolations, bardage en mélèze naturel, menuiseries premium et toiture en tuiles céramiques ou bac acier moderne.",
   specification:
     "Spécifications complètes pour la maison à ossature bois Maison Enea avec Toit. La toiture à pans inclinés supporte des couvertures en tuiles céramiques ou en bac acier.",
   defaultImage: eneaKulmDefaultImage,

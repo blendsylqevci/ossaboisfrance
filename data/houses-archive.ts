@@ -320,6 +320,15 @@ export const houseArchiveItems: HouseArchiveItem[] = [
       "ORENDA est une maison modulaire contemporaine à deux étages, construite sur une ossature bois robuste.",
     image: "https://ossaboisfrance.com/wp-content/uploads/2025/12/orenda-7-scaled.jpg",
     price60x160: 32550
+  },
+  {
+    slug: "escape-villa-me-atike",
+    title: "Escape Villa avec Attique",
+    category: "Maison toiture terrasse avec étage",
+    description:
+      "L'Escape Villa avec Attique est une réalisation haut de gamme en ossature bois offrant une architecture à toiture terrasse avec des prestations modernes personnalisables.",
+    image: "/images/houses/escape villa me atike/7 ESCAPE VILLA.jpg",
+    price60x160: 1
   }
 ];
 

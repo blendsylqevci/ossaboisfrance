@@ -8,11 +8,15 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 type StoredSelection = {
   house?: {
     name?: string;
+    id?: string;
     image?: string;
   };
   size?: {
     value?: string;
+    price?: string;
+    image?: string;
   };
+  currentImage?: string;
   isolation?: { value?: string };
   outerIsolation?: { value?: string };
   facade?: { value?: string };
@@ -24,6 +28,7 @@ type StoredSelection = {
   dritaret?: { value?: string };
   totalPrice?: number;
   priceBreakdown?: Array<{ label: string; value: number }>;
+  perdhesa?: Record<string, number | string>;
 };
 
 const TRANSPORTATION_COST = 3000;
@@ -64,6 +69,9 @@ export function CheckoutPage() {
     step1: isEn ? "Configuration" : "Configuration",
     step2: isEn ? "Your Details" : "Informations",
     step3: isEn ? "Confirmation" : "Validation",
+    configTitle: isEn ? "Your Custom House Configuration" : "Votre Configuration Personnalisée",
+    selectedCustoms: isEn ? "Selected Customizations" : "Personnalisations choisies",
+    archSpecs: isEn ? "Architectural Specifications" : "Spécifications Architecturales",
     personalInfo: isEn ? "Personal Information" : "Informations personnelles",
     fullName: isEn ? "Full Name" : "Nom complet",
     email: isEn ? "Email Address" : "Adresse e-mail",
@@ -125,7 +133,6 @@ export function CheckoutPage() {
     setClientName(fullName);
     setIsSubmitting(true);
 
-    // Simulate premium API call with a loader to make it feel rich and robust
     setTimeout(() => {
       const randomCode = Math.random().toString(36).substring(2, 7).toUpperCase();
       const year = new Date().getFullYear();
@@ -186,8 +193,92 @@ export function CheckoutPage() {
             {selection ? (
               <div className="checkout-content">
                 <div className="checkout-form-section">
+                  
+                  {/* Premium Configuration Details Card */}
+                  <div className="config-overview-card">
+                    <div className="config-overview-header">
+                      <span className="form-section-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
+                        </svg>
+                      </span>
+                      <h2 className="form-title">{t.configTitle}</h2>
+                    </div>
+
+                    <div className="config-overview-content">
+                      <div className="config-overview-image">
+                        <Image
+                          src={selection.currentImage || selection.house?.image || "/images/houses/ambre/10 ambre.jpg"}
+                          alt={selection.house?.name || "Configuration"}
+                          width={400}
+                          height={260}
+                          priority
+                        />
+                        <div className="config-image-overlay">
+                          <span className="model-badge">{selection.house?.name}</span>
+                          <span className="size-badge">{selection.size?.value}</span>
+                        </div>
+                      </div>
+
+                      <div className="config-specs-grid">
+                        <div className="specs-table-title">{t.selectedCustoms}</div>
+                        <div className="specs-items">
+                          {selection.isolation?.value && (
+                            <div className="spec-row-item">
+                              <span className="spec-label">{isEn ? "Interior Isolation" : "Isolation Intérieure"}</span>
+                              <span className="spec-value">{selection.isolation.value}</span>
+                            </div>
+                          )}
+                          {selection.outerIsolation?.value && (
+                            <div className="spec-row-item">
+                              <span className="spec-label">{isEn ? "Exterior Isolation" : "Isolation Extérieure"}</span>
+                              <span className="spec-value">{selection.outerIsolation.value}</span>
+                            </div>
+                          )}
+                          {selection.facade?.value && (
+                            <div className="spec-row-item">
+                              <span className="spec-label">{isEn ? "Facade Type" : "Type de Façade"}</span>
+                              <span className="spec-value">{selection.facade.value}</span>
+                            </div>
+                          )}
+                          {selection.toiture?.value && (
+                            <div className="spec-row-item">
+                              <span className="spec-label">{isEn ? "Roof Cover" : "Couverture de Toiture"}</span>
+                              <span className="spec-value">{selection.toiture.value}</span>
+                            </div>
+                          )}
+                          {selection.dritaret?.value && (
+                            <div className="spec-row-item">
+                              <span className="spec-label">{isEn ? "Windows & Doors" : "Menuiseries & Fenêtres"}</span>
+                              <span className="spec-value">{selection.dritaret.value}</span>
+                            </div>
+                          )}
+                        </div>
+
+                        {selection.perdhesa && Object.keys(selection.perdhesa).length > 0 && (
+                          <>
+                            <div className="specs-table-title">{t.archSpecs}</div>
+                            <div className="specs-items architectural-specs">
+                              {Object.entries(selection.perdhesa).map(([key, value]) => {
+                                let label = key.replaceAll("_", " ");
+                                if (key === "mure_te_jashtme") label = isEn ? "Exterior Walls Area" : "Surface des murs extérieurs";
+                                if (key === "pllaka_e_kulmit") label = isEn ? "Roof Plate Area" : "Surface de la dalle de toit";
+                                if (key === "kulmi") label = isEn ? "Roof Area" : "Surface de toiture";
+                                return (
+                                  <div className="spec-row-item" key={key}>
+                                    <span className="spec-label">{label}</span>
+                                    <span className="spec-value">{value} m²</span>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
                   <form id="checkout-form" className="checkout-form-card" onSubmit={submitOrder}>
-                    
                     {/* Section 1: Personal info */}
                     <div className="form-section">
                       <div className="form-section-header">
@@ -347,40 +438,6 @@ export function CheckoutPage() {
                           <div className="order-product-qty">1 · {selection.size?.value}</div>
                         </div>
                         <div className="order-product-price">{euroFormatter.format(basePrice)}</div>
-                      </div>
-
-                      {/* Displaying configured attributes */}
-                      <div className="configured-options-list">
-                        {selection.isolation?.value && (
-                          <div className="config-option-item">
-                            <span>{isEn ? "Insulation" : "Isolation"}</span>
-                            <span>{selection.isolation.value}</span>
-                          </div>
-                        )}
-                        {selection.outerIsolation?.value && (
-                          <div className="config-option-item">
-                            <span>{isEn ? "Ext. Insulation" : "Isolation Ext."}</span>
-                            <span>{selection.outerIsolation.value}</span>
-                          </div>
-                        )}
-                        {selection.facade?.value && (
-                          <div className="config-option-item">
-                            <span>{isEn ? "Facade" : "Façade"}</span>
-                            <span>{selection.facade.value}</span>
-                          </div>
-                        )}
-                        {selection.toiture?.value && (
-                          <div className="config-option-item">
-                            <span>{isEn ? "Roof Cover" : "Couverture"}</span>
-                            <span>{selection.toiture.value}</span>
-                          </div>
-                        )}
-                        {selection.dritaret?.value && (
-                          <div className="config-option-item">
-                            <span>{isEn ? "Windows" : "Menuiseries"}</span>
-                            <span>{selection.dritaret.value}</span>
-                          </div>
-                        )}
                       </div>
                     </div>
                     

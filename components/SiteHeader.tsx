@@ -84,12 +84,24 @@ export function SiteHeader({ locale }: SiteHeaderProps) {
             </summary>
             <div className="mobile-menu-panel">
               <Link href={`/${locale}`}>Accueil</Link>
-              <Link href={`/${locale}/maisons`}>Modèles de Maisons</Link>
-              {houseNav.map((item) => (
-                <Link key={item.href} href={`/${locale}/${item.href}`}>
-                  {item.label}
-                </Link>
-              ))}
+              <details className="mobile-menu-submenu">
+                <summary className="mobile-submenu-trigger">
+                  <span>Modèles de Maisons</span>
+                  <svg className="submenu-arrow-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </summary>
+                <div className="mobile-submenu-content">
+                  <Link href={`/${locale}/maisons`} className="mobile-submenu-all-link">
+                    Tous les modèles
+                  </Link>
+                  {houseNav.map((item) => (
+                    <Link key={item.href} href={`/${locale}/${item.href}`}>
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
+              </details>
               <Link href={`/${locale}/qui-sommes-nous`}>Qui Sommes-Nous</Link>
               <Link href={`/${locale}/b2b`}>B2B</Link>
               <Link href={`/${locale}/realisations`}>Réalisations</Link>

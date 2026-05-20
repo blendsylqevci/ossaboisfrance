@@ -1070,7 +1070,11 @@ img {
   .layout-clean .price-breakdown {
     top: 100% !important;
     bottom: auto !important;
-    border-radius: 0 0 12px 12px !important;
+    left: 20px !important;
+    right: auto !important;
+    width: 360px !important;
+    max-width: calc(100vw - 40px) !important;
+    border-radius: 12px !important;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08) !important;
     z-index: 60;
   }

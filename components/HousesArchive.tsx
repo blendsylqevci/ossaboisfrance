@@ -159,7 +159,7 @@ export function HousesArchive({ locale }: HousesArchiveProps) {
                 return (
                   <a href={`#${category.id}`} className="category-nav-badge" key={category.id}>
                     <span>{category.title}</span>
-                    <span className="badge-count">{count}</span>
+                    <span className="badge-count notranslate" translate="no">{count}</span>
                   </a>
                 );
               })}
@@ -174,10 +174,10 @@ export function HousesArchive({ locale }: HousesArchiveProps) {
           <div className="archive-sticky-nav">
             {houseArchiveCategories.map((category) => {
               const count = houseArchiveItems.filter((house) => house.category === category.sourceCategory).length;
-              if (count === 0) return null;
               return (
                 <a href={`#${category.id}`} key={category.id}>
-                  {category.title} <span className="sticky-nav-count">{count}</span>
+                  <span>{category.title}</span>
+                  <span className="sticky-nav-count notranslate" translate="no">{count || 0}</span>
                 </a>
               );
             })}

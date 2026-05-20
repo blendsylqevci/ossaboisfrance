@@ -1597,8 +1597,13 @@ img {
 }
 
 .material-modal-media {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   min-height: 360px;
   background: #f3f4ef;
+  overflow: hidden;
 }
 
 .material-modal-media img {
@@ -1613,6 +1618,22 @@ img {
   justify-content: center;
   gap: 16px;
   padding: 38px;
+}
+
+@media (min-width: 992px) {
+  .material-modal {
+    height: 520px;
+    max-height: min(720px, calc(100vh - 48px));
+    overflow: hidden;
+  }
+  .material-modal-media {
+    height: 100%;
+    min-height: 100%;
+  }
+  .material-modal-content {
+    height: 100%;
+    overflow-y: auto;
+  }
 }
 
 .material-modal-kicker {

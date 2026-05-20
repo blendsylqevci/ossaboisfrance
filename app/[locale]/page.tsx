@@ -12,10 +12,11 @@ type HomePageProps = {
 };
 
 const heroImages = [
-  "/images/houses/ambre/7 ambre.jpg",
-  "/images/houses/ambre/10 ambre.jpg",
-  "https://ossaboisfrance.com/wp-content/uploads/2025/12/australe-7-scaled.jpg",
-  "https://ossaboisfrance.com/wp-content/uploads/2025/12/australe-1-scaled.jpg"
+  "/images/hero/step1.jpg",
+  "/images/hero/step2.jpg",
+  "/images/hero/step3.jpg",
+  "/images/hero/step4.jpg",
+  "/images/hero/step5.jpg"
 ];
 
 const featuredSlugs = [

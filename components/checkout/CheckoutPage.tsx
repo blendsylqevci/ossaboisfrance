@@ -45,11 +45,20 @@ export function CheckoutPage() {
   const isEn = pathname.startsWith("/en");
 
   const [selection, setSelection] = useState<StoredSelection | null>(null);
-  const [transport, setTransport] = useState(true);
   const [success, setSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderRef, setOrderRef] = useState("");
   const [clientName, setClientName] = useState("");
+
+  // Transport is mandatory and locked
+  const transport = true;
+
+  // Agreement checkbox states
+  const [agreeShipping, setAgreeShipping] = useState(false);
+  const [agreeTerms, setAgreeTerms] = useState(false);
+  const [agreeUrban, setAgreeUrban] = useState(false);
+  const [agreePrivacy, setAgreePrivacy] = useState(false);
+  const [agreementsError, setAgreementsError] = useState(false);
 
   useEffect(() => {
     const raw = sessionStorage.getItem("house_selections");
@@ -62,7 +71,7 @@ export function CheckoutPage() {
   }, []);
 
   const basePrice = selection?.totalPrice ?? 0;
-  const total = useMemo(() => basePrice + (transport ? TRANSPORTATION_COST : 0), [basePrice, transport]);
+  const total = useMemo(() => basePrice + TRANSPORTATION_COST, [basePrice]);
 
   const t = {
     title: isEn ? "Finalize Your Wooden House Project" : "Finalisation de votre projet bois",
@@ -80,6 +89,7 @@ export function CheckoutPage() {
     city: isEn ? "City" : "Ville",
     zipCode: isEn ? "Zip Code" : "Code postal",
     region: isEn ? "Region / State" : "Région / Département",
+    country: isEn ? "Country" : "Pays",
     additionalNotes: isEn ? "Additional Notes" : "Notes supplémentaires",
     notesPlaceholder: isEn 
       ? "Tell us about your plot, accessibility, or special requests..." 
@@ -89,6 +99,21 @@ export function CheckoutPage() {
     shippingDesc: isEn
       ? "Delivery by crane truck directly to your plot under secure conditions within 3 to 4 weeks"
       : "Livraison par camion grue directement sur votre terrain sous 3 à 4 semaines avec encadrement de sécurité",
+    agreeShippingText: isEn
+      ? "I accept the delivery conditions by special convoy. I certify that my plot is accessible for heavy crane trucks."
+      : "J'accepte les conditions de livraison par convoi exceptionnel. Je certifie que mon terrain est accessible aux camions grues de gros tonnage.",
+    agreeTermsText: isEn
+      ? "I accept the general terms of sale and payment conditions (30% downpayment on order, 40% on timber frame assembly, 30% on key handover)."
+      : "J'accepte les conditions générales de vente et les modalités de paiement (30% d'acompte à la commande, 40% au montage de la structure, 30% à la remise des clés).",
+    agreeUrbanText: isEn
+      ? "I confirm the compliance of my project with local urban planning regulations (PLU) and accept the building permit steps."
+      : "Je confirme la conformité de mon projet avec les règles d'urbanisme locales (PLU) et prends connaissance des démarches de permis de construire requises.",
+    agreePrivacyText: isEn
+      ? "I authorize Ossa Bois to process my personal data in order to conduct the technical and financial feasibility study of my project."
+      : "J'autorise Ossa Bois à traiter mes données personnelles afin de réaliser l'étude de faisabilité technique et financière de mon projet.",
+    agreementsErrorText: isEn
+      ? "Please accept all terms and conditions above to submit your request."
+      : "Veuillez accepter toutes les conditions ci-dessus pour envoyer votre demande.",
     summaryTitle: isEn ? "Project Summary" : "Récapitulatif du projet",
     selectedModel: isEn ? "Selected Model" : "Modèle choisi",
     basePriceLabel: isEn ? "Base Price" : "Prix de base",
@@ -127,21 +152,69 @@ export function CheckoutPage() {
 
   function submitOrder(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    
+    // Check custom agreements validation
+    if (!agreeShipping || !agreeTerms || !agreeUrban || !agreePrivacy) {
+      setAgreementsError(true);
+      return;
+    }
+    
+    setAgreementsError(false);
     const data = new FormData(event.currentTarget);
     const fullName = (data.get("full_name") as string) || "Client";
     setClientName(fullName);
     setIsSubmitting(true);
 
-    setTimeout(() => {
-      const randomCode = Math.random().toString(36).substring(2, 7).toUpperCase();
-      const year = new Date().getFullYear();
-      setOrderRef(`OB-${year}-${randomCode}`);
-      setIsSubmitting(false);
-      setSuccess(true);
-      sessionStorage.removeItem("house_selections");
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }, 1800);
+    const randomCode = Math.random().toString(36).substring(2, 7).toUpperCase();
+    const year = new Date().getFullYear();
+    const ref = `OB-${year}-${randomCode}`;
+    setOrderRef(ref);
+
+    const personalInfo = {
+      fullName,
+      email: data.get("email"),
+      phone: data.get("phone")
+    };
+
+    const deliveryInfo = {
+      streetAddress: data.get("street_address"),
+      city: data.get("city"),
+      zipCode: data.get("zip_code"),
+      stateRegion: data.get("state_region"),
+      country: data.get("country"),
+      notes: data.get("notes")
+    };
+
+    fetch("/api/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        selection,
+        personalInfo,
+        deliveryInfo,
+        orderRef: ref,
+        total,
+        transportCost: TRANSPORTATION_COST
+      })
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        setIsSubmitting(false);
+        if (result.success) {
+          setSuccess(true);
+          sessionStorage.removeItem("house_selections");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        } else {
+          alert(isEn ? "Failed to send request. Please try again." : "Échec de l'envoi de la demande. Veuillez réessayer.");
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        setIsSubmitting(false);
+        alert(isEn ? "An error occurred. Please try again." : "Une erreur est survenue. Veuillez réessayer.");
+      });
   }
+
 
   return (
     <div className={`checkout-page${success ? " success-showing" : ""}`}>
@@ -275,12 +348,33 @@ export function CheckoutPage() {
                         </div>
                       </div>
                       <div className="form-row">
-                        <div className="form-group form-group-full">
+                        <div className="form-group form-group-half">
                           <label className="form-label">
                             {t.region} <span className="required">*</span>
                           </label>
                           <div className="form-input-wrapper">
                             <input className="form-input" name="state_region" required type="text" placeholder="Île-de-France" />
+                          </div>
+                        </div>
+                        <div className="form-group form-group-half">
+                          <label className="form-label">
+                            {t.country} <span className="required">*</span>
+                          </label>
+                          <div className="form-input-wrapper select-wrapper">
+                            <select className="form-input" name="country" required defaultValue="France">
+                              <option value="France">France</option>
+                              <option value="Belgique">{isEn ? "Belgium" : "Belgique"}</option>
+                              <option value="Suisse">{isEn ? "Switzerland" : "Suisse"}</option>
+                              <option value="Luxembourg">Luxembourg</option>
+                              <option value="Allemagne">{isEn ? "Germany" : "Allemagne"}</option>
+                              <option value="Pays-Bas">{isEn ? "Netherlands" : "Pays-Bas"}</option>
+                              <option value="Italie">{isEn ? "Italy" : "Italie"}</option>
+                              <option value="Espagne">{isEn ? "Spain" : "Espagne"}</option>
+                              <option value="Royaume-Uni">{isEn ? "United Kingdom" : "Royaume-Uni"}</option>
+                              <option value="Autriche">{isEn ? "Austria" : "Autriche"}</option>
+                              <option value="Portugal">Portugal</option>
+                              <option value="Autre">{isEn ? "Other European Country" : "Autre pays d'Europe"}</option>
+                            </select>
                           </div>
                         </div>
                       </div>
@@ -311,12 +405,13 @@ export function CheckoutPage() {
                       </div>
                       
                       <div className="transportation-options-wrapper">
-                        <label className={`transportation-card${transport ? " checked" : ""}`}>
+                        {/* Static locked checked shipping option card */}
+                        <div className="transportation-card checked static-card">
                           <input
                             className="transportation-checkbox"
                             type="checkbox"
-                            checked={transport}
-                            onChange={(event) => setTransport(event.target.checked)}
+                            checked={true}
+                            readOnly
                           />
                           <span className="transportation-custom-checkbox" />
                           <div className="transportation-content">
@@ -326,7 +421,7 @@ export function CheckoutPage() {
                             </div>
                             <span className="transportation-price">{euroFormatter.format(TRANSPORTATION_COST)}</span>
                           </div>
-                        </label>
+                        </div>
                       </div>
                     </div>
                   </form>
@@ -419,7 +514,7 @@ export function CheckoutPage() {
                     </div>
                     <div className="order-price-row">
                       <span className="order-price-label">{t.shippingCost}</span>
-                      <span className="order-price-value">{euroFormatter.format(transport ? TRANSPORTATION_COST : 0)}</span>
+                      <span className="order-price-value">{euroFormatter.format(TRANSPORTATION_COST)}</span>
                     </div>
                     
                     <div className="order-divider" />
@@ -458,6 +553,96 @@ export function CheckoutPage() {
                         </>
                       )}
                     </button>
+
+                    {/* Validation Error Message Box */}
+                    {agreementsError && (
+                      <div className="agreements-error-message">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{marginRight: "6px", flexShrink: 0}}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                        </svg>
+                        <span>{t.agreementsErrorText}</span>
+                      </div>
+                    )}
+
+                    {/* Agreement checkboxes relocated under the submit button inside the sidebar order-summary-footer */}
+                    <div className="sidebar-agreements-section">
+                      <label className="sidebar-agreement-card">
+                        <input
+                          className="sidebar-agreement-checkbox"
+                          type="checkbox"
+                          checked={agreeShipping}
+                          onChange={(e) => {
+                            setAgreeShipping(e.target.checked);
+                            if (e.target.checked && agreeTerms && agreeUrban && agreePrivacy) {
+                              setAgreementsError(false);
+                            }
+                          }}
+                          name="agree_shipping"
+                        />
+                        <span className="sidebar-agreement-custom-checkbox" />
+                        <span className="sidebar-agreement-description">
+                          {t.agreeShippingText} <span className="required">*</span>
+                        </span>
+                      </label>
+
+                      <label className="sidebar-agreement-card">
+                        <input
+                          className="sidebar-agreement-checkbox"
+                          type="checkbox"
+                          checked={agreeTerms}
+                          onChange={(e) => {
+                            setAgreeTerms(e.target.checked);
+                            if (agreeShipping && e.target.checked && agreeUrban && agreePrivacy) {
+                              setAgreementsError(false);
+                            }
+                          }}
+                          name="agree_terms"
+                        />
+                        <span className="sidebar-agreement-custom-checkbox" />
+                        <span className="sidebar-agreement-description">
+                          {t.agreeTermsText} <span className="required">*</span>
+                        </span>
+                      </label>
+
+                      <label className="sidebar-agreement-card">
+                        <input
+                          className="sidebar-agreement-checkbox"
+                          type="checkbox"
+                          checked={agreeUrban}
+                          onChange={(e) => {
+                            setAgreeUrban(e.target.checked);
+                            if (agreeShipping && agreeTerms && e.target.checked && agreePrivacy) {
+                              setAgreementsError(false);
+                            }
+                          }}
+                          name="agree_urban"
+                        />
+                        <span className="sidebar-agreement-custom-checkbox" />
+                        <span className="sidebar-agreement-description">
+                          {t.agreeUrbanText} <span className="required">*</span>
+                        </span>
+                      </label>
+
+                      <label className="sidebar-agreement-card">
+                        <input
+                          className="sidebar-agreement-checkbox"
+                          type="checkbox"
+                          checked={agreePrivacy}
+                          onChange={(e) => {
+                            setAgreePrivacy(e.target.checked);
+                            if (agreeShipping && agreeTerms && agreeUrban && e.target.checked) {
+                              setAgreementsError(false);
+                            }
+                          }}
+                          name="agree_privacy"
+                        />
+                        <span className="sidebar-agreement-custom-checkbox" />
+                        <span className="sidebar-agreement-description">
+                          {t.agreePrivacyText} <span className="required">*</span>
+                        </span>
+                      </label>
+                    </div>
+
                     <p className="terms-text">{t.terms}</p>
                   </div>
 

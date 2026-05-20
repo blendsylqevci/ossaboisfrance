@@ -590,7 +590,30 @@ Rekomandimi:
 - Adjusted right sidebar layout width on the checkout page to `540px` to match the configurator split-mode menu width.
 - Updated transportation and logistics estimated time of delivery to 3-4 weeks.
 - Expanded the checkout page overall container max-width to `1400px` to match other site pages and the navigation menu.
+- Relocated the four required agreement checkbox cards (delivery accessibility, payment milestones, urban compliance, GDPR authorization) to the right sidebar summary footer section directly under the submit button.
+- Added a Country (Pays) selection dropdown to the checkout form delivery address section featuring European countries (France, Belgium, Switzerland, Germany, etc.).
+- Locked the shipping/logistics transport method selection to mandatory default selected state and styled it as a static card to prevent deselecting.
+- Created a new Next.js route handler (`app/api/checkout/route.ts`) to automate order placement and trigger emails.
+- Designed two professional HTML email templates (customer confirmation with project details/steps, admin dashboard notification to info@ossaboisfrance.com) with custom branding.
+- Installed the Resend SDK and configured email sending using `RESEND_API_KEY` and `RESEND_FROM_EMAIL` environment variables with robust local console logging fallback.
+- Rewrote the Resend email integration in the checkout API route (`app/api/checkout/route.ts`) to use a direct native HTTP `fetch` to Resend's REST API, resolving runtime `require is not defined` errors under Next.js Turbopack dev server.
+- Integrated the frontend form submission with the API route using `fetch`.
+- Optimized the checkout layout's responsiveness across mobile and tablet devices, removing sticky sidebar position on small screens, adapting the multi-step indicator layout, styling vertical form group stacks, and preventing flex item overflow on ultra-small screens.
+- Refined input group and label spacing specifically for mobile screens in the checkout page to provide standard, elegant spacing (24px) between stacked inputs.
+- Restructured and styled the order product recap card on mobile, keeping it inline (row layout) with the image on the left, details in the center, and price on the right instead of stacking them vertically.
 - Verified build and static generation using `npm run build`.
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

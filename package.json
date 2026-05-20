@@ -14,11 +14,14 @@
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",
     "next": "16.2.6",
+    "nodemailer": "^8.0.7",
     "react": "19.2.1",
     "react-dom": "19.2.1",
+    "resend": "^6.12.3",
     "typescript": "5.4.5"
   },
   "devDependencies": {
+    "@types/nodemailer": "^8.0.0",
     "eslint": "9.39.2",
     "eslint-config-next": "16.2.6"
   }

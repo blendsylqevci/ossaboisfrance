@@ -1,6 +1,6 @@
 :root {
-  --brand: #445236;
-  --brand-dark: #354428;
+  --brand: #5E6F4F;
+  --brand-dark: #4F5E42;
   --ink: #151711;
   --muted: #66705e;
   --line: #d9ddd3;
@@ -41,12 +41,16 @@ html {
   background: var(--paper);
   color: var(--ink);
   font-family: "PP Neue Montreal", Arial, sans-serif;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
   background: var(--paper);
+  width: 100%;
+  overflow-x: hidden;
 }
 
 a {
@@ -69,6 +73,8 @@ img {
 .site-shell {
   min-height: 100vh;
   background: var(--paper);
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .container {
@@ -157,7 +163,7 @@ img {
 }
 
 .main-nav a {
-  color: #445236;
+  color: #5E6F4F;
   text-decoration: none;
   position: relative;
   padding: 10px 0;
@@ -172,7 +178,7 @@ img {
 }
 
 .main-nav a.active {
-  color: #445236;
+  color: #5E6F4F;
   font-weight: 600;
 }
 
@@ -183,14 +189,14 @@ img {
   left: 0;
   width: 100%;
   height: 3px;
-  background: #445236;
+  background: #5E6F4F;
   border-radius: 2px;
 }
 
 .dropdown-arrow-indicator {
   font-size: 8px;
   margin-left: 2px;
-  color: #445236;
+  color: #5E6F4F;
 }
 
 .nav-dropdown {
@@ -247,7 +253,7 @@ img {
   min-height: 48px;
   border-radius: 999px;
   border: none;
-  background: #445236;
+  background: #5E6F4F;
   color: var(--white);
   font-size: 15px;
   font-weight: 500;
@@ -2415,7 +2421,7 @@ img {
 
 /* ═══════════════════════════════════════════════
    HOMEPAGE & PAGES CSS — 1:1 FROM ELEMENTOR JSON
-   Brand: #445236 | Dark Text: #12161D | BG: #F7F7F7
+   Brand: #5E6F4F | Dark Text: #12161D | BG: #F7F7F7
    ═══════════════════════════════════════════════ */
 
 /* ─── HERO TEXT SECTION ─── */
@@ -2591,7 +2597,7 @@ img {
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  color: #445236;
+  color: #5E6F4F;
   font-family: "PP Neue Montreal", sans-serif;
   font-weight: 500;
   font-size: 16px;
@@ -3072,7 +3078,7 @@ img {
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  color: #445236;
+  color: #5E6F4F;
   font-family: "PP Neue Montreal", sans-serif;
   font-weight: 500;
   font-size: 16px;
@@ -3090,6 +3096,7 @@ img {
 
 .reviews-right-col {
   width: 100%;
+  min-width: 0;
 }
 
 .reviews-carousel {
@@ -3169,7 +3176,7 @@ img {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: #445236;
+  background: #5E6F4F;
   color: #ffffff;
   display: flex;
   align-items: center;
@@ -3204,6 +3211,7 @@ img {
 
 .reviews-carousel-dots {
   display: flex;
+  justify-content: center;
   gap: 8px;
   margin-top: 20px;
 }
@@ -3383,7 +3391,7 @@ img {
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  background: #445236;
+  background: #5E6F4F;
   color: #ffffff;
   font-family: "PP Neue Montreal", sans-serif;
   font-weight: 500;
@@ -3396,7 +3404,7 @@ img {
 }
 
 .cta-contact-btn:hover {
-  background: #354428;
+  background: #4F5E42;
 }
 
 .cta-btn-arrow {
@@ -3502,7 +3510,7 @@ img {
 .form-group select:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: #445236;
+  border-color: #5E6F4F;
 }
 
 .form-group textarea {
@@ -3537,7 +3545,7 @@ img {
 }
 
 .contact-info-card a {
-  color: #445236;
+  color: #5E6F4F;
   text-decoration: underline;
 }
 
@@ -4272,14 +4280,16 @@ img {
   /* Narrow header on mobile and scale down logo */
   .header-inner {
     min-height: 64px !important;
-    padding-top: 8px !important;
-    padding-bottom: 8px !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
     gap: 12px !important;
   }
 
   .brand-link img {
-    height: 46px !important;
+    height: 72px !important;
     width: auto !important;
+    transform: scale(1.12) !important;
+    transform-origin: left center !important;
   }
 
   .header-actions {
@@ -4549,6 +4559,332 @@ img {
   .house-product-page {
     height: calc(100dvh - 76px);
   }
+}
+
+/* ═══════════════════════════════════════════════
+   HOMEPAGE MOBILE RESPONSIVENESS OVERRIDES
+   ═══════════════════════════════════════════════ */
+@media (max-width: 991px) {
+  .container {
+    width: min(1400px, calc(100% - 32px)) !important;
+  }
+
+  /* Hero Text Section */
+  .wp-section-hero {
+    padding: 60px 20px 30px !important;
+  }
+  .hero-title {
+    font-size: 38px !important;
+    line-height: 1.15 !important;
+    letter-spacing: -0.5px !important;
+  }
+  .hero-description {
+    font-size: 15px !important;
+    margin-bottom: 24px !important;
+    padding: 0 10px !important;
+  }
+
+  /* About Section */
+  .wp-section-about {
+    padding: 60px 20px !important;
+  }
+  .about-grid {
+    grid-template-columns: 1fr !important;
+    gap: 40px !important;
+  }
+  .about-title {
+    font-size: 32px !important;
+    line-height: 1.2 !important;
+  }
+  .about-title br,
+  .about-link-btn br {
+    display: none !important;
+  }
+  .about-stats-row {
+    flex-direction: column !important;
+    gap: 16px !important;
+    margin-top: 30px !important;
+  }
+  .stat-number {
+    font-size: 38px !important;
+  }
+  .about-stats-row .about-stat-item:nth-child(3) .stat-number {
+    display: none !important;
+  }
+
+  /* Featured Products Section */
+  .wp-section-products {
+    padding-top: clamp(40px, 6vw, 80px) !important;
+    padding-bottom: clamp(40px, 6vw, 80px) !important;
+  }
+  .prod-slider-viewport {
+    padding-bottom: 0 !important;
+  }
+  .wp-section-products .container {
+    width: calc(100% - 16px) !important;
+  }
+  .prod-slider-container > .prod-nav-controls {
+    display: none !important;
+  }
+  .products-section-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 16px !important;
+  }
+  .products-title {
+    font-size: 26px !important;
+  }
+
+  /* Mobile product card styling overrides to match WordPress live site */
+  .prod-card-content {
+    padding: 20px 16px !important;
+  }
+  .prod-card-title {
+    font-size: 22px !important;
+    font-weight: 500 !important;
+    margin-bottom: 8px !important;
+  }
+  .prod-card-desc {
+    font-size: 14px !important;
+    color: #374151 !important;
+    min-height: auto !important;
+    margin-bottom: 16px !important;
+    line-height: 1.5 !important;
+  }
+  .prod-card-footer {
+    gap: 12px !important;
+  }
+  .prod-price-val {
+    font-size: 22px !important;
+  }
+  .prod-card-button {
+    width: 100% !important;
+    padding: 14px 0 !important;
+    font-weight: 500 !important;
+  }
+
+  /* Reviews Section */
+  .wp-section-reviews {
+    padding: clamp(40px, 6vw, 80px) 20px !important;
+  }
+  .reviews-grid {
+    grid-template-columns: 1fr !important;
+    gap: 40px !important;
+  }
+  .reviews-title {
+    font-size: 26px !important;
+  }
+  .reviews-right-col {
+    width: 100% !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+  }
+  .reviews-carousel-slide {
+    padding: 30px 20px !important;
+  }
+  .reviews-quote-icon {
+    font-size: 60px !important;
+    top: 20px !important;
+    right: 20px !important;
+  }
+  .reviews-text {
+    font-size: 15px !important;
+    line-height: 1.6 !important;
+    margin-bottom: 20px !important;
+    min-height: auto !important;
+  }
+
+  /* Why Choose Us Section */
+  .wp-section-why {
+    padding: 60px 20px !important;
+  }
+  .why-title {
+    font-size: 26px !important;
+  }
+  .why-subtitle {
+    margin-bottom: 40px !important;
+  }
+  .why-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 24px !important;
+  }
+
+  /* Collaborators Section */
+  .wp-section-collabs {
+    padding: 50px 20px !important;
+  }
+  .collabs-title {
+    font-size: 26px !important;
+    margin-bottom: 30px !important;
+  }
+
+  /* CTA Section */
+  .wp-section-cta {
+    padding: 0 20px 60px !important;
+  }
+  .cta-gray-box {
+    padding: 40px 24px !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 30px !important;
+    position: relative !important;
+    overflow: hidden !important;
+  }
+  .cta-left-content {
+    max-width: 100% !important;
+  }
+  .cta-box-title {
+    font-size: 28px !important;
+    line-height: 1.2 !important;
+  }
+  .cta-box-desc {
+    font-size: 14px !important;
+    margin-bottom: 24px !important;
+  }
+  .cta-right-image-overlay {
+    position: relative !important;
+    right: auto !important;
+    bottom: auto !important;
+    width: calc(100% + 48px) !important;
+    height: auto !important;
+    margin: 20px -24px -40px -24px !important;
+    display: block !important;
+  }
+  .cta-image-el {
+    position: relative !important;
+    right: auto !important;
+    bottom: auto !important;
+    width: 150% !important;
+    max-width: 150% !important;
+    margin-left: -25% !important;
+    height: auto !important;
+    object-fit: contain !important;
+    display: block !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero-title {
+    font-size: 32px !important;
+  }
+  .why-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Mobile Footer Styles - 2 columns premium layout */
+  .site-footer {
+    padding: 40px 20px 30px !important;
+  }
+  .footer-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 30px 20px !important;
+  }
+  .footer-brand {
+    grid-column: span 2 !important;
+    text-align: left !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    padding-bottom: 20px !important;
+    margin-bottom: 5px !important;
+  }
+  .footer-brand img {
+    width: 130px !important;
+    margin-bottom: 12px !important;
+  }
+  .footer-brand p {
+    font-size: 13px !important;
+    line-height: 1.4 !important;
+    margin-bottom: 0 !important;
+  }
+  .footer-nav {
+    grid-column: span 1 !important;
+  }
+  .footer-contact {
+    grid-column: span 1 !important;
+  }
+  .footer-grid h2 {
+    font-size: 15px !important;
+    margin-bottom: 12px !important;
+  }
+  .footer-grid p, .footer-grid a {
+    font-size: 13px !important;
+    margin-bottom: 8px !important;
+    line-height: 1.4 !important;
+  }
+  .footer-socials {
+    gap: 8px !important;
+    margin-top: 10px !important;
+  }
+  .footer-socials span {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 10px !important;
+  }
+  .footer-question {
+    grid-column: span 2 !important;
+    margin-top: 15px !important;
+    padding-top: 20px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+  }
+  .footer-question label {
+    font-size: 15px !important;
+    margin-bottom: 12px !important;
+  }
+  .footer-form-row {
+    grid-template-columns: 1fr auto !important;
+    gap: 10px !important;
+  }
+  .footer-form-row input, 
+  .footer-form-row button {
+    height: 42px !important;
+    font-size: 13px !important;
+  }
+  .footer-bottom {
+    margin-top: 35px !important;
+    padding-top: 20px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 8px !important;
+    font-size: 12px !important;
+  }
+}
+
+/* Mobile Products Swiper Styles (<= 768px) */
+.mobile-products-carousel {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.mobile-products-viewport {
+  width: 100%;
+  overflow: hidden;
+  padding: 10px 0 20px;
+}
+
+.mobile-products-track {
+  display: flex;
+  transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  width: 100%;
+}
+
+.mobile-product-slide {
+  flex: 0 0 100%;
+  width: 100%;
+  padding: 0 12px;
+  box-sizing: border-box;
+}
+
+/* Align cards correctly inside slide */
+.mobile-product-slide .prod-card {
+  margin: 0 auto;
+  max-width: 420px;
+  width: 100%;
+}
+
+.mobile-products-carousel .prod-nav-controls {
+  margin-top: 15px;
 }
 
 

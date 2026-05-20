@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { HouseArchiveCategory, HouseArchiveItem } from "@/data/houses-archive";
 import { ProductsGrid } from "./ProductsGrid";
 
@@ -22,12 +22,27 @@ export function FeaturedProductsSection({
   });
 
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [houseInitialIndex, setHouseInitialIndex] = useState(0);
+  const activeTabRef = useRef<HTMLButtonElement | null>(null);
+
+  // Scroll active tab into view on mobile
+  useEffect(() => {
+    if (activeTabRef.current) {
+      activeTabRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+        inline: "center",
+      });
+    }
+  }, [currentIndex]);
 
   const nextSlide = () => {
+    setHouseInitialIndex(0);
     setCurrentIndex((prev) => (prev === activeCategories.length - 1 ? 0 : prev + 1));
   };
 
   const prevSlide = () => {
+    setHouseInitialIndex(0);
     setCurrentIndex((prev) => (prev === 0 ? activeCategories.length - 1 : prev - 1));
   };
 
@@ -56,8 +71,12 @@ export function FeaturedProductsSection({
               {activeCategories.map((cat, idx) => (
                 <button
                   key={cat.id}
+                  ref={idx === currentIndex ? activeTabRef : null}
                   className={`prod-category-tab-btn ${idx === currentIndex ? "active" : ""}`}
-                  onClick={() => setCurrentIndex(idx)}
+                  onClick={() => {
+                    setHouseInitialIndex(0);
+                    setCurrentIndex(idx);
+                  }}
                 >
                   {cat.title}
                 </button>
@@ -65,6 +84,7 @@ export function FeaturedProductsSection({
             </div>
           </div>
         </div>
+
 
         {/* Sliding Viewport containing a grid of 6 houses per slide */}
         <div className="prod-slider-container">
@@ -75,7 +95,7 @@ export function FeaturedProductsSection({
                 transform: `translateX(-${currentIndex * 100}%)`,
               }}
             >
-              {activeCategories.map((cat) => {
+              {activeCategories.map((cat, idx) => {
                 // Get up to 6 houses for this category
                 const categoryHouses = allHouses
                   .filter((h) => h.category === cat.sourceCategory)
@@ -87,7 +107,24 @@ export function FeaturedProductsSection({
                     key={cat.id}
                     style={{ flex: "0 0 100%", width: "100%" }}
                   >
-                    <ProductsGrid houses={categoryHouses} locale={locale} />
+                    <ProductsGrid
+                      houses={categoryHouses}
+                      locale={locale}
+                      initialActiveIndex={idx === currentIndex ? houseInitialIndex : 0}
+                      onReachEnd={() => {
+                        const nextCatIdx = (currentIndex + 1) % activeCategories.length;
+                        setHouseInitialIndex(0);
+                        setCurrentIndex(nextCatIdx);
+                      }}
+                      onReachStart={() => {
+                        const prevCatIdx = (currentIndex - 1 + activeCategories.length) % activeCategories.length;
+                        const prevCat = activeCategories[prevCatIdx];
+                        const prevCategoryHousesCount = allHouses.filter((h) => h.category === prevCat.sourceCategory).length;
+                        const lastHouseIdx = Math.max(0, Math.min(prevCategoryHousesCount, 6) - 1);
+                        setHouseInitialIndex(lastHouseIdx);
+                        setCurrentIndex(prevCatIdx);
+                      }}
+                    />
                   </div>
                 );
               })}
@@ -105,7 +142,10 @@ export function FeaturedProductsSection({
                 <button
                   key={idx}
                   className={`prod-dot-indicator ${idx === currentIndex ? "active" : ""}`}
-                  onClick={() => setCurrentIndex(idx)}
+                  onClick={() => {
+                    setHouseInitialIndex(0);
+                    setCurrentIndex(idx);
+                  }}
                   aria-label={`Aller au slide ${idx + 1}`}
                 />
               ))}

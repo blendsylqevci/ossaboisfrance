@@ -589,7 +589,9 @@ Rekomandimi:
 - Relocated detailed configuration option list and structural parameters into the right sidebar summary section.
 - Adjusted right sidebar layout width on the checkout page to `540px` to match the configurator split-mode menu width.
 - Updated transportation and logistics estimated time of delivery to 3-4 weeks.
+- Expanded the checkout page overall container max-width to `1400px` to match other site pages and the navigation menu.
 - Verified build and static generation using `npm run build`.
+
 
 
 

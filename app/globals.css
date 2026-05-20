@@ -2384,9 +2384,8 @@ img {
 }
 
 .checkout-container {
-  max-width: 1200px;
+  width: min(1400px, calc(100% - 64px));
   margin: 0 auto;
-  padding: 0 24px;
 }
 
 /* Page Header & Progress Steps */

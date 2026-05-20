@@ -1,5 +1,20 @@
 import { ConfigCategory, HouseConfiguratorData, SizeOption } from "@/data/house-configurator";
-import { layerOrder } from "@/data/ambre";
+
+const escapeVillaLayerOrder = [
+  "konstruksioni",
+  "iso_inter_verre",
+  "iso_inter_roche",
+  "iso_inter_bois",
+  "iso_ext_roche_comprimee",
+  "iso_ext_polystyrene",
+  "iso_ext_fibre",
+  "terrace_etancheite_epdm",
+  "etancheite_epdm",
+  "facade_blanche",
+  "facade_bardage",
+  "windows_aluminium",
+  "windows_pvc"
+] as const;
 
 const escapeVillaLayers = {
   backgroundLayer: "/images/houses/escape villa me atike/1. prapavija.png",
@@ -229,7 +244,7 @@ export const escapeVillaAtikeConfiguratorData: HouseConfiguratorData = {
   },
   sizes: escapeVillaSizes,
   categories: escapeVillaCategories,
-  layerOrder,
+  layerOrder: escapeVillaLayerOrder,
   defaultSelection: {
     size: "60x160"
   },

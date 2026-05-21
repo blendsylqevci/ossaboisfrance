@@ -2,6 +2,10 @@ import { CollectionConfig } from 'payload'
 
 export const HouseCategories: CollectionConfig = {
   slug: 'house-categories',
+  lockDocuments: false,
+  access: {
+    read: () => true,
+  },
   admin: {
     useAsTitle: 'name',
   },

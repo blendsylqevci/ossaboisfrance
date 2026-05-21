@@ -3,12 +3,15 @@ import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
+import { s3Storage } from '@payloadcms/storage-s3'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { HouseCategories } from './collections/HouseCategories'
 import { Houses } from './collections/Houses'
 import { Orders } from './collections/Orders'
+import { FieldDefinitions } from './collections/FieldDefinitions'
+import { HouseOptions } from './globals/HouseOptions'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -26,13 +29,20 @@ export default buildConfig({
     HouseCategories,
     Houses,
     Orders,
+    FieldDefinitions,
+  ],
+  globals: [
+    HouseOptions,
   ],
   editor: lexicalEditor({}),
   secret: process.env.PAYLOAD_SECRET || 'fallback-secret-for-local-dev-only',
   db: postgresAdapter({
     pool: {
       connectionString: process.env.DATABASE_URI || '',
+      max: 10,
+      idleTimeoutMillis: 1000,
     },
+    push: false,
   }),
   localization: {
     locales: [
@@ -47,4 +57,21 @@ export default buildConfig({
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
+  plugins: [
+    s3Storage({
+      collections: {
+        media: true,
+      },
+      bucket: process.env.S3_BUCKET || 'media',
+      config: {
+        credentials: {
+          accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
+          secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
+        },
+        region: process.env.S3_REGION || 'eu-central-1',
+        endpoint: process.env.S3_ENDPOINT || '',
+        forcePathStyle: true,
+      },
+    }),
+  ],
 })

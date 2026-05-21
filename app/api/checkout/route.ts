@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getPayload } from "payload";
+import config from "@/payload.config";
 
 const euroFormatter = new Intl.NumberFormat("fr-FR", {
   style: "currency",
@@ -15,6 +17,47 @@ export async function POST(req: NextRequest) {
     const clientName = personalInfo?.fullName || "Client";
     const clientEmail = personalInfo?.email;
     const clientPhone = personalInfo?.phone;
+
+    // Validate selection and resolve House Document ID
+    const houseSlug = selection?.house?.id;
+    if (!houseSlug) {
+      return NextResponse.json(
+        { success: false, error: "Missing house selection reference." },
+        { status: 400 }
+      );
+    }
+
+    const payload = await getPayload({ config });
+    const housesResult = await payload.find({
+      collection: 'houses',
+      where: { slug: { equals: houseSlug } },
+      limit: 1
+    });
+
+    if (housesResult.totalDocs === 0) {
+      return NextResponse.json(
+        { success: false, error: `Maison avec le slug '${houseSlug}' introuvable dans la base de données.` },
+        { status: 400 }
+      );
+    }
+
+    const houseDoc = housesResult.docs[0];
+
+    // Persist order in the database
+    const orderDoc = await payload.create({
+      collection: 'orders',
+      data: {
+        house: houseDoc.id,
+        customerName: clientName,
+        customerEmail: clientEmail,
+        customerPhone: clientPhone || "",
+        totalPrice: total,
+        selections: selection,
+        status: 'pending',
+      }
+    });
+
+    console.log(`[API Checkout] Order persisted in database with ID: ${orderDoc.id}`);
 
     const origin = req.headers.get("origin") || "https://ossaboisfrance.com";
     const houseImageUrl = selection?.currentImage || selection?.house?.image
@@ -219,6 +262,7 @@ export async function POST(req: NextRequest) {
     // 3. Send Email using Resend REST API (avoids CommonJS requirement issues in Turbopack)
     const apiKey = process.env.RESEND_API_KEY;
     const fromEmail = process.env.RESEND_FROM_EMAIL || "Ossa Bois <info@ossaboisfrance.com>";
+    const toAdminEmail = process.env.RESEND_ADMIN_EMAIL || "sylqevciblendi@gmail.com";
 
     if (apiKey) {
       // Send to Admin
@@ -230,7 +274,7 @@ export async function POST(req: NextRequest) {
         },
         body: JSON.stringify({
           from: fromEmail,
-          to: "info@ossaboisfrance.com",
+          to: toAdminEmail,
           subject: `[Nouveau Projet] Configuration de Maison ${selection?.house?.name || ""} - Ref ${orderRef}`,
           html: adminEmailHtml
         })
@@ -272,7 +316,7 @@ export async function POST(req: NextRequest) {
       console.log(`Order Reference: ${orderRef}`);
       console.log(`Total: ${euroFormatter.format(total)}`);
       console.log(`Client: ${clientName} (${clientEmail}), Phone: ${clientPhone}`);
-      console.log(`To Admin (info@ossaboisfrance.com):\n${adminEmailHtml}`);
+      console.log(`To Admin (${toAdminEmail}):\n${adminEmailHtml}`);
       console.log(`To Client (${clientEmail}):\n${clientEmailHtml}`);
       console.log("=========================================================================");
     }

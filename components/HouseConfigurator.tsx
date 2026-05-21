@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ConfigCategory, ConfigOption, HouseConfiguratorData, SizeOption } from "@/data/house-configurator";
 
@@ -37,8 +37,24 @@ function detectFacadeType(facadeOptionLabel: string | undefined): "enduit" | "ba
   return "enduit"; // default per WordPress
 }
 
+export const PERDHESA_LABELS: Record<string, { fr: string; en: string }> = {
+  bruto: { fr: "Surface Brute", en: "Gross Surface" },
+  neto: { fr: "Surface Nette", en: "Net Surface" },
+  mure_te_jashtme: { fr: "Murs Extérieurs", en: "Exterior Walls" },
+  mure_mbajtese: { fr: "Murs Porteurs", en: "Load-bearing Walls" },
+  mure_ndarese: { fr: "Murs Séparateurs", en: "Partition Walls" },
+  pllaka_e_kulmit: { fr: "Dalle de Toit", en: "Roof Plate" },
+  pllaka_e_katit_0: { fr: "Dalle d'Étage 0", en: "Floor Slab 0" },
+  pllaka_e_katit_1: { fr: "Dalle d'Étage 1", en: "Floor Slab 1" },
+  pllaka_e_katit_2: { fr: "Dalle d'Étage 2", en: "Floor Slab 2" },
+  pllaka_e_katit: { fr: "Dalle d'Étage", en: "Floor Slab" },
+  kulmi: { fr: "Toiture", en: "Roof Area" },
+};
+
 export function HouseConfigurator({ config }: HouseConfiguratorProps) {
   const router = useRouter();
+  const pathname = usePathname();
+  const isEn = pathname?.startsWith("/en") || false;
   const [selection, setSelection] = useState(config.defaultSelection);
   const [breakdownOpen, setBreakdownOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"description" | "specification">("description");
@@ -335,14 +351,30 @@ L'équipe Ossa Bois France`;
         const next = { ...current };
         delete next[category.id];
 
-        // If unchecking couverture, terrasse section becomes visible again
-        // (no need to clear terrasse - it was already hidden)
+        if (category.id === "facade") {
+          setFacadeWarning("");
+        }
+
+        // If toggling off an isolation type, check if facade needs to be deselected
+        if (category.id === "isolation" || category.id === "outerIsolation") {
+          const bothIsolationsSelected = !!next.isolation && !!next.outerIsolation;
+          if (next.facade && !bothIsolationsSelected) {
+            const facadeCategory = config.categories.find((c) => c.id === "facade");
+            const selectedFacadeOption = facadeCategory?.options.find((o) => o.id === next.facade);
+            const label = selectedFacadeOption?.label || "";
+            setFacadeWarning(`Vous ne pouvez pas sélectionner ${label} sans avoir choisi l’isolation.`);
+            delete next.facade;
+          } else {
+            setFacadeWarning("");
+          }
+        }
+
         return next;
       }
 
       // Facade validation: requires both isolations
       if (category.id === "facade" && (!current.isolation || !current.outerIsolation)) {
-        setFacadeWarning("Selectionnez d'abord l'isolation intermediaire et l'isolation exterieure.");
+        setFacadeWarning(`Vous ne pouvez pas sélectionner ${option.label} sans avoir choisi l’isolation.`);
         return current;
       }
 
@@ -351,9 +383,18 @@ L'équipe Ossa Bois France`;
         [category.id]: option.id
       };
 
-      // If changing isolation, clear facade (WordPress behavior)
+      // If isolation or outerIsolation changes, check if both are selected
       if (category.id === "isolation" || category.id === "outerIsolation") {
-        delete next.facade;
+        const bothIsolationsSelected = !!next.isolation && !!next.outerIsolation;
+        if (next.facade && !bothIsolationsSelected) {
+          const facadeCategory = config.categories.find((c) => c.id === "facade");
+          const selectedFacadeOption = facadeCategory?.options.find((o) => o.id === next.facade);
+          const label = selectedFacadeOption?.label || "";
+          setFacadeWarning(`Vous ne pouvez pas sélectionner ${label} sans avoir choisi l’isolation.`);
+          delete next.facade;
+        } else {
+          setFacadeWarning("");
+        }
       }
 
       // Couverture ↔ Terrasse exclusivity:
@@ -362,7 +403,10 @@ L'équipe Ossa Bois France`;
         delete next.terraceEtancheite;
       }
 
-      setFacadeWarning("");
+      if (category.id === "facade") {
+        setFacadeWarning("");
+      }
+
       return next;
     });
   }
@@ -416,24 +460,19 @@ L'équipe Ossa Bois France`;
         className={className}
         aria-label={`Apercu configurateur ${config.name}`}
       >
-        <Image
+        <img
           className="house-layer is-on"
           data-layer="bg"
           src={config.backgroundLayer}
           alt=""
-          width={3840}
-          height={2160}
-          priority={className === "house-layer-stage"}
         />
         {layers.map((layer) => (
-          <Image
+          <img
             key={layer.key}
             className={`house-layer${activeLayerKeys.has(layer.key) ? " is-on" : ""}`}
             data-layer={layer.key}
             src={layer.src}
             alt=""
-            width={3840}
-            height={2160}
           />
         ))}
       </div>
@@ -604,12 +643,18 @@ L'équipe Ossa Bois France`;
                     <div className="specification-content">
                       <p>{config.specification}</p>
                       <div className="perdhesa-table">
-                        {Object.entries(config.perdhesa).map(([key, value]) => (
-                          <div className="perdhesa-row" key={key}>
-                            <span>{key.replaceAll("_", " ")}</span>
-                            <strong>{value} m2</strong>
-                          </div>
-                        ))}
+                        {Object.entries(config.perdhesa)
+                          .filter(([_, value]) => value && Number(value) > 0)
+                          .map(([key, value]) => {
+                            const translation = PERDHESA_LABELS[key];
+                            const label = translation ? (isEn ? translation.en : translation.fr) : key.replaceAll("_", " ");
+                            return (
+                              <div className="perdhesa-row" key={key}>
+                                <span>{label}</span>
+                                <strong>{value} m²</strong>
+                              </div>
+                            );
+                          })}
                       </div>
                     </div>
                   </div>
@@ -618,9 +663,9 @@ L'équipe Ossa Bois France`;
 
               {/* Expression of Interest Form */}
               <div className="interest-form-container">
-                <h2 className="interest-form-title">Envoyer une expression d'intérêt</h2>
+                <h2 className="interest-form-title">Envoyer une expression d&apos;intérêt</h2>
                 <p className="interest-form-subtitle">
-                  Nous rendons les choses simples et pratiques pour vous. Remplissez le formulaire ci-dessous et nous vous contacterons pour répondre à toutes vos questions. Cette demande d'intérêt est entièrement gratuite et sans engagement.
+                  Nous rendons les choses simples et pratiques pour vous. Remplissez le formulaire ci-dessous et nous vous contacterons pour répondre à toutes vos questions. Cette demande d&apos;intérêt est entièrement gratuite et sans engagement.
                 </p>
                 
                 <form onSubmit={handleInterestSubmit} className="interest-form">
@@ -755,18 +800,18 @@ L'équipe Ossa Bois France`;
                         onChange={(e) => setFormFields({ ...formFields, pranoje: e.target.checked })}
                       />
                       <span className="checkbox-text">
-                        J'accepte le traitement de mes données personnelles conformément à la politique de confidentialité.
+                        J&apos;accepte le traitement de mes données personnelles conformément à la politique de confidentialité.
                       </span>
                     </label>
                   </div>
 
                   <button type="submit" className="interest-submit-button">
-                    Envoyer l'expression d'intérêt
+                    Envoyer l&apos;expression d&apos;intérêt
                   </button>
 
                   {formStatus === "success" && (
                     <div className="form-success-msg">
-                      Merci ! Votre expression d'intérêt a été envoyée avec succès. Nous vous contacterons très prochainement.
+                      Merci ! Votre expression d&apos;intérêt a été envoyée avec succès. Nous vous contacterons très prochainement.
                     </div>
                   )}
                 </form>
@@ -845,6 +890,16 @@ L'équipe Ossa Bois France`;
                 {materialModal.option.materialDescription ??
                   "Information du materiau a completer depuis le CMS lors de la migration finale."}
               </p>
+              {materialModal.option.attributes && materialModal.option.attributes.length > 0 && (
+                <div className="material-attributes-grid">
+                  {materialModal.option.attributes.map((attr, idx) => (
+                    <div key={idx} className="material-attribute-card">
+                      <span className="material-attribute-label">{attr.name}</span>
+                      <span className="material-attribute-value">{attr.value}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>

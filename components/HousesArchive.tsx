@@ -3,38 +3,53 @@
 import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  formatArchiveStartingPrice,
-  houseArchiveCategories,
-  houseArchiveItems,
-  HouseArchiveItem
-} from "@/data/houses-archive";
+import { formatArchiveStartingPrice } from "@/data/houses-archive";
 import { Locale } from "@/lib/i18n";
+
+export type CMSCategoryItem = {
+  id: string;
+  title: string;
+  slug: string;
+};
+
+export type CMSHouseItem = {
+  slug: string;
+  title: string;
+  categoryName: string;
+  categorySlug: string;
+  description: string;
+  image: string;
+  price60x160: number | null;
+};
 
 type HousesArchiveProps = {
   locale: Locale;
+  initialHouses: CMSHouseItem[];
+  initialCategories: CMSCategoryItem[];
 };
 
-function HouseCard({ house, locale }: { house: HouseArchiveItem; locale: Locale }) {
+function HouseCard({ house, locale }: { house: CMSHouseItem; locale: Locale }) {
   const price = formatArchiveStartingPrice(house.price60x160);
 
   return (
     <article className="house-archive-card reveal-on-scroll">
       <div className="house-archive-card-image">
-        <Image 
-          src={house.image} 
-          alt={house.title} 
-          width={900} 
-          height={600} 
-          sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw" 
-          priority={false}
-        />
+        {house.image && (
+          <Image 
+            src={house.image} 
+            alt={house.title} 
+            width={900} 
+            height={600} 
+            sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw" 
+            priority={false}
+          />
+        )}
         <div className="house-archive-card-badge">
           Structure Bois
         </div>
       </div>
       <div className="house-archive-card-body">
-        <span className="house-archive-card-category">{house.category}</span>
+        <span className="house-archive-card-category">{house.categoryName}</span>
         <h3>{house.title}</h3>
         <p className="house-archive-card-desc">{house.description}</p>
         
@@ -61,7 +76,7 @@ function HouseCard({ house, locale }: { house: HouseArchiveItem; locale: Locale 
   );
 }
 
-export function HousesArchive({ locale }: HousesArchiveProps) {
+export function HousesArchive({ locale, initialHouses, initialCategories }: HousesArchiveProps) {
   // Intersection Observer for scroll animations with a safety timeout to ensure React DOM is painted
   useEffect(() => {
     let observer: IntersectionObserver | null = null;
@@ -153,8 +168,8 @@ export function HousesArchive({ locale }: HousesArchiveProps) {
             
             {/* Quick Category Anchors */}
             <div className="category-quick-nav">
-              {houseArchiveCategories.map((category) => {
-                const count = houseArchiveItems.filter((house) => house.category === category.sourceCategory).length;
+              {initialCategories.map((category) => {
+                const count = initialHouses.filter((house) => house.categorySlug === category.slug).length;
                 if (count === 0) return null;
                 return (
                   <a href={`#${category.id}`} className="category-nav-badge" key={category.id}>
@@ -172,8 +187,8 @@ export function HousesArchive({ locale }: HousesArchiveProps) {
       <div className="archive-sticky-nav-container">
         <div className="container">
           <div className="archive-sticky-nav">
-            {houseArchiveCategories.map((category) => {
-              const count = houseArchiveItems.filter((house) => house.category === category.sourceCategory).length;
+            {initialCategories.map((category) => {
+              const count = initialHouses.filter((house) => house.categorySlug === category.slug).length;
               return (
                 <a href={`#${category.id}`} key={category.id}>
                   <span>{category.title}</span>
@@ -227,8 +242,8 @@ export function HousesArchive({ locale }: HousesArchiveProps) {
 
       {/* Houses Sections by Category */}
       <div className="archive-sections-container">
-        {houseArchiveCategories.map((category) => {
-          const houses = houseArchiveItems.filter((house) => house.category === category.sourceCategory);
+        {initialCategories.map((category) => {
+          const houses = initialHouses.filter((house) => house.categorySlug === category.slug);
           if (houses.length === 0) return null;
           return (
             <div className="archive-house-section" id={category.id} key={category.id}>

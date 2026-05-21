@@ -2,6 +2,10 @@ import { CollectionConfig } from 'payload'
 
 export const Houses: CollectionConfig = {
   slug: 'houses',
+  lockDocuments: false,
+  access: {
+    read: () => true,
+  },
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'slug', 'category'],
@@ -72,22 +76,31 @@ export const Houses: CollectionConfig = {
     {
       name: 'marginPercent',
       type: 'number',
-      defaultValue: 40,
-      required: true,
+      admin: {
+        description: 'Surcharge optionnelle de la marge commerciale (%) (laisse vide pour utiliser la marge globale dans House Options).',
+      },
     },
     {
       name: 'perdhesa',
       type: 'group',
       label: 'Surfaces and Dimensions',
       fields: [
-        { name: 'bruto', type: 'number', label: 'Surface Brute (m²)' },
-        { name: 'neto', type: 'number', label: 'Surface Nette (m²)' },
-        { name: 'mure_te_jashtme', type: 'number', label: 'Murs Extérieurs (m²)' },
-        { name: 'mure_mbajtese', type: 'number', label: 'Murs Porteurs (m²)' },
-        { name: 'mure_ndarese', type: 'number', label: 'Murs Séparateurs (m²)' },
-        { name: 'pllaka_e_kulmit', type: 'number', label: 'Dalle de Toit (m²)' },
-        { name: 'kulmi', type: 'number', label: 'Toiture (m²)' },
-        { name: 'pllaka_e_katit', type: 'number', label: 'Dalle d’Étage (m²)' },
+        {
+          type: 'row',
+          fields: [
+            { name: 'bruto', type: 'number', label: 'Surface Brute (m²)', admin: { width: '9%' } },
+            { name: 'neto', type: 'number', label: 'Surface Nette (m²)', admin: { width: '9%' } },
+            { name: 'mure_te_jashtme', type: 'number', label: 'Murs Extérieurs (m²)', admin: { width: '9%' } },
+            { name: 'mure_mbajtese', type: 'number', label: 'Murs Porteurs (m²)', admin: { width: '9%' } },
+            { name: 'mure_ndarese', type: 'number', label: 'Murs Séparateurs (m²)', admin: { width: '9%' } },
+            { name: 'pllaka_e_kulmit', type: 'number', label: 'Dalle de Toit (m²)', admin: { width: '9%' } },
+            { name: 'pllaka_e_katit_0', type: 'number', label: 'Dalle d’Étage 0 (m²)', admin: { width: '9%' } },
+            { name: 'pllaka_e_katit_1', type: 'number', label: 'Dalle d’Étage 1 (m²)', admin: { width: '9%' } },
+            { name: 'pllaka_e_katit_2', type: 'number', label: 'Dalle d’Étage 2 (m²)', admin: { width: '9%' } },
+            { name: 'pllaka_e_katit', type: 'number', label: 'Dalle d’Étage (m²)', admin: { width: '9%' } },
+            { name: 'kulmi', type: 'number', label: 'Toiture (m²)', admin: { width: '9%' } },
+          ],
+        },
       ],
     },
     {
@@ -125,6 +138,7 @@ export const Houses: CollectionConfig = {
       name: 'structureInfo',
       type: 'textarea',
       localized: true,
+      defaultValue: 'Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant rigidité et stabilité de l’ensemble. Comprend les murs porteurs, murs de séparation et charpente industrielle type fermette. Le prix inclut le transport et le montage sur site sous garantie décennale.',
       admin: {
         description: 'Informational text displayed beside the structure price.',
       },
@@ -158,6 +172,251 @@ export const Houses: CollectionConfig = {
         { name: 'faux_plafond_roche', type: 'relationship', relationTo: 'media' },
         { name: 'faux_plafond_bois', type: 'relationship', relationTo: 'media' },
       ],
+    },
+    {
+      name: 'customFields',
+      label: 'Custom Fields Values',
+      type: 'blocks',
+      blocks: [
+        {
+          slug: 'booleanValue',
+          labels: {
+            singular: 'Checkbox Field Value',
+            plural: 'Checkbox Field Values',
+          },
+          fields: [
+            {
+              name: 'definition',
+              type: 'relationship',
+              relationTo: 'field-definitions',
+              required: true,
+              label: 'Field Definition',
+            },
+            {
+              name: 'value',
+              type: 'checkbox',
+              required: true,
+              label: 'Enabled / Yes',
+            },
+          ],
+        },
+        {
+          slug: 'numberValue',
+          labels: {
+            singular: 'Number Field Value',
+            plural: 'Number Field Values',
+          },
+          fields: [
+            {
+              name: 'definition',
+              type: 'relationship',
+              relationTo: 'field-definitions',
+              required: true,
+              label: 'Field Definition',
+            },
+            {
+              name: 'value',
+              type: 'number',
+              required: true,
+              label: 'Value',
+            },
+          ],
+        },
+        {
+          slug: 'textValue',
+          labels: {
+            singular: 'Text Field Value',
+            plural: 'Text Field Values',
+          },
+          fields: [
+            {
+              name: 'definition',
+              type: 'relationship',
+              relationTo: 'field-definitions',
+              required: true,
+              label: 'Field Definition',
+            },
+            {
+              name: 'value',
+              type: 'text',
+              required: true,
+              label: 'Value',
+            },
+          ],
+        },
+        {
+          slug: 'selectValue',
+          labels: {
+            singular: 'Select Field Value',
+            plural: 'Select Field Values',
+          },
+          fields: [
+            {
+              name: 'definition',
+              type: 'relationship',
+              relationTo: 'field-definitions',
+              required: true,
+              label: 'Field Definition',
+            },
+            {
+              name: 'value',
+              type: 'text',
+              required: true,
+              label: 'Selected Option Value',
+              admin: {
+                description: 'Specify the exact option name configured in global House Options for this custom field.',
+              },
+            },
+          ],
+        },
+        {
+          slug: 'textareaValue',
+          labels: {
+            singular: 'Textarea Field Value',
+            plural: 'Textarea Field Values',
+          },
+          fields: [
+            {
+              name: 'definition',
+              type: 'relationship',
+              relationTo: 'field-definitions',
+              required: true,
+              label: 'Field Definition',
+            },
+            {
+              name: 'value',
+              type: 'textarea',
+              required: true,
+              localized: true,
+              label: 'Value',
+            },
+          ],
+        },
+        {
+          slug: 'imageValue',
+          labels: {
+            singular: 'Image Field Value',
+            plural: 'Image Field Values',
+          },
+          fields: [
+            {
+              name: 'definition',
+              type: 'relationship',
+              relationTo: 'field-definitions',
+              required: true,
+              label: 'Field Definition',
+            },
+            {
+              name: 'value',
+              type: 'relationship',
+              relationTo: 'media',
+              required: true,
+              label: 'Value',
+            },
+          ],
+        },
+        {
+          slug: 'repeaterValue',
+          labels: {
+            singular: 'Repeater Field Value',
+            plural: 'Repeater Field Values',
+          },
+          fields: [
+            {
+              name: 'definition',
+              type: 'relationship',
+              relationTo: 'field-definitions',
+              required: true,
+              label: 'Field Definition',
+            },
+            {
+              name: 'rows',
+              type: 'array',
+              required: true,
+              label: 'Rows / Choices',
+              fields: [
+                {
+                  name: 'title',
+                  type: 'text',
+                  required: true,
+                  localized: true,
+                  label: 'Title',
+                },
+                {
+                  name: 'description',
+                  type: 'textarea',
+                  localized: true,
+                  label: 'Description',
+                },
+                {
+                  name: 'price',
+                  type: 'number',
+                  required: true,
+                  label: 'Price (60x160)',
+                },
+                {
+                  name: 'price_200',
+                  type: 'number',
+                  label: 'Price Override (60x200)',
+                  admin: {
+                    description: 'Optional override for 60x200 size (defaults to Price if empty).',
+                  },
+                },
+                {
+                  name: 'image',
+                  type: 'relationship',
+                  relationTo: 'media',
+                  label: 'Image',
+                },
+                {
+                  name: 'layer_key',
+                  type: 'text',
+                  label: 'Graphic Layer Key',
+                  admin: {
+                    description: 'Optional associated graphic layer key.',
+                  },
+                },
+                {
+                  name: 'checkbox',
+                  type: 'checkbox',
+                  label: 'Selected by default?',
+                },
+                {
+                  name: 'attributes',
+                  type: 'array',
+                  label: 'Custom Attributes / Details',
+                  fields: [
+                    {
+                      name: 'name',
+                      type: 'text',
+                      required: true,
+                      localized: true,
+                      label: 'Attribute Name (e.g. Thickness, Warranty)',
+                    },
+                    {
+                      name: 'value',
+                      type: 'text',
+                      required: true,
+                      localized: true,
+                      label: 'Value (e.g. 10cm, 5 years)',
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: 'dynamicFieldsConfig',
+      type: 'json',
+      label: 'Dynamic Custom Fields Settings',
+      admin: {
+        components: {
+          Field: '/components/HouseDynamicFieldsConfig#HouseDynamicFieldsConfig',
+        },
+      },
     },
   ],
 }

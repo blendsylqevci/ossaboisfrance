@@ -27,6 +27,7 @@ export type ConfigOption = {
   layerEnduit?: string;
   /** Facade-dependent alternate layer for bardage facade */
   layerBardage?: string;
+  attributes?: Array<{ name: string; value: string }>;
 };
 
 export type SizeOption = {
@@ -81,4 +82,6 @@ export type HouseConfiguratorData = {
   enableFlags: HouseEnableFlags;
   /** Category IDs where the image changes based on selected facade type */
   facadeDependentCategoryIds?: string[];
+  /** Dynamic custom fields (ACF-like) values defined for this house */
+  customFields?: Record<string, any>;
 };

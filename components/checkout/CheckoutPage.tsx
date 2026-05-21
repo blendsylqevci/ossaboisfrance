@@ -40,6 +40,20 @@ const euroFormatter = new Intl.NumberFormat("fr-FR", {
   maximumFractionDigits: 0
 });
 
+const PERDHESA_LABELS: Record<string, { fr: string; en: string }> = {
+  bruto: { fr: "Surface Brute", en: "Gross Surface" },
+  neto: { fr: "Surface Nette", en: "Net Surface" },
+  mure_te_jashtme: { fr: "Murs Extérieurs", en: "Exterior Walls" },
+  mure_mbajtese: { fr: "Murs Porteurs", en: "Load-bearing Walls" },
+  mure_ndarese: { fr: "Murs Séparateurs", en: "Partition Walls" },
+  pllaka_e_kulmit: { fr: "Dalle de Toit", en: "Roof Plate" },
+  pllaka_e_katit_0: { fr: "Dalle d'Étage 0", en: "Floor Slab 0" },
+  pllaka_e_katit_1: { fr: "Dalle d'Étage 1", en: "Floor Slab 1" },
+  pllaka_e_katit_2: { fr: "Dalle d'Étage 2", en: "Floor Slab 2" },
+  pllaka_e_katit: { fr: "Dalle d'Étage", en: "Floor Slab" },
+  kulmi: { fr: "Toiture", en: "Roof Area" },
+};
+
 export function CheckoutPage() {
   const pathname = usePathname();
   const isEn = pathname.startsWith("/en");
@@ -489,18 +503,18 @@ export function CheckoutPage() {
                         <>
                           <div className="specs-table-title">{t.archSpecs}</div>
                           <div className="configured-options-list architectural-specs">
-                            {Object.entries(selection.perdhesa).map(([key, value]) => {
-                              let label = key.replaceAll("_", " ");
-                              if (key === "mure_te_jashtme") label = isEn ? "Exterior Walls" : "Murs extérieurs";
-                              if (key === "pllaka_e_kulmit") label = isEn ? "Roof Plate" : "Dalle de toit";
-                              if (key === "kulmi") label = isEn ? "Roof Area" : "Toiture";
-                              return (
-                                <div className="config-option-item" key={key}>
-                                  <span>{label}</span>
-                                  <span>{value} m²</span>
-                                </div>
-                              );
-                            })}
+                            {Object.entries(selection.perdhesa)
+                              .filter(([_, value]) => value && Number(value) > 0)
+                              .map(([key, value]) => {
+                                const translation = PERDHESA_LABELS[key];
+                                const label = translation ? (isEn ? translation.en : translation.fr) : key.replaceAll("_", " ");
+                                return (
+                                  <div className="config-option-item" key={key}>
+                                    <span>{label}</span>
+                                    <span>{value} m²</span>
+                                  </div>
+                                );
+                              })}
                           </div>
                         </>
                       )}

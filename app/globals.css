@@ -1597,11 +1597,13 @@ img {
 
 @media (min-width: 992px) {
   .house-layer-stage {
-    position: absolute;
-    inset: 0;
+    position: relative;
     width: 100% !important;
-    height: 100% !important;
-    aspect-ratio: auto;
+    height: auto !important;
+    max-width: 100%;
+    max-height: 100%;
+    aspect-ratio: 16 / 9;
+    margin: auto;
   }
 }
 
@@ -7612,6 +7614,36 @@ img {
   }
 }
 
+/* Dynamic custom field material attributes styles */
+.material-attributes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #eaeaea;
+}
 
+.material-attribute-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  background: #f7f9f9;
+  border-radius: 8px;
+  border: 1px solid #edf1f2;
+}
 
+.material-attribute-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #718096;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
 
+.material-attribute-value {
+  font-size: 14px;
+  color: #1f4b43;
+  font-weight: 600;
+}

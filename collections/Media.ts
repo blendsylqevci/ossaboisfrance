@@ -2,6 +2,10 @@ import { CollectionConfig } from 'payload'
 
 export const Media: CollectionConfig = {
   slug: 'media',
+  lockDocuments: false,
+  access: {
+    read: () => true,
+  },
   upload: {
     staticDir: 'public/media',
     imageSizes: [

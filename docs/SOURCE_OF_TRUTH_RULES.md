@@ -25,7 +25,8 @@ Use these sources before implementing layout, logic, data, or pricing:
 6. Live website: `https://ossaboisfrance.com/`
 7. User-provided screenshots/assets.
 8. ACF/house field mapping: `docs/ACF_HOUSE_FIELD_MAPPING.md`
-9. Full source analysis: stored in conversation artifacts.
+9. Full project audit: `docs/FULL_PROJECT_AUDIT_2026-05-21.md`
+10. Full source analysis: stored in conversation artifacts.
 
 ## Source File Format Warning
 

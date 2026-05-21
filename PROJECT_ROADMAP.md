@@ -18,6 +18,7 @@ Te rindertohet `ossaboisfrance.com` jashte WordPress-it si platforme profesional
 - Source-of-truth rules: `docs/SOURCE_OF_TRUTH_RULES.md`
 - ACF house field mapping: `docs/ACF_HOUSE_FIELD_MAPPING.md`
 - House category/configurator audit: `docs/HOUSE_CATEGORY_CONFIGURATOR_AUDIT.md`
+- Full project audit: `docs/FULL_PROJECT_AUDIT_2026-05-21.md`
 
 ## Stack i Synuar
 
@@ -613,3 +614,5 @@ Rekomandimi:
 - Mapped all 15 visual layer PNG assets including the new roof couverture (Tuiles and Bac Acier) options and the underlayment pare-pluie.
 - Integrated the model into the dynamic search, archive, and slug redirection lists.
 - Verified successful Next.js static page generation and TypeScript type-checking using `npm run build`.
+- Fixed Payload admin styling by importing `@payloadcms/next/css` in `app/(payload)/layout.tsx`.
+- Created `docs/FULL_PROJECT_AUDIT_2026-05-21.md` with current architecture, CMS inventory, configurator status, lint debt, risks, and next safe phase.

@@ -9,13 +9,13 @@ export const Orders: CollectionConfig = {
   },
   hooks: {
     beforeChange: [
-      async ({ data, operation }) => {
-        if (operation === 'update') {
+      async ({ data, originalDoc, operation }) => {
+        if (operation === 'update' && originalDoc) {
           // Permet de ne modifier QUE la propriété 'status' et 'cancellationReason'
           const allowedFields = ['status', 'cancellationReason']
-          Object.keys(data).forEach((key) => {
+          Object.keys(originalDoc).forEach((key) => {
             if (!allowedFields.includes(key)) {
-              delete data[key]
+              data[key] = originalDoc[key]
             }
           })
         }

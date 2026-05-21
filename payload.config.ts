@@ -23,6 +23,11 @@ export default buildConfig({
     importMap: {
       // Required for Payload 3.x
     },
+    components: {
+      beforeDashboard: [
+        '/components/DashboardStats#DashboardStats',
+      ],
+    },
   },
   collections: [
     Users,

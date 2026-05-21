@@ -7647,3 +7647,41 @@ img {
   color: #1f4b43;
   font-weight: 600;
 }
+
+/* Autocomplete Address Dropdown */
+.address-suggestions-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border: 1.5px solid #e5e5e0;
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  max-height: 250px;
+  overflow-y: auto;
+  z-index: 999;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.address-suggestion-item {
+  padding: 12px 16px;
+  cursor: pointer;
+  font-size: 14.5px;
+  color: #181a20;
+  border-bottom: 1px solid #f0f0eb;
+  text-align: left;
+  transition: background 0.2s ease;
+}
+
+.address-suggestion-item:last-child {
+  border-bottom: none;
+  border-radius: 0 0 8px 8px;
+}
+
+.address-suggestion-item:hover {
+  background: #f0f0eb;
+}

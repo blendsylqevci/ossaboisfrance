@@ -74,6 +74,63 @@ export function CheckoutPage() {
   const [agreePrivacy, setAgreePrivacy] = useState(false);
   const [agreementsError, setAgreementsError] = useState(false);
 
+  // Address lookup state variables
+  const [streetAddress, setStreetAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [zipCode, setZipCode] = useState("");
+  const [stateRegion, setStateRegion] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState("France");
+  const [addressSuggestions, setAddressSuggestions] = useState<any[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  useEffect(() => {
+    if (selectedCountry !== "France" || streetAddress.trim().length < 4) {
+      setAddressSuggestions([]);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      fetch(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(streetAddress)}&limit=5`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data && data.features) {
+            setAddressSuggestions(data.features);
+            setShowSuggestions(true);
+          } else {
+            setAddressSuggestions([]);
+          }
+        })
+        .catch((err) => {
+          console.error("Error fetching address suggestions:", err);
+          setAddressSuggestions([]);
+        });
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [streetAddress, selectedCountry]);
+
+  const handleSelectSuggestion = (feature: any) => {
+    const props = feature.properties;
+    setStreetAddress(props.name || props.label);
+    setCity(props.city || "");
+    setZipCode(props.postcode || "");
+    
+    let region = "";
+    if (props.context) {
+      const parts = props.context.split(",");
+      if (parts.length >= 3) {
+        region = parts[2].trim();
+      } else if (parts.length >= 2) {
+        region = parts[1].trim();
+      } else {
+        region = props.context;
+      }
+    }
+    setStateRegion(region);
+    setAddressSuggestions([]);
+    setShowSuggestions(false);
+  };
+
   useEffect(() => {
     const raw = sessionStorage.getItem("house_selections");
     if (!raw) return;
@@ -339,7 +396,36 @@ export function CheckoutPage() {
                             {t.address} <span className="required">*</span>
                           </label>
                           <div className="form-input-wrapper">
-                            <input className="form-input" name="street_address" required type="text" placeholder="12 Rue de la Forêt" />
+                            <input 
+                              className="form-input" 
+                              name="street_address" 
+                              required 
+                              type="text" 
+                              placeholder="12 Rue de la Forêt" 
+                              value={streetAddress}
+                              onChange={(e) => setStreetAddress(e.target.value)}
+                              onFocus={() => setShowSuggestions(true)}
+                              onBlur={() => {
+                                setTimeout(() => setShowSuggestions(false), 200);
+                              }}
+                              autoComplete="off"
+                            />
+                            {showSuggestions && addressSuggestions.length > 0 && (
+                              <ul className="address-suggestions-dropdown">
+                                {addressSuggestions.map((suggestion, idx) => (
+                                  <li
+                                    key={idx}
+                                    className="address-suggestion-item"
+                                    onMouseDown={(e) => {
+                                      e.preventDefault();
+                                      handleSelectSuggestion(suggestion);
+                                    }}
+                                  >
+                                    {suggestion.properties.label}
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -349,7 +435,15 @@ export function CheckoutPage() {
                             {t.city} <span className="required">*</span>
                           </label>
                           <div className="form-input-wrapper">
-                            <input className="form-input" name="city" required type="text" placeholder="Paris" />
+                            <input 
+                              className="form-input" 
+                              name="city" 
+                              required 
+                              type="text" 
+                              placeholder="Paris" 
+                              value={city}
+                              onChange={(e) => setCity(e.target.value)}
+                            />
                           </div>
                         </div>
                         <div className="form-group form-group-half">
@@ -357,7 +451,15 @@ export function CheckoutPage() {
                             {t.zipCode} <span className="required">*</span>
                           </label>
                           <div className="form-input-wrapper">
-                            <input className="form-input" name="zip_code" required type="text" placeholder="75001" />
+                            <input 
+                              className="form-input" 
+                              name="zip_code" 
+                              required 
+                              type="text" 
+                              placeholder="75001" 
+                              value={zipCode}
+                              onChange={(e) => setZipCode(e.target.value)}
+                            />
                           </div>
                         </div>
                       </div>
@@ -367,7 +469,15 @@ export function CheckoutPage() {
                             {t.region} <span className="required">*</span>
                           </label>
                           <div className="form-input-wrapper">
-                            <input className="form-input" name="state_region" required type="text" placeholder="Île-de-France" />
+                            <input 
+                              className="form-input" 
+                              name="state_region" 
+                              required 
+                              type="text" 
+                              placeholder="Île-de-France" 
+                              value={stateRegion}
+                              onChange={(e) => setStateRegion(e.target.value)}
+                            />
                           </div>
                         </div>
                         <div className="form-group form-group-half">
@@ -375,7 +485,13 @@ export function CheckoutPage() {
                             {t.country} <span className="required">*</span>
                           </label>
                           <div className="form-input-wrapper select-wrapper">
-                            <select className="form-input" name="country" required defaultValue="France">
+                            <select 
+                              className="form-input" 
+                              name="country" 
+                              required 
+                              value={selectedCountry}
+                              onChange={(e) => setSelectedCountry(e.target.value)}
+                            >
                               <option value="France">France</option>
                               <option value="Belgique">{isEn ? "Belgium" : "Belgique"}</option>
                               <option value="Suisse">{isEn ? "Switzerland" : "Suisse"}</option>

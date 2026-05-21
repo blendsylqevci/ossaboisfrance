@@ -5,7 +5,7 @@ export const Orders: CollectionConfig = {
   lockDocuments: false,
   admin: {
     useAsTitle: 'orderRef',
-    defaultColumns: ['orderRef', 'customerName', 'customerEmail', 'status', 'totalPrice', 'createdAt'],
+    defaultColumns: ['orderRef', 'customerName', 'customerEmail', 'stateRegion', 'status', 'totalPrice', 'createdAt'],
   },
   hooks: {
     beforeChange: [

@@ -209,31 +209,70 @@ export const OrderSummaryView: React.FC<{ path: string }> = ({ path }) => {
 
       {/* Pricing Summary Card */}
       <div style={{
-        marginTop: '28px',
-        padding: '20px',
-        background: 'var(--theme-elevation-100, #f1f5f9)',
-        borderRadius: '8px',
-        border: '1.5px dashed #5E6F4F',
+        marginTop: '32px',
+        padding: '24px',
+        background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.08) 0%, rgba(21, 128, 61, 0.03) 100%)',
+        borderRadius: '12px',
+        border: '2px solid #22c55e',
+        boxShadow: '0 4px 20px rgba(34, 197, 94, 0.12)',
         display: 'flex',
         flexWrap: 'wrap',
         justifyContent: 'space-between',
         alignItems: 'center',
-        gap: '16px'
+        gap: '24px',
       }}>
         <div>
-          <h4 style={{ margin: '0 0 4px 0', fontSize: '13.5px', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--theme-elevation-500, #64748b)', fontWeight: '700' }}>
+          <h4 style={{ 
+            margin: '0 0 12px 0', 
+            fontSize: '12px', 
+            textTransform: 'uppercase', 
+            letterSpacing: '0.1em', 
+            color: '#22c55e', 
+            fontWeight: '700' 
+          }}>
             Détails du Financement (TTC)
           </h4>
-          <div style={{ fontSize: '13.5px', color: 'var(--theme-elevation-600, #475569)', display: 'flex', flexWrap: 'wrap', gap: '16px', marginTop: '8px' }}>
-            <span><strong>Montant Maison:</strong> {euroFormatter.format(housePrice)}</span>
-            <span>• <strong>Frais de transport:</strong> {euroFormatter.format(shippingCost)}</span>
+          <div style={{ 
+            fontSize: '14px', 
+            color: 'var(--theme-elevation-800, #e2e8f0)', 
+            display: 'flex', 
+            flexDirection: 'column', 
+            gap: '8px',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ color: 'var(--theme-elevation-500, #94a3b8)', fontWeight: '500' }}>Montant Maison:</span>
+              <strong style={{ fontSize: '15px', color: 'var(--theme-elevation-900, #ffffff)' }}>{euroFormatter.format(housePrice)}</strong>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ color: 'var(--theme-elevation-500, #94a3b8)', fontWeight: '500' }}>Frais de transport:</span>
+              <strong style={{ fontSize: '15px', color: 'var(--theme-elevation-900, #ffffff)' }}>{euroFormatter.format(shippingCost)}</strong>
+            </div>
           </div>
         </div>
-        <div style={{ textAlign: 'right' }}>
-          <div style={{ fontSize: '12px', color: 'var(--theme-elevation-500, #64748b)', fontWeight: '600', textTransform: 'uppercase' }}>
+        <div style={{ 
+          textAlign: 'right',
+          background: 'rgba(34, 197, 94, 0.1)',
+          padding: '12px 24px',
+          borderRadius: '10px',
+          border: '1px solid rgba(34, 197, 94, 0.2)',
+          boxShadow: 'inset 0 1px 2px rgba(255, 255, 255, 0.05)'
+        }}>
+          <div style={{ 
+            fontSize: '11px', 
+            color: '#4ade80', 
+            fontWeight: '700', 
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em'
+          }}>
             Total Général
           </div>
-          <div style={{ fontSize: '24px', fontWeight: '800', color: '#5E6F4F', marginTop: '2px' }}>
+          <div style={{ 
+            fontSize: '32px', 
+            fontWeight: '900', 
+            color: '#22c55e', 
+            marginTop: '4px',
+            textShadow: '0 0 15px rgba(34, 197, 94, 0.25)'
+          }}>
             {euroFormatter.format(grandTotal)}
           </div>
         </div>

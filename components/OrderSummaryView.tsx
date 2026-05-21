@@ -173,6 +173,18 @@ export const OrderSummaryView: React.FC<{ path: string }> = ({ path }) => {
                   <td style={{ padding: '8px 0', textAlign: 'right', fontWeight: '600' }}>{selection.etancheiteTerrasse.value}</td>
                 </tr>
               )}
+              {selection.strukturaPlloqes?.value && (
+                <tr style={{ borderBottom: '1px solid var(--theme-elevation-100, #f1f5f9)' }}>
+                  <td style={{ padding: '8px 0', color: 'var(--theme-elevation-500, #64748b)', fontWeight: '500' }}>Structure de la dalle (Toit)</td>
+                  <td style={{ padding: '8px 0', textAlign: 'right', fontWeight: '600' }}>{selection.strukturaPlloqes.value}</td>
+                </tr>
+              )}
+              {selection.izolimiPlloqes?.value && (
+                <tr style={{ borderBottom: '1px solid var(--theme-elevation-100, #f1f5f9)' }}>
+                  <td style={{ padding: '8px 0', color: 'var(--theme-elevation-500, #64748b)', fontWeight: '500' }}>Isolation plafond (Faux plafond)</td>
+                  <td style={{ padding: '8px 0', textAlign: 'right', fontWeight: '600' }}>{selection.izolimiPlloqes.value}</td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

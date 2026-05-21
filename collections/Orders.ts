@@ -11,8 +11,8 @@ export const Orders: CollectionConfig = {
     beforeChange: [
       async ({ data, operation }) => {
         if (operation === 'update') {
-          // Permet de ne modifier QUE la propriété 'status'
-          const allowedFields = ['status']
+          // Permet de ne modifier QUE la propriété 'status' et 'cancellationReason'
+          const allowedFields = ['status', 'cancellationReason']
           Object.keys(data).forEach((key) => {
             if (!allowedFields.includes(key)) {
               delete data[key]
@@ -63,6 +63,21 @@ export const Orders: CollectionConfig = {
                   },
                 },
               ],
+            },
+            {
+              name: 'cancellationReason',
+              type: 'textarea',
+              label: 'Cancellation Reason',
+              validate: (val: string | null | undefined, { data }: any) => {
+                if (data?.status === 'cancelled' && (!val || val.trim() === '')) {
+                  return "Veuillez indiquer le motif de l'annulation."
+                }
+                return true
+              },
+              admin: {
+                condition: (data) => data?.status === 'cancelled',
+                description: 'Reason why this order was cancelled.',
+              },
             },
             {
               type: 'row',

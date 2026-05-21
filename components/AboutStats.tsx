@@ -8,7 +8,6 @@ function AnimatedNumber({ target, suffix = "" }: { target: number; suffix?: stri
 
   useEffect(() => {
     setMounted(true);
-    let start = 0;
     const end = target;
     const duration = 1200; // 1.2 seconds
     const steps = 40;

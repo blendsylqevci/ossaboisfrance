@@ -4,6 +4,7 @@ import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import { s3Storage } from '@payloadcms/storage-s3'
+import sharp from 'sharp'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
@@ -35,6 +36,7 @@ export default buildConfig({
     HouseOptions,
   ],
   editor: lexicalEditor({}),
+  sharp,
   secret: process.env.PAYLOAD_SECRET || 'fallback-secret-for-local-dev-only',
   db: postgresAdapter({
     pool: {

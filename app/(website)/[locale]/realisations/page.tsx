@@ -116,15 +116,21 @@ export default function RealisationsPage({ params }: RealisationsPageProps) {
     ? projects
     : projects.filter((project) => project.category === activeCategory);
 
+  useEffect(() => {
+    document.body.style.overflow = selectedProject ? "hidden" : "";
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [selectedProject]);
+
   const openLightbox = (project: Project) => {
     setSelectedProject(project);
     setCurrentImageIndex(0);
-    document.body.style.overflow = "hidden"; // disable background scroll
   };
 
   const closeLightbox = () => {
     setSelectedProject(null);
-    document.body.style.overflow = ""; // restore scroll
   };
 
   const showNextImage = (e?: React.MouseEvent) => {

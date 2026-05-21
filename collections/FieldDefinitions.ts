@@ -13,6 +13,49 @@ const slugify = (text: string): string => {
     .replace(/^_+|_+$/g, '')
 }
 
+async function registerFieldDefinitionInHouseOptions({
+  fieldDefinitionId,
+  req,
+}: {
+  fieldDefinitionId: number | string
+  req: any
+}) {
+  const houseOptions = await req.payload.findGlobal({
+    slug: 'house-options',
+    depth: 0,
+    req,
+  })
+
+  const dynamicOptions = Array.isArray(houseOptions.dynamic_options)
+    ? houseOptions.dynamic_options
+    : []
+
+  const alreadyLinked = dynamicOptions.some((entry: any) => {
+    const defId = typeof entry.field_definition === 'object'
+      ? entry.field_definition?.id
+      : entry.field_definition
+
+    return String(defId) === String(fieldDefinitionId)
+  })
+
+  if (alreadyLinked) return
+
+  await req.payload.updateGlobal({
+    slug: 'house-options',
+    req,
+    overrideAccess: true,
+    data: {
+      dynamic_options: [
+        ...dynamicOptions,
+        {
+          field_definition: fieldDefinitionId,
+          options: [],
+        },
+      ],
+    },
+  })
+}
+
 export const FieldDefinitions: CollectionConfig = {
   slug: 'field-definitions',
   lockDocuments: false,
@@ -106,8 +149,9 @@ export const FieldDefinitions: CollectionConfig = {
               );
             }
           } catch (err: any) {
-            // If table doesn't exist, skip (no references)
             if (err instanceof APIError) throw err;
+            // Ignore only missing tables. Any other DB error should block the delete.
+            if (err?.code !== '42P01') throw err;
           }
         }
 
@@ -162,53 +206,10 @@ export const FieldDefinitions: CollectionConfig = {
         // Auto-register new Field Definitions in House Options dynamic_options
         if (operation !== 'create') return doc;
 
-        // Defer the insert to run AFTER the current transaction commits.
-        // The afterChange hook runs inside the transaction, so the new
-        // field_definitions row isn't visible to FK checks yet.
-        const payload = req.payload;
-        const docId = doc.id;
-        const docName = doc.name;
-
-        setTimeout(async () => {
-          console.log(`[FieldDefinitions] Deferred auto-register: id=${docId}, name=${docName}`);
-          try {
-            const pool = (payload.db as any).pool;
-            if (!pool) {
-              console.error('[FieldDefinitions] No database pool available');
-              return;
-            }
-
-            // Check if already linked
-            const existing = await pool.query(
-              'SELECT 1 FROM house_options_dynamic_options WHERE field_definition_id = $1 LIMIT 1',
-              [docId]
-            );
-
-            if (existing && existing.rowCount > 0) {
-              console.log(`[FieldDefinitions] Already linked in house-options, skipping.`);
-              return;
-            }
-
-            // Get the next order number
-            const maxOrder = await pool.query(
-              'SELECT COALESCE(MAX(_order), 0) + 1 as next_order FROM house_options_dynamic_options WHERE _parent_id = 1'
-            );
-            const nextOrder = maxOrder.rows[0]?.next_order || 1;
-
-            // Generate a unique hex ID (Payload uses MongoDB-style ObjectIds for array row IDs)
-            const rowId = Array.from({ length: 24 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
-
-            // Insert directly via SQL (transaction is now committed, FK is satisfied)
-            await pool.query(
-              `INSERT INTO house_options_dynamic_options (_order, _parent_id, id, field_definition_id) VALUES ($1, 1, $2, $3)`,
-              [nextOrder, rowId, docId]
-            );
-
-            console.log(`[FieldDefinitions] Successfully registered in house-options (order=${nextOrder}).`);
-          } catch (err) {
-            console.error('[FieldDefinitions] Deferred auto-register error:', err);
-          }
-        }, 1000); // 1 second delay to ensure transaction is committed
+        await registerFieldDefinitionInHouseOptions({
+          fieldDefinitionId: doc.id,
+          req,
+        });
 
         return doc;
       },

@@ -39,9 +39,6 @@ export const Orders: CollectionConfig = {
                   required: true,
                   unique: true,
                   label: 'Order Reference',
-                  access: {
-                    update: () => false,
-                  },
                   admin: {
                     readOnly: true,
                     width: '50%',
@@ -54,6 +51,7 @@ export const Orders: CollectionConfig = {
                   options: [
                     { label: 'Pending', value: 'pending' },
                     { label: 'Processing', value: 'processing' },
+                    { label: 'Shipped', value: 'shipped' },
                     { label: 'Completed', value: 'completed' },
                     { label: 'Cancelled', value: 'cancelled' },
                   ],
@@ -87,9 +85,6 @@ export const Orders: CollectionConfig = {
                   type: 'text',
                   required: true,
                   label: 'Customer Name',
-                  access: {
-                    update: () => false,
-                  },
                   admin: {
                     readOnly: true,
                     width: '33%',
@@ -100,9 +95,6 @@ export const Orders: CollectionConfig = {
                   type: 'email',
                   required: true,
                   label: 'Customer Email',
-                  access: {
-                    update: () => false,
-                  },
                   admin: {
                     readOnly: true,
                     width: '33%',
@@ -112,9 +104,6 @@ export const Orders: CollectionConfig = {
                   name: 'customerPhone',
                   type: 'text',
                   label: 'Customer Phone',
-                  access: {
-                    update: () => false,
-                  },
                   admin: {
                     readOnly: true,
                     width: '34%',
@@ -131,9 +120,6 @@ export const Orders: CollectionConfig = {
                   relationTo: 'houses',
                   required: true,
                   label: 'Selected House Model',
-                  access: {
-                    update: () => false,
-                  },
                   admin: {
                     readOnly: true,
                     width: '50%',
@@ -146,9 +132,6 @@ export const Orders: CollectionConfig = {
                   type: 'number',
                   required: true,
                   label: 'Total Price (€)',
-                  access: {
-                    update: () => false,
-                  },
                   admin: {
                     readOnly: true,
                     width: '25%',
@@ -158,9 +141,6 @@ export const Orders: CollectionConfig = {
                   name: 'transportCost',
                   type: 'number',
                   label: 'Transport Cost (€)',
-                  access: {
-                    update: () => false,
-                  },
                   admin: {
                     readOnly: true,
                     width: '25%',
@@ -174,65 +154,50 @@ export const Orders: CollectionConfig = {
           label: 'Delivery & Terrain',
           fields: [
             {
-              name: 'streetAddress',
-              type: 'text',
-              label: 'Street Address / Plot Location',
-              access: {
-                update: () => false,
-              },
-              admin: {
-                readOnly: true,
-              },
-            },
-            {
-              type: 'row',
-              fields: [
-                {
-                  name: 'city',
+                  name: 'streetAddress',
                   type: 'text',
-                  label: 'City',
-                  access: {
-                    update: () => false,
-                  },
+                  label: 'Street Address / Plot Location',
                   admin: {
                     readOnly: true,
-                    width: '40%',
                   },
                 },
                 {
-                  name: 'zipCode',
-                  type: 'text',
-                  label: 'Zip / Postal Code',
-                  access: {
-                    update: () => false,
-                  },
-                  admin: {
-                    readOnly: true,
-                    width: '30%',
-                  },
+                  type: 'row',
+                  fields: [
+                    {
+                      name: 'city',
+                      type: 'text',
+                      label: 'City',
+                      admin: {
+                        readOnly: true,
+                        width: '40%',
+                      },
+                    },
+                    {
+                      name: 'zipCode',
+                      type: 'text',
+                      label: 'Zip / Postal Code',
+                      admin: {
+                        readOnly: true,
+                        width: '30%',
+                      },
+                    },
+                    {
+                      name: 'stateRegion',
+                      type: 'text',
+                      label: 'State / Region',
+                      admin: {
+                        readOnly: true,
+                        width: '30%',
+                      },
+                    },
+                  ],
                 },
-                {
-                  name: 'stateRegion',
-                  type: 'text',
-                  label: 'State / Region',
-                  access: {
-                    update: () => false,
-                  },
-                  admin: {
-                    readOnly: true,
-                    width: '30%',
-                  },
-                },
-              ],
-            },
             {
               name: 'country',
               type: 'text',
               defaultValue: 'France',
               label: 'Country',
-              access: {
-                update: () => false,
-              },
               admin: {
                 readOnly: true,
               },
@@ -241,9 +206,6 @@ export const Orders: CollectionConfig = {
               name: 'clientNotes',
               type: 'textarea',
               label: 'Client Special Notes & Requirements',
-              access: {
-                update: () => false,
-              },
               admin: {
                 readOnly: true,
               },
@@ -257,9 +219,6 @@ export const Orders: CollectionConfig = {
               name: 'selections',
               type: 'json',
               required: true,
-              access: {
-                update: () => false,
-              },
               admin: {
                 readOnly: true,
                 description: 'Detailed option choices and structural selection details.',

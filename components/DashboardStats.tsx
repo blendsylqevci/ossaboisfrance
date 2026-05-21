@@ -6,6 +6,7 @@ export const DashboardStats: React.FC = async () => {
   let pendingCount = 0
   let totalCount = 0
   let processingCount = 0
+  let shippedCount = 0
   let completedCount = 0
 
   try {
@@ -39,6 +40,17 @@ export const DashboardStats: React.FC = async () => {
       limit: 0,
     })
     processingCount = processingOrders.totalDocs || 0
+
+    const shippedOrders = await payload.find({
+      collection: 'orders',
+      where: {
+        status: {
+          equals: 'shipped',
+        },
+      },
+      limit: 0,
+    })
+    shippedCount = shippedOrders.totalDocs || 0
 
     const completedOrders = await payload.find({
       collection: 'orders',
@@ -140,6 +152,32 @@ export const DashboardStats: React.FC = async () => {
               marginTop: '4px'
             }}>
               {processingCount}
+            </div>
+          </div>
+        </div>
+
+        {/* Shipped Orders Card */}
+        <div style={{
+          background: 'var(--theme-elevation-50, #f8fafc)',
+          border: '1px solid var(--theme-elevation-150, #e2e8f0)',
+          borderRadius: '12px',
+          padding: '20px',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}>
+          <div>
+            <div style={{ fontSize: '13px', color: 'var(--theme-elevation-500, #64748b)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              Të Nisuara (Shipped)
+            </div>
+            <div style={{ 
+              fontSize: '36px', 
+              fontWeight: '900', 
+              color: 'var(--theme-elevation-900, #0f172a)',
+              marginTop: '4px'
+            }}>
+              {shippedCount}
             </div>
           </div>
         </div>

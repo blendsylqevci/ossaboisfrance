@@ -47,11 +47,19 @@ export async function POST(req: NextRequest) {
     const orderDoc = await payload.create({
       collection: 'orders',
       data: {
+        orderRef: orderRef,
         house: houseDoc.id,
         customerName: clientName,
         customerEmail: clientEmail,
         customerPhone: clientPhone || "",
         totalPrice: total,
+        transportCost: transportCost || 0,
+        streetAddress: deliveryInfo?.streetAddress || "",
+        city: deliveryInfo?.city || "",
+        zipCode: deliveryInfo?.zipCode || "",
+        stateRegion: deliveryInfo?.stateRegion || "",
+        country: deliveryInfo?.country || "France",
+        clientNotes: deliveryInfo?.notes || "",
         selections: selection,
         status: 'pending',
       }

@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { useField } from '@payloadcms/ui'
+import { useField, useFormFields } from '@payloadcms/ui'
 
 interface StoredSelection {
   house?: {
@@ -46,6 +46,10 @@ const PERDHESA_LABELS: Record<string, string> = {
 export const OrderSummaryView: React.FC<{ path: string }> = ({ path }) => {
   const { value } = useField<any>({ path })
 
+  // Read other form fields using Payload's form state selectors
+  const transportCostValue = useFormFields(([fields]) => fields.transportCost?.value)
+  const totalPriceValue = useFormFields(([fields]) => fields.totalPrice?.value)
+
   if (!value) {
     return (
       <div style={{
@@ -79,6 +83,11 @@ export const OrderSummaryView: React.FC<{ path: string }> = ({ path }) => {
 
   const houseImageUrl = selection.currentImage || selection.house?.image
 
+  // Calculate pricing components
+  const shippingCost = transportCostValue !== undefined && transportCostValue !== null ? Number(transportCostValue) : 0
+  const grandTotal = totalPriceValue !== undefined && totalPriceValue !== null ? Number(totalPriceValue) : (selection.totalPrice || 0) + shippingCost
+  const housePrice = totalPriceValue !== undefined && totalPriceValue !== null ? grandTotal - shippingCost : (selection.totalPrice || 0)
+
   return (
     <div style={{
       background: 'var(--theme-elevation-50, #f8fafc)',
@@ -107,9 +116,7 @@ export const OrderSummaryView: React.FC<{ path: string }> = ({ path }) => {
           </h3>
           <div style={{ fontSize: '14px', color: 'var(--theme-elevation-600, #64748b)', display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
             <span><strong>Dimensions:</strong> {selection.size?.value || 'Non spécifié'}</span>
-            {selection.totalPrice && (
-              <span>• <strong>Montant de base:</strong> {euroFormatter.format(selection.totalPrice)}</span>
-            )}
+            <span>• <strong>Montant de base:</strong> {euroFormatter.format(housePrice)}</span>
           </div>
         </div>
       </div>
@@ -198,6 +205,38 @@ export const OrderSummaryView: React.FC<{ path: string }> = ({ path }) => {
           )}
         </div>
 
+      </div>
+
+      {/* Pricing Summary Card */}
+      <div style={{
+        marginTop: '28px',
+        padding: '20px',
+        background: 'var(--theme-elevation-100, #f1f5f9)',
+        borderRadius: '8px',
+        border: '1.5px dashed #5E6F4F',
+        display: 'flex',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        gap: '16px'
+      }}>
+        <div>
+          <h4 style={{ margin: '0 0 4px 0', fontSize: '13.5px', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--theme-elevation-500, #64748b)', fontWeight: '700' }}>
+            Détails du Financement (TTC)
+          </h4>
+          <div style={{ fontSize: '13.5px', color: 'var(--theme-elevation-600, #475569)', display: 'flex', flexWrap: 'wrap', gap: '16px', marginTop: '8px' }}>
+            <span><strong>Montant Maison:</strong> {euroFormatter.format(housePrice)}</span>
+            <span>• <strong>Frais de transport:</strong> {euroFormatter.format(shippingCost)}</span>
+          </div>
+        </div>
+        <div style={{ textAlign: 'right' }}>
+          <div style={{ fontSize: '12px', color: 'var(--theme-elevation-500, #64748b)', fontWeight: '600', textTransform: 'uppercase' }}>
+            Total Général
+          </div>
+          <div style={{ fontSize: '24px', fontWeight: '800', color: '#5E6F4F', marginTop: '2px' }}>
+            {euroFormatter.format(grandTotal)}
+          </div>
+        </div>
       </div>
 
       {/* Raw Data Toggle (for advanced view) */}

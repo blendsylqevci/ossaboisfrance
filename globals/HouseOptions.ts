@@ -169,15 +169,23 @@ export const HouseOptions: GlobalConfig = {
       },
       fields: optionFields,
     },
+    // Custom UI component that renders dynamic options sections (like the hardcoded ones)
+    {
+      name: 'dynamicOptionsSectionsUI',
+      type: 'ui',
+      admin: {
+        components: {
+          Field: '/components/DynamicOptionsSections#DynamicOptionsSections',
+        },
+      },
+    },
+    // Hidden native array - data storage only, managed by the DynamicOptionsSections component
     {
       name: 'dynamic_options',
       label: 'Dynamic Options & Prices',
       type: 'array',
       admin: {
-        description: 'Configure pricing, metadata, and choices for custom checkbox or select fields here.',
-        components: {
-          RowLabel: '/components/DynamicOptionsRowLabel#DynamicOptionsRowLabel',
-        },
+        condition: () => false,
       },
       fields: [
         {
@@ -191,64 +199,7 @@ export const HouseOptions: GlobalConfig = {
           name: 'options',
           type: 'array',
           label: 'Options / Choices',
-          admin: {
-            components: {
-              RowLabel: '/components/ArrayRowLabel#ArrayRowLabel',
-            },
-          },
-          fields: [
-            {
-              name: 'option_name',
-              type: 'text',
-              required: true,
-              localized: true,
-              admin: {
-                description: 'The name of this option choice (e.g. "Oui" or "Isolation Laine de Roche").',
-              },
-            },
-            {
-              name: 'option_price',
-              type: 'number',
-              required: true,
-              admin: {
-                description: 'Base price in Euros for 60x160 size (before margin).',
-              },
-            },
-            {
-              name: 'option_price_200',
-              type: 'number',
-              admin: {
-                description: 'Optional price in Euros override for 60x200 size (before margin). Defaults to option_price if empty.',
-              },
-            },
-            {
-              name: 'layer_key',
-              type: 'text',
-              admin: {
-                description: 'Optional graphic layer key matching a key in the Visual Graphic Layers config (e.g. iso_inter_verre) to render graphic overlays.',
-              },
-            },
-            {
-              name: 'option_description',
-              type: 'textarea',
-              localized: true,
-            },
-            {
-              name: 'option_image',
-              type: 'relationship',
-              relationTo: 'media',
-            },
-            {
-              name: 'option_mini_image',
-              type: 'relationship',
-              relationTo: 'media',
-            },
-            {
-              name: 'checkbox',
-              type: 'checkbox',
-              label: 'Selected by default?',
-            },
-          ],
+          fields: optionFields,
         },
       ],
     },

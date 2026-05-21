@@ -162,37 +162,53 @@ export const FieldDefinitions: CollectionConfig = {
         // Auto-register new Field Definitions in House Options dynamic_options
         if (operation !== 'create') return doc;
 
-        try {
-          const houseOptions = await req.payload.findGlobal({
-            slug: 'house-options',
-            depth: 0,
-          });
+        // Defer the insert to run AFTER the current transaction commits.
+        // The afterChange hook runs inside the transaction, so the new
+        // field_definitions row isn't visible to FK checks yet.
+        const payload = req.payload;
+        const docId = doc.id;
+        const docName = doc.name;
 
-          const existingDynamic = houseOptions.dynamic_options || [];
-          const alreadyLinked = existingDynamic.some(
-            (d: any) => {
-              const defId = typeof d.field_definition === 'object' ? d.field_definition?.id : d.field_definition;
-              return defId === doc.id;
+        setTimeout(async () => {
+          console.log(`[FieldDefinitions] Deferred auto-register: id=${docId}, name=${docName}`);
+          try {
+            const pool = (payload.db as any).pool;
+            if (!pool) {
+              console.error('[FieldDefinitions] No database pool available');
+              return;
             }
-          );
 
-          if (!alreadyLinked) {
-            await req.payload.updateGlobal({
-              slug: 'house-options',
-              data: {
-                dynamic_options: [
-                  ...existingDynamic,
-                  {
-                    field_definition: doc.id,
-                    options: [],
-                  },
-                ],
-              },
-            });
+            // Check if already linked
+            const existing = await pool.query(
+              'SELECT 1 FROM house_options_dynamic_options WHERE field_definition_id = $1 LIMIT 1',
+              [docId]
+            );
+
+            if (existing && existing.rowCount > 0) {
+              console.log(`[FieldDefinitions] Already linked in house-options, skipping.`);
+              return;
+            }
+
+            // Get the next order number
+            const maxOrder = await pool.query(
+              'SELECT COALESCE(MAX(_order), 0) + 1 as next_order FROM house_options_dynamic_options WHERE _parent_id = 1'
+            );
+            const nextOrder = maxOrder.rows[0]?.next_order || 1;
+
+            // Generate a unique hex ID (Payload uses MongoDB-style ObjectIds for array row IDs)
+            const rowId = Array.from({ length: 24 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
+
+            // Insert directly via SQL (transaction is now committed, FK is satisfied)
+            await pool.query(
+              `INSERT INTO house_options_dynamic_options (_order, _parent_id, id, field_definition_id) VALUES ($1, 1, $2, $3)`,
+              [nextOrder, rowId, docId]
+            );
+
+            console.log(`[FieldDefinitions] Successfully registered in house-options (order=${nextOrder}).`);
+          } catch (err) {
+            console.error('[FieldDefinitions] Deferred auto-register error:', err);
           }
-        } catch (err) {
-          console.error('FieldDefinitions afterChange: error auto-registering in house-options', err);
-        }
+        }, 1000); // 1 second delay to ensure transaction is committed
 
         return doc;
       },

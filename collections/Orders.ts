@@ -137,6 +137,8 @@ export const Orders: CollectionConfig = {
                   admin: {
                     readOnly: true,
                     width: '50%',
+                    allowCreate: false,
+                    allowEdit: false,
                   },
                 },
                 {

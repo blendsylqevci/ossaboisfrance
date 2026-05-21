@@ -559,10 +559,10 @@ export function CheckoutPage() {
                               onChange={(e) => setSelectedCountry(e.target.value)}
                             >
                               <option value="France">France</option>
+                              <option value="Allemagne">{isEn ? "Germany" : "Allemagne"}</option>
                               <option value="Belgique">{isEn ? "Belgium" : "Belgique"}</option>
                               <option value="Suisse">{isEn ? "Switzerland" : "Suisse"}</option>
                               <option value="Luxembourg">Luxembourg</option>
-                              <option value="Allemagne">{isEn ? "Germany" : "Allemagne"}</option>
                               <option value="Pays-Bas">{isEn ? "Netherlands" : "Pays-Bas"}</option>
                               <option value="Italie">{isEn ? "Italy" : "Italie"}</option>
                               <option value="Espagne">{isEn ? "Spain" : "Espagne"}</option>

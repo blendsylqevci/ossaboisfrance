@@ -84,49 +84,115 @@ export function CheckoutPage() {
   const [showSuggestions, setShowSuggestions] = useState(false);
 
   useEffect(() => {
-    if (selectedCountry !== "France" || streetAddress.trim().length < 4) {
+    if (streetAddress.trim().length < 4) {
       setAddressSuggestions([]);
       return;
     }
 
     const timer = setTimeout(() => {
-      fetch(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(streetAddress)}&limit=5`)
-        .then((res) => res.json())
-        .then((data) => {
-          if (data && data.features) {
-            setAddressSuggestions(data.features);
-            setShowSuggestions(true);
-          } else {
+      if (selectedCountry === "France") {
+        fetch(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(streetAddress)}&limit=5`)
+          .then((res) => res.json())
+          .then((data) => {
+            if (data && data.features) {
+              const normalized = data.features.map((f: any) => {
+                const props = f.properties;
+                let region = "";
+                if (props.context) {
+                  const parts = props.context.split(",");
+                  if (parts.length >= 3) {
+                    region = parts[2].trim();
+                  } else if (parts.length >= 2) {
+                    region = parts[1].trim();
+                  } else {
+                    region = props.context;
+                  }
+                }
+                return {
+                  label: props.label,
+                  street: props.name || props.label,
+                  city: props.city || "",
+                  postcode: props.postcode || "",
+                  region: region
+                };
+              });
+              setAddressSuggestions(normalized);
+              setShowSuggestions(true);
+            } else {
+              setAddressSuggestions([]);
+            }
+          })
+          .catch((err) => {
+            console.error("Error fetching French address suggestions:", err);
             setAddressSuggestions([]);
-          }
-        })
-        .catch((err) => {
-          console.error("Error fetching address suggestions:", err);
-          setAddressSuggestions([]);
-        });
+          });
+      } else {
+        // Mapping country names to ISO codes for OpenStreetMap Nominatim filtering
+        const COUNTRY_CODES: Record<string, string> = {
+          Belgique: "be",
+          Suisse: "ch",
+          Luxembourg: "lu",
+          Allemagne: "de",
+          "Pays-Bas": "nl",
+          Italie: "it",
+          Espagne: "es",
+          "Royaume-Uni": "gb",
+          Autriche: "at",
+          Portugal: "pt"
+        };
+        const countryCode = COUNTRY_CODES[selectedCountry] || "";
+        const countryFilter = countryCode ? `&countrycodes=${countryCode}` : "";
+
+        fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(streetAddress)}&format=json&addressdetails=1&limit=5${countryFilter}`)
+          .then((res) => res.json())
+          .then((data) => {
+            if (Array.isArray(data)) {
+              const normalized = data.map((item: any) => {
+                const addr = item.address || {};
+                
+                // Extract road/street details
+                const streetName = addr.road || addr.suburb || addr.pedestrian || addr.neighbourhood || addr.city_district || "";
+                const houseNum = addr.house_number ? " " + addr.house_number : "";
+                const street = streetName ? `${streetName}${houseNum}` : item.display_name;
+
+                // Extract city
+                const cityName = addr.city || addr.town || addr.village || addr.municipality || "";
+
+                // Extract postcode
+                const postcode = addr.postcode || "";
+
+                // Extract region/state
+                const region = addr.state || addr.region || addr.county || "";
+
+                return {
+                  label: item.display_name,
+                  street: street,
+                  city: cityName,
+                  postcode: postcode,
+                  region: region
+                };
+              });
+              setAddressSuggestions(normalized);
+              setShowSuggestions(true);
+            } else {
+              setAddressSuggestions([]);
+            }
+          })
+          .catch((err) => {
+            console.error("Error fetching global address suggestions:", err);
+            setAddressSuggestions([]);
+          });
+      }
     }, 300);
 
     return () => clearTimeout(timer);
   }, [streetAddress, selectedCountry]);
 
-  const handleSelectSuggestion = (feature: any) => {
-    const props = feature.properties;
-    setStreetAddress(props.name || props.label);
-    setCity(props.city || "");
-    setZipCode(props.postcode || "");
-    
-    let region = "";
-    if (props.context) {
-      const parts = props.context.split(",");
-      if (parts.length >= 3) {
-        region = parts[2].trim();
-      } else if (parts.length >= 2) {
-        region = parts[1].trim();
-      } else {
-        region = props.context;
-      }
-    }
-    setStateRegion(region);
+  const handleSelectSuggestion = (suggestion: any) => {
+    setStreetAddress(suggestion.street);
+    setCity(suggestion.city);
+    setZipCode(suggestion.postcode);
+    setStateRegion(suggestion.region);
     setAddressSuggestions([]);
     setShowSuggestions(false);
   };
@@ -421,7 +487,7 @@ export function CheckoutPage() {
                                       handleSelectSuggestion(suggestion);
                                     }}
                                   >
-                                    {suggestion.properties.label}
+                                    {suggestion.label}
                                   </li>
                                 ))}
                               </ul>

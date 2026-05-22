@@ -590,6 +590,9 @@ export function mapHouseDocToConfiguratorData(
     "iso_ext_roche_comprimee",
     "iso_ext_polystyrene",
     "iso_ext_fibre",
+    "faux_plafond_verre",
+    "faux_plafond_roche",
+    "faux_plafond_bois",
     "roof_polystyrene",
     "roof_bois",
     "roof_roche",
@@ -599,14 +602,21 @@ export function mapHouseDocToConfiguratorData(
     "couverture_bac_acier_gouttieres",
     "terrace_etancheite_epdm",
     "etancheite_epdm",
-    "faux_plafond_verre",
-    "faux_plafond_roche",
-    "faux_plafond_bois",
     "facade_blanche",
     "facade_bardage",
     "windows_aluminium",
     "windows_pvc"
   ];
+
+  const mappedCategories = [...categories, ...dynamicCategories].filter(c => c.options.length > 0);
+  if (houseDoc.slug === 'elegance-comble') {
+    const fauxPlafondIdx = mappedCategories.findIndex(c => c.id === 'fauxPlafond');
+    const roofIdx = mappedCategories.findIndex(c => c.id === 'roof');
+    if (fauxPlafondIdx !== -1 && roofIdx !== -1 && fauxPlafondIdx > roofIdx) {
+      const [fauxPlafondCat] = mappedCategories.splice(fauxPlafondIdx, 1);
+      mappedCategories.splice(roofIdx, 0, fauxPlafondCat);
+    }
+  }
 
   return {
     id: houseDoc.slug,
@@ -634,13 +644,14 @@ export function mapHouseDocToConfiguratorData(
       kulmi: houseDoc.perdhesa?.kulmi || 0,
     },
     sizes,
-    categories: [...categories, ...dynamicCategories].filter(c => c.options.length > 0),
+    categories: mappedCategories,
     layerOrder: Array.from(new Set([
       ...layerOrder,
       ...dynamicCategories.flatMap(cat => cat.options.map(opt => opt.layerKey).filter(Boolean))
     ])),
     defaultSelection: {
       size: "60x160",
+      ...(houseDoc.slug === 'elegance-comble' ? { couverture: "pare-pluie" } : {}),
       ...dynamicDefaultSelections
     },
     optionalCategoryIds: ["dritaret"],
@@ -652,6 +663,15 @@ export function mapHouseDocToConfiguratorData(
       enableFauxPlafondOption: houseDoc.enableFlags?.enableFauxPlafondOption ?? false,
     },
     structureInfo: houseDoc.structureInfo || 'Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant rigidité et stabilité de l’ensemble. Comprend les murs porteurs, murs de séparation et charpente industrielle type fermette. Le prix inclut le transport et le montage sur site sous garantie décennale.',
-    customFields
+    customFields,
+    sliderConfig: houseDoc.sliderConfig || (houseDoc.slug === 'elegance-comble' ? {
+      top: "10%",
+      height: "55%",
+      left: "15%",
+      width: "80%",
+      slantAngle: -40,
+      slantOffset: -57.61,
+      clippableOptions: ["pare-pluie"],
+    } : undefined),
   };
 }

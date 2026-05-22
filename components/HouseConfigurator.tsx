@@ -37,6 +37,14 @@ function detectFacadeType(facadeOptionLabel: string | undefined): "enduit" | "ba
   return "enduit"; // default per WordPress
 }
 
+function isOuterLayer(key: string): boolean {
+  return (
+    key.startsWith("couverture_") ||
+    key.startsWith("terrace_etancheite_") ||
+    key.startsWith("etancheite_")
+  );
+}
+
 export const PERDHESA_LABELS: Record<string, { fr: string; en: string }> = {
   bruto: { fr: "Surface Brute", en: "Gross Surface" },
   neto: { fr: "Surface Nette", en: "Net Surface" },
@@ -57,6 +65,7 @@ export function HouseConfigurator({ config }: HouseConfiguratorProps) {
   const isEn = pathname?.startsWith("/en") || false;
   const [selection, setSelection] = useState(config.defaultSelection);
   const [breakdownOpen, setBreakdownOpen] = useState(false);
+  const [sliderPos, setSliderPos] = useState(50);
   const [activeTab, setActiveTab] = useState<"description" | "specification">("description");
   const [layoutMode, setLayoutMode] = useState<"split" | "narrow" | "clean">("split");
   const [isZoomed, setIsZoomed] = useState(false);
@@ -86,6 +95,7 @@ export function HouseConfigurator({ config }: HouseConfiguratorProps) {
   useEffect(() => {
     setSelection(config.defaultSelection);
     setBreakdownOpen(false);
+    setSliderPos(50);
     setActiveTab("description");
     setFacadeWarning("");
     setMaterialModal(null);
@@ -221,8 +231,11 @@ export function HouseConfigurator({ config }: HouseConfiguratorProps) {
     selectedOptions.forEach((item) => {
       if (item?.option.layerKey) keys.add(item.option.layerKey);
     });
+    if (selection.couverture) {
+      keys.add("couverture_pare_pluie_lattage");
+    }
     return keys;
-  }, [selectedOptions]);
+  }, [selectedOptions, selection.couverture]);
 
   const layers = useMemo(() => {
     const byKey = new Map<string, string>([
@@ -336,14 +349,43 @@ L'équipe Ossa Bois France`;
 
   function selectSize(size: SizeOption) {
     // WordPress: size change = nuclear reset of ALL selections
+    // But preserve couverture default (pare-pluie) if the house has it
     setSelection(() => ({
-      size: size.id
+      size: size.id,
+      ...(config.defaultSelection.couverture ? { couverture: config.defaultSelection.couverture } : {}),
     }));
     setFacadeWarning("");
+    setSliderPos(50);
   }
 
   function selectOption(category: ConfigCategory, option: ConfigOption) {
+    if (["isolation", "outerIsolation", "roof", "fauxPlafond"].includes(category.id)) {
+      setSliderPos(0);
+    } else if (["facade", "couverture", "dritaret"].includes(category.id)) {
+      setSliderPos(100);
+    }
+
     setSelection((current) => {
+      // Special handling for couverture to keep "Pare Pluie et Lattage" sticky
+      if (category.id === "couverture") {
+        const next = { ...current };
+        if (option.id === "pare-pluie") {
+          // Revert to only pare-pluie, removing tiles/bac-acier covering
+          next.couverture = "pare-pluie";
+        } else {
+          // If Tuiles or Bac Acier is clicked
+          if (current.couverture === option.id) {
+            // Toggle off -> revert to pare-pluie
+            next.couverture = "pare-pluie";
+          } else {
+            // Select this covering option
+            next.couverture = option.id;
+          }
+        }
+        delete next.terraceEtancheite;
+        return next;
+      }
+
       const isSelected = current[category.id] === option.id;
 
       // Toggle off if already selected
@@ -454,27 +496,214 @@ L'équipe Ossa Bois France`;
   }
 
   function renderLayerStage(className = "house-layer-stage") {
+    if (!config.sliderConfig) {
+      return (
+        <div
+          id={className === "house-layer-stage" ? "house-layer-stage" : undefined}
+          className={className}
+          style={{ position: "relative", width: "100%", height: "100%" }}
+          aria-label={`Apercu configurateur ${config.name}`}
+        >
+          {/* Background */}
+          <img
+            className="house-layer is-on"
+            data-layer="bg"
+            src={config.backgroundLayer}
+            alt=""
+          />
+
+          {/* Render all house layers in exact order */}
+          {layers.map((layer) => (
+            <img
+              key={layer.key}
+              className={`house-layer${activeLayerKeys.has(layer.key) ? " is-on" : ""}`}
+              data-layer={layer.key}
+              src={layer.src}
+              alt=""
+            />
+          ))}
+        </div>
+      );
+    }
+
+    const sliderTop = config.sliderConfig.top ?? 0;
+    const sliderHeight = config.sliderConfig.height ?? "100%";
+    const sliderLeft = config.sliderConfig.left ?? 0;
+    const sliderWidth = config.sliderConfig.width ?? "100%";
+    const clippableOptions = config.sliderConfig.clippableOptions;
+    const slantOffset = config.sliderConfig?.slantOffset ?? 0;
+    const slantAngle = config.sliderConfig?.slantAngle ?? 0;
+
+    const leftVal = typeof sliderLeft === "string" ? parseFloat(sliderLeft) : sliderLeft;
+    const widthVal = typeof sliderWidth === "string" ? parseFloat(sliderWidth) : sliderWidth;
+    const splitPercent = leftVal + (sliderPos * widthVal) / 100;
+
+    const sliderTopPercent = typeof sliderTop === "string" ? parseFloat(sliderTop) : 0;
+    const sliderHeightPercent = typeof sliderHeight === "string" ? parseFloat(sliderHeight) : 100;
+    const lineCenterYPercent = sliderTopPercent + sliderHeightPercent / 2;
+
+    const activeClippedLayer = [...layers].reverse().find((layer) => {
+      if (!activeLayerKeys.has(layer.key)) return false;
+      if (!isOuterLayer(layer.key)) return false;
+      if (!clippableOptions) return true;
+      const category = config.categories.find((c) =>
+        c.options.some((opt) => opt.layerKey === layer.key)
+      );
+      const selectedOptionId = category ? selection[category.id] : undefined;
+      return selectedOptionId ? clippableOptions.includes(selectedOptionId) : false;
+    });
+
+    const hasClippedLayers = !!activeClippedLayer;
+
     return (
       <div
         id={className === "house-layer-stage" ? "house-layer-stage" : undefined}
         className={className}
+        style={{ position: "relative", width: "100%", height: "100%" }}
         aria-label={`Apercu configurateur ${config.name}`}
       >
+        {/* Background */}
         <img
           className="house-layer is-on"
           data-layer="bg"
           src={config.backgroundLayer}
           alt=""
         />
-        {layers.map((layer) => (
-          <img
-            key={layer.key}
-            className={`house-layer${activeLayerKeys.has(layer.key) ? " is-on" : ""}`}
-            data-layer={layer.key}
-            src={layer.src}
-            alt=""
+
+        {/* Render all house layers in exact order */}
+        {layers.map((layer) => {
+          let isClipped = false;
+          if (isOuterLayer(layer.key)) {
+            if (!clippableOptions) {
+              isClipped = true;
+            } else {
+              const category = config.categories.find((c) =>
+                c.options.some((opt) => opt.layerKey === layer.key)
+              );
+              const selectedOptionId = category ? selection[category.id] : undefined;
+              if (selectedOptionId && clippableOptions.includes(selectedOptionId)) {
+                isClipped = true;
+              }
+            }
+          }
+
+          let clipPathValue = undefined;
+          if (isClipped) {
+            if (sliderPos === 0) {
+              clipPathValue = "polygon(0 0, 0 0, 0 100%, 0 100%)";
+            } else if (sliderPos === 100) {
+              clipPathValue = undefined;
+            } else {
+              const topPercent = splitPercent + slantOffset / 2;
+              const bottomPercent = splitPercent - slantOffset / 2;
+              clipPathValue = `polygon(0 0, ${topPercent}% 0, ${bottomPercent}% 100%, 0 100%)`;
+            }
+          }
+
+          return (
+            <img
+              key={layer.key}
+              className={`house-layer${activeLayerKeys.has(layer.key) ? " is-on" : ""}`}
+              data-layer={layer.key}
+              src={layer.src}
+              alt=""
+              style={
+                isClipped && clipPathValue
+                  ? {
+                      clipPath: clipPathValue,
+                      WebkitClipPath: clipPathValue,
+                    }
+                  : undefined
+              }
+            />
+          );
+        })}
+
+        {/* Slider Line & Handle (only rendered if there is an active clipped layer) */}
+        {hasClippedLayers && activeClippedLayer && (
+          <>
+            {/* Slider Line — SVG exactly matching the clip-path edge */}
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                pointerEvents: "none",
+                zIndex: 8,
+                WebkitMaskImage: `url("${activeClippedLayer.src}")`,
+                maskImage: `url("${activeClippedLayer.src}")`,
+                WebkitMaskSize: "cover",
+                maskSize: "cover",
+                WebkitMaskPosition: "center",
+                maskPosition: "center",
+                WebkitMaskRepeat: "no-repeat",
+                maskRepeat: "no-repeat",
+              }}
+            >
+              <svg
+                style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
+                preserveAspectRatio="none"
+                viewBox="0 0 100 100"
+              >
+                <line
+                  x1={splitPercent + slantOffset / 2}
+                  y1="0"
+                  x2={splitPercent - slantOffset / 2}
+                  y2="100"
+                  stroke="rgba(255, 255, 255, 0.7)"
+                  strokeWidth="0.3"
+                  style={{ filter: "drop-shadow(0 0 2px rgba(0,0,0,0.5))" }}
+                />
+              </svg>
+            </div>
+
+            {/* Handle — positioned at the midpoint of the clip edge, rotated to match line */}
+            {(() => {
+              const topX = splitPercent + slantOffset / 2;
+              const bottomX = splitPercent - slantOffset / 2;
+              const handleX = topX + (bottomX - topX) * (lineCenterYPercent / 100);
+              return (
+                <div
+                  className="house-slider-handle"
+                  style={{
+                    left: `${handleX}%`,
+                    top: `${lineCenterYPercent}%`,
+                    transform: `translate(-50%, -50%) rotate(${slantAngle}deg)`,
+                    zIndex: 9,
+                  }}
+                >
+                  <div className="grip-line" />
+                  <div className="grip-line" />
+                </div>
+              );
+            })()}
+          </>
+        )}
+
+        {/* Transparent Range Input Overlay for Dragging (only active if there is an active clipped layer) */}
+        {hasClippedLayers && (
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value={sliderPos}
+            onChange={(e) => setSliderPos(Number(e.target.value))}
+            style={{
+              position: "absolute",
+              top: sliderTop,
+              height: sliderHeight,
+              left: `${leftVal}%`,
+              width: `${widthVal}%`,
+              opacity: 0,
+              cursor: "ew-resize",
+              zIndex: 9,
+              margin: 0,
+              padding: 0,
+              outline: "none",
+              appearance: "none",
+              WebkitAppearance: "none",
+            }}
           />
-        ))}
+        )}
       </div>
     );
   }
@@ -491,7 +720,10 @@ L'équipe Ossa Bois France`;
         ) : null}
         <div className={`${category.id}-options house-options-grid`}>
           {category.options.map((option) => {
-            const selected = selection[category.id] === option.id;
+            let selected = selection[category.id] === option.id;
+            if (category.id === "couverture" && option.id === "pare-pluie") {
+              selected = selection.couverture === "pare-pluie" || selection.couverture === "tuiles" || selection.couverture === "bac-acier";
+            }
             const unitPrice = selectedSize.id === "60x200" ? option.price200 ?? option.price160 : option.price160;
             return (
               <label
@@ -503,8 +735,8 @@ L'équipe Ossa Bois France`;
                 }}
               >
                 <input
-                  type={category.selectionMode === "checkbox" ? "checkbox" : "radio"}
-                  name={category.inputName}
+                  type={category.id === "couverture" ? "checkbox" : category.selectionMode === "checkbox" ? "checkbox" : "radio"}
+                  name={category.id === "couverture" ? undefined : category.inputName}
                   value={option.id}
                   checked={selected}
                   readOnly
@@ -513,6 +745,9 @@ L'équipe Ossa Bois France`;
                   <div className="option-check">{checkIcon()}</div>
                   <div className="option-details">
                     <span className="option-name">{option.label}</span>
+                    {category.id === "couverture" && option.id === "pare-pluie" && (
+                      <span className="option-included-note">Inclus dans le prix de la structure</span>
+                    )}
                   </div>
                   <button
                     type="button"

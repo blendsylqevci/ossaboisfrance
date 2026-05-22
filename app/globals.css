@@ -944,6 +944,122 @@ img {
   transform: scale(1.05);
 }
 
+/* ── Compare Slider (Before/After) ── */
+.compare-slider {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  cursor: ew-resize;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+.compare-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.compare-img-full {
+  position: absolute;
+  inset: 0;
+}
+
+.compare-clip {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.compare-clip .compare-img {
+  position: absolute;
+  inset: 0;
+}
+
+.compare-divider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 2;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.compare-divider-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+}
+
+.compare-handle {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), 0 0 0 2px rgba(255, 255, 255, 0.6);
+  color: #3d3d3d;
+  pointer-events: auto;
+  cursor: ew-resize;
+  z-index: 3;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.compare-handle:hover {
+  transform: scale(1.12);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.25), 0 0 0 3px rgba(255, 255, 255, 0.7);
+}
+
+.compare-handle svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.compare-label {
+  position: absolute;
+  bottom: 12px;
+  z-index: 2;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  padding: 3px 10px;
+  border-radius: 4px;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.compare-label-left {
+  left: 12px;
+}
+
+.compare-label-right {
+  right: 12px;
+}
+
+/* Disable card hover zoom when slider is present */
+.house-archive-card:hover .compare-slider .compare-img {
+  transform: none;
+}
+
 .house-archive-card-badge {
   position: absolute;
   top: 16px;
@@ -1519,9 +1635,10 @@ img {
   max-width: 100%;
   flex: 1;
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
   cursor: default;
+  overflow: hidden;
 }
 
 .house-stage-click-area {
@@ -1599,11 +1716,11 @@ img {
   .house-layer-stage {
     position: relative;
     width: 100% !important;
-    height: auto !important;
+    height: 100% !important;
     max-width: 100%;
     max-height: 100%;
-    aspect-ratio: 16 / 9;
-    margin: auto;
+    aspect-ratio: unset;
+    margin: 0;
   }
 }
 
@@ -3349,10 +3466,10 @@ img {
     position: sticky;
     top: 74px;
     z-index: 30;
-    gap: 14px;
+    gap: 0;
     border-bottom: 1px solid rgba(21, 23, 17, 0.08);
     background: var(--paper);
-    padding: 10px 0 14px;
+    padding: 0;
   }
 
   .house-main-image {
@@ -7929,39 +8046,34 @@ img {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 28px;
-  height: 56px;
-  background-color: white;
-  border-radius: 14px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  border: 1px solid #cbd5e1;
+  width: 36px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), 0 0 0 2px rgba(255, 255, 255, 0.6);
+  color: #3d3d3d;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 3px;
+  gap: 0;
   pointer-events: none;
 }
 
-.house-slider-handle .grip-line {
-  width: 2px;
-  height: 12px;
-  background-color: #cbd5e1;
-  border-radius: 1px;
+.house-slider-handle svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
 }
 
-/* Mobile Slider Handle - smaller screen */
+/* Mobile Slider Handle */
 @media (max-width: 991px) {
   .house-slider-handle {
-    width: 14px;
-    height: 32px;
-    border-radius: 7px;
-    gap: 1.5px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    width: 28px;
+    height: 28px;
   }
-  .house-slider-handle .grip-line {
-    width: 1px;
-    height: 6px;
+  .house-slider-handle svg {
+    width: 10px;
+    height: 10px;
   }
 }
 

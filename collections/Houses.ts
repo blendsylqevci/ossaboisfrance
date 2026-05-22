@@ -165,6 +165,7 @@ export const Houses: CollectionConfig = {
         { name: 'roof_polystyrene', type: 'relationship', relationTo: 'media' },
         { name: 'roof_roche', type: 'relationship', relationTo: 'media' },
         { name: 'roof_verre', type: 'relationship', relationTo: 'media' },
+        { name: 'roof_bois', type: 'relationship', relationTo: 'media' },
         { name: 'couverture_pare_pluie_lattage', type: 'relationship', relationTo: 'media' },
         { name: 'couverture_tuiles_gouttieres', type: 'relationship', relationTo: 'media' },
         { name: 'couverture_bac_acier_gouttieres', type: 'relationship', relationTo: 'media' },

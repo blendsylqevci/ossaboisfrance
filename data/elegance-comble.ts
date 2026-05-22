@@ -356,6 +356,6 @@ export const eleganceCombleConfiguratorData: HouseConfiguratorData = {
     width: "80%",
     slantAngle: -40,
     slantOffset: -57.61,
-    clippableOptions: ["pare-pluie"]
+    clippableOptions: ["pare-pluie", "tuiles", "bac-acier"]
   }
 };

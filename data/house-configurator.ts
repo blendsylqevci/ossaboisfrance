@@ -60,6 +60,16 @@ export type HouseEnableFlags = {
   enableFauxPlafondOption: boolean;
 };
 
+export type HouseSliderConfig = {
+  top?: string | number;
+  height?: string | number;
+  left?: string | number;
+  width?: string | number;
+  slantAngle?: number;
+  slantOffset?: number;
+  clippableOptions?: string[];
+};
+
 export type HouseConfiguratorData = {
   id: string;
   name: string;
@@ -84,4 +94,7 @@ export type HouseConfiguratorData = {
   facadeDependentCategoryIds?: string[];
   /** Dynamic custom fields (ACF-like) values defined for this house */
   customFields?: Record<string, any>;
+  /** Position and dimensions config for the image comparison slider */
+  sliderConfig?: HouseSliderConfig;
 };
+

@@ -671,8 +671,12 @@ L'équipe Ossa Bois France`;
                     zIndex: 9,
                   }}
                 >
-                  <div className="grip-line" />
-                  <div className="grip-line" />
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="15 18 9 12 15 6" />
+                  </svg>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="9 18 15 12 9 6" />
+                  </svg>
                 </div>
               );
             })()}
@@ -808,7 +812,7 @@ L'équipe Ossa Bois France`;
               aria-label="Changer de disposition"
             >
               <div className="handle-line" />
-              <div className="handle-line" />
+              {layoutMode === "split" && <div className="handle-line" />}
             </button>
             <div
               className="mobile-drawer-handle"

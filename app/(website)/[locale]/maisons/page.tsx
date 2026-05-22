@@ -62,6 +62,7 @@ export default async function HousesPage({ params }: HousesPageProps) {
 
   const houses: CMSHouseItem[] = housesRes.docs.map((doc) => {
     const imageUrl = typeof doc.defaultImage === 'object' ? doc.defaultImage?.url : '';
+    const finalImageUrl = typeof doc.finalImage === 'object' ? doc.finalImage?.url : '';
     const catObj = typeof doc.category === 'object' ? doc.category : null;
     
     const rawPrice = doc.price60x160 || null;
@@ -75,6 +76,7 @@ export default async function HousesPage({ params }: HousesPageProps) {
       categorySlug: catObj?.slug || '',
       description: doc.description || doc.subheading || '',
       image: imageUrl || '',
+      imageBardage: finalImageUrl || '',
       price60x160: finalPrice,
     };
   });

@@ -608,8 +608,14 @@ export function mapHouseDocToConfiguratorData(
     "windows_pvc"
   ];
 
+  const isComble = 
+    ['elegance-comble', 'cristal', 'azura-comble', 'dianne', 'els-house-comble', 'els-house', 'france-comble', 'france-house', 'mountain-valley-villa-comble', 'mountain-valley-villa-house', 'nina-house', 'nina-comble', 'orenda'].includes(houseDoc.slug) ||
+    houseDoc.category_id === 4 ||
+    houseDoc.category === 4 ||
+    (typeof houseDoc.category === 'object' && (houseDoc.category?.id === 4 || houseDoc.category?.slug === 'maison-combles-ammenageable'));
+
   const mappedCategories = [...categories, ...dynamicCategories].filter(c => c.options.length > 0);
-  if (houseDoc.slug === 'elegance-comble') {
+  if (isComble) {
     const fauxPlafondIdx = mappedCategories.findIndex(c => c.id === 'fauxPlafond');
     const roofIdx = mappedCategories.findIndex(c => c.id === 'roof');
     if (fauxPlafondIdx !== -1 && roofIdx !== -1 && fauxPlafondIdx > roofIdx) {
@@ -651,7 +657,7 @@ export function mapHouseDocToConfiguratorData(
     ])),
     defaultSelection: {
       size: "60x160",
-      ...(houseDoc.slug === 'elegance-comble' ? { couverture: "pare-pluie" } : {}),
+      ...(isComble ? { couverture: "pare-pluie" } : {}),
       ...dynamicDefaultSelections
     },
     optionalCategoryIds: ["dritaret"],
@@ -664,14 +670,14 @@ export function mapHouseDocToConfiguratorData(
     },
     structureInfo: houseDoc.structureInfo || 'Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant rigidité et stabilité de l’ensemble. Comprend les murs porteurs, murs de séparation et charpente industrielle type fermette. Le prix inclut le transport et le montage sur site sous garantie décennale.',
     customFields,
-    sliderConfig: houseDoc.sliderConfig || (houseDoc.slug === 'elegance-comble' ? {
+    sliderConfig: houseDoc.sliderConfig || (isComble ? {
       top: "10%",
       height: "55%",
       left: "15%",
       width: "80%",
       slantAngle: -40,
       slantOffset: -57.61,
-      clippableOptions: ["pare-pluie"],
+      clippableOptions: ["pare-pluie", "tuiles", "bac-acier"],
     } : undefined),
   };
 }

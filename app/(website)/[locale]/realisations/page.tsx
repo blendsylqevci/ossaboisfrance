@@ -34,13 +34,13 @@ const projects: Project[] = [
     ]
   },
   {
-    id: "boreale",
-    title: "Maison Boréale",
+    id: "boreale-me-atike",
+    title: "Maison Boréale avec Attique",
     category: "Toiture terrasse",
     location: "Chamonix, France",
     area: "120 m²",
     images: [
-      "https://ossaboisfrance.com/wp-content/uploads/2025/12/7-boreale-scaled.jpg",
+      "/images/houses/Boreale me atike/7 boreale.jpg",
       "https://ossaboisfrance.com/wp-content/uploads/2025/12/australe-1-scaled.jpg",
       "https://ossaboisfrance.com/wp-content/uploads/2025/12/australe-2-scaled.jpg"
     ]

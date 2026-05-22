@@ -53,7 +53,7 @@ export default function HouseLayersScroll({ locale }: HouseLayersScrollProps) {
             {/* 1. Base Structure / Background - Always Active */}
             <div className="hl-layer-image active">
               <Image
-                src="/images/house-layers/calme-atike/1-prapavija.png"
+                src="/images/houses/calme-atike/1-prapavija.png"
                 alt="Fondation"
                 fill
                 sizes="100vw"
@@ -65,7 +65,7 @@ export default function HouseLayersScroll({ locale }: HouseLayersScrollProps) {
             {/* 2. Wooden Frame / Console (Active >= 12%, Slide from Left) */}
             <div className={`hl-layer-image from-left ${progress >= 0.12 ? "active" : ""}`}>
               <Image
-                src="/images/house-layers/calme-atike/2-kons.png"
+                src="/images/houses/calme-atike/2-kons.png"
                 alt="Ossature"
                 fill
                 sizes="100vw"
@@ -77,7 +77,7 @@ export default function HouseLayersScroll({ locale }: HouseLayersScrollProps) {
             {/* 3. Rockwool Insulation (Active >= 24%, Drop from Top) */}
             <div className={`hl-layer-image from-top ${progress >= 0.24 ? "active" : ""}`}>
               <Image
-                src="/images/house-layers/calme-atike/3-lesh-guri.png"
+                src="/images/houses/calme-atike/3-lesh-guri.png"
                 alt="Isolation Laine de Roche"
                 fill
                 sizes="100vw"
@@ -89,7 +89,7 @@ export default function HouseLayersScroll({ locale }: HouseLayersScrollProps) {
             {/* 4. Outer Insulation (Active >= 36%, Rise from Bottom) */}
             <div className={`hl-layer-image from-bottom ${progress >= 0.36 ? "active" : ""}`}>
               <Image
-                src="/images/house-layers/calme-atike/7-lesh-guri-jashte.png"
+                src="/images/houses/calme-atike/7-lesh-guri-jashte.png"
                 alt="Isolation Extérieure"
                 fill
                 sizes="100vw"
@@ -101,7 +101,7 @@ export default function HouseLayersScroll({ locale }: HouseLayersScrollProps) {
             {/* 5. Wood Fiber Sheathing (Active >= 48%, Slide from Right) */}
             <div className={`hl-layer-image from-right ${progress >= 0.48 ? "active" : ""}`}>
               <Image
-                src="/images/house-layers/calme-atike/8-fibra.png"
+                src="/images/houses/calme-atike/8-fibra.png"
                 alt="Panneaux Fibres"
                 fill
                 sizes="100vw"
@@ -113,7 +113,7 @@ export default function HouseLayersScroll({ locale }: HouseLayersScrollProps) {
             {/* 6. Attic Roof Insulation (Active >= 60%, Drop from Top) */}
             <div className={`hl-layer-image from-top ${progress >= 0.60 ? "active" : ""}`}>
               <Image
-                src="/images/house-layers/calme-atike/9-stiropori-atikes.png"
+                src="/images/houses/calme-atike/9-stiropori-atikes.png"
                 alt="Styropor Attique"
                 fill
                 sizes="100vw"
@@ -125,7 +125,7 @@ export default function HouseLayersScroll({ locale }: HouseLayersScrollProps) {
             {/* 7. EPDM Waterproofing (Active >= 72%, Drop from Top) */}
             <div className={`hl-layer-image from-top ${progress >= 0.72 ? "active" : ""}`}>
               <Image
-                src="/images/house-layers/calme-atike/10-epdm.png"
+                src="/images/houses/calme-atike/10-epdm.png"
                 alt="Étanchéité EPDM"
                 fill
                 sizes="100vw"
@@ -137,7 +137,7 @@ export default function HouseLayersScroll({ locale }: HouseLayersScrollProps) {
             {/* 8. White Facade Finish (Active >= 82%, Rise from Bottom) */}
             <div className={`hl-layer-image from-bottom ${progress >= 0.82 ? "active" : ""}`}>
               <Image
-                src="/images/house-layers/calme-atike/11-fasada-e-bardhe.png"
+                src="/images/houses/calme-atike/11-fasada-e-bardhe.png"
                 alt="Crépi Blanc"
                 fill
                 sizes="100vw"
@@ -149,7 +149,7 @@ export default function HouseLayersScroll({ locale }: HouseLayersScrollProps) {
             {/* 9. Premium Aluminium Windows (Active >= 92%, Fly in from Front) */}
             <div className={`hl-layer-image from-front ${progress >= 0.92 ? "active" : ""}`}>
               <Image
-                src="/images/house-layers/calme-atike/13-dritare-alumin.png"
+                src="/images/houses/calme-atike/13-dritare-alumin.png"
                 alt="Menuiserie Aluminium"
                 fill
                 sizes="100vw"

@@ -25,7 +25,7 @@ const featuredSlugs = [
   "emmy-house-etage-toiture-terrasse",
   "emeraude-toiture-terrasse",
   "diademe-toiture-terrasse",
-  "boreale",
+  "boreale-me-atike",
   "australe",
   "ambre-me-atike"
 ];

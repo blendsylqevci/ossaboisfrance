@@ -70,12 +70,12 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     price60x160: 25985
   },
   {
-    slug: "boreale",
-    title: "Boreale Toiture Terrasse",
-    category: "Maison Toiture Terrasse",
+    slug: "boreale-me-atike",
+    title: "Boreale avec Attique",
+    category: "Maison toiture terrasse avec étage",
     description:
-      "BORÉALE est une maison modulaire contemporaine de plain-pied, conçue avec une ossature bois robuste garantissant stabilité, durabilité et excellente performance thermique. Son architecture à toiture plate met en valeur des lignes modernes et épurées, permettant une intégration harmonieuse dans des environnements urbains ou résidentiels contemporains. Grâce à une préfabrication soignée en atelier, BORÉALE assure une installation rapide sur site.",
-    image: "https://ossaboisfrance.com/wp-content/uploads/2025/12/7-boreale-scaled.jpg",
+      "Le modèle Boreale avec Attique séduit par son design contemporain, ses volumes harmonieux et sa structure robuste en ossature bois à haute performance thermique (conforme RE2020). Cette maison modulaire contemporaine propose une toiture terrasse plate avec attique, créant des lignes géométriques épurées qui s'intègrent parfaitement dans les environnements urbains et résidentiels modernes.",
+    image: "/images/houses/Boreale me atike/7 boreale.jpg",
     price60x160: 27462
   },
   {
@@ -102,7 +102,7 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     category: "Maison Toiture Terrasse",
     description:
       "Le modèle Cotage Toiture Terrasse incarne une architecture moderne, épurée et chaleureuse, pensée pour un habitat fonctionnel.",
-    image: "https://ossaboisfrance.com/wp-content/uploads/2026/05/5-cottage-scaled.jpg",
+    image: "/images/houses/cotage me atike/4 cottage.jpg",
     price60x160: 23400
   },
   {
@@ -111,7 +111,7 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     category: "Maison Toiture Terrasse",
     description:
       "Le modèle Diademe Toiture Terrasse reflète une vision contemporaine de l’habitat, où simplicité architecturale, élégance naturelle et confort moderne se rencontrent harmonieusement. Avec sa toiture terrasse aux lignes épurées et sa façade en bois naturel au style raffiné, cette maison offre une esthétique chaleureuse et intemporelle, parfaitement adaptée aux environnements modernes comme aux paysages naturels. Pensée pour maximiser la lumière naturelle et la fluidité des espaces.",
-    image: "https://ossaboisfrance.com/wp-content/uploads/2026/05/7-diademe-scaled.jpg",
+    image: "/images/houses/diademe me atike/7 diademe.jpg",
     price60x160: 26100
   },
   {
@@ -278,12 +278,21 @@ export const houseArchiveItems: HouseArchiveItem[] = [
   },
   {
     slug: "dianne",
-    title: "Dianne",
+    title: "Dianne Comble",
     category: "Maison combles amenageable",
     description:
-      "DIANNE est une maison modulaire contemporaine à étage avec combles aménageables, construite sur une ossature bois.",
+      "Le modèle Dianne Comble allie charme traditionnel et performance énergétique. Avec sa toiture à forte pente abritant des combles aménageables, il offre une flexibilité d'aménagement optimale.",
     image: "https://ossaboisfrance.com/wp-content/uploads/2025/12/dianne-comble-7-scaled.jpg",
     price60x160: 26675
+  },
+  {
+    slug: "elegance-comble",
+    title: "Elegance Comble",
+    category: "Maison combles amenageable",
+    description:
+      "Le modèle Elegance Comble allie charme traditionnel et performance énergétique. Avec sa toiture à forte pente abritant des combles aménageables, il offre une flexibilité d'aménagement optimale pour s'adapter à l'évolution de votre famille. Sa structure robuste en ossature bois à haute efficacité thermique garantit un confort de vie inégalé en toutes saisons.",
+    image: "/images/houses/Elegance Comble/elegance comble 7.jpg",
+    price60x160: 28500
   },
   {
     slug: "mountain-valley-villa",
@@ -296,20 +305,20 @@ export const houseArchiveItems: HouseArchiveItem[] = [
   },
   {
     slug: "nina-house",
-    title: "Nina House",
-    category: "Maison avec étage",
+    title: "Nina comble",
+    category: "Maison combles amenageable",
     description:
       "NINA HOUSE est une maison modulaire contemporaine à deux étages, construite sur une ossature bois robuste.",
-    image: "https://ossaboisfrance.com/wp-content/uploads/2025/12/nina-7-scaled.jpg",
+    image: "/images/houses/nina comble/nina 7.jpg",
     price60x160: 26863
   },
   {
     slug: "orenda",
-    title: "Orenda",
-    category: "Maison avec étage",
+    title: "Orenda comble",
+    category: "Maison combles amenageable",
     description:
       "ORENDA est une maison modulaire contemporaine à deux étages, construite sur une ossature bois robuste.",
-    image: "https://ossaboisfrance.com/wp-content/uploads/2025/12/orenda-7-scaled.jpg",
+    image: "/images/houses/orenda comble/orenda 7.jpg",
     price60x160: 32550
   },
   {
@@ -319,6 +328,33 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     description:
       "Le modèle Escape Villa avec Attique incarne la modernité absolue avec son architecture contemporaine à toiture terrasse et son attique raffiné. Conçue sur une structure en ossature bois de haute performance thermique, elle propose des volumes intérieurs optimisés et baignés de lumière grâce à ses grandes menuiseries. Personnalisable selon vos souhaits avec un bardage mélèze ou un enduit blanc, elle garantit confort, élégance et durabilité conformes aux exigences environnementales RE2020.",
     image: "/images/houses/escape villa me atike/7 ESCAPE VILLA.jpg",
+    price60x160: 1
+  },
+  {
+    slug: "els-house-comble",
+    title: "Els House comble",
+    category: "Maison combles amenageable",
+    description:
+      "Le modèle Els House Comble allie charme traditionnel et performance énergétique. Avec sa toiture à forte pente abritant des combles aménageables, il offre une flexibilité d'aménagement optimale.",
+    image: "/images/houses/Els House comble/els house 7.jpg",
+    price60x160: 1
+  },
+  {
+    slug: "france-comble",
+    title: "France comble",
+    category: "Maison combles amenageable",
+    description:
+      "Le modèle France Comble allie charme traditionnel et performance énergétique. Avec sa toiture à forte pente abritant des combles aménageables, il offre une flexibilité d'aménagement optimale.",
+    image: "/images/houses/France comble/france comble 5.jpg",
+    price60x160: 1
+  },
+  {
+    slug: "mountain-valley-villa-comble",
+    title: "Mountain valley villa comble",
+    category: "Maison combles amenageable",
+    description:
+      "Le modèle Mountain Valley Villa Comble allie charme traditionnel et performance énergétique. Avec sa toiture à forte pente abritant des combles aménageables, il offre une flexibilité d'aménagement optimale.",
+    image: "/images/houses/mountain valley villa comble/Mountain Valley Villa 7.jpg",
     price60x160: 1
   }
 ];

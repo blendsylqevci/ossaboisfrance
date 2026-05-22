@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { formatArchiveStartingPrice } from "@/data/houses-archive";
@@ -19,6 +19,7 @@ export type CMSHouseItem = {
   categorySlug: string;
   description: string;
   image: string;
+  imageBardage: string;
   price60x160: number | null;
 };
 
@@ -28,13 +29,117 @@ type HousesArchiveProps = {
   initialCategories: CMSCategoryItem[];
 };
 
+function CompareSlider({ imageA, imageB, altA, altB }: { imageA: string; imageB: string; altA: string; altB: string }) {
+  const [pos, setPos] = useState(50);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const dragging = useRef(false);
+
+  const updatePos = useCallback((clientX: number) => {
+    const el = containerRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const pct = Math.max(0, Math.min(100, (x / rect.width) * 100));
+    setPos(pct);
+  }, []);
+
+  useEffect(() => {
+    const onMove = (e: MouseEvent | TouchEvent) => {
+      if (!dragging.current) return;
+      e.preventDefault();
+      const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
+      updatePos(clientX);
+    };
+    const onUp = () => { dragging.current = false; };
+
+    window.addEventListener("mousemove", onMove, { passive: false });
+    window.addEventListener("touchmove", onMove, { passive: false });
+    window.addEventListener("mouseup", onUp);
+    window.addEventListener("touchend", onUp);
+
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("touchmove", onMove);
+      window.removeEventListener("mouseup", onUp);
+      window.removeEventListener("touchend", onUp);
+    };
+  }, [updatePos]);
+
+  const onPointerDown = (e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
+    dragging.current = true;
+    const clientX = "touches" in e ? e.touches[0].clientX : (e as React.MouseEvent).clientX;
+    updatePos(clientX);
+  };
+
+  return (
+    <div
+      ref={containerRef}
+      className="compare-slider"
+      onMouseDown={onPointerDown}
+      onTouchStart={onPointerDown}
+    >
+      {/* Bottom layer — Bardage (full) */}
+      <Image
+        className="compare-img compare-img-full"
+        src={imageB}
+        alt={altB}
+        width={900}
+        height={600}
+        sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        priority={false}
+        draggable={false}
+      />
+
+      {/* Top layer — Enduit (clipped) */}
+      <div className="compare-clip" style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}>
+        <Image
+          className="compare-img"
+          src={imageA}
+          alt={altA}
+          width={900}
+          height={600}
+          sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          priority={false}
+          draggable={false}
+        />
+      </div>
+
+      {/* Divider line */}
+      <div className="compare-divider" style={{ left: `${pos}%` }}>
+        <div className="compare-divider-line" />
+        <div className="compare-handle">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </div>
+      </div>
+
+      {/* Labels */}
+      <span className="compare-label compare-label-left" style={{ opacity: pos > 15 ? 1 : 0 }}>Enduit</span>
+      <span className="compare-label compare-label-right" style={{ opacity: pos < 85 ? 1 : 0 }}>Bardage</span>
+    </div>
+  );
+}
+
 function HouseCard({ house, locale }: { house: CMSHouseItem; locale: Locale }) {
   const price = formatArchiveStartingPrice(house.price60x160);
+  const hasBothImages = !!house.image && !!house.imageBardage && house.image !== house.imageBardage;
 
   return (
     <article className="house-archive-card reveal-on-scroll">
       <div className="house-archive-card-image">
-        {house.image && (
+        {hasBothImages ? (
+          <CompareSlider
+            imageA={house.image}
+            imageB={house.imageBardage}
+            altA={`${house.title} — Enduit`}
+            altB={`${house.title} — Bardage`}
+          />
+        ) : house.image ? (
           <Image 
             src={house.image} 
             alt={house.title} 
@@ -43,10 +148,7 @@ function HouseCard({ house, locale }: { house: CMSHouseItem; locale: Locale }) {
             sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw" 
             priority={false}
           />
-        )}
-        <div className="house-archive-card-badge">
-          Structure Bois
-        </div>
+        ) : null}
       </div>
       <div className="house-archive-card-body">
         <span className="house-archive-card-category">{house.categoryName}</span>

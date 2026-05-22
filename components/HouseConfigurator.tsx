@@ -759,14 +759,16 @@ L'équipe Ossa Bois France`;
                       setMaterialModal({ category, option, unitPrice });
                     }}
                   >
-                    <Image
-                      className="option-mini-image"
-                      src={option.thumbnail ?? getEffectiveLayer(category, option)}
-                      alt=""
-                      width={50}
-                      height={50}
-                      aria-hidden="true"
-                    />
+                    {(option.thumbnail || getEffectiveLayer(category, option)) ? (
+                      <Image
+                        className="option-mini-image"
+                        src={option.thumbnail ?? getEffectiveLayer(category, option)}
+                        alt=""
+                        width={50}
+                        height={50}
+                        aria-hidden="true"
+                      />
+                    ) : null}
                   </button>
                 </div>
               </label>

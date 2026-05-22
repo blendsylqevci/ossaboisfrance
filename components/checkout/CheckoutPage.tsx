@@ -17,15 +17,15 @@ type StoredSelection = {
     image?: string;
   };
   currentImage?: string;
-  isolation?: { value?: string };
-  outerIsolation?: { value?: string };
-  facade?: { value?: string };
-  etancheite?: { value?: string };
-  toiture?: { value?: string };
-  etancheiteTerrasse?: { value?: string };
-  strukturaPlloqes?: { value?: string };
-  izolimiPlloqes?: { value?: string };
-  dritaret?: { value?: string };
+  isolation?: { value?: string; price?: string; image?: string };
+  outerIsolation?: { value?: string; price?: string; image?: string };
+  facade?: { value?: string; price?: string; image?: string };
+  etancheite?: { value?: string; price?: string; image?: string };
+  toiture?: { value?: string; price?: string; image?: string };
+  etancheiteTerrasse?: { value?: string; price?: string; image?: string };
+  strukturaPlloqes?: { value?: string; price?: string; image?: string };
+  izolimiPlloqes?: { value?: string; price?: string; image?: string };
+  dritaret?: { value?: string; price?: string; image?: string };
   totalPrice?: number;
   priceBreakdown?: Array<{ label: string; value: number }>;
   perdhesa?: Record<string, number | string>;
@@ -209,6 +209,21 @@ export function CheckoutPage() {
 
   const basePrice = selection?.totalPrice ?? 0;
   const total = useMemo(() => basePrice + TRANSPORTATION_COST, [basePrice]);
+
+  const hasCustomizations = useMemo(() => {
+    if (!selection) return false;
+    return !!(
+      selection.isolation?.value ||
+      selection.outerIsolation?.value ||
+      selection.facade?.value ||
+      selection.toiture?.value ||
+      selection.dritaret?.value ||
+      selection.etancheite?.value ||
+      selection.etancheiteTerrasse?.value ||
+      selection.strukturaPlloqes?.value ||
+      selection.izolimiPlloqes?.value
+    );
+  }, [selection]);
 
   const t = {
     title: isEn ? "Finalize Your Wooden House Project" : "Finalisation de votre projet bois",
@@ -646,39 +661,112 @@ export function CheckoutPage() {
                       </div>
 
                       {/* Displaying configured customizations */}
-                      <div className="specs-table-title">{t.selectedCustoms}</div>
-                      <div className="configured-options-list">
-                        {selection.isolation?.value && (
-                          <div className="config-option-item">
-                            <span>{isEn ? "Insulation" : "Isolation"}</span>
-                            <span>{selection.isolation.value}</span>
+                      {hasCustomizations && (
+                        <>
+                          <div className="specs-table-title">{t.selectedCustoms}</div>
+                          <div className="configured-options-list">
+                            {selection.isolation?.value && (
+                              <div className="config-option-item">
+                                <span>
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="config-item-svg">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.751h-.152c-3.196 0-6.1-1.249-8.25-3.286zm0 30v-30z" />
+                                  </svg>
+                                  {isEn ? "Insulation" : "Isolation"}
+                                </span>
+                                <span>{selection.isolation.value}</span>
+                              </div>
+                            )}
+                            {selection.outerIsolation?.value && (
+                              <div className="config-option-item">
+                                <span>
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="config-item-svg">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.751h-.152c-3.196 0-6.1-1.249-8.25-3.286zm0 30v-30z" />
+                                  </svg>
+                                  {isEn ? "Ext. Insulation" : "Isolation Ext."}
+                                </span>
+                                <span>{selection.outerIsolation.value}</span>
+                              </div>
+                            )}
+                            {selection.facade?.value && (
+                              <div className="config-option-item">
+                                <span>
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="config-item-svg">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M12.75 7.5h.008v.008h-.008V7.5zm0 2.25h.008v.008h-.008V9.75zM3.75 21h.008v-.008H3.75V21zm0-3h.008v-.008H3.75V18zm0-3h.008v-.008H3.75V15zm0-3h.008v-.008H3.75V12zm0-3h.008v-.008H3.75V9zm0-3h.008v-.008H3.75V6zm0-3h.008v-.008H3.75V3z" />
+                                  </svg>
+                                  {isEn ? "Facade" : "Façade"}
+                                </span>
+                                <span>{selection.facade.value}</span>
+                              </div>
+                            )}
+                            {selection.toiture?.value && (
+                              <div className="config-option-item">
+                                <span>
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="config-item-svg">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                                  </svg>
+                                  {isEn ? "Roof Cover" : "Couverture"}
+                                </span>
+                                <span>{selection.toiture.value}</span>
+                              </div>
+                            )}
+                            {selection.dritaret?.value && (
+                              <div className="config-option-item">
+                                <span>
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="config-item-svg">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3.75v16.5m16.5-16.5v16.5m-16.5-16.5h16.5m-16.5 16.5h16.5M12 3.75v16.5M3.75 12h16.5" />
+                                  </svg>
+                                  {isEn ? "Windows" : "Menuiseries"}
+                                </span>
+                                <span>{selection.dritaret.value}</span>
+                              </div>
+                            )}
+                            {selection.etancheite?.value && (
+                              <div className="config-option-item">
+                                <span>
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="config-item-svg">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                                  </svg>
+                                  {isEn ? "EPDM Waterproofing" : "Étanchéité EPDM"}
+                                </span>
+                                <span>{selection.etancheite.value}</span>
+                              </div>
+                            )}
+                            {selection.etancheiteTerrasse?.value && (
+                              <div className="config-option-item">
+                                <span>
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="config-item-svg">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-.778.099-1.533.284-2.253" />
+                                  </svg>
+                                  {isEn ? "Attic Isolation" : "Isolation de l'attique"}
+                                </span>
+                                <span>{selection.etancheiteTerrasse.value}</span>
+                              </div>
+                            )}
+                            {selection.strukturaPlloqes?.value && (
+                              <div className="config-option-item">
+                                <span>
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="config-item-svg">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.751h-.152c-3.196 0-6.1-1.249-8.25-3.286zm0 30v-30z" />
+                                  </svg>
+                                  {isEn ? "Roof Insulation" : "Isolation de la toiture"}
+                                </span>
+                                <span>{selection.strukturaPlloqes.value}</span>
+                              </div>
+                            )}
+                            {selection.izolimiPlloqes?.value && (
+                              <div className="config-option-item">
+                                <span>
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="config-item-svg">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-.778.099-1.533.284-2.253" />
+                                  </svg>
+                                  {isEn ? "Faux Plafond" : "Faux plafond"}
+                                </span>
+                                <span>{selection.izolimiPlloqes.value}</span>
+                              </div>
+                            )}
                           </div>
-                        )}
-                        {selection.outerIsolation?.value && (
-                          <div className="config-option-item">
-                            <span>{isEn ? "Ext. Insulation" : "Isolation Ext."}</span>
-                            <span>{selection.outerIsolation.value}</span>
-                          </div>
-                        )}
-                        {selection.facade?.value && (
-                          <div className="config-option-item">
-                            <span>{isEn ? "Facade" : "Façade"}</span>
-                            <span>{selection.facade.value}</span>
-                          </div>
-                        )}
-                        {selection.toiture?.value && (
-                          <div className="config-option-item">
-                            <span>{isEn ? "Roof Cover" : "Couverture"}</span>
-                            <span>{selection.toiture.value}</span>
-                          </div>
-                        )}
-                        {selection.dritaret?.value && (
-                          <div className="config-option-item">
-                            <span>{isEn ? "Windows" : "Menuiseries"}</span>
-                            <span>{selection.dritaret.value}</span>
-                          </div>
-                        )}
-                      </div>
+                        </>
+                      )}
 
                       {/* Displaying architectural specifications if available */}
                       {selection.perdhesa && Object.keys(selection.perdhesa).length > 0 && (
@@ -692,7 +780,12 @@ export function CheckoutPage() {
                                 const label = translation ? (isEn ? translation.en : translation.fr) : key.replaceAll("_", " ");
                                 return (
                                   <div className="config-option-item" key={key}>
-                                    <span>{label}</span>
+                                    <span>
+                                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="config-item-svg">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                                      </svg>
+                                      {label}
+                                    </span>
                                     <span>{value} m²</span>
                                   </div>
                                 );

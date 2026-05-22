@@ -1,0 +1,22 @@
+# Rules for House Uploading and Configuration
+
+When the user uploads a house photo and provides the house name:
+
+1. **Category Identification**: Inspect the uploaded photo to identify which category it belongs to:
+   - Maison Toiture Terrasse (Flat roof)
+   - Maison Toiture Terrasse avec Étage (Flat roof with upper floor / sans faîtage)
+   - Maison de Plain-pied (Single-story)
+   - Maison avec Combles Aménageables (Attic space / pitched roof)
+   - Maison avec Étage (Two-story with pitched roof)
+
+2. **Check Existing Dimensions & Data**: Search the codebase (specifically `data/houses-archive.ts` or database collections) for the house name:
+   - **If existing dimensions/data are found**:
+     - Retain those dimensions.
+     - Inspect the layer image files. Ensure all layers/photos for that house are present and correct.
+     - If any photos are missing, add/configure them.
+   - **If no existing data is found**:
+     - Assign the identified category.
+     - Generate a professional, sufficient description in French.
+     - Leave the prices and dimensions blank or set to `1` (the user will manually enter them later).
+
+3. **Layer Image Consistency**: No layer photos should be missing or extra. Every layer image must map to its named material (e.g., background, construction/ossature, laine de roche, laine de verre, laine de bois, EPDM, white facade, cladding, aluminium windows, PVC windows, etc.).

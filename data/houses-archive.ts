@@ -43,15 +43,6 @@ export const houseArchiveCategories: HouseArchiveCategory[] = [
 
 export const houseArchiveItems: HouseArchiveItem[] = [
   {
-    slug: "ambre",
-    title: "Ambre",
-    category: "Maison Toiture Terrasse",
-    description:
-      "AMBRE est une maison modulaire contemporaine de plain-pied, conçue avec une ossature bois robuste et une finition configurable.",
-    image: "/images/houses/ambre/7 ambre.jpg",
-    price60x160: 25985
-  },
-  {
     slug: "a-frame-house",
     title: "A frame house",
     category: "Maison Toiture Terrasse",
@@ -70,12 +61,12 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     price60x160: 20716
   },
   {
-    slug: "ambre-sans-faitage",
-    title: "Ambre Toiture Terrasse",
-    category: "Maison Toiture Terrasse",
+    slug: "ambre-me-atike",
+    title: "Ambre avec Attique",
+    category: "Maison toiture terrasse avec étage",
     description:
-      "AMBRE attique est une maison modulaire contemporaine de plain-pied, conçue avec une ossature bois robuste garantissant durabilité, stabilité et excellente performance thermique. Son architecture à toiture plate avec attique met en valeur des lignes modernes et épurées, tout en assurant une parfaite intégration dans des environnements urbains ou résidentiels contemporains. Grâce à une préfabrication soignée en atelier, AMBRE avec attique permet une installation rapide sur site.",
-    image: "https://ossaboisfrance.com/wp-content/uploads/2025/12/7-ambre-scaled.jpg",
+      "Le modèle Ambre avec Attique réunit l'élégance d'une toiture terrasse plate à la fonctionnalité d'un attique moderne. Bâtie sur une structure robuste en ossature bois à haute performance énergétique (conforme RE2020), cette maison modulaire contemporaine offre des volumes intérieurs baignés de lumière grâce à ses larges ouvertures. Entièrement configurable, elle permet d'associer un enduit blanc épuré ou un bardage naturel en mélèze, offrant une intégration architecturale harmonieuse.",
+    image: "/images/houses/ambre me atike/7 ambre.jpg",
     price60x160: 25985
   },
   {
@@ -97,12 +88,12 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     price60x160: 31292
   },
   {
-    slug: "asebra",
-    title: "ASEBRA Toiture Terrasse",
-    category: "Maison Toiture Terrasse",
+    slug: "asebra-me-atike",
+    title: "Asebra avec Attique",
+    category: "Maison toiture terrasse avec étage",
     description:
-      "Le modèle ASEBRA Toiture Terrasse séduit par son design contemporain, ses volumes harmonieux et son confort de vie.",
-    image: "https://ossaboisfrance.com/wp-content/uploads/2026/04/5-asebra-scaled.jpg",
+      "Le modèle Asebra avec Attique séduit par son design contemporain, ses volumes harmonieux et sa structure robuste en ossature bois à haute performance thermique. Cette maison modulaire contemporaine propose une toiture terrasse plate avec attique, créant des lignes géométriques épurées qui s'intègrent parfaitement dans les environnements urbains et résidentiels modernes.",
+    image: "/images/houses/asebra me atike/4 asebra.jpg",
     price60x160: 28693
   },
   {

@@ -58,8 +58,8 @@ const projects: Project[] = [
     ]
   },
   {
-    id: "ambre",
-    title: "Maison Ambre",
+    id: "ambre-me-atike",
+    title: "Maison Ambre avec Attique",
     category: "Toiture terrasse",
     location: "Haute-Savoie, France",
     area: "135 m²",

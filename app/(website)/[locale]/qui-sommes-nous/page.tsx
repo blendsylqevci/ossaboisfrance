@@ -152,7 +152,7 @@ export default function AboutPage({ params }: AboutPageProps) {
                 {/* 01. Structure */}
                 <div className="how-step-card">
                   <Image
-                    src="https://ossaboisfrance.com/wp-content/uploads/2026/04/2.-kons-scaled.png"
+                    src="/images/houses/asebra me atike/2. kons.png"
                     alt="Structure"
                     width={200}
                     height={150}
@@ -164,7 +164,7 @@ export default function AboutPage({ params }: AboutPageProps) {
                 {/* 02. Laine de verre */}
                 <div className="how-step-card">
                   <Image
-                    src="https://ossaboisfrance.com/wp-content/uploads/2026/04/3.-lesh-guri-scaled.png"
+                    src="/images/houses/asebra me atike/3. lesh guri.png"
                     alt="Laine de verre"
                     width={200}
                     height={150}
@@ -176,7 +176,7 @@ export default function AboutPage({ params }: AboutPageProps) {
                 {/* 03. Laine de roche */}
                 <div className="how-step-card">
                   <Image
-                    src="https://ossaboisfrance.com/wp-content/uploads/2026/04/4.-lesh-druri-scaled.png"
+                    src="/images/houses/asebra me atike/4. lesh druri.png"
                     alt="Laine de roche"
                     width={200}
                     height={150}
@@ -188,7 +188,7 @@ export default function AboutPage({ params }: AboutPageProps) {
                 {/* 04. Laine de bois */}
                 <div className="how-step-card">
                   <Image
-                    src="https://ossaboisfrance.com/wp-content/uploads/2026/04/5.-lesh-xhami-scaled.png"
+                    src="/images/houses/asebra me atike/5. lesh xhami.png"
                     alt="Laine de bois"
                     width={200}
                     height={150}
@@ -200,7 +200,7 @@ export default function AboutPage({ params }: AboutPageProps) {
                 {/* 05. EPS Extérieur */}
                 <div className="how-step-card">
                   <Image
-                    src="https://ossaboisfrance.com/wp-content/uploads/2026/04/6.-stiropori-scaled.png"
+                    src="/images/houses/asebra me atike/6. stiropori.png"
                     alt="EPS Extérieur"
                     width={200}
                     height={150}
@@ -212,7 +212,7 @@ export default function AboutPage({ params }: AboutPageProps) {
                 {/* 06. Fibre de bois */}
                 <div className="how-step-card">
                   <Image
-                    src="https://ossaboisfrance.com/wp-content/uploads/2026/04/7.-fibra-scaled.png"
+                    src="/images/houses/asebra me atike/7. fibra.png"
                     alt="Fibre de bois"
                     width={200}
                     height={150}
@@ -224,7 +224,7 @@ export default function AboutPage({ params }: AboutPageProps) {
                 {/* 07. Roche Extérieure */}
                 <div className="how-step-card">
                   <Image
-                    src="https://ossaboisfrance.com/wp-content/uploads/2026/04/8.-leshi-gurit-jashte-scaled.png"
+                    src="/images/houses/asebra me atike/8. leshi gurit jashte.png"
                     alt="Roche Extérieure"
                     width={200}
                     height={150}
@@ -236,7 +236,7 @@ export default function AboutPage({ params }: AboutPageProps) {
                 {/* 08. Toit EPDM */}
                 <div className="how-step-card">
                   <Image
-                    src="https://ossaboisfrance.com/wp-content/uploads/2026/04/10.-epdm-1-scaled.png"
+                    src="/images/houses/asebra me atike/10. epdm.png"
                     alt="Toit EPDM"
                     width={200}
                     height={150}
@@ -248,7 +248,7 @@ export default function AboutPage({ params }: AboutPageProps) {
                 {/* 09. Enduit Blanc */}
                 <div className="how-step-card">
                   <Image
-                    src="https://ossaboisfrance.com/wp-content/uploads/2026/04/11.-fasada-e-bardhe-1-scaled.png"
+                    src="/images/houses/asebra me atike/11. fasada e bardhe.png"
                     alt="Enduit Blanc"
                     width={200}
                     height={150}
@@ -260,7 +260,7 @@ export default function AboutPage({ params }: AboutPageProps) {
                 {/* 10. Bardage Bois */}
                 <div className="how-step-card">
                   <Image
-                    src="https://ossaboisfrance.com/wp-content/uploads/2026/04/12.-fasada-arish-1-scaled.png"
+                    src="/images/houses/asebra me atike/12. fasada arish.png"
                     alt="Bardage Bois"
                     width={200}
                     height={150}
@@ -272,7 +272,7 @@ export default function AboutPage({ params }: AboutPageProps) {
                 {/* 11. Fenêtres Alu */}
                 <div className="how-step-card">
                   <Image
-                    src="https://ossaboisfrance.com/wp-content/uploads/2026/04/13.-dritaret-alumin-1-scaled.png"
+                    src="/images/houses/asebra me atike/13. dritaret alumin.png"
                     alt="Fenêtres Alu"
                     width={200}
                     height={150}
@@ -284,7 +284,7 @@ export default function AboutPage({ params }: AboutPageProps) {
                 {/* 12. Maison Finie */}
                 <div className="how-step-card how-final-card">
                   <Image
-                    src="https://ossaboisfrance.com/wp-content/uploads/2026/04/5-asebra-scaled.jpg"
+                    src="/images/houses/asebra me atike/5 asebra.jpg"
                     alt="Maison Finie"
                     width={200}
                     height={150}

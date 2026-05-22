@@ -27,7 +27,7 @@ const featuredSlugs = [
   "diademe-toiture-terrasse",
   "boreale",
   "australe",
-  "ambre-sans-faitage"
+  "ambre-me-atike"
 ];
 
 const whyCards = [

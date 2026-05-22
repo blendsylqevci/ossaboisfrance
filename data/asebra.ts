@@ -1,23 +1,40 @@
-import { ambreCategories, layerOrder } from "@/data/ambre";
 import { ConfigCategory, HouseConfiguratorData, SizeOption } from "@/data/house-configurator";
 
+const asebraLayerOrder = [
+  "konstruksioni",
+  "iso_inter_verre",
+  "iso_inter_roche",
+  "iso_inter_bois",
+  "iso_ext_roche_comprimee",
+  "iso_ext_polystyrene",
+  "iso_ext_fibre",
+  "terrace_etancheite_epdm",
+  "etancheite_epdm",
+  "facade_blanche",
+  "facade_bardage",
+  "windows_aluminium",
+  "windows_pvc"
+] as const;
+
 const asebraLayers = {
-  backgroundLayer: "https://ossaboisfrance.com/wp-content/uploads/2026/04/1.-Prapavija-scaled.png",
-  constructionLayer: "https://ossaboisfrance.com/wp-content/uploads/2026/04/2.-kons-scaled.png",
-  iso_inter_verre: "https://ossaboisfrance.com/wp-content/uploads/2026/04/3.-lesh-guri-scaled.png",
-  iso_inter_roche: "https://ossaboisfrance.com/wp-content/uploads/2026/04/4.-lesh-druri-scaled.png",
-  iso_inter_bois: "https://ossaboisfrance.com/wp-content/uploads/2026/04/5.-lesh-xhami-scaled.png",
-  iso_ext_roche_comprimee: "https://ossaboisfrance.com/wp-content/uploads/2026/04/6.-stiropori-scaled.png",
-  iso_ext_polystyrene: "https://ossaboisfrance.com/wp-content/uploads/2026/04/7.-fibra-scaled.png",
-  iso_ext_fibre: "https://ossaboisfrance.com/wp-content/uploads/2026/04/8.-leshi-gurit-jashte-scaled.png",
-  etancheite_epdm: "https://ossaboisfrance.com/wp-content/uploads/2026/04/10.-epdm-1-scaled.png",
-  facade_blanche: "https://ossaboisfrance.com/wp-content/uploads/2026/04/11.-fasada-e-bardhe-1-scaled.png",
-  facade_bardage: "https://ossaboisfrance.com/wp-content/uploads/2026/04/12.-fasada-arish-1-scaled.png",
-  windows_aluminium: "https://ossaboisfrance.com/wp-content/uploads/2026/04/13.-dritaret-alumin-1-scaled.png",
-  windows_pvc: "https://ossaboisfrance.com/wp-content/uploads/2026/04/14.-dritaret-pvc-1-scaled.png"
+  backgroundLayer: "/images/houses/asebra me atike/1. Prapavija.png",
+  constructionLayer: "/images/houses/asebra me atike/2. kons.png",
+  iso_inter_verre: "/images/houses/asebra me atike/5. lesh xhami.png",
+  iso_inter_roche: "/images/houses/asebra me atike/3. lesh guri.png",
+  iso_inter_bois: "/images/houses/asebra me atike/4. lesh druri.png",
+  iso_ext_roche_comprimee: "/images/houses/asebra me atike/8. leshi gurit jashte.png",
+  iso_ext_polystyrene: "/images/houses/asebra me atike/6. stiropori.png",
+  iso_ext_fibre: "/images/houses/asebra me atike/7. fibra.png",
+  terrace_etancheite_epdm: "/images/houses/asebra me atike/9. stiropori atikes.png",
+  etancheite_epdm: "/images/houses/asebra me atike/10. epdm.png",
+  facade_blanche: "/images/houses/asebra me atike/11. fasada e bardhe.png",
+  facade_bardage: "/images/houses/asebra me atike/12. fasada arish.png",
+  windows_aluminium: "/images/houses/asebra me atike/13. dritaret alumin.png",
+  windows_pvc: "/images/houses/asebra me atike/14. dritaret pvc.png"
 } as const;
 
-const asebraDefaultImage = "https://ossaboisfrance.com/wp-content/uploads/2026/04/5-asebra-scaled.jpg";
+const asebraDefaultImage = "/images/houses/asebra me atike/4 asebra.jpg";
+const asebraFinalImage = "/images/houses/asebra me atike/5 asebra.jpg";
 
 const asebraSizes: SizeOption[] = [
   {
@@ -30,39 +47,190 @@ const asebraSizes: SizeOption[] = [
     id: "60x200",
     label: "60x200",
     price: 30193,
-    image: asebraDefaultImage
+    image: asebraFinalImage
   }
 ];
 
-const asebraCategories: ConfigCategory[] = ambreCategories.map((category) => ({
-  ...category,
-  options: category.options
-    .filter((option) => option.layerKey in asebraLayers)
-    .map((option) => {
-      const layer = asebraLayers[option.layerKey as keyof typeof asebraLayers];
-      const isAluminium = option.layerKey === "windows_aluminium";
-      const isPvc = option.layerKey === "windows_pvc";
-
-      return {
-        ...option,
-        price160: isAluminium ? 7331 : isPvc ? 5778 : option.price160,
-        price200: isAluminium ? 7331 : isPvc ? 5778 : option.price200,
-        layer
-      };
-    })
-}));
+const asebraCategories: ConfigCategory[] = [
+  {
+    id: "isolation",
+    inputName: "house_isolation",
+    label: "Isolation intermédiaire",
+    description: "Choix de l'isolation entre les éléments de structure.",
+    priceMode: "wall_m2",
+    selectionMode: "radio-toggle",
+    options: [
+      {
+        id: "laine-verre",
+        label: "Laine de verre",
+        price160: 11.15,
+        price200: 12.25,
+        layerKey: "iso_inter_verre",
+        layer: asebraLayers.iso_inter_verre,
+        materialDescription: "Solution d'isolation légère et efficace pour les parois de la structure."
+      },
+      {
+        id: "laine-roche",
+        label: "Laine de roche",
+        price160: 12.5,
+        price200: 14.0,
+        layerKey: "iso_inter_roche",
+        layer: asebraLayers.iso_inter_roche,
+        materialDescription: "Isolation minérale avec une bonne tenue thermique et acoustique."
+      },
+      {
+        id: "laine-bois",
+        label: "Laine de bois",
+        price160: 16.5,
+        price200: 18.0,
+        layerKey: "iso_inter_bois",
+        layer: asebraLayers.iso_inter_bois,
+        materialDescription: "Isolation biosourcée, choisie pour le confort thermique et l'inertie naturelle."
+      }
+    ]
+  },
+  {
+    id: "outerIsolation",
+    inputName: "house_outer_isolation",
+    label: "Isolation extérieure",
+    description: "Isolation appliquée depuis l'extérieur.",
+    priceMode: "wall_m2",
+    selectionMode: "radio-toggle",
+    options: [
+      {
+        id: "laine-roche-ext",
+        label: "Laine de roche comprimée",
+        price160: 15.9,
+        price200: 17.4,
+        layerKey: "iso_ext_roche_comprimee",
+        layer: asebraLayers.iso_ext_roche_comprimee,
+        materialDescription: "Isolation extérieure dense en laine de roche comprimée, robuste et stable."
+      },
+      {
+        id: "polystyrene-ext",
+        label: "Polystyrene",
+        price160: 10.15,
+        price200: 11.4,
+        layerKey: "iso_ext_polystyrene",
+        layer: asebraLayers.iso_ext_polystyrene,
+        materialDescription: "Isolation extérieure en polystyrène pour une enveloppe continue et un coût maîtrisé."
+      },
+      {
+        id: "fibre",
+        label: "Fibre",
+        price160: 14.2,
+        price200: 15.6,
+        layerKey: "iso_ext_fibre",
+        layer: asebraLayers.iso_ext_fibre,
+        materialDescription: "Isolation extérieure biosourcée haute densité en fibre de bois."
+      }
+    ]
+  },
+  {
+    id: "terraceEtancheite",
+    inputName: "house_terrace_etancheite",
+    label: "Isolation de l'attique",
+    description: "Polystyrène isolant pour l'attique de la toiture terrasse.",
+    priceMode: "roof_m2",
+    selectionMode: "radio-toggle",
+    options: [
+      {
+        id: "attic-polystyrene",
+        label: "Polystyrène d'attique",
+        price160: 15.5,
+        price200: 17.0,
+        layerKey: "terrace_etancheite_epdm",
+        layer: asebraLayers.terrace_etancheite_epdm,
+        materialDescription: "Couche de polystyrène isolant sur l'attique."
+      }
+    ]
+  },
+  {
+    id: "etancheite",
+    inputName: "house_etancheite",
+    label: "Étanchéité EPDM",
+    description: "Membrane d'étanchéité pour la toiture terrasse.",
+    priceMode: "roof_m2",
+    selectionMode: "radio-toggle",
+    options: [
+      {
+        id: "epdm",
+        label: "Membrane EPDM",
+        price160: 25.9,
+        price200: 27.5,
+        layerKey: "etancheite_epdm",
+        layer: asebraLayers.etancheite_epdm,
+        materialDescription: "Membrane synthétique monocouche offrant une étanchéité totale et durable."
+      }
+    ]
+  },
+  {
+    id: "facade",
+    inputName: "house_facade",
+    label: "Finition façade",
+    description: "Revêtement extérieur de la maison.",
+    priceMode: "wall_m2",
+    selectionMode: "radio-toggle",
+    options: [
+      {
+        id: "blanc",
+        label: "Enduit blanc",
+        price160: 0,
+        price200: 0,
+        layerKey: "facade_blanche",
+        layer: asebraLayers.facade_blanche,
+        materialDescription: "Finition enduit blanc traditionnel."
+      },
+      {
+        id: "bardage",
+        label: "Bardage bois mélèze",
+        price160: 16.9,
+        price200: 18.5,
+        layerKey: "facade_bardage",
+        layer: asebraLayers.facade_bardage,
+        materialDescription: "Clin de bardage en bois de mélèze naturel."
+      }
+    ]
+  },
+  {
+    id: "dritaret",
+    inputName: "house_dritaret",
+    label: "Menuiseries extérieures",
+    description: "Fenêtres et portes extérieures.",
+    priceMode: "fixed",
+    selectionMode: "radio-toggle",
+    options: [
+      {
+        id: "aluminium",
+        label: "Menuiseries Aluminium",
+        price160: 7331,
+        price200: 7331,
+        layerKey: "windows_aluminium",
+        layer: asebraLayers.windows_aluminium,
+        materialDescription: "Menuiseries en aluminium thermolaqué de couleur anthracite."
+      },
+      {
+        id: "pvc",
+        label: "Menuiseries PVC",
+        price160: 5778,
+        price200: 5778,
+        layerKey: "windows_pvc",
+        layer: asebraLayers.windows_pvc,
+        materialDescription: "Menuiseries PVC haute performance d'isolation."
+      }
+    ]
+  }
+];
 
 export const asebraConfiguratorData: HouseConfiguratorData = {
-  id: "asebra",
-  name: "ASEBRA Toiture Terrasse",
-  category: "Maison Toiture Terrasse",
-  subheading: "ASEBRA Toiture Terrasse - Une architecture moderne pensee pour une vie elegante et apaisante.",
-  description:
-    "Le modele ASEBRA Toiture Terrasse seduit par son design contemporain, ses volumes harmonieux et son esthetique minimaliste inspiree de l'architecture moderne europeenne. Concue pour offrir confort, luminosite et fonctionnalite, cette maison a toiture terrasse propose des espaces ouverts et accueillants, parfaitement adaptes a un mode de vie moderne et raffine.",
-  specification:
-    "Donnees importees depuis WordPress/ACF. Pour ce modele, la surface EPDM utilise `perdhesa_kulmi` car `perdhesa_pllaka_e_kulmit` est vide dans l'export WordPress.",
+  id: "asebra-me-atike",
+  name: "Asebra avec Attique",
+  category: "Maison toiture terrasse avec étage",
+  subheading: "Découvrez le modèle Asebra avec Attique, une réalisation modulaire d'exception dotée d'une architecture plate contemporaine et d'une structure bois performante.",
+  description: "Le modèle Asebra avec Attique séduit par son design contemporain, ses volumes harmonieux et sa structure robuste en ossature bois à haute performance thermique (conforme RE2020). Cette maison modulaire haut de gamme propose un toit plat avec attique, créant des lignes géométriques épurées qui s'intègrent à la perfection dans les environnements urbains et résidentiels modernes. Entièrement personnalisable, elle allie confort et élégance architecturale.",
+  specification: "Fiche technique de l'Asebra avec Attique. Toiture plate avec isolation d'attique en polystyrène et membrane d'étanchéité EPDM.",
   defaultImage: asebraDefaultImage,
-  finalImage: asebraDefaultImage,
+  finalImage: asebraFinalImage,
   backgroundLayer: asebraLayers.backgroundLayer,
   constructionLayer: asebraLayers.constructionLayer,
   marginPercent: 40,
@@ -76,7 +244,7 @@ export const asebraConfiguratorData: HouseConfiguratorData = {
   },
   sizes: asebraSizes,
   categories: asebraCategories,
-  layerOrder,
+  layerOrder: asebraLayerOrder,
   defaultSelection: {
     size: "60x160"
   },
@@ -84,10 +252,9 @@ export const asebraConfiguratorData: HouseConfiguratorData = {
   enableFlags: {
     enableRoofOption: false,
     enableEtancheiteOption: true,
-    enableEtancheiteTerrasse: false,
+    enableEtancheiteTerrasse: true,
     enableCouvertureOption: false,
     enableFauxPlafondOption: false
   },
-  structureInfo:
-    "Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant rigidité et stabilité de l’ensemble. Comprend les murs porteurs, murs de séparation et charpente industrielle type fermette. Le prix inclut le transport et le montage sur site sous garantie décennale."
+  structureInfo: "Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant rigidité et stabilité de l'ensemble. Comprend les murs porteurs, murs de séparation et charpente industrielle de type terrasse avec attique. Le prix inclut le transport et le montage sur site sous garantie décennale."
 };

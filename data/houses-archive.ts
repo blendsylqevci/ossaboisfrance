@@ -365,6 +365,15 @@ export const houseArchiveItems: HouseArchiveItem[] = [
       "Le modèle Mountain Valley Villa Comble allie charme traditionnel et performance énergétique. Avec sa toiture à forte pente abritant des combles aménageables, il offre une flexibilité d'aménagement optimale.",
     image: "/images/houses/mountain valley villa comble/Mountain Valley Villa 7.jpg",
     price60x160: 1
+  },
+  {
+    slug: "flora-me-atike",
+    title: "Flora avec Attique",
+    category: "Maison toiture terrasse avec étage",
+    description:
+      "Le modèle Flora avec Attique séduit par son design contemporain, ses volumes harmonieux et sa structure robuste en ossature bois à haute performance thermique.",
+    image: "/images/houses/flora me atike/7 flora.jpg",
+    price60x160: 1
   }
 ];
 

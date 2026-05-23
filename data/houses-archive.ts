@@ -48,7 +48,7 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     category: "Maison Toiture Terrasse",
     description:
       "A Frame House est une maison modulaire contemporaine construite sur une ossature bois robuste, combinant architecture moderne et confort.",
-    image: "https://ossaboisfrance.com/wp-content/uploads/2025/12/7-a-frame-house-scaled.jpg",
+    image: "/images/houses/A frame house me atike/10 a frame house.jpg",
     price60x160: 17022
   },
   {
@@ -57,7 +57,7 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     category: "Maison Toiture Terrasse",
     description:
       "MAISON LOREN est une maison modulaire contemporaine de plain-pied, conçue avec une ossature bois robuste et une toiture terrasse.",
-    image: "https://ossaboisfrance.com/wp-content/uploads/2025/12/LOREN-7-scaled.jpg",
+    image: "/images/houses/Maison Loren me atike/LOREN 7.jpg",
     price60x160: 20716
   },
   {
@@ -147,7 +147,7 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     category: "Maison toiture terrasse avec étage",
     description:
       "AUSTRALE avec attique est une maison modulaire contemporaine à deux étages, construite sur une ossature bois robuste garantissant stabilité, durabilité et excellente performance thermique. Son architecture à toiture plate avec attique, complétée par deux terrasses au deuxième étage, offre de vastes espaces extérieurs idéals pour la détente tout en valorisant des lignes modernes et épurées. Grâce à une préfabrication soignée en atelier, AUSTRALE avec attique permet une installation rapide.",
-    image: "https://ossaboisfrance.com/wp-content/uploads/2025/12/australe-7-1-scaled.jpg",
+    image: "/images/houses/Australe/australe 7.jpg",
     price60x160: 30393
   },
   {
@@ -237,8 +237,8 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     category: "Maison plein pied",
     description:
       "MAISON E est une maison modulaire contemporaine de plain-pied, réalisée avec une ossature bois solide.",
-    image: "https://ossaboisfrance.com/wp-content/uploads/2025/12/maison-E-me-kulm-7-scaled.jpg",
-    price60x160: 15370
+    image: "/images/houses/maison e me atike/5 Maison E.jpg",
+    price60x160: 1
   },
   {
     slug: "maison-jola",
@@ -264,7 +264,7 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     category: "Maison plein pied",
     description:
       "MEDIALUNA est une maison modulaire contemporaine de plain-pied, construite sur une ossature bois robuste.",
-    image: "https://ossaboisfrance.com/wp-content/uploads/2025/12/medialuna-me-kulm-7-scaled.jpg",
+    image: "/images/houses/medialuna me atike/7 medialuna.jpg",
     price60x160: 28605
   },
   {
@@ -409,6 +409,15 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     description:
       "Le modèle Liberte etage avec Attique séduit par son design contemporain, son architecture sur deux étages et sa terrasse moderne avec vue panoramique.",
     image: "/images/houses/liberte etage me atike/liberte 5.jpg",
+    price60x160: 1
+  },
+  {
+    slug: "maison-2-etage-me-atike",
+    title: "Maison 2 etage me atike",
+    category: "Maison toiture terrasse avec étage",
+    description:
+      "Le modèle Maison 2 etage avec Attique séduit par son design contemporain, son architecture sur deux étages et sa terrasse moderne avec vue panoramique.",
+    image: "/images/houses/maison 2 etage me atike/maison 2 me atike 7.jpg",
     price60x160: 1
   }
 ];

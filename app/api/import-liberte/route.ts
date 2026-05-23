@@ -30,13 +30,29 @@ export async function GET(req: NextRequest) {
     if (existing.totalDocs > 0) {
       const oldDoc = existing.docs[0];
       console.log(`[Import Liberte] Deleting existing house ID ${oldDoc.id} and its media...`);
-      await payload.delete({
+      
+      const oldMedia = await payload.find({
         collection: "media",
-        where: { house: { equals: oldDoc.id } }
+        where: { house: { equals: oldDoc.id } },
+        limit: 100,
+        depth: 0,
       });
+
+      for (const mediaDoc of oldMedia.docs) {
+        try {
+          console.log(`[Import Liberte] Deleting Media ID ${mediaDoc.id} (${mediaDoc.filename})...`);
+          await payload.delete({
+            collection: "media",
+            id: mediaDoc.id,
+          });
+        } catch (err: any) {
+          console.error(`Failed to delete old media ${mediaDoc.id}:`, err);
+        }
+      }
+
       await payload.delete({
         collection: "houses",
-        where: { id: { equals: oldDoc.id } }
+        id: oldDoc.id,
       });
     }
 

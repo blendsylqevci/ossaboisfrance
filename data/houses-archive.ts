@@ -115,12 +115,12 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     price60x160: 26100
   },
   {
-    slug: "emeraude-toiture-terrasse",
-    title: "Emeraude Toiture Terrasse",
-    category: "Maison Toiture Terrasse",
+    slug: "emeraude-me-atike",
+    title: "Emeraude avec Attique",
+    category: "Maison toiture terrasse avec étage",
     description:
-      "Le modèle Emeraude Toiture Terrasse incarne parfaitement l’équilibre entre modernité, sophistication architecturale et confort de vie haut de gamme. Avec ses lignes épurées, ses volumes harmonieux et sa toiture terrasse contemporaine, cette maison offre une esthétique raffinée pensée pour répondre aux exigences d’un mode de vie moderne et élégant. Disponible avec une finition façade moderne ou un habillage en bois naturel haut de gamme.",
-    image: "https://ossaboisfrance.com/wp-content/uploads/2026/05/7-EMERAUDE-scaled.jpg",
+      "Le modèle Emeraude avec Attique incarne parfaitemet l’équilibre entre modernité, sophistication architecturale et confort de vie haut de gamme. Avec ses lignes épurées, ses volumes harmonieux et sa toiture terrasse contemporaine, cette maison offre une esthétique raffinée pensée pour répondre aux exigences d’un mode de vie moderne et élégant. Disponible avec une finition façade moderne ou un habillage en bois naturel haut de gamme.",
+    image: "/images/houses/emeraude me atike/7 EMERAUDE.jpg",
     price60x160: 28800
   },
   {
@@ -308,7 +308,7 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     title: "Nina comble",
     category: "Maison combles amenageable",
     description:
-      "NINA HOUSE est une maison modulaire contemporaine à deux étages, construite sur une ossature bois robuste.",
+      "Le modèle Nina Comble allie charme traditionnel et performance énergétique. Avec sa toiture inclinée à forte pente abritant des combles aménageables, il offre une flexibilité d'aménagement optimale.",
     image: "/images/houses/nina comble/nina 7.jpg",
     price60x160: 26863
   },

@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { getPayload } from "payload";
@@ -31,6 +31,10 @@ export async function generateStaticParams() {
 
 export default async function HouseDetailPage({ params }: HouseDetailPageProps) {
   const { locale, slug } = await params;
+
+  if (slug === "emeraude-toiture-terrasse") {
+    redirect(`/${locale}/maisons/emeraude-me-atike`);
+  }
   
   const payload = await getPayload({ config });
   const result = await payload.find({

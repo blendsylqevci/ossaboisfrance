@@ -257,46 +257,58 @@ async function main() {
   try {
     await pgClient.query('BEGIN');
 
-    console.log(' - Cleaning up old nina-comble media from DB...');
-    await pgClient.query(`
-      DELETE FROM media_locales 
-      WHERE _parent_id IN (
-        SELECT id FROM media WHERE filename LIKE 'nina-comble\\_%' ESCAPE '\\'
-      )
-    `);
-    const cleanupRes = await pgClient.query(`
-      DELETE FROM media WHERE filename LIKE 'nina-comble\\_%' ESCAPE '\\' RETURNING id
-    `);
-    console.log(`   Deleted ${cleanupRes.rowCount} previous media records.`);
-
     // Insert new media entries
     const uploadedMediaIds = {};
     console.log(' - Inserting new media entries into database...');
     for (const data of uploadMetadata) {
-      const mediaUrl = `/api/media/file/${encodeURIComponent(data.mapping.targetName)}`;
-      const mediaQuery = `
-        INSERT INTO media (
-          updated_at, created_at, url, filename, mime_type, filesize, width, height, focal_x, focal_y
-        ) VALUES (
-          $1, $2, $3, $4, $5, $6, $7, $8, $9, $10
-        ) RETURNING id
-      `;
-      const now = new Date();
-      const mediaRes = await pgClient.query(mediaQuery, [
-        now, now, mediaUrl, data.mapping.targetName, data.mapping.mime, data.filesize, data.width, data.height, 50, 50
-      ]);
-      const mediaId = mediaRes.rows[0].id;
-      uploadedMediaIds[data.mapping.dbColumn] = mediaId;
-      console.log(`   Registered ${data.mapping.targetName} as media ID: ${mediaId}`);
+      // Check if media already exists
+      const checkRes = await pgClient.query('SELECT id FROM media WHERE filename = $1', [data.mapping.targetName]);
+      let mediaId;
+      if (checkRes.rowCount > 0) {
+        mediaId = checkRes.rows[0].id;
+        console.log(`   Media already exists: ${data.mapping.targetName} (ID: ${mediaId}). Updating metadata...`);
+        
+        // Update existing media record to ensure metadata matches
+        const updateMediaQuery = `
+          UPDATE media
+          SET updated_at = $1, filesize = $2, width = $3, height = $4
+          WHERE id = $5
+        `;
+        await pgClient.query(updateMediaQuery, [new Date(), data.filesize, data.width, data.height, mediaId]);
 
-      const mediaLocQuery = `
-        INSERT INTO media_locales (
-          alt, _locale, _parent_id
-        ) VALUES (
-          $1, $2, $3
-        )
-      `;
-      await pgClient.query(mediaLocQuery, [data.mapping.alt, 'fr', mediaId]);
+        // Update alt text in locales if it exists, or insert it
+        const checkLocRes = await pgClient.query('SELECT id FROM media_locales WHERE _parent_id = $1 AND _locale = $2', [mediaId, 'fr']);
+        if (checkLocRes.rowCount > 0) {
+          await pgClient.query('UPDATE media_locales SET alt = $1 WHERE id = $2', [data.mapping.alt, checkLocRes.rows[0].id]);
+        } else {
+          await pgClient.query('INSERT INTO media_locales (alt, _locale, _parent_id) VALUES ($1, $2, $3)', [data.mapping.alt, 'fr', mediaId]);
+        }
+      } else {
+        const mediaUrl = `/api/media/file/${encodeURIComponent(data.mapping.targetName)}`;
+        const mediaQuery = `
+          INSERT INTO media (
+            updated_at, created_at, url, filename, mime_type, filesize, width, height, focal_x, focal_y
+          ) VALUES (
+            $1, $2, $3, $4, $5, $6, $7, $8, $9, $10
+          ) RETURNING id
+        `;
+        const now = new Date();
+        const mediaRes = await pgClient.query(mediaQuery, [
+          now, now, mediaUrl, data.mapping.targetName, data.mapping.mime, data.filesize, data.width, data.height, 50, 50
+        ]);
+        mediaId = mediaRes.rows[0].id;
+        console.log(`   Registered ${data.mapping.targetName} as media ID: ${mediaId}`);
+
+        const mediaLocQuery = `
+          INSERT INTO media_locales (
+            alt, _locale, _parent_id
+          ) VALUES (
+            $1, $2, $3
+          )
+        `;
+        await pgClient.query(mediaLocQuery, [data.mapping.alt, 'fr', mediaId]);
+      }
+      uploadedMediaIds[data.mapping.dbColumn] = mediaId;
     }
 
     // Check if house nina-house exists
@@ -505,6 +517,25 @@ async function main() {
       houseId
     ]);
     console.log('House localization inserted successfully.');
+
+    const newMediaIds = Object.values(uploadedMediaIds);
+    if (newMediaIds.length > 0) {
+      console.log(' - Cleaning up old nina-comble media from DB (excluding new ones)...');
+      await pgClient.query(`
+        DELETE FROM media_locales 
+        WHERE _parent_id IN (
+          SELECT id FROM media 
+          WHERE filename LIKE 'nina-comble\\_%' ESCAPE '\\'
+            AND id NOT IN (${newMediaIds.join(',')})
+        )
+      `);
+      const cleanupRes = await pgClient.query(`
+        DELETE FROM media 
+        WHERE filename LIKE 'nina-comble\\_%' ESCAPE '\\'
+          AND id NOT IN (${newMediaIds.join(',')})
+      `);
+      console.log(`   Deleted ${cleanupRes.rowCount} previous media records.`);
+    }
 
     await pgClient.query('COMMIT');
     console.log('\n=== Database Transaction Successfully Committed ===');

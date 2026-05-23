@@ -374,6 +374,42 @@ export const houseArchiveItems: HouseArchiveItem[] = [
       "Le modèle Flora avec Attique séduit par son design contemporain, ses volumes harmonieux et sa structure robuste en ossature bois à haute performance thermique.",
     image: "/images/houses/flora me atike/7 flora.jpg",
     price60x160: 1
+  },
+  {
+    slug: "forest-side-cabin-me-atike",
+    title: "Forest side cabin me atike",
+    category: "Maison toiture terrasse avec étage",
+    description:
+      "Le modèle Forest Side Cabin avec Attique allie architecture contemporaine, compacité et isolation de haute performance énergétique dans un style forestier unique.",
+    image: "/images/houses/forest side cabin me atike/forest side cabin atike 7.jpg",
+    price60x160: 1
+  },
+  {
+    slug: "france-etage-me-atike",
+    title: "France etage me atike",
+    category: "Maison toiture terrasse avec étage",
+    description:
+      "Le modèle France etage avec Attique séduit par son design contemporain, son architecture sur deux étages et sa terrasse moderne avec vue panoramique.",
+    image: "/images/houses/France etage me atike/France atike 7.jpg",
+    price60x160: 1
+  },
+  {
+    slug: "maison-en-l-avec-attique",
+    title: "Maison en L avec Attique",
+    category: "Maison toiture terrasse avec étage",
+    description:
+      "Le modèle Maison en L avec Attique séduit par son design contemporain en forme de L, ses volumes généreux et sa terrasse panoramique en attique.",
+    image: "/images/houses/l shaped house me atike/4 l shaped house.jpg",
+    price60x160: 1
+  },
+  {
+    slug: "liberte-etage-me-atike",
+    title: "Liberte etage me atike",
+    category: "Maison toiture terrasse avec étage",
+    description:
+      "Le modèle Liberte etage avec Attique séduit par son design contemporain, son architecture sur deux étages et sa terrasse moderne avec vue panoramique.",
+    image: "/images/houses/liberte etage me atike/liberte 5.jpg",
+    price60x160: 1
   }
 ];
 

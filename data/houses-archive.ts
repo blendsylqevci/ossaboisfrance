@@ -133,6 +133,15 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     price60x160: 37157
   },
   {
+    slug: "enea-me-atike",
+    title: "Enea avec Attique",
+    category: "Maison toiture terrasse avec étage",
+    description:
+      "Le modèle Enea avec Attique réunit l'élégance d'une toiture terrasse plate à la fonctionnalité d'un attique moderne. Bâtie sur une structure robuste en ossature bois à haute performance énergétique (conforme RE2020), cette maison modulaire contemporaine offre des volumes intérieurs baignés de lumière grâce à ses larges ouvertures.",
+    image: "/images/houses/enea me atike/4 enea.jpg",
+    price60x160: 27850
+  },
+  {
     slug: "australe",
     title: "Australe",
     category: "Maison toiture terrasse avec étage",

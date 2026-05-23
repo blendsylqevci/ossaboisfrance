@@ -125,11 +125,11 @@ export const houseArchiveItems: HouseArchiveItem[] = [
   },
   {
     slug: "maison-emmy",
-    title: "Maison Emmy",
+    title: "Emmy avec Attique",
     category: "Maison toiture terrasse avec étage",
     description:
       "MAISON EMMY est une maison modulaire contemporaine à deux étages, conçue avec une ossature bois robuste et une toiture terrasse.",
-    image: "https://ossaboisfrance.com/wp-content/uploads/2025/12/EMMY-7-scaled.jpg",
+    image: "/images/houses/emmy house etage me atike/EMMY 7.jpg",
     price60x160: 37157
   },
   {

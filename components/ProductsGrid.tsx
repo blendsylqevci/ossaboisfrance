@@ -4,12 +4,14 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { formatArchiveStartingPrice } from "@/data/houses-archive";
+import { CompareSlider } from "@/components/HousesArchive";
 
 type House = {
   slug: string;
   title: string;
   description: string;
   image: string;
+  imageBardage?: string;
   price60x160?: number | null;
 };
 
@@ -82,15 +84,24 @@ export function ProductsGrid({
             {houses.map((house) => (
               <div className="mobile-product-slide" key={house.slug}>
                 <div className="prod-card">
-                  <div className="prod-card-img-container">
-                    <Image
-                      src={house.image}
-                      alt={house.title}
-                      width={380}
-                      height={320}
-                      style={{ objectFit: "cover", width: "100%", height: "320px" }}
-                      priority
-                    />
+                  <div className="prod-card-img-container relative" style={{ height: "320px" }}>
+                    {house.image && house.imageBardage && house.image !== house.imageBardage ? (
+                      <CompareSlider
+                        imageA={house.image}
+                        imageB={house.imageBardage}
+                        altA={`${house.title} — Enduit`}
+                        altB={`${house.title} — Bardage`}
+                      />
+                    ) : house.image ? (
+                      <Image
+                        src={house.image}
+                        alt={house.title}
+                        width={380}
+                        height={320}
+                        style={{ objectFit: "cover", width: "100%", height: "320px" }}
+                        priority
+                      />
+                    ) : null}
                   </div>
                   <div className="prod-card-content">
                     <div>
@@ -160,14 +171,23 @@ export function ProductsGrid({
         {houses.map((house) => {
           return (
             <div className="prod-card" key={house.slug}>
-              <div className="prod-card-img-container">
-                <Image
-                  src={house.image}
-                  alt={house.title}
-                  width={380}
-                  height={320}
-                  style={{ objectFit: "cover", width: "100%", height: "320px" }}
-                />
+              <div className="prod-card-img-container relative" style={{ height: "320px" }}>
+                {house.image && house.imageBardage && house.image !== house.imageBardage ? (
+                  <CompareSlider
+                    imageA={house.image}
+                    imageB={house.imageBardage}
+                    altA={`${house.title} — Enduit`}
+                    altB={`${house.title} — Bardage`}
+                  />
+                ) : house.image ? (
+                  <Image
+                    src={house.image}
+                    alt={house.title}
+                    width={380}
+                    height={320}
+                    style={{ objectFit: "cover", width: "100%", height: "320px" }}
+                  />
+                ) : null}
               </div>
               <div className="prod-card-content">
                 <div>

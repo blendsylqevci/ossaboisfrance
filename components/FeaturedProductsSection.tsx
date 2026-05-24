@@ -1,13 +1,28 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { HouseArchiveCategory, HouseArchiveItem } from "@/data/houses-archive";
 import { ProductsGrid } from "./ProductsGrid";
+
+type Category = {
+  id: string;
+  title: string;
+  slug: string;
+};
+
+type FeaturedHouseItem = {
+  slug: string;
+  title: string;
+  categorySlug: string;
+  description: string;
+  image: string;
+  imageBardage?: string;
+  price60x160: number | null;
+};
 
 type FeaturedProductsSectionProps = {
   locale: string;
-  categories: HouseArchiveCategory[];
-  allHouses: HouseArchiveItem[];
+  categories: Category[];
+  allHouses: FeaturedHouseItem[];
 };
 
 export function FeaturedProductsSection({
@@ -17,7 +32,7 @@ export function FeaturedProductsSection({
 }: FeaturedProductsSectionProps) {
   // Filter out any categories that have 0 houses in our data to keep the carousel clean
   const activeCategories = categories.filter((cat) => {
-    const count = allHouses.filter((h) => h.category === cat.sourceCategory).length;
+    const count = allHouses.filter((h) => h.categorySlug === cat.slug).length;
     return count > 0;
   });
 
@@ -84,8 +99,8 @@ export function FeaturedProductsSection({
                   ref={idx === currentIndex ? activeTabRef : null}
                   className={`prod-category-tab-btn ${idx === currentIndex ? "active" : ""}`}
                   onClick={() => {
-                    setHouseInitialIndex(0);
-                    setCurrentIndex(idx);
+                     setHouseInitialIndex(0);
+                     setCurrentIndex(idx);
                   }}
                 >
                   {cat.title}
@@ -108,7 +123,7 @@ export function FeaturedProductsSection({
               {activeCategories.map((cat, idx) => {
                 // Get up to 6 houses for this category
                 const categoryHouses = allHouses
-                  .filter((h) => h.category === cat.sourceCategory)
+                  .filter((h) => h.categorySlug === cat.slug)
                   .slice(0, 6);
 
                 return (
@@ -129,7 +144,7 @@ export function FeaturedProductsSection({
                       onReachStart={() => {
                         const prevCatIdx = (currentIndex - 1 + activeCategories.length) % activeCategories.length;
                         const prevCat = activeCategories[prevCatIdx];
-                        const prevCategoryHousesCount = allHouses.filter((h) => h.category === prevCat.sourceCategory).length;
+                        const prevCategoryHousesCount = allHouses.filter((h) => h.categorySlug === prevCat.slug).length;
                         const lastHouseIdx = Math.max(0, Math.min(prevCategoryHousesCount, 6) - 1);
                         setHouseInitialIndex(lastHouseIdx);
                         setCurrentIndex(prevCatIdx);

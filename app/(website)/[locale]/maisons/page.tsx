@@ -67,7 +67,7 @@ export default async function HousesPage({ params }: HousesPageProps) {
     
     const rawPrice = doc.price60x160 || null;
     const marginMultiplier = 1 + (doc.marginPercent ?? globalMargin) / 100;
-    const finalPrice = rawPrice ? Math.round(rawPrice * marginMultiplier) : null;
+    const finalPrice = rawPrice ? rawPrice * marginMultiplier : null;
     
     return {
       slug: doc.slug,

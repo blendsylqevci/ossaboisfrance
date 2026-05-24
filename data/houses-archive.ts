@@ -424,10 +424,9 @@ export const houseArchiveItems: HouseArchiveItem[] = [
 
 export function formatArchiveStartingPrice(price: number | null) {
   if (price === null || price === undefined) return null;
-  const priceWithMargin = price * 1.40;
 
   // Format exactly with space as thousands separator and comma for decimals
-  const formatted = priceWithMargin.toFixed(2);
+  const formatted = price.toFixed(2);
   const [integerPart, decimalPart] = formatted.split(".");
   const groupedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
   return `${groupedInteger},${decimalPart}`;

@@ -150,18 +150,20 @@ export default async function HomePage({ params }: HomePageProps) {
 
   const allHouses = housesRes.docs.map((doc) => {
     const imageUrl = typeof doc.defaultImage === 'object' ? doc.defaultImage?.url : '';
+    const finalImageUrl = typeof doc.finalImage === 'object' ? doc.finalImage?.url : '';
     const catObj = typeof doc.category === 'object' ? doc.category : null;
     
     const rawPrice = doc.price60x160 || null;
     const marginMultiplier = 1 + (doc.marginPercent ?? globalMargin) / 100;
-    const finalPrice = rawPrice ? Math.round(rawPrice * marginMultiplier) : null;
+    const finalPrice = rawPrice ? rawPrice * marginMultiplier : null;
 
     return {
       slug: doc.slug,
       title: doc.title,
-      category: catObj?.name || 'Maison',
+      categorySlug: catObj?.slug || '',
       description: doc.description || doc.subheading || '',
       image: imageUrl || '',
+      imageBardage: finalImageUrl || '',
       price60x160: finalPrice,
     };
   });

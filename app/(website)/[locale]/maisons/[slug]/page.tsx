@@ -112,7 +112,11 @@ export default async function HouseDetailPage({ params }: HouseDetailPageProps) 
   }
 
   // Otherwise, render the standard house detail page
-  const price = formatArchiveStartingPrice(houseDoc.price60x160);
+  const globalMargin = globalOptions?.marginPercent ?? 40;
+  const marginMultiplier = 1 + (houseDoc.marginPercent ?? globalMargin) / 100;
+  const rawPrice = houseDoc.price60x160 || null;
+  const finalPrice = rawPrice ? rawPrice * marginMultiplier : null;
+  const price = formatArchiveStartingPrice(finalPrice);
   const defaultImageUrl = typeof houseDoc.defaultImage === 'object' ? houseDoc.defaultImage?.url : '';
   const categoryName = typeof houseDoc.category === 'object' ? houseDoc.category?.name : '';
 

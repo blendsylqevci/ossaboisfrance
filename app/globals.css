@@ -565,7 +565,7 @@ img {
 /* Hero Section */
 .houses-archive-hero {
   background: linear-gradient(180deg, #f4f4ef 0%, #fafaf7 100%);
-  padding: 100px 0 80px;
+  padding: 55px 0 45px;
   border-bottom: 1px solid rgba(21, 23, 17, 0.05);
 }
 
@@ -613,7 +613,7 @@ img {
   font-weight: 600;
   letter-spacing: 0.1em;
   color: #5E6F4F;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
   text-transform: uppercase;
   animation-delay: 100ms;
 }
@@ -624,7 +624,7 @@ img {
   color: #181A20;
   line-height: 1.05;
   letter-spacing: -0.02em;
-  margin: 0 auto 24px;
+  margin: 0 auto 16px;
   max-width: 800px;
   animation-delay: 200ms;
 }
@@ -633,7 +633,7 @@ img {
   font-size: clamp(18px, 2.3vw, 22px);
   line-height: 1.65;
   color: #4b5563;
-  margin: 0 auto 40px;
+  margin: 0 auto 20px;
   max-width: 720px;
   font-weight: 400;
   animation-delay: 300ms;

@@ -224,32 +224,35 @@ export default async function HomePage({ params }: HomePageProps) {
 
   return (
     <main className="homepage-root">
-      {/* ═══════════════ SEKTION 1: HERO TEXT ═══════════════ */}
-      <section className="wp-section-hero">
-        <div className="container hero-content-wrapper">
-          <h1 className="hero-title">{dict.home.heroTitle}</h1>
-          <p className="hero-description">
-            {dict.home.heroDescription}
-          </p>
-          <div className="hero-btn-container">
-            <Link href={`/${locale}/maisons`} className="hero-discover-btn">
-              <span>{dict.home.exploreCta}</span>
-              <span className="hero-btn-icon-wrapper">
-                <svg className="hero-btn-arrow" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </span>
-            </Link>
+      {/* Homepage Hero Group (for desktop viewport height docking) */}
+      <div className="homepage-hero-wrapper">
+        {/* ═══════════════ SEKTION 1: HERO TEXT ═══════════════ */}
+        <section className="wp-section-hero">
+          <div className="container hero-content-wrapper">
+            <h1 className="hero-title">{dict.home.heroTitle}</h1>
+            <p className="hero-description">
+              {dict.home.heroDescription}
+            </p>
+            <div className="hero-btn-container">
+              <Link href={`/${locale}/maisons`} className="hero-discover-btn">
+                <span>{dict.home.exploreCta}</span>
+                <span className="hero-btn-icon-wrapper">
+                  <svg className="hero-btn-arrow" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </span>
+              </Link>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ═══════════════ SEKTION 2: HERO CAROUSEL ═══════════════ */}
-      <section className="wp-section-carousel">
-        <div className="hero-carousel-container">
-          <HeroSlider houses={sliderHouses} initialIdx={initialIdx} />
-        </div>
-      </section>
+        {/* ═══════════════ SEKTION 2: HERO CAROUSEL ═══════════════ */}
+        <section className="wp-section-carousel">
+          <div className="hero-carousel-container">
+            <HeroSlider houses={sliderHouses} initialIdx={initialIdx} />
+          </div>
+        </section>
+      </div>
 
       {/* ═══════════════ SEKTION 3: ABOUT (C'EST NOUS...) ═══════════════ */}
       <section className="wp-section-about">

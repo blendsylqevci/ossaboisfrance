@@ -200,6 +200,23 @@ export function HousesArchive({ locale, initialHouses, initialCategories, dict }
   const { isFavorite } = useFavorites();
   const totalFavoritesCount = initialHouses.filter((house) => isFavorite(house.slug)).length;
 
+  // Reset showOnlyFavorites when a hash is present or changes (e.g. from header nav links)
+  useEffect(() => {
+    const handleHashChange = () => {
+      if (window.location.hash) {
+        setShowOnlyFavorites(false);
+      }
+    };
+    window.addEventListener("hashchange", handleHashChange);
+    // Also run on mount to handle direct page loads with hash
+    if (window.location.hash) {
+      setShowOnlyFavorites(false);
+    }
+    return () => {
+      window.removeEventListener("hashchange", handleHashChange);
+    };
+  }, []);
+
   // Intersection Observer for scroll animations with a safety timeout to ensure React DOM is painted
   useEffect(() => {
     let observer: IntersectionObserver | null = null;

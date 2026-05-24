@@ -44,6 +44,17 @@ export function SiteHeader({ locale, dict }: SiteHeaderProps) {
     }
   };
 
+  const handleHouseCategoryClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    const archivePath = `/${locale}/maisons`;
+    if (pathname === archivePath || pathname === `${archivePath}/`) {
+      e.preventDefault();
+      const hash = href.split("#")[1];
+      if (hash) {
+        window.location.hash = hash;
+      }
+    }
+  };
+
   const isActive = (path: string) => {
     if (path === "") {
       return pathname === `/${locale}` || pathname === `/${locale}/` || pathname === "/" || pathname === "";
@@ -79,11 +90,17 @@ export function SiteHeader({ locale, dict }: SiteHeaderProps) {
           <div className="nav-dropdown">
             <Link className={`nav-dropdown-trigger ${isActive("maisons") ? "active" : ""}`} href={`/${locale}/maisons`}>
               <span>{dict?.models || "Modèles De Maisons"}</span>
-              <span className="dropdown-arrow-indicator">▼</span>
+              <svg className="nav-dropdown-arrow" width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </Link>
             <div className="nav-dropdown-panel">
               {houseNav.map((item) => (
-                <Link key={item.href} href={`/${locale}/${item.href}`}>
+                <Link 
+                  key={item.href} 
+                  href={`/${locale}/${item.href}`}
+                  onClick={(e) => handleHouseCategoryClick(e, item.href)}
+                >
                   {item.label}
                 </Link>
               ))}
@@ -104,12 +121,24 @@ export function SiteHeader({ locale, dict }: SiteHeaderProps) {
         </nav>
         
         <div className="header-actions">
-          <div className="locale-switcher" aria-label="Changer de langue">
-            {locales.map((item) => (
-              <Link key={item} href={getLocalePath(item)} aria-current={item === locale ? "page" : undefined}>
-                {localeLabels[item]}
-              </Link>
-            ))}
+          <div className="locale-dropdown" aria-label="Changer de langue">
+            <button className="locale-dropdown-trigger" type="button" aria-haspopup="listbox" aria-expanded="false">
+              <span>{localeLabels[locale]}</span>
+              <svg className="locale-dropdown-arrow" width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+            <div className="locale-dropdown-panel">
+              {locales.map((item) => (
+                <Link 
+                  key={item} 
+                  href={getLocalePath(item)} 
+                  className={`locale-dropdown-item ${item === locale ? "active" : ""}`}
+                >
+                  {localeLabels[item]}
+                </Link>
+              ))}
+            </div>
           </div>
           <Link className="button secondary header-contact-btn" href={`/${locale}/contact`}>
             {dict?.contactUs || "Contactez-Nous"}
@@ -134,7 +163,14 @@ export function SiteHeader({ locale, dict }: SiteHeaderProps) {
                     {dict?.allModels || "Tous les modèles"}
                   </Link>
                   {houseNav.map((item) => (
-                    <Link key={item.href} href={`/${locale}/${item.href}`} onClick={closeMobileMenu}>
+                    <Link 
+                      key={item.href} 
+                      href={`/${locale}/${item.href}`} 
+                      onClick={(e) => {
+                        closeMobileMenu();
+                        handleHouseCategoryClick(e, item.href);
+                      }}
+                    >
                       {item.label}
                     </Link>
                   ))}

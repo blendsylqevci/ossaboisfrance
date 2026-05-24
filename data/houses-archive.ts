@@ -151,15 +151,6 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     price60x160: 27462
   },
   {
-    slug: "a-frame-house-kulm",
-    title: "A Frame House (kulm)",
-    category: "Maison plein pied",
-    description:
-      "A Frame House avec toit est une maison modulaire moderne construite sur une ossature bois robuste, compacte et fonctionnelle.",
-    image: "https://ossaboisfrance.com/wp-content/uploads/2025/12/a-frame-house-me-kulm-7-scaled.jpg",
-    price60x160: 16060
-  },
-  {
     slug: "asebra-me-kulm",
     title: "Asebra avec Toit",
     category: "Maison plein pied",
@@ -178,51 +169,6 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     price60x160: 27850
   },
   {
-    slug: "mairie",
-    title: "MAIRIE",
-    category: "Maison plein pied",
-    description:
-      "MAIRIE est une maison modulaire contemporaine de plain-pied, construite sur une ossature bois robuste et pensée pour le quotidien.",
-    image: "https://ossaboisfrance.com/wp-content/uploads/2025/12/mairie-kulm-7-scaled.jpg",
-    price60x160: 20113
-  },
-  {
-    slug: "maison-a",
-    title: "Maison A",
-    category: "Maison plein pied",
-    description:
-      "MAISON A est une maison modulaire contemporaine de plain-pied, construite sur une ossature bois robuste.",
-    image: "https://ossaboisfrance.com/wp-content/uploads/2025/10/Image-1.png",
-    price60x160: 20113
-  },
-  {
-    slug: "maison-b",
-    title: "Maison B",
-    category: "Maison plein pied",
-    description:
-      "MAISON B est une maison modulaire contemporaine de plain-pied, construite sur une ossature bois robuste.",
-    image: "https://ossaboisfrance.com/wp-content/uploads/2025/10/Image-1.png",
-    price60x160: 19335
-  },
-  {
-    slug: "maison-c",
-    title: "Maison C",
-    category: "Maison plein pied",
-    description:
-      "MAISON C est une maison modulaire contemporaine de plain-pied, conçue avec une ossature bois solide et moderne.",
-    image: "https://ossaboisfrance.com/wp-content/uploads/2025/12/maison-c-me-kulm-7-scaled.jpg",
-    price60x160: 18037
-  },
-  {
-    slug: "maison-d",
-    title: "Maison D",
-    category: "Maison plein pied",
-    description:
-      "MAISON D est une maison modulaire contemporaine de plain-pied, construite sur une ossature bois robuste.",
-    image: "https://ossaboisfrance.com/wp-content/uploads/2025/12/Maison-D-7-scaled.jpg",
-    price60x160: 15116
-  },
-  {
     slug: "maison-e",
     title: "Maison E",
     category: "Maison plein pied",
@@ -232,24 +178,6 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     price60x160: 1
   },
   {
-    slug: "maison-jola",
-    title: "Maison Jola",
-    category: "Maison plein pied",
-    description:
-      "MAISON JOLA est une maison modulaire contemporaine de plain-pied, construite sur une ossature bois robuste.",
-    image: "https://ossaboisfrance.com/wp-content/uploads/2025/12/Maison-Jola-6-scaled.jpg",
-    price60x160: 17433
-  },
-  {
-    slug: "maison-monna",
-    title: "Maison Monna",
-    category: "Maison plein pied",
-    description:
-      "MAISON MONNA est une maison modulaire contemporaine de plain-pied, construite sur une ossature bois.",
-    image: "https://ossaboisfrance.com/wp-content/uploads/2025/12/maison-monna-me-kulm-7-scaled.jpg",
-    price60x160: 19138
-  },
-  {
     slug: "medialuna",
     title: "Medialuna",
     category: "Maison plein pied",
@@ -257,15 +185,6 @@ export const houseArchiveItems: HouseArchiveItem[] = [
       "MEDIALUNA est une maison modulaire contemporaine de plain-pied, construite sur une ossature bois robuste.",
     image: "/images/houses/medialuna me atike/7 medialuna.jpg",
     price60x160: 28605
-  },
-  {
-    slug: "mountainview-cottage",
-    title: "Mountainview Cottage",
-    category: "Maison plein pied",
-    description:
-      "MOUNTAINVIEW COTTAGE est une maison modulaire contemporaine de plain-pied, construite sur une ossature bois robuste.",
-    image: "https://ossaboisfrance.com/wp-content/uploads/2025/10/Image-1.png",
-    price60x160: 14100
   },
   {
     slug: "cristal",

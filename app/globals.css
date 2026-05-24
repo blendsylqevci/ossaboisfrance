@@ -222,20 +222,30 @@ img {
   display: none;
 }
 
+.nav-dropdown-arrow {
+  transition: transform 180ms ease;
+}
+
+.nav-dropdown:hover .nav-dropdown-arrow {
+  transform: rotate(180deg);
+}
+
 .nav-dropdown-panel {
   position: absolute;
-  top: calc(100% + 16px);
+  top: calc(100% + 14px);
   left: 50%;
-  min-width: 310px;
-  border: 1px solid rgba(21, 23, 17, 0.1);
-  border-radius: 8px;
-  padding: 12px;
-  background: var(--white);
-  box-shadow: 0 20px 60px rgba(21, 23, 17, 0.12);
+  min-width: 320px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 16px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.02);
   opacity: 0;
   pointer-events: none;
-  transform: translate(-50%, 8px);
-  transition: opacity 160ms ease, transform 160ms ease;
+  transform: translate(-50%, 10px);
+  transition: opacity 220ms cubic-bezier(0.16, 1, 0.3, 1), transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 150;
 }
 
 .nav-dropdown-panel::before {
@@ -257,12 +267,20 @@ img {
 
 .nav-dropdown-panel a {
   display: block;
-  border-radius: 6px;
-  padding: 11px 12px;
+  border-radius: 10px;
+  padding: 12px 18px;
+  font-family: "PP Neue Montreal", sans-serif;
+  font-size: 14.5px;
+  font-weight: 500;
+  color: #4B5563;
+  text-decoration: none;
+  transition: all 250ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .nav-dropdown-panel a:hover {
-  background: rgba(94, 111, 79, 0.1);
+  background: rgba(94, 111, 79, 0.08) !important;
+  color: #5E6F4F !important;
+  padding-left: 24px !important;
 }
 
 .site-header .button.secondary {
@@ -413,38 +431,103 @@ img {
   gap: 20px;
 }
 
-.locale-switcher {
-  display: flex;
-  align-items: center;
-  background: rgba(24, 26, 32, 0.05);
-  padding: 3px;
-  border-radius: 99px;
-  gap: 2px;
-}
-
-.locale-switcher a {
+/* ─── LOCALE DROPDOWN ─── */
+.locale-dropdown {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 12px;
+}
+
+.locale-dropdown-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(24, 26, 32, 0.05);
+  border: none;
   border-radius: 99px;
+  padding: 8px 16px;
   font-family: "PP Neue Montreal", sans-serif;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
-  color: #6B7280;
-  text-decoration: none;
-  transition: all 180ms ease;
+  color: #12161D;
+  cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease;
   line-height: 1;
 }
 
-.locale-switcher a:hover {
-  color: #181A20;
+.locale-dropdown-trigger:hover {
+  background: rgba(24, 26, 32, 0.09);
 }
 
-.locale-switcher a[aria-current="page"] {
-  background: var(--white);
-  color: #181A20;
-  box-shadow: 0 2px 6px rgba(24, 26, 32, 0.08);
+.locale-dropdown-arrow {
+  transition: transform 180ms ease;
+}
+
+.locale-dropdown:hover .locale-dropdown-arrow {
+  transform: rotate(180deg);
+}
+
+.locale-dropdown-panel {
+  position: absolute;
+  top: calc(100% + 14px);
+  right: 0;
+  min-width: 100px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 14px;
+  padding: 6px;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.02);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+  transition: opacity 220ms cubic-bezier(0.16, 1, 0.3, 1), transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 150;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.locale-dropdown-panel::before {
+  content: "";
+  position: absolute;
+  top: -15px;
+  left: 0;
+  right: 0;
+  height: 15px;
+  background: transparent;
+}
+
+.locale-dropdown:hover .locale-dropdown-panel {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.locale-dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-family: "PP Neue Montreal", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4B5563;
+  text-decoration: none;
+  transition: all 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  line-height: 1;
+}
+
+.locale-dropdown-item:hover {
+  background: rgba(24, 26, 32, 0.05);
+  color: #12161D;
+}
+
+.locale-dropdown-item.active {
+  background: rgba(94, 111, 79, 0.08);
+  color: #5E6F4F;
 }
 
 .site-footer {
@@ -3487,9 +3570,9 @@ img {
     display: none;
   }
 
-  .locale-switcher {
-    gap: 6px;
-    font-size: 11px;
+  .locale-dropdown-trigger {
+    padding: 6px 12px;
+    font-size: 12px;
   }
 
   .footer-grid {
@@ -3674,15 +3757,103 @@ img {
    Brand: #5E6F4F | Dark Text: #12161D | BG: #F7F7F7
    ═══════════════════════════════════════════════ */
 
+/* ─── HOMEPAGE HERO WRAPPER FOR DESKTOP (STICKY TO SCREEN BOTTOM) ─── */
+@media (min-width: 992px) {
+  .homepage-hero-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100vh; /* Fills full viewport */
+    overflow: hidden;
+    display: block;
+    background: #ffffff;
+  }
+
+  /* Make header transparent and overlay on top of the hero wrapper */
+  .site-shell:has(.homepage-root) .site-header {
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: transparent !important;
+    box-shadow: none !important;
+    border-bottom: none !important;
+    z-index: 100;
+  }
+
+  /* Float the menu elements in a white capsule/pill container */
+  .site-shell:has(.homepage-root) .header-inner {
+    background: #ffffff !important;
+    border-radius: 99px !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08) !important;
+    padding-left: 28px !important;
+    padding-right: 28px !important;
+    border: 1px solid rgba(0, 0, 0, 0.05) !important;
+    margin-top: 15px !important;
+    max-width: 1180px !important;
+    min-height: 70px !important;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  
+  .homepage-hero-wrapper .wp-section-hero {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent !important;
+    z-index: 5;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 140px; /* Below the header line */
+    pointer-events: none;
+  }
+
+  .homepage-hero-wrapper .hero-content-wrapper {
+    pointer-events: auto; /* enable click on buttons/text */
+    max-width: 800px;
+  }
+
+  .homepage-hero-wrapper .hero-title {
+    color: #ffffff !important;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+  }
+
+  .homepage-hero-wrapper .hero-description {
+    color: rgba(255, 255, 255, 0.95) !important;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.3);
+  }
+  
+  .homepage-hero-wrapper .wp-section-carousel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    padding: 0;
+  }
+  
+  .homepage-hero-wrapper .hero-carousel-container {
+    width: 100%;
+    height: 100%;
+    max-height: none !important;
+    min-height: 0 !important;
+  }
+}
+
 /* ─── HERO TEXT SECTION ─── */
 .wp-section-hero {
-  padding: 80px 0 40px;
+  padding: 40px 0 20px;
   background: #ffffff;
   text-align: center;
 }
 
 .hero-content-wrapper {
-  max-width: 900px;
+  max-width: 800px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -3691,20 +3862,20 @@ img {
 
 .hero-title {
   font-family: "PP Neue Montreal", sans-serif;
-  font-size: 60px;
+  font-size: clamp(36px, 4.5vw, 54px);
   font-weight: 500;
   color: #12161D;
   line-height: 1.1;
-  margin: 0 0 20px;
+  margin: 0 0 16px;
   letter-spacing: -0.5px;
 }
 
 .hero-description {
   font-family: "PP Neue Montreal", sans-serif;
-  font-size: 16px;
+  font-size: 15px;
   color: #6B7280;
-  line-height: 1.6;
-  margin: 0 0 32px;
+  line-height: 1.5;
+  margin: 0 0 24px;
   max-width: 100%;
 }
 
@@ -3760,21 +3931,25 @@ img {
   position: relative;
   width: 100%;
   max-width: 100%;
-  aspect-ratio: 16 / 9;
-  height: auto;
+  height: 52vh;
+  min-height: 420px;
+  max-height: 600px;
   overflow: hidden;
 }
 
 @media (max-width: 991px) {
   .hero-carousel-container {
-    height: auto;
+    height: 48vh;
+    min-height: 340px;
+    max-height: 480px;
   }
 }
 
 @media (max-width: 767px) {
   .hero-carousel-container {
-    aspect-ratio: 1.25 / 1;
-    height: auto;
+    height: 44vh;
+    min-height: 280px;
+    max-height: 380px;
   }
 
   /* Make house name badge smaller on mobile */
@@ -6790,7 +6965,7 @@ img {
   }
 
   /* Hide desktop-only header items to prevent wrapping and keep header clean */
-  .site-header .locale-switcher,
+  .site-header .locale-dropdown,
   .site-header .header-contact-btn {
     display: none !important;
   }
@@ -7000,16 +7175,16 @@ img {
 
   /* Hero Text Section */
   .wp-section-hero {
-    padding: 60px 20px 30px !important;
+    padding: 30px 20px 15px !important;
   }
   .hero-title {
-    font-size: 38px !important;
+    font-size: clamp(28px, 6vw, 36px) !important;
     line-height: 1.15 !important;
     letter-spacing: -0.5px !important;
   }
   .hero-description {
-    font-size: 15px !important;
-    margin-bottom: 24px !important;
+    font-size: 14px !important;
+    margin-bottom: 16px !important;
     padding: 0 10px !important;
   }
 

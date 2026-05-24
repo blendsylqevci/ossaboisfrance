@@ -4010,6 +4010,7 @@ img {
   user-select: none;
   cursor: ew-resize;
   overflow: hidden;
+  touch-action: pan-y;
 }
 
 .hero-slider-img-wrapper {

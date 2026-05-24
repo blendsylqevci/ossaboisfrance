@@ -40,6 +40,34 @@ export function ProductsGrid({
   const [currentIndex, setCurrentIndex] = useState(0);
   const { isFavorite, handleToggle } = useFavorites();
 
+  // Mobile touch gesture tracking states
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+
+  const minSwipeDistance = 50;
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe) {
+      nextSlide();
+    } else if (isRightSwipe) {
+      prevSlide();
+    }
+  };
+
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -81,7 +109,13 @@ export function ProductsGrid({
   if (isMobile) {
     return (
       <div className="mobile-products-carousel">
-        <div className="mobile-products-viewport">
+        <div 
+          className="mobile-products-viewport"
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+          style={{ touchAction: "pan-y" }}
+        >
           <div
             className="mobile-products-track"
             style={{
@@ -93,12 +127,19 @@ export function ProductsGrid({
                 <div className="prod-card">
                   <div className="prod-card-img-container relative" style={{ height: "320px" }}>
                     {house.image && house.imageBardage && house.image !== house.imageBardage ? (
-                      <CompareSlider
-                        imageA={house.image}
-                        imageB={house.imageBardage}
-                        altA={`${house.title} — Enduit`}
-                        altB={`${house.title} — Bardage`}
-                      />
+                      <div
+                        onTouchStart={(e) => e.stopPropagation()}
+                        onTouchMove={(e) => e.stopPropagation()}
+                        onTouchEnd={(e) => e.stopPropagation()}
+                        style={{ width: "100%", height: "100%" }}
+                      >
+                        <CompareSlider
+                          imageA={house.image}
+                          imageB={house.imageBardage}
+                          altA={`${house.title} — Enduit`}
+                          altB={`${house.title} — Bardage`}
+                        />
+                      </div>
                     ) : house.image ? (
                       <Image
                         src={house.image}

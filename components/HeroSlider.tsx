@@ -106,7 +106,9 @@ export function HeroSlider({ houses, initialIdx }: HeroSliderProps) {
   useEffect(() => {
     const onMove = (e: MouseEvent | TouchEvent) => {
       if (!dragging.current) return;
-      // Do not preventDefault if it interferes with scroll, but we want clean sliding
+      if (e.cancelable) {
+        e.preventDefault();
+      }
       const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
       updatePos(clientX);
     };
@@ -116,7 +118,7 @@ export function HeroSlider({ houses, initialIdx }: HeroSliderProps) {
     };
 
     window.addEventListener("mousemove", onMove);
-    window.addEventListener("touchmove", onMove, { passive: true });
+    window.addEventListener("touchmove", onMove, { passive: false });
     window.addEventListener("mouseup", onUp);
     window.addEventListener("touchend", onUp);
 

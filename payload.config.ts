@@ -42,7 +42,12 @@ export default buildConfig({
   ],
   editor: lexicalEditor({}),
   sharp,
-  secret: process.env.PAYLOAD_SECRET || 'fallback-secret-for-local-dev-only',
+  secret: process.env.PAYLOAD_SECRET || (() => {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('PAYLOAD_SECRET is required in production environment.')
+    }
+    return 'fallback-secret-for-local-dev-only'
+  })(),
   db: postgresAdapter({
     pool: {
       connectionString: process.env.DATABASE_URI || '',

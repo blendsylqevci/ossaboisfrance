@@ -7,12 +7,16 @@ async function main() {
   await client.connect();
 
   const res = await client.query(`
-    SELECT id, slug, price60x160, price60x200, category_id
-    FROM houses
-    ORDER BY id
+    SELECT h.id, hl.title, h.slug, hc.slug as category_slug
+    FROM houses h
+    LEFT JOIN houses_locales hl ON h.id = hl._parent_id AND hl._locale = 'fr'
+    LEFT JOIN house_categories hc ON h.category_id = hc.id
+    ORDER BY hl.title, h.id
   `);
   console.log("=== Houses in DB ===");
-  console.log(JSON.stringify(res.rows, null, 2));
+  res.rows.forEach(r => {
+    console.log(`- ${r.title} (slug: ${r.slug}, category: ${r.category_slug || 'N/A'}, id: ${r.id})`);
+  });
 
   await client.end();
 }

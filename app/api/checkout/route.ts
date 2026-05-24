@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getPayload } from "payload";
 import config from "@/payload.config";
+import { mapHouseDocToConfiguratorData } from "@/lib/house-mapper";
 
 const euroFormatter = new Intl.NumberFormat("fr-FR", {
   style: "currency",
@@ -42,6 +43,90 @@ export async function POST(req: NextRequest) {
     }
 
     const houseDoc = housesResult.docs[0];
+
+    // Load global options to propagate dynamic pricing and metadata
+    let globalOptions = null;
+    try {
+      globalOptions = await payload.findGlobal({
+        slug: 'house-options',
+        depth: 2,
+      });
+    } catch (globalErr) {
+      console.error("[API Checkout] Failed to fetch global options:", globalErr);
+    }
+
+    // Map house doc using configurator mapper
+    const configData = mapHouseDocToConfiguratorData(houseDoc, globalOptions);
+    if (!configData) {
+      return NextResponse.json(
+        { success: false, error: "Failed to map configurator config." },
+        { status: 500 }
+      );
+    }
+
+    // Recalculate price server-side to prevent client manipulation
+    const selectedSizeId = selection?.size?.value;
+    const selectedSize = configData.sizes.find(s => s.id === selectedSizeId || s.label === selectedSizeId);
+    if (!selectedSize) {
+      return NextResponse.json(
+        { success: false, error: "Taille de shtëpi invalide." },
+        { status: 400 }
+      );
+    }
+
+    // Base price with margin applied
+    const marginPercent = houseDoc.marginPercent ?? globalOptions?.marginPercent ?? 40;
+    const marginMultiplier = 1 + marginPercent / 100;
+    const serverBasePrice = selectedSize.price * marginMultiplier;
+
+    const roofArea = configData.perdhesa.pllaka_e_kulmit || configData.perdhesa.kulmi || 0;
+    let serverOptionsTotal = 0;
+
+    const categoryIdToPayloadKey: Record<string, string> = {
+      isolation: "isolation",
+      outerIsolation: "outerIsolation",
+      facade: "facade",
+      etancheite: "etancheite",
+      couverture: "toiture",
+      terraceEtancheite: "etancheiteTerrasse",
+      roof: "strukturaPlloqes",
+      fauxPlafond: "izolimiPlloqes",
+      dritaret: "dritaret"
+    };
+
+    for (const category of configData.categories) {
+      const payloadKey = categoryIdToPayloadKey[category.id] || category.id;
+      const selectedOptionPayload = selection?.[payloadKey];
+      if (!selectedOptionPayload || !selectedOptionPayload.value) continue;
+
+      // Find option by name/label
+      const option = category.options.find(
+        (o: any) => o.label === selectedOptionPayload.value || o.id === selectedOptionPayload.value
+      );
+      if (!option) continue;
+
+      const rawPrice = selectedSizeId === "60x200" ? (option.price200 ?? option.price160) : option.price160;
+      
+      let multiplier = 1;
+      if (category.priceMode === "wall_m2") {
+        multiplier = configData.perdhesa.mure_te_jashtme || 0;
+      } else if (category.priceMode === "roof_m2") {
+        multiplier = roofArea;
+      }
+
+      serverOptionsTotal += rawPrice * multiplier;
+    }
+
+    const calculatedGrandTotal = Math.round(serverBasePrice + serverOptionsTotal) + 3000;
+
+    // Validate against client-sent total price (allow small tolerance of 5 EUR)
+    if (Math.abs(calculatedGrandTotal - total) > 5) {
+      console.warn(`[API Checkout] Price mismatch! Client: ${total}, Server calculated: ${calculatedGrandTotal}`);
+      return NextResponse.json(
+        { success: false, error: "Prix de commande non valide (incohérence de calcul)." },
+        { status: 400 }
+      );
+    }
 
     // Persist order in the database
     const orderDoc = await payload.create({

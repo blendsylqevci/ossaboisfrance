@@ -3,6 +3,45 @@ import { CollectionConfig } from 'payload'
 export const Houses: CollectionConfig = {
   slug: 'houses',
   lockDocuments: false,
+  hooks: {
+    afterDelete: [
+      async ({ req, id }) => {
+        try {
+          const mediaDocs = await req.payload.find({
+            collection: 'media',
+            where: {
+              house: {
+                equals: id,
+              },
+            },
+            limit: 1000,
+            depth: 0,
+          })
+
+          for (const mediaDoc of mediaDocs.docs) {
+            try {
+              req.payload.logger.info(
+                `[Houses Hook] Deleting associated media ID ${mediaDoc.id} (${mediaDoc.filename}) for house ID ${id}...`
+              )
+              await req.payload.delete({
+                collection: 'media',
+                id: mediaDoc.id,
+                req,
+              })
+            } catch (mediaErr) {
+              req.payload.logger.error(
+                `[Houses Hook] Failed to delete associated media ID ${mediaDoc.id}: ${mediaErr}`
+              )
+            }
+          }
+        } catch (err) {
+          req.payload.logger.error(
+            `[Houses Hook] Failed to query associated media for house ID ${id}: ${err}`
+          )
+        }
+      },
+    ],
+  },
   access: {
     read: () => true,
   },

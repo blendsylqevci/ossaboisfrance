@@ -3,7 +3,8 @@ import Link from "next/link";
 import { getPayload } from "payload";
 import config from "@/payload.config";
 import { Locale } from "@/lib/i18n";
-import { HeroCarousel } from "@/components/HeroCarousel";
+import { cookies } from "next/headers";
+import { HeroSlider } from "@/components/HeroSlider";
 import { ReviewsCarousel } from "@/components/ReviewsCarousel";
 import { CollaboratorsCarousel } from "@/components/CollaboratorsCarousel";
 import { FeaturedProductsSection } from "@/components/FeaturedProductsSection";
@@ -160,6 +161,7 @@ export default async function HomePage({ params }: HomePageProps) {
     return {
       slug: doc.slug,
       title: doc.title,
+      categoryName: catObj?.name || 'Maison',
       categorySlug: catObj?.slug || '',
       description: doc.description || doc.subheading || '',
       image: imageUrl || '',
@@ -172,6 +174,27 @@ export default async function HomePage({ params }: HomePageProps) {
   const featuredHouses = featuredSlugs
     .map((s) => allHouses.find((h) => h.slug === s))
     .filter((h): h is NonNullable<typeof h> => !!h);
+
+  // Filter houses that have both images for the Hero Slider comparison
+  const sliderHouses = allHouses
+    .filter((h) => h.image && h.imageBardage && h.image !== h.imageBardage)
+    .map((h) => ({
+      slug: h.slug,
+      title: h.title,
+      categoryName: h.categoryName,
+      image: h.image,
+      imageBardage: h.imageBardage,
+    }));
+
+  // Read cookie on the server to determine the initial house to render
+  const cookieStore = await cookies();
+  const heroHouseSlug = cookieStore.get("hero_house_slug")?.value || "maison-2-etage-me-atike";
+
+  let initialIdx = sliderHouses.findIndex((h) => h.slug === heroHouseSlug);
+  if (initialIdx === -1) {
+    initialIdx = sliderHouses.findIndex((h) => h.slug === "maison-2-etage-me-atike");
+    if (initialIdx === -1) initialIdx = 0;
+  }
 
   return (
     <main className="homepage-root">
@@ -197,7 +220,9 @@ export default async function HomePage({ params }: HomePageProps) {
 
       {/* ═══════════════ SEKTION 2: HERO CAROUSEL ═══════════════ */}
       <section className="wp-section-carousel">
-        <HeroCarousel images={heroImages} />
+        <div className="hero-carousel-container">
+          <HeroSlider houses={sliderHouses} initialIdx={initialIdx} />
+        </div>
       </section>
 
       {/* ═══════════════ SEKTION 3: ABOUT (C'EST NOUS...) ═══════════════ */}

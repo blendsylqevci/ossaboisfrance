@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { formatArchiveStartingPrice } from "@/data/houses-archive";
 import { Locale } from "@/lib/i18n";
+import { useFavorites } from "@/lib/favorites";
 
 export type CMSCategoryItem = {
   id: string;
@@ -128,6 +129,7 @@ export function CompareSlider({ imageA, imageB, altA, altB }: { imageA: string; 
 function HouseCard({ house, locale }: { house: CMSHouseItem; locale: Locale }) {
   const price = formatArchiveStartingPrice(house.price60x160);
   const hasBothImages = !!house.image && !!house.imageBardage && house.image !== house.imageBardage;
+  const { isFavorite, handleToggle } = useFavorites();
 
   return (
     <article className="house-archive-card reveal-on-scroll">
@@ -149,6 +151,20 @@ function HouseCard({ house, locale }: { house: CMSHouseItem; locale: Locale }) {
             priority={false}
           />
         ) : null}
+
+        <button
+          className="card-favorite-btn"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleToggle(house.slug);
+          }}
+          aria-label="Save to favorites"
+        >
+          <svg className={`heart-icon ${isFavorite(house.slug) ? "is-fav" : ""}`} viewBox="0 0 24 24">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+          </svg>
+        </button>
       </div>
       <div className="house-archive-card-body">
         <span className="house-archive-card-category">{house.categoryName}</span>
@@ -179,6 +195,10 @@ function HouseCard({ house, locale }: { house: CMSHouseItem; locale: Locale }) {
 }
 
 export function HousesArchive({ locale, initialHouses, initialCategories }: HousesArchiveProps) {
+  const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
+  const { isFavorite } = useFavorites();
+  const totalFavoritesCount = initialHouses.filter((house) => isFavorite(house.slug)).length;
+
   // Intersection Observer for scroll animations with a safety timeout to ensure React DOM is painted
   useEffect(() => {
     let observer: IntersectionObserver | null = null;
@@ -280,6 +300,16 @@ export function HousesArchive({ locale, initialHouses, initialCategories }: Hous
                   </a>
                 );
               })}
+              
+              <button 
+                className={`category-nav-badge favorites-toggle-badge ${showOnlyFavorites ? "active" : ""}`}
+                onClick={() => setShowOnlyFavorites(!showOnlyFavorites)}
+              >
+                <span>Favoris ❤️</span>
+                <span className="badge-count notranslate" translate="no">
+                  {totalFavoritesCount}
+                </span>
+              </button>
             </div>
           </div>
         </div>
@@ -298,54 +328,121 @@ export function HousesArchive({ locale, initialHouses, initialCategories }: Hous
                 </a>
               );
             })}
+            
+            <button 
+              className={`favorites-sticky-toggle ${showOnlyFavorites ? "active" : ""}`}
+              onClick={() => setShowOnlyFavorites(!showOnlyFavorites)}
+            >
+              <span>Favoris ❤️</span>
+              <span className="sticky-nav-count notranslate" translate="no">
+                {totalFavoritesCount}
+              </span>
+            </button>
           </div>
         </div>
       </div>
 
       {/* Commitments & Guarantees section */}
-      <div className="archive-commitments-section">
-        <div className="container">
-          <div className="commitments-header reveal-on-scroll">
-            <h2>{commitmentsTitle}</h2>
-            <p>{commitmentsSubtitle}</p>
-          </div>
-          <div className="archive-commitments-grid">
-            {commitmentsList.map((item, idx) => (
-              <div className="commitment-card reveal-on-scroll" key={idx}>
-                <div className="commitment-icon">
-                  {idx === 0 && (
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  )}
-                  {idx === 1 && (
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                      <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  )}
-                  {idx === 2 && (
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  )}
-                  {idx === 3 && (
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  )}
+      {!showOnlyFavorites && (
+        <div className="archive-commitments-section">
+          <div className="container">
+            <div className="commitments-header reveal-on-scroll">
+              <h2>{commitmentsTitle}</h2>
+              <p>{commitmentsSubtitle}</p>
+            </div>
+            <div className="archive-commitments-grid">
+              {commitmentsList.map((item, idx) => (
+                <div className="commitment-card reveal-on-scroll" key={idx}>
+                  <div className="commitment-icon">
+                    {idx === 0 && (
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    )}
+                    {idx === 1 && (
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    )}
+                    {idx === 2 && (
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    )}
+                    {idx === 3 && (
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    )}
+                  </div>
+                  <h3>{item.title}</h3>
+                  <p>{item.desc}</p>
                 </div>
-                <h3>{item.title}</h3>
-                <p>{item.desc}</p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Houses Sections by Category */}
       <div className="archive-sections-container">
+        {showOnlyFavorites && (
+          <div className="favorites-info-wrapper container">
+            <div className="favorites-explanation-box reveal-on-scroll is-visible direct-show">
+              <div className="explanation-content">
+                <h4>
+                  <span className="info-icon" style={{ marginRight: "8px" }}>💡</span>
+                  {isEn ? "How do your favorites work?" : "Comment fonctionnent vos favoris ?"}
+                </h4>
+                <ul>
+                  <li>
+                    <strong>{isEn ? "Local Storage per Device:" : "Stockage local par appareil :"}</strong>{" "}
+                    {isEn 
+                      ? "Your favorites are saved locally in your browser (localStorage). If you save a model on your phone, it will only be visible on that phone. If you save it from your computer, it will only be visible on that computer." 
+                      : "Vos favoris sont enregistrés localement dans votre navigateur (localStorage). Si vous enregistrez un modèle depuis votre téléphone, il s'affichera uniquement sur ce téléphone. Si vous l'enregistrez depuis votre ordinateur, il s'affichera uniquement sur cet ordinateur."}
+                  </li>
+                  <li>
+                    <strong>{isEn ? "No Account Required:" : "Sans compte :"}</strong>{" "}
+                    {isEn 
+                      ? "They remain saved during your next visits and refreshes without needing to create an account." 
+                      : "Ils restent sauvegardés lors de vos prochaines visites et rafraîchissements sans avoir besoin de créer un compte."}
+                  </li>
+                  <li>
+                    <strong>{isEn ? "Cache Warning:" : "Attention au cache :"}</strong>{" "}
+                    {isEn 
+                      ? "If you clear your browser history or cache on this device, your favorites will be reset." 
+                      : "Si vous videz le cache ou l'historique de votre navigateur sur cet appareil, vos favoris seront réinitialisés."}
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {showOnlyFavorites && totalFavoritesCount === 0 && (
+          <div className="favorites-empty-state container reveal-on-scroll is-visible">
+            <div className="empty-state-content">
+              <div className="empty-state-icon">❤️</div>
+              <h3>{isEn ? "No favorites yet" : "Aucun favori pour le moment"}</h3>
+              <p>
+                {isEn 
+                  ? "Click on the heart icon on any house model to save it here." 
+                  : "Cliquez sur l'icône de cœur sur n'importe quel modèle de maison pour l'enregistrer ici."}
+              </p>
+              <button className="primary-btn" onClick={() => setShowOnlyFavorites(false)}>
+                {isEn ? "Browse all models" : "Voir tous les modèles"}
+              </button>
+            </div>
+          </div>
+        )}
+
         {initialCategories.map((category) => {
-          const houses = initialHouses.filter((house) => house.categorySlug === category.slug);
+          const houses = initialHouses.filter((house) => {
+            const matchesCategory = house.categorySlug === category.slug;
+            if (!matchesCategory) return false;
+            if (showOnlyFavorites) return isFavorite(house.slug);
+            return true;
+          });
           if (houses.length === 0) return null;
           return (
             <div className="archive-house-section" id={category.id} key={category.id}>

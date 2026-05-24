@@ -47,11 +47,19 @@ export function ProductsGrid({
   const minSwipeDistance = 50;
 
   const onTouchStart = (e: React.TouchEvent) => {
+    const target = e.target as HTMLElement;
+    if (target.closest(".compare-slider")) {
+      return; // Ignore swipes that originate from the compare slider handle
+    }
     setTouchEnd(null);
     setTouchStart(e.targetTouches[0].clientX);
   };
 
   const onTouchMove = (e: React.TouchEvent) => {
+    const target = e.target as HTMLElement;
+    if (target.closest(".compare-slider")) {
+      return;
+    }
     setTouchEnd(e.targetTouches[0].clientX);
   };
 
@@ -127,19 +135,12 @@ export function ProductsGrid({
                 <div className="prod-card">
                   <div className="prod-card-img-container relative" style={{ height: "320px" }}>
                     {house.image && house.imageBardage && house.image !== house.imageBardage ? (
-                      <div
-                        onTouchStart={(e) => e.stopPropagation()}
-                        onTouchMove={(e) => e.stopPropagation()}
-                        onTouchEnd={(e) => e.stopPropagation()}
-                        style={{ width: "100%", height: "100%" }}
-                      >
-                        <CompareSlider
-                          imageA={house.image}
-                          imageB={house.imageBardage}
-                          altA={`${house.title} — Enduit`}
-                          altB={`${house.title} — Bardage`}
-                        />
-                      </div>
+                      <CompareSlider
+                        imageA={house.image}
+                        imageB={house.imageBardage}
+                        altA={`${house.title} — Enduit`}
+                        altB={`${house.title} — Bardage`}
+                      />
                     ) : house.image ? (
                       <Image
                         src={house.image}

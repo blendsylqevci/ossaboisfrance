@@ -28,6 +28,7 @@ type HousesArchiveProps = {
   locale: Locale;
   initialHouses: CMSHouseItem[];
   initialCategories: CMSCategoryItem[];
+  dict: any;
 };
 
 export function CompareSlider({ imageA, imageB, altA, altB }: { imageA: string; imageB: string; altA: string; altB: string }) {
@@ -126,7 +127,7 @@ export function CompareSlider({ imageA, imageB, altA, altB }: { imageA: string; 
   );
 }
 
-function HouseCard({ house, locale }: { house: CMSHouseItem; locale: Locale }) {
+function HouseCard({ house, locale, dict }: { house: CMSHouseItem; locale: Locale; dict: any }) {
   const price = formatArchiveStartingPrice(house.price60x160);
   const hasBothImages = !!house.image && !!house.imageBardage && house.image !== house.imageBardage;
   const { isFavorite, handleToggle } = useFavorites();
@@ -174,16 +175,16 @@ function HouseCard({ house, locale }: { house: CMSHouseItem; locale: Locale }) {
         <div className="house-archive-card-footer">
           {price ? (
             <div className="house-archive-price">
-              <span className="price-label">à partir de</span>
+              <span className="price-label">{dict.startingFrom}</span>
               <strong className="price-val">{price}&nbsp;€</strong>
             </div>
           ) : (
             <div className="house-archive-price price-placeholder">
-              <span className="price-label">Sur devis</span>
+              <span className="price-label">{dict.onQuote}</span>
             </div>
           )}
           <Link className="house-archive-button" href={`/${locale}/maisons/${house.slug}`}>
-            <span>Configurer</span>
+            <span>{dict.configureBtn}</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
@@ -194,7 +195,7 @@ function HouseCard({ house, locale }: { house: CMSHouseItem; locale: Locale }) {
   );
 }
 
-export function HousesArchive({ locale, initialHouses, initialCategories }: HousesArchiveProps) {
+export function HousesArchive({ locale, initialHouses, initialCategories, dict }: HousesArchiveProps) {
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
   const { isFavorite } = useFavorites();
   const totalFavoritesCount = initialHouses.filter((house) => isFavorite(house.slug)).length;
@@ -236,47 +237,14 @@ export function HousesArchive({ locale, initialHouses, initialCategories }: Hous
         });
       }
     };
-  }, []);
+  }, [showOnlyFavorites]);
 
-  // Translate commitments and titles based on locale
-  const isEn = locale === "en";
+  const pageTitle = dict.pageTitle;
+  const pageSubtitle = dict.pageSubtitle;
   
-  const pageTitle = isEn ? "House Models" : "Modèles de Maisons";
-  const pageSubtitle = isEn 
-    ? "Discover our range of premium modular timber-frame homes. Fully customizable to fit your life." 
-    : "Découvrez notre gamme de maisons modulaires à ossature bois haut de gamme. Entérieurement personnalisables pour s'adapter à votre vie.";
-  
-  const commitmentsTitle = isEn ? "Our Commitments & Guarantees" : "Engagements & Garanties";
-  const commitmentsSubtitle = isEn
-    ? "Building with Ossa Bois France is the guarantee of a serene, sustainable, and high-performance project."
-    : "Construire avec Ossa Bois France, c'est l'assurance d'un projet serein, durable et performant.";
-
-  const commitmentsList = [
-    {
-      title: isEn ? "Decennial Guarantee" : "Garantie Décennale",
-      desc: isEn 
-        ? "All builder's guarantees required by French law, including ten-year structural insurance." 
-        : "Toutes les garanties constructeurs requises par la loi, y compris l'assurance décennale de structure."
-    },
-    {
-      title: isEn ? "RE2020 Compliance" : "Conformité RE2020",
-      desc: isEn 
-        ? "High thermal performance design meeting the latest ecological and energy savings standards." 
-        : "Conception bioclimatique à haute performance thermique, conforme aux normes environnementales RE2020."
-    },
-    {
-      title: isEn ? "Eco-Responsible Wood" : "Bois Éco-responsable",
-      desc: isEn 
-        ? "Certified premium timber sourced from sustainably managed European forests." 
-        : "Matériaux certifiés de haute qualité issus de forêts gérées durablement."
-    },
-    {
-      title: isEn ? "Millimeter Precision" : "Précision Millimétrique",
-      desc: isEn 
-        ? "Prefabricated in our state-of-the-art facility for swift and perfect assembly on site." 
-        : "Préfabrication robotisée en atelier garantissant un assemblage rapide et sans défaut sur chantier."
-    }
-  ];
+  const commitmentsTitle = dict.commitmentsTitle;
+  const commitmentsSubtitle = dict.commitmentsSubtitle;
+  const commitmentsList = dict.commitmentsList || [];
 
   return (
     <section className="houses-archive-page">
@@ -294,7 +262,12 @@ export function HousesArchive({ locale, initialHouses, initialCategories }: Hous
                 const count = initialHouses.filter((house) => house.categorySlug === category.slug).length;
                 if (count === 0) return null;
                 return (
-                  <a href={`#${category.id}`} className="category-nav-badge" key={category.id}>
+                  <a 
+                    href={`#${category.id}`} 
+                    className="category-nav-badge" 
+                    key={category.id}
+                    onClick={() => setShowOnlyFavorites(false)}
+                  >
                     <span>{category.title}</span>
                     <span className="badge-count notranslate" translate="no">{count}</span>
                   </a>
@@ -305,7 +278,7 @@ export function HousesArchive({ locale, initialHouses, initialCategories }: Hous
                 className={`category-nav-badge favorites-toggle-badge ${showOnlyFavorites ? "active" : ""}`}
                 onClick={() => setShowOnlyFavorites(!showOnlyFavorites)}
               >
-                <span>Favoris ❤️</span>
+                <span>{dict.favoritesLabel} ❤️</span>
                 <span className="badge-count notranslate" translate="no">
                   {totalFavoritesCount}
                 </span>
@@ -314,7 +287,7 @@ export function HousesArchive({ locale, initialHouses, initialCategories }: Hous
           </div>
         </div>
       </div>
-
+ 
       {/* Sticky Bar - Client scroll controlled in CSS / global */}
       <div className="archive-sticky-nav-container">
         <div className="container">
@@ -322,7 +295,11 @@ export function HousesArchive({ locale, initialHouses, initialCategories }: Hous
             {initialCategories.map((category) => {
               const count = initialHouses.filter((house) => house.categorySlug === category.slug).length;
               return (
-                <a href={`#${category.id}`} key={category.id}>
+                <a 
+                  href={`#${category.id}`} 
+                  key={category.id}
+                  onClick={() => setShowOnlyFavorites(false)}
+                >
                   <span>{category.title}</span>
                   <span className="sticky-nav-count notranslate" translate="no">{count || 0}</span>
                 </a>
@@ -333,7 +310,7 @@ export function HousesArchive({ locale, initialHouses, initialCategories }: Hous
               className={`favorites-sticky-toggle ${showOnlyFavorites ? "active" : ""}`}
               onClick={() => setShowOnlyFavorites(!showOnlyFavorites)}
             >
-              <span>Favoris ❤️</span>
+              <span>{dict.favoritesLabel} ❤️</span>
               <span className="sticky-nav-count notranslate" translate="no">
                 {totalFavoritesCount}
               </span>
@@ -341,7 +318,7 @@ export function HousesArchive({ locale, initialHouses, initialCategories }: Hous
           </div>
         </div>
       </div>
-
+ 
       {/* Commitments & Guarantees section */}
       {!showOnlyFavorites && (
         <div className="archive-commitments-section">
@@ -351,7 +328,7 @@ export function HousesArchive({ locale, initialHouses, initialCategories }: Hous
               <p>{commitmentsSubtitle}</p>
             </div>
             <div className="archive-commitments-grid">
-              {commitmentsList.map((item, idx) => (
+              {commitmentsList.map((item: any, idx: number) => (
                 <div className="commitment-card reveal-on-scroll" key={idx}>
                   <div className="commitment-icon">
                     {idx === 0 && (
@@ -383,7 +360,7 @@ export function HousesArchive({ locale, initialHouses, initialCategories }: Hous
           </div>
         </div>
       )}
-
+ 
       {/* Houses Sections by Category */}
       <div className="archive-sections-container">
         {showOnlyFavorites && (
@@ -392,50 +369,39 @@ export function HousesArchive({ locale, initialHouses, initialCategories }: Hous
               <div className="explanation-content">
                 <h4>
                   <span className="info-icon" style={{ marginRight: "8px" }}>💡</span>
-                  {isEn ? "How do your favorites work?" : "Comment fonctionnent vos favoris ?"}
+                  {dict.favoritesExplanationTitle}
                 </h4>
                 <ul>
                   <li>
-                    <strong>{isEn ? "Local Storage per Device:" : "Stockage local par appareil :"}</strong>{" "}
-                    {isEn 
-                      ? "Your favorites are saved locally in your browser (localStorage). If you save a model on your phone, it will only be visible on that phone. If you save it from your computer, it will only be visible on that computer." 
-                      : "Vos favoris sont enregistrés localement dans votre navigateur (localStorage). Si vous enregistrez un modèle depuis votre téléphone, il s'affichera uniquement sur ce téléphone. Si vous l'enregistrez depuis votre ordinateur, il s'affichera uniquement sur cet ordinateur."}
+                    {dict.favoritesExplanationStorage}
                   </li>
                   <li>
-                    <strong>{isEn ? "No Account Required:" : "Sans compte :"}</strong>{" "}
-                    {isEn 
-                      ? "They remain saved during your next visits and refreshes without needing to create an account." 
-                      : "Ils restent sauvegardés lors de vos prochaines visites et rafraîchissements sans avoir besoin de créer un compte."}
+                    {dict.favoritesExplanationAccount}
                   </li>
                   <li>
-                    <strong>{isEn ? "Cache Warning:" : "Attention au cache :"}</strong>{" "}
-                    {isEn 
-                      ? "If you clear your browser history or cache on this device, your favorites will be reset." 
-                      : "Si vous videz le cache ou l'historique de votre navigateur sur cet appareil, vos favoris seront réinitialisés."}
+                    {dict.favoritesExplanationCache}
                   </li>
                 </ul>
               </div>
             </div>
           </div>
         )}
-
+ 
         {showOnlyFavorites && totalFavoritesCount === 0 && (
           <div className="favorites-empty-state container reveal-on-scroll is-visible">
             <div className="empty-state-content">
               <div className="empty-state-icon">❤️</div>
-              <h3>{isEn ? "No favorites yet" : "Aucun favori pour le moment"}</h3>
+              <h3>{dict.favoritesEmptyTitle}</h3>
               <p>
-                {isEn 
-                  ? "Click on the heart icon on any house model to save it here." 
-                  : "Cliquez sur l'icône de cœur sur n'importe quel modèle de maison pour l'enregistrer ici."}
+                {dict.favoritesEmptyText}
               </p>
               <button className="primary-btn" onClick={() => setShowOnlyFavorites(false)}>
-                {isEn ? "Browse all models" : "Voir tous les modèles"}
+                {dict.favoritesEmptyBtn}
               </button>
             </div>
           </div>
         )}
-
+ 
         {initialCategories.map((category) => {
           const houses = initialHouses.filter((house) => {
             const matchesCategory = house.categorySlug === category.slug;
@@ -450,12 +416,12 @@ export function HousesArchive({ locale, initialHouses, initialCategories }: Hous
                 <div className="section-heading-block reveal-on-scroll">
                   <h2>{category.title}</h2>
                   <span className="model-count-label">
-                    {houses.length} {houses.length > 1 ? (isEn ? "Models" : "Modèles") : (isEn ? "Model" : "Modèle")}
+                    {houses.length} {houses.length > 1 ? dict.modelsCount : dict.modelCount}
                   </span>
                 </div>
                 <div className="house-archive-grid">
                   {houses.map((house) => (
-                    <HouseCard key={house.slug} house={house} locale={locale} />
+                    <HouseCard key={house.slug} house={house} locale={locale} dict={dict} />
                   ))}
                 </div>
               </div>

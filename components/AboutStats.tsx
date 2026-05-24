@@ -34,26 +34,26 @@ function AnimatedNumber({ target, suffix = "" }: { target: number; suffix?: stri
   return <>{count}{suffix}</>;
 }
 
-export function AboutStats() {
+export function AboutStats({ dict }: { dict: { experience: string; projects: string; quality: string } }) {
   return (
     <div className="about-stats-row">
       <div className="about-stat-item">
         <h3 className="stat-number">
           <AnimatedNumber target={30} suffix="+" />
         </h3>
-        <p className="stat-label">années d’expérience dans la construction modulaire</p>
+        <p className="stat-label">{dict.experience}</p>
       </div>
       <div className="about-stat-item">
         <h3 className="stat-number">
           <AnimatedNumber target={700} suffix="+" />
         </h3>
-        <p className="stat-label">projets livrés en Europe</p>
+        <p className="stat-label">{dict.projects}</p>
       </div>
       <div className="about-stat-item">
         <h3 className="stat-number">
           <AnimatedNumber target={100} suffix="%" />
         </h3>
-        <p className="stat-label">production maîtrisée et qualité certifiée</p>
+        <p className="stat-label">{dict.quality}</p>
       </div>
     </div>
   );

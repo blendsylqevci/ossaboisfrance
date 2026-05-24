@@ -1,3 +1,4 @@
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { getPayload } from "payload";
@@ -9,6 +10,8 @@ import { ReviewsCarousel } from "@/components/ReviewsCarousel";
 import { CollaboratorsCarousel } from "@/components/CollaboratorsCarousel";
 import { FeaturedProductsSection } from "@/components/FeaturedProductsSection";
 import { AboutStats } from "@/components/AboutStats";
+import { getDictionary } from "@/lib/dictionary";
+import { translateText, translateHouseDescription } from "@/lib/translation-helper";
 
 type HomePageProps = {
   params: Promise<{ locale: Locale }>;
@@ -42,7 +45,7 @@ const whyCards = [
   },
   {
     title: "Livraison rapide dans toute l'Europe",
-    text: "Nous prenons en charge le transport et livrons votre maison modulaire en un délai court, partout en Europe, grâce à une logistique optimisée."
+    text: "We take care of the transport and deliver your modular home in a short time, anywhere in Europe, thanks to optimized logistics."
   },
   {
     title: "Fabrication contrôlée en usine",
@@ -97,6 +100,7 @@ const clientReviews = [
 
 export default async function HomePage({ params }: HomePageProps) {
   const { locale } = await params;
+  const dict = await getDictionary(locale);
   
   const payload = await getPayload({ config });
 
@@ -135,14 +139,27 @@ export default async function HomePage({ params }: HomePageProps) {
     "maison-avec-etage"
   ];
 
+  const categorySlugToKey: Record<string, string> = {
+    "maison-toitu-terrasse": "terrace",
+    "maison-sans-faitage": "terraceEtage",
+    "maison-plein-pied": "plainPied",
+    "maison-combles-ammenageable": "combles",
+    "maison-avec-etage": "etage"
+  };
+
   // Map to matching layout types
   const categories = categoriesRes.docs
-    .map((doc) => ({
-      id: doc.slug,
-      title: doc.name,
-      slug: doc.slug,
-      sourceCategory: doc.name,
-    }))
+    .map((doc) => {
+      const key = categorySlugToKey[doc.slug];
+      const categoriesObj = dict.header?.categories as Record<string, string> | undefined;
+      const translatedTitle = key && categoriesObj?.[key] ? categoriesObj[key] : translateText(doc.name, locale);
+      return {
+        id: doc.slug,
+        title: translatedTitle,
+        slug: doc.slug,
+        sourceCategory: doc.name,
+      };
+    })
     .sort((a, b) => {
       const idxA = categoryOrder.indexOf(a.id);
       const idxB = categoryOrder.indexOf(b.id);
@@ -160,10 +177,10 @@ export default async function HomePage({ params }: HomePageProps) {
 
     return {
       slug: doc.slug,
-      title: doc.title,
-      categoryName: catObj?.name || 'Maison',
+      title: translateText(doc.title, locale),
+      categoryName: translateText(catObj?.name || 'Maison', locale),
       categorySlug: catObj?.slug || '',
-      description: doc.description || doc.subheading || '',
+      description: translateHouseDescription(doc.description || doc.subheading || '', doc.slug, locale),
       image: imageUrl || '',
       imageBardage: finalImageUrl || '',
       price60x160: finalPrice,
@@ -196,18 +213,27 @@ export default async function HomePage({ params }: HomePageProps) {
     if (initialIdx === -1) initialIdx = 0;
   }
 
+  // Construct localized client reviews by merging text with static media links
+  const carouselReviews = (dict.home.clientReviews || []).map((rev: any, index: number) => ({
+    content: rev.content,
+    name: rev.name,
+    title: rev.title,
+    image: index === 0 ? "https://ossaboisfrance.com/wp-content/uploads/2025/10/div.avarta.png" : undefined,
+    socialIcon: "https://ossaboisfrance.com/wp-content/uploads/2025/10/SVG-1.svg"
+  }));
+
   return (
     <main className="homepage-root">
       {/* ═══════════════ SEKTION 1: HERO TEXT ═══════════════ */}
       <section className="wp-section-hero">
         <div className="container hero-content-wrapper">
-          <h1 className="hero-title">MAISONS PRÉFABRIQUÉES</h1>
+          <h1 className="hero-title">{dict.home.heroTitle}</h1>
           <p className="hero-description">
-            Des maisons modernes, durables et entièrement personnalisables, conçues pour s’adapter parfaitement à votre mode de vie.
+            {dict.home.heroDescription}
           </p>
           <div className="hero-btn-container">
             <Link href={`/${locale}/maisons`} className="hero-discover-btn">
-              <span>Découvrir</span>
+              <span>{dict.home.exploreCta}</span>
               <span className="hero-btn-icon-wrapper">
                 <svg className="hero-btn-arrow" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -230,12 +256,23 @@ export default async function HomePage({ params }: HomePageProps) {
         <div className="container about-grid">
           <div className="about-left-col">
             <h2 className="about-title">
-              C’est nous, <br />
-              Ossa Bois <br />
-              France
+              {dict.home.aboutTitle.split(', ').map((part: string, index: number) => (
+                <React.Fragment key={index}>
+                  {part}
+                  {index < dict.home.aboutTitle.split(', ').length - 1 && <>, <br /></>}
+                </React.Fragment>
+              ))}
             </h2>
             <Link href={`/${locale}/qui-sommes-nous`} className="about-link-btn">
-              <span>Découvrez qui <br /> nous sommes</span>
+              <span>
+                {dict.home.aboutCta.split(' ').map((word: string, idx: number, arr: string[]) => {
+                  // Put a line break before the last words to match design
+                  if (idx === arr.length - 2) {
+                    return <React.Fragment key={idx}>{word} <br /></React.Fragment>;
+                  }
+                  return idx === arr.length - 1 ? word : word + ' ';
+                })}
+              </span>
               <svg className="about-arrow-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
@@ -245,17 +282,17 @@ export default async function HomePage({ params }: HomePageProps) {
           <div className="about-right-col">
             <div className="about-editorial-text">
               <p>
-                Ossa Bois France réinvente l’habitat individuel et collectif à travers une approche moderne, écologique et hautement performante de la construction en bois. Forts de notre expertise d’ingénierie et de notre savoir-faire industriel, nous concevons des structures d'exception qui allient design contemporain, durabilité environnementale et confort de vie inégalé.
+                {dict.home.aboutText1}
               </p>
               <p>
-                De la conception sur-mesure à la fabrication de haute précision dans nos ateliers de pointe, chaque projet bénéficie d'un suivi rigoureux. Grâce à une logistique intégrée et des équipes d'assemblage qualifiées, nous garantissons un accompagnement clé en main à travers toute l'Europe, éliminant les aléas des chantiers traditionnels en respectant strictement vos budgets et vos délais.
+                {dict.home.aboutText2}
               </p>
               <p className="about-bold-highlight">
-                <strong>Une construction d'avenir, durable et certifiée, pour concrétiser vos projets architecturaux les plus exigeants.</strong>
+                <strong>{dict.home.aboutBold}</strong>
               </p>
             </div>
 
-            <AboutStats />
+            <AboutStats dict={dict.home.stats} />
           </div>
         </div>
       </section>
@@ -265,16 +302,23 @@ export default async function HomePage({ params }: HomePageProps) {
         locale={locale}
         categories={categories}
         allHouses={allHouses}
+        dict={{
+          featuredTitle: dict.home.featuredTitle,
+          featuredSubtitle: dict.home.featuredSubtitle,
+          exploreCta: dict.home.exploreCta,
+          startingFrom: dict.archive.startingFrom,
+          configureBtn: dict.archive.configureBtn,
+        }}
       />
 
       {/* ═══════════════ SEKTION 5: CLIENT TESTIMONIALS ═══════════════ */}
       <section className="wp-section-reviews">
         <div className="container reviews-grid">
           <div className="reviews-left-col">
-            <h2 className="reviews-title">Les avis de nos clients</h2>
-            <p className="reviews-subtitle">Les témoignages de nos clients à travers l’Europe</p>
+            <h2 className="reviews-title">{dict.home.reviewsTitle}</h2>
+            <p className="reviews-subtitle">{dict.home.reviewsSubtitle}</p>
             <Link href={`/${locale}/qui-sommes-nous`} className="reviews-more-btn">
-              <span>Voir plus d’avis</span>
+              <span>{dict.home.reviewsMore}</span>
               <svg className="about-arrow-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
@@ -282,7 +326,7 @@ export default async function HomePage({ params }: HomePageProps) {
           </div>
 
           <div className="reviews-right-col">
-            <ReviewsCarousel reviews={clientReviews} />
+            <ReviewsCarousel reviews={carouselReviews} />
           </div>
         </div>
       </section>
@@ -290,11 +334,11 @@ export default async function HomePage({ params }: HomePageProps) {
       {/* ═══════════════ SEKTION 6: WHY CHOOSE US ═══════════════ */}
       <section className="wp-section-why">
         <div className="container">
-          <h2 className="why-title">Pourquoi choisir Ossa Bois France</h2>
-          <p className="why-subtitle">Des prix imbattables et une personnalisation complète de votre maison, du kit jusqu’aux fenêtres.</p>
+          <h2 className="why-title">{dict.home.whyTitle}</h2>
+          <p className="why-subtitle">{dict.home.whySubtitle}</p>
           
           <div className="why-grid">
-            {whyCards.map((card, i) => (
+            {(dict.home.whyCards || []).map((card: any, i: number) => (
               <div className="why-card" key={i}>
                 <div className="why-card-header">
                   <div className="why-card-icon-container">
@@ -318,7 +362,7 @@ export default async function HomePage({ params }: HomePageProps) {
       {/* ═══════════════ SEKTION 7: COLLABORATORS ═══════════════ */}
       <section className="wp-section-collabs">
         <div className="container">
-          <h2 className="collabs-title">Nos Collaborateurs Européens</h2>
+          <h2 className="collabs-title">{dict.home.collabsTitle}</h2>
           <CollaboratorsCarousel logos={collabLogos} />
         </div>
       </section>
@@ -328,13 +372,17 @@ export default async function HomePage({ params }: HomePageProps) {
         <div className="container">
           <div className="cta-gray-box">
             <div className="cta-left-content">
-              <h2 className="cta-box-title">Construisez votre maison idéale</h2>
+              <h2 className="cta-box-title">{dict.home.ctaTitle}</h2>
               <p className="cta-box-desc">
-                Choisissez votre modèle, personnalisez chaque détail et suivez le prix en temps réel. <br />
-                Simple. Rapide. Transparent.
+                {dict.home.ctaDesc.split('. ').map((part: string, index: number, arr: string[]) => (
+                  <React.Fragment key={index}>
+                    {part}{index < arr.length - 1 ? '.' : ''}
+                    {index === 1 && <br />}
+                  </React.Fragment>
+                ))}
               </p>
               <Link href={`/${locale}/contact`} className="cta-contact-btn">
-                <span>Contactez-nous</span>
+                <span>{dict.home.ctaCta}</span>
                 <svg className="cta-btn-arrow" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M7 17L17 7M17 7H9M17 7V15" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>

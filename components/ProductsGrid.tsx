@@ -22,6 +22,10 @@ type ProductsGridProps = {
   initialActiveIndex?: number;
   onReachEnd?: () => void;
   onReachStart?: () => void;
+  dict: {
+    startingFrom: string;
+    configureBtn: string;
+  };
 };
 
 export function ProductsGrid({
@@ -30,6 +34,7 @@ export function ProductsGrid({
   initialActiveIndex = 0,
   onReachEnd,
   onReachStart,
+  dict,
 }: ProductsGridProps) {
   const [isMobile, setIsMobile] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -130,7 +135,7 @@ export function ProductsGrid({
                         const formattedPrice = formatArchiveStartingPrice(house.price60x160 ?? null);
                         return formattedPrice ? (
                           <div className="prod-card-price-row">
-                            <span className="prod-price-label">À partir de</span>
+                            <span className="prod-price-label">{dict.startingFrom}</span>
                             <span className="prod-price-val">{formattedPrice} €</span>
                           </div>
                         ) : (
@@ -142,7 +147,7 @@ export function ProductsGrid({
                         href={`/${locale}/maisons/${house.slug}`}
                         className="prod-card-button"
                       >
-                        <span>View & Configure</span>
+                        <span>{dict.configureBtn}</span>
                         <svg className="prod-btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M7 17L17 7M17 7H9M17 7V15" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
@@ -230,7 +235,7 @@ export function ProductsGrid({
                     const formattedPrice = formatArchiveStartingPrice(house.price60x160 ?? null);
                     return formattedPrice ? (
                       <div className="prod-card-price-row">
-                        <span className="prod-price-label">À partir de</span>
+                        <span className="prod-price-label">{dict.startingFrom}</span>
                         <span className="prod-price-val">{formattedPrice} €</span>
                       </div>
                     ) : (
@@ -243,7 +248,7 @@ export function ProductsGrid({
                     href={`/${locale}/maisons/${house.slug}`}
                     className="prod-card-button"
                   >
-                    <span>View & Configure</span>
+                    <span>{dict.configureBtn}</span>
                     <svg className="prod-btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M7 17L17 7M17 7H9M17 7V15" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>

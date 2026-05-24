@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { isLocale, Locale } from "@/lib/i18n";
+import { getDictionary } from "@/lib/dictionary";
 
 export default async function LocaleLayout({
   children,
@@ -16,11 +17,13 @@ export default async function LocaleLayout({
     notFound();
   }
 
+  const dict = await getDictionary(locale as Locale);
+
   return (
     <div className="site-shell">
-      <SiteHeader locale={locale as Locale} />
+      <SiteHeader locale={locale as Locale} dict={dict.header} />
       <main>{children}</main>
-      <SiteFooter locale={locale as Locale} />
+      <SiteFooter locale={locale as Locale} dict={dict.footer} />
     </div>
   );
 }

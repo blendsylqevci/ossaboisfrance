@@ -1,0 +1,405 @@
+{
+  "header": {
+    "home": "Home",
+    "models": "House Models",
+    "allModels": "All models",
+    "about": "About Us",
+    "b2b": "B2B",
+    "realisations": "Realizations",
+    "contactUs": "Contact Us",
+    "closeMenu": "Close menu",
+    "categories": {
+      "terrace": "Flat roof houses",
+      "terraceEtage": "Flat roof houses with floor",
+      "plainPied": "Single-story houses",
+      "combles": "Houses with convertible attics",
+      "etage": "Two-story houses"
+    }
+  },
+  "footer": {
+    "description": "Timber frame modular house builder.",
+    "navigation": "Navigation",
+    "address": "Our Address",
+    "contactUs": "Contact Us",
+    "socialMedia": "Social Media",
+    "newsletterLabel": "Contact for any question",
+    "emailPlaceholder": "E-mail",
+    "send": "Send",
+    "copyright": "Copyright © 2025. Ossabois",
+    "madeBy": "Made by iCode"
+  },
+  "home": {
+    "heroKicker": "Timber frame house manufacturer",
+    "heroTitle": "Your premium modular house",
+    "heroDescription": "Discover our fully customizable and high-performance models, delivered throughout France.",
+    "exploreCta": "Discover our models",
+    "contactCta": "Contact us",
+    "whyTitle": "Why choose Ossa Bois France?",
+    "whySubtitle": "Exceptional services tailored to your life projects.",
+    "whyCards": [
+      {
+        "title": "Very advantageous prices",
+        "text": "Our modular homes are offered at competitive prices thanks to our own production plant. Excellent value for money without compromise on strength or finish."
+      },
+      {
+        "title": "Full online customization",
+        "text": "You can configure your house as you wish directly on our website: model, surface, insulation, materials, windows, and finishes — everything is customizable according to your needs."
+      },
+      {
+        "title": "Fast delivery throughout Europe",
+        "text": "We take care of the transport and deliver your modular home in a short time, anywhere in Europe, thanks to optimized logistics."
+      },
+      {
+        "title": "Controlled factory manufacturing",
+        "text": "Production carried out in our modern factory in France, under strict quality control: solid structure, millimeter precision, and certified materials."
+      },
+      {
+        "title": "Simple and quick installation",
+        "text": "Thanks to modular construction, installation on your land is clean, fast, and without surprises. A much more efficient process than traditional construction."
+      },
+      {
+        "title": "Reliable company & full support",
+        "text": "We accompany you at every step of your project, from the initial 3D plans to the formalities and final assembly for complete peace of mind."
+      }
+    ],
+    "featuredTitle": "Discover our featured listings",
+    "featuredSubtitle": "Our flagship models highly appreciated by our customers.",
+    "statsTitle": "Our factory in figures",
+    "statsSubtitle": "A modern industrial capacity to make your projects a reality.",
+    "reviewsTitle": "What our clients say",
+    "reviewsSubtitle": "Our customers' satisfaction is our greatest success.",
+    "clientReviews": [
+      {
+        "content": "Impeccable service, fast delivery, and premium quality. Our modular home was installed perfectly and the result exceeds our expectations. We highly recommend Ossa Bois France.",
+        "name": "Mrs. Khorsan",
+        "title": "13/04/2025"
+      },
+      {
+        "content": "A very professional team, full support from start to finish. The quality of construction is remarkable and the deadlines were perfectly respected. I am delighted with my modular home.",
+        "name": "Sophie L.",
+        "title": "@sophie.l"
+      },
+      {
+        "content": "Fast installation, solid materials, and customer service always available. Our house is exactly as we imagined it. Thank you to Ossa Bois France for this quality work.",
+        "name": "Marc and Élodie R.",
+        "title": "@marc_elodie"
+      },
+      {
+        "content": "Excellent value for money. Transport and assembly went without any problems. I recommend this company 100%.",
+        "name": "Jean-Michel D.",
+        "title": "@jm_dubois"
+      }
+    ],
+    "aboutTitle": "It's us, Ossa Bois France",
+    "aboutCta": "Discover who we are",
+    "aboutText1": "Ossa Bois France reinvents individual and collective housing through a modern, ecological, and high-performance approach to timber construction. Building on our engineering expertise and industrial know-how, we design exceptional structures that combine contemporary design, environmental sustainability, and unparalleled living comfort.",
+    "aboutText2": "From custom design to high-precision manufacturing in our state-of-the-art workshops, every project benefits from rigorous monitoring. Thanks to integrated logistics and qualified assembly teams, we guarantee turnkey support across Europe, eliminating the hazards of traditional construction sites while strictly respecting your budgets and deadlines.",
+    "aboutBold": "A sustainable and certified construction of the future, to make your most demanding architectural projects a reality.",
+    "stats": {
+      "experience": "years of experience in modular construction",
+      "projects": "projects delivered in Europe",
+      "quality": "controlled production and certified quality"
+    },
+    "reviewsMore": "See more reviews",
+    "collabsTitle": "Our European Partners",
+    "ctaTitle": "Build your ideal home",
+    "ctaDesc": "Choose your model, customize every detail, and track the price in real time. Simple. Fast. Transparent.",
+    "ctaCta": "Contact us"
+  },
+  "archive": {
+    "pageTitle": "House Models",
+    "pageSubtitle": "Discover our range of premium modular timber frame homes. Fully customizable to fit your life.",
+    "commitmentsTitle": "Our Commitments & Guarantees",
+    "commitmentsSubtitle": "Building with Ossa Bois France is the guarantee of a serene, sustainable, and high-performance project.",
+    "commitmentsList": [
+      {
+        "title": "Decennial Guarantee",
+        "desc": "All builder's guarantees required by French law, including ten-year structural insurance."
+      },
+      {
+        "title": "RE2020 Compliance",
+        "desc": "High thermal performance design meeting the latest ecological and energy savings standards."
+      },
+      {
+        "title": "Eco-Responsible Wood",
+        "desc": "Certified premium timber sourced from sustainably managed European forests."
+      },
+      {
+        "title": "Millimeter Precision",
+        "desc": "Prefabricated in our state-of-the-art facility for swift and perfect assembly on site."
+      }
+    ],
+    "favoritesLabel": "Favorites",
+    "modelsCount": "Models",
+    "modelCount": "Model",
+    "startingFrom": "starting from",
+    "onQuote": "On quote",
+    "configureBtn": "Configure",
+    "favoritesInfoTitle": "How do your favorites work?",
+    "favoritesInfoText": "Find here the models you liked. Your favorites are saved on this device.",
+    "favoritesExplanationTitle": "How do local favorites work?",
+    "favoritesExplanationStorage": "Your favorites are saved locally in your browser (localStorage). If you save a model on your phone, it will only be visible on that phone. If you save it from your computer, it will only be visible on that computer.",
+    "favoritesExplanationAccount": "They remain saved during your next visits and refreshes without needing to create an account.",
+    "favoritesExplanationCache": "If you clear your browser history or cache on this device, your favorites will be reset.",
+    "favoritesEmptyTitle": "No favorites yet",
+    "favoritesEmptyText": "Click on the heart icon on any house model to save it here.",
+    "favoritesEmptyBtn": "Browse all models",
+    "favoritesInfoTextShort": "Your favorites are saved on this device."
+  },
+  "configurator": {
+    "startingPrice": "starting from",
+    "steps": {
+      "dimensions": "Dimensions",
+      "structure": "Structure",
+      "isolation": "Insulation",
+      "facade": "Façade",
+      "menuiserie": "Joinery",
+      "options": "Options",
+      "recap": "Recap"
+    },
+    "breakdown": {
+      "title": "Price details",
+      "basePrice": "Base structure",
+      "dimensions": "Base dimensions",
+      "walls": "Exterior walls",
+      "roof": "Roofing",
+      "epdm": "EPDM waterproofing",
+      "isolationInter": "Interior insulation",
+      "isolationExt": "Exterior insulation",
+      "facade": "Façade finish",
+      "windows": "Joinery",
+      "ceiling": "False Ceiling",
+      "atticTerrace": "Attic Terrace",
+      "couverture": "Roof cover",
+      "options": "Additional options",
+      "subtotal": "Subtotal excl. VAT",
+      "transport": "Transport fees",
+      "tva": "VAT (20%)",
+      "total": "Total incl. VAT"
+    },
+    "labels": {
+      "configureYourHouse": "Configure your house",
+      "selectSize": "Select dimensions",
+      "selected": "Selected",
+      "select": "Select",
+      "materialsInfo": "Materials information",
+      "close": "Close",
+      "askQuote": "Request information",
+      "nextStep": "Next step",
+      "prevStep": "Previous step",
+      "orderNow": "Validate project",
+      "backToModels": "Back to models",
+      "atticOption": "Polystyrene Attic Option",
+      "epdmOption": "EPDM Waterproofing Option",
+      "roofCover": "Roof Cover Option (tiles/metal)",
+      "ceilingOption": "False Ceiling Option",
+      "interestFormTitle": "Interest form",
+      "interestFormText": "Leave us your details to receive a personalized offer for this configuration.",
+      "name": "Full name",
+      "email": "E-mail address",
+      "phone": "Phone number",
+      "address": "Land address",
+      "message": "Message / Additional questions",
+      "submit": "Submit my request",
+      "loading": "Sending...",
+      "successTitle": "Request sent!",
+      "successText": "Thank you for your interest. We will contact you very quickly with a detailed proposal.",
+      "zoomReset": "Reset Zoom",
+      "description": "Description",
+      "specification": "Specification",
+      "preferredTime": "Preferred contact time",
+      "anytime": "Any time",
+      "morning": "Morning",
+      "afternoon": "Afternoon",
+      "preferredContact": "Preferred contact method",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "postalCode": "Postal code",
+      "city": "City",
+      "gdpr": "I accept the processing of my personal data in accordance with the privacy policy.",
+      "sendInterest": "Send expression of interest",
+      "successInterest": "Thank you! Your expression of interest has been sent successfully. We will contact you very soon.",
+      "configuratorPrep": "Configurator in preparation",
+      "configuratorPrepDesc": "The data for this house is imported from the CMS. The visual configurator will be activated after the graphic layers are fully loaded."
+    }
+  },
+  "checkout": {
+    "title": "Finalize your construction project",
+    "deliveryAddress": "Project Delivery Address",
+    "shippingMethod": "Shipping Method & Logistics",
+    "legalAgreement": "Regulatory Validation & Commitments",
+    "orderSummary": "Summary of your configuration",
+    "steps": {
+      "delivery": "Delivery",
+      "shipping": "Logistics",
+      "agreements": "Commitments",
+      "confirmation": "Validation"
+    },
+    "form": {
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "E-mail address",
+      "phone": "Phone",
+      "address": "Full land address",
+      "city": "City",
+      "postalCode": "Postal code",
+      "country": "Country",
+      "selectCountry": "Select a country",
+      "deliveryAccessibility": "I certify that the land is accessible to transport trucks (semi-trailer).",
+      "paymentMilestones": "I accept the payment steps: 30% at order, 50% upon loading at factory, 20% upon delivery.",
+      "urbanCompliance": "I certify that I have verified local urban planning rules (PLU) applicable to my land.",
+      "gdpr": "I authorize Ossa Bois France to keep my data to process my construction request.",
+      "validationError": "Please fill in all mandatory fields and accept the commitments."
+    },
+    "shippingCard": {
+      "title": "Specialized Road Transport",
+      "desc": "Secure delivery of your prefabricated house structure by specialized convoy truck directly to your construction site.",
+      "time": "Estimated delivery time: 3-4 weeks"
+    },
+    "summary": {
+      "structuralData": "Structural Data",
+      "dimensions": "Dimensions",
+      "basePrice": "Base",
+      "subtotal": "Subtotal",
+      "transport": "Transport fees",
+      "tva": "VAT (20%)",
+      "total": "Total incl. VAT",
+      "placeRequest": "Send my project request",
+      "processing": "Processing your request...",
+      "successTitle": "Thank you for your request!",
+      "successSubtitle": "Your timber frame modular house project has been sent to our team.",
+      "refCode": "Your file reference",
+      "nextSteps": "Next steps",
+      "step1": "Our partner engineering office analyzes the accessibility of your land.",
+      "step2": "A sales advisor will contact you within 24-48h to validate your choices and refine the project.",
+      "step3": "We will send you a complete contractual quote ready for building permit application.",
+      "downloadPdf": "Download PDF Summary",
+      "anyQuestion": "Any question?",
+      "contactInfo": "Contact us at sylqevci@gmail.com for any modifications."
+    }
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "A project? A question? Our team is at your disposal.",
+    "formTitle": "Send us a message",
+    "name": "Full name",
+    "email": "E-mail address",
+    "phone": "Phone number",
+    "subject": "Subject of your request",
+    "message": "Message",
+    "submit": "Send my message",
+    "success": "Your message was sent successfully. We will reply very quickly.",
+    "loading": "Sending...",
+    "details": {
+      "address": "Our Address",
+      "phone": "Phone",
+      "email": "E-mail address",
+      "hours": "Opening hours",
+      "hoursText": "Monday - Friday: 9:00 - 18:00"
+    }
+  },
+  "about": {
+    "title": "About Us",
+    "introText": "Manufacturer of modular timber frame homes throughout France. Created by builders with more than 30 years of experience in construction, Ossa Bois France specializes in the construction of modular timber frame homes.",
+    "conceptTitle": "Our concept",
+    "conceptText": "The construction, throughout France, of houses manufactured in a factory.",
+    "advantagesTitle": "Our advantages",
+    "advantagesText": "Controlled costs and shortened lead times, in compliance with quality standards and environmental regulations in force.",
+    "processTitle": "Prefabricated house: how does it go?",
+    "processText1": "The construction process of a timber frame house relies on precision engineering and rigorously controlled industrial organization. Located in Chartres, in Eure-et-Loir, Ossa Bois France collaborates with a specialized engineering office and relies on a modern production plant equipped with the latest generation machinery in Kosovo. This synergy guarantees a tailor-made design and factory fabrication protected from weather conditions, ensuring a consistency of quality impossible to obtain on a traditional building site.",
+    "processText2": "Our workshop prefabrication process allows performing most of the structural work (wall assembly, integrated insulation, window installation) under optimal safety and control conditions. This modern method significantly reduces overall implementation time and optimizes resource use by minimizing construction waste on site.",
+    "processText3": "Once the different modules or panels are completed and certified compliant, they are transported with the greatest care to your land. The final assembly is then carried out by our certified assembler partners throughout France. In just a few days, the water-tight and wind-tight structure is erected, ready to receive interior finishes for a fast and peaceful move-in.",
+    "processCta": "Discover our house models",
+    "commitmentsTitle": "Our commitments and guarantees",
+    "commitmentsText": "Each house built by Ossa Bois France benefits from all builder's guarantees required by law, including ten-year structural insurance.",
+    "faqsTitle": "Questions and answers about timber frames",
+    "faqsSubtitle": "Find answers to the most frequently asked questions about modular home construction and compliance with standards.",
+    "faqs": [
+      {
+        "question": "Can we build on sloping land?",
+        "answer": "Yes, timber frame construction is particularly suitable for sloping land. Thanks to the structural lightness of wood, foundations (like concrete pads or foundation screws) are less restrictive and more economical than for traditional concrete construction, adapting perfectly to the natural relief of the ground."
+      },
+      {
+        "question": "What is the lifespan of a timber frame house?",
+        "answer": "The quality of the design, treated materials, and factory construction of our homes allows them to last for several generations. Modern wood structures benefit from advanced treatments against moisture and insects, offering a longevity equivalent to or greater than traditional block or brick constructions."
+      },
+      {
+        "question": "What guarantees do you offer for your constructions?",
+        "answer": "Each house built by Ossa Bois France benefits from all builder's guarantees required by French law, including decennial insurance (which guarantees structure and weather tightness for 10 years), the guarantee of perfect completion (1 year), and the guarantee of proper functioning of equipment (2 years)."
+      },
+      {
+        "question": "What are the advantages of factory prefabrication?",
+        "answer": "Workshop prefabrication guarantees millimeter precision thanks to our digital equipment and constant quality control protected from weather. It also cuts construction times in half and minimizes waste, while guaranteeing flawless finishes."
+      }
+    ],
+    "steps": {
+      "step1": "01. Structure",
+      "step2": "02. Glass Wool",
+      "step3": "03. Rock Wool",
+      "step4": "04. Wood Wool",
+      "step5": "05. EPS Insulation",
+      "step6": "06. Wood Fibre",
+      "step7": "07. Rockwool Ext",
+      "step8": "08. EPDM Roof",
+      "step9": "09. White Plaster",
+      "step10": "10. Timber Cladding",
+      "step11": "11. Alu Windows",
+      "step12": "12. Finished House"
+    }
+  },
+  "b2b": {
+    "title": "B2B & Partnerships",
+    "subtitle": "Become a partner of a builder at the cutting edge of modular innovation.",
+    "introText": "Ossa Bois France collaborates with real estate professionals, architects, developers, and assemblers throughout the national territory. Take advantage of our industrial production capacity to enrich your offers and accelerate your construction sites.",
+    "advantagesTitle": "Why work with us?",
+    "advantage1Title": "Competitive professional rates",
+    "advantage1Text": "Attractive volume discounts guaranteeing optimal margins for your marketing or integrated projects.",
+    "advantage2Title": "Engineering & Dedicated 3D plans",
+    "advantage2Text": "Access to our partner engineering office to adapt our models or design large-scale custom modular projects.",
+    "advantage3Title": "Logistics & Tracking",
+    "advantage3Text": "We manage the transport and unload modules directly on site. A dedicated coordinator tracks the transit in real time.",
+    "formTitle": "Become an Ossa Bois Partner",
+    "formSubtitle": "Fill out this form and upload your presentation document or company registration. Our partnership division will contact you.",
+    "companyName": "Company name",
+    "contactName": "Contact name",
+    "email": "Professional e-mail address",
+    "phone": "Direct phone",
+    "activity": "Sector of activity",
+    "activityOptions": {
+      "select": "Select your sector",
+      "architect": "Architect / Engineering office",
+      "developer": "Developer / Builder",
+      "assembler": "Assembler / Carpenter",
+      "agent": "Real estate agent / Negotiator",
+      "other": "Other activity"
+    },
+    "uploadLabel": "Upload a document (Registration, Presentation, Brochure)",
+    "uploadPlaceholder": "Click to upload (PDF, JPG, PNG - Max 10MB)",
+    "message": "Describe your partnership project",
+    "submit": "Submit my partnership file",
+    "loading": "Submitting...",
+    "success": "File received! Our B2B development teams will analyze your profile and contact you quickly."
+  },
+  "realisations": {
+    "title": "Our Realizations",
+    "subtitle": "Discover concrete examples of modular timber frame homes installed by our clients and partners.",
+    "filters": {
+      "all": "All projects",
+      "terrace": "Flat Roof",
+      "stage": "Two-Story",
+      "classic": "Classic / Loft"
+    },
+    "quoteCta": "Request the same house",
+    "surface": "Surface",
+    "duration": "Assembly",
+    "location": "Location",
+    "items": {
+      "project1Title": "Contemporary Villa - Arcachon Bay",
+      "project1Desc": "Contemporary modular flat-roof house with master suite and large bay windows.",
+      "project2Title": "Eco-designed Family House - Annecy",
+      "project2Desc": "Two-story home with high thermal performance (RE2020) perfectly integrated into its mountain environment.",
+      "project3Title": "Single-story Pavilion - Orléans",
+      "project3Desc": "Single-story modular construction optimized for accessibility and featuring a double garage."
+    }
+  }
+}

@@ -7,6 +7,8 @@ import { HouseConfigurator } from "@/components/HouseConfigurator";
 import { mapHouseDocToConfiguratorData } from "@/lib/house-mapper";
 import { formatArchiveStartingPrice } from "@/data/houses-archive";
 import { Locale } from "@/lib/i18n";
+import { getDictionary } from "@/lib/dictionary";
+import { translateText, translateHouseDescription } from "@/lib/translation-helper";
 
 type HouseDetailPageProps = {
   params: Promise<{ locale: Locale; slug: string }>;
@@ -31,6 +33,7 @@ export async function generateStaticParams() {
 
 export default async function HouseDetailPage({ params }: HouseDetailPageProps) {
   const { locale, slug } = await params;
+  const dict = await getDictionary(locale);
 
   if (slug === "emeraude-toiture-terrasse") {
     redirect(`/${locale}/maisons/emeraude-me-atike`);
@@ -104,11 +107,11 @@ export default async function HouseDetailPage({ params }: HouseDetailPageProps) 
     }
   }
 
-  const configuratorConfig = mapHouseDocToConfiguratorData(houseDoc, globalOptions, mediaMap);
+  const configuratorConfig = mapHouseDocToConfiguratorData(houseDoc, globalOptions, mediaMap, locale);
 
   // If it's a configurator house, render the visual configurator component
   if (configuratorConfig) {
-    return <HouseConfigurator config={configuratorConfig} />;
+    return <HouseConfigurator config={configuratorConfig} locale={locale} dict={dict.configurator} />;
   }
 
   // Otherwise, render the standard house detail page
@@ -120,37 +123,40 @@ export default async function HouseDetailPage({ params }: HouseDetailPageProps) 
   const defaultImageUrl = typeof houseDoc.defaultImage === 'object' ? houseDoc.defaultImage?.url : '';
   const categoryName = typeof houseDoc.category === 'object' ? houseDoc.category?.name : '';
 
+  const translatedCategoryName = translateText(categoryName, locale);
+  const translatedTitle = translateText(houseDoc.title, locale);
+  const translatedDescription = translateHouseDescription(houseDoc.description || houseDoc.subheading || '', houseDoc.slug, locale);
+
   return (
     <section className="house-detail-shell">
       <div className="container house-detail-back">
-        <Link href={`/${locale}/maisons`}>← Modèles de Maisons</Link>
+        <Link href={`/${locale}/maisons`}>← {dict.configurator.labels.backToModels}</Link>
       </div>
 
       <div className="container house-detail-hero">
         <div className="house-detail-media">
           {defaultImageUrl && (
-            <Image src={defaultImageUrl} alt={houseDoc.title} width={1400} height={930} priority sizes="(max-width: 980px) 100vw, 58vw" />
+            <Image src={defaultImageUrl} alt={translatedTitle} width={1400} height={930} priority sizes="(max-width: 980px) 100vw, 58vw" />
           )}
         </div>
         <div className="house-detail-copy">
-          <p className="house-detail-category">{categoryName}</p>
-          <h1>{houseDoc.title}</h1>
-          <p>{houseDoc.description}</p>
+          <p className="house-detail-category">{translatedCategoryName}</p>
+          <h1>{translatedTitle}</h1>
+          <p>{translatedDescription}</p>
           {price ? (
             <div className="house-detail-price">
-              <span>à partir de</span>
+              <span>{dict.configurator.startingPrice}</span>
               <strong>{price}&nbsp;€</strong>
             </div>
           ) : null}
           <div className="house-detail-status">
-            <strong>Configurateur en préparation</strong>
+            <strong>{dict.configurator.labels.configuratorPrep}</strong>
             <p>
-              Les données de cette maison sont importées depuis le CMS. Le configurateur visuel sera activé après
-              chargement complet des calques graphiques.
+              {dict.configurator.labels.configuratorPrepDesc}
             </p>
           </div>
           <Link className="house-detail-cta" href={`/${locale}/contact`}>
-            Demander des informations
+            {dict.configurator.labels.askQuote}
           </Link>
         </div>
       </div>

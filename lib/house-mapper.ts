@@ -1,4 +1,6 @@
 import { HouseConfiguratorData, ConfigCategory, SizeOption } from "@/data/house-configurator";
+import { Locale } from "@/lib/i18n";
+import { translateText, translateHouseDescription } from "./translation-helper";
 
 function buildCategoryOptions(
   hardcodedDefaults: Array<{
@@ -11,7 +13,8 @@ function buildCategoryOptions(
   }>,
   cmsOptions: any[] | undefined,
   layers: Record<string, string>,
-  houseDoc: any
+  houseDoc: any,
+  locale: Locale
 ): any[] {
   const finalOptions: any[] = [];
   const processedLayerKeys = new Set<string>();
@@ -40,12 +43,12 @@ function buildCategoryOptions(
 
       finalOptions.push({
         id,
-        label: cmsOpt.option_name || defaultOpt?.label || '',
+        label: translateText(cmsOpt.option_name || defaultOpt?.label || '', locale),
         price160,
         price200,
         layerKey: cmsOpt.layer_key,
         layer: layerUrl,
-        materialDescription: cmsOpt.option_description || defaultOpt?.materialDescription || '',
+        materialDescription: translateText(cmsOpt.option_description || defaultOpt?.materialDescription || '', locale),
         thumbnail: cmsOpt.option_mini_image?.url || undefined,
         modalImage: cmsOpt.option_image?.url || undefined,
       });
@@ -61,22 +64,24 @@ function buildCategoryOptions(
 
     finalOptions.push({
       id: defOpt.id,
-      label: defOpt.label,
+      label: translateText(defOpt.label, locale),
       price160: defOpt.price160,
       price200: defOpt.price200,
       layerKey: defOpt.layerKey,
       layer: layerUrl,
-      materialDescription: defOpt.materialDescription || '',
+      materialDescription: translateText(defOpt.materialDescription || '', locale),
     });
   }
 
   return finalOptions;
 }
 
+
 export function mapHouseDocToConfiguratorData(
   houseDoc: any,
   globalOptions?: any,
-  mediaMap?: Record<string, string>
+  mediaMap?: Record<string, string>,
+  locale: Locale = "fr"
 ): HouseConfiguratorData | null {
   if (!houseDoc) return null;
 
@@ -221,26 +226,28 @@ export function mapHouseDocToConfiguratorData(
             if (val !== undefined && val !== null && val !== '') {
               let valStr = String(val);
               if (sf.type === 'checkbox') {
-                valStr = val ? 'Oui' : 'Non';
+                valStr = val
+                  ? locale === 'en' ? 'Yes' : locale === 'de' ? 'Ja' : locale === 'nl' ? 'Ja' : 'Oui'
+                  : locale === 'en' ? 'No' : locale === 'de' ? 'Nein' : locale === 'nl' ? 'Nee' : 'Non';
               }
 
               mappedAttributes.push({
-                name: sf.label || sf.name,
-                value: valStr
+                name: translateText(sf.label || sf.name, locale),
+                value: translateText(valStr, locale)
               });
             }
           });
 
           return {
             id: optionId,
-            label: o.option_name,
+            label: translateText(o.option_name, locale),
             price160: o.option_price || 0,
             price200: typeof o.option_price_200 === 'number' ? o.option_price_200 : (o.option_price || 0),
             layerKey: o.layer_key || '',
             layer: layerUrl,
             thumbnail: o.option_mini_image?.url || undefined,
             modalImage: o.option_image?.url || undefined,
-            materialDescription: o.option_description || '',
+            materialDescription: translateText(o.option_description || '', locale),
             attributes: mappedAttributes.length > 0 ? mappedAttributes : undefined,
           };
         });
@@ -251,8 +258,8 @@ export function mapHouseDocToConfiguratorData(
           dynamicCategories.push({
             id: slug,
             inputName: `house_${slug}`,
-            label: label || slug,
-            description: description || undefined,
+            label: translateText(label || slug, locale),
+            description: translateText(description || undefined, locale),
             priceMode: 'fixed',
             selectionMode,
             options: optionsList,
@@ -279,8 +286,8 @@ export function mapHouseDocToConfiguratorData(
     {
       id: "isolation",
       inputName: "house_isolation",
-      label: "Isolation intermédiaire",
-      description: "Choix de l'isolation entre les éléments de structure.",
+      label: translateText("Isolation intermédiaire", locale),
+      description: translateText("Choix de l'isolation entre les éléments de structure.", locale),
       priceMode: "wall_m2",
       selectionMode: "radio-toggle",
       options: buildCategoryOptions(
@@ -312,14 +319,15 @@ export function mapHouseDocToConfiguratorData(
         ],
         globalOptions?.global_isolation_options,
         layers,
-        houseDoc
+        houseDoc,
+        locale
       )
     },
     {
       id: "outerIsolation",
       inputName: "house_outer_isolation",
-      label: "Isolation extérieure",
-      description: "Isolation appliquée depuis l'extérieur.",
+      label: translateText("Isolation extérieure", locale),
+      description: translateText("Isolation appliquée depuis l'extérieur.", locale),
       priceMode: "wall_m2",
       selectionMode: "radio-toggle",
       options: buildCategoryOptions(
@@ -351,14 +359,15 @@ export function mapHouseDocToConfiguratorData(
         ],
         globalOptions?.global_outer_isolation_options,
         layers,
-        houseDoc
+        houseDoc,
+        locale
       )
     },
     {
       id: "terraceEtancheite",
       inputName: "house_terrace_etancheite",
-      label: "Étanchéité toiture terrasse avec couvertine",
-      description: "Isolation pour toiture terrasse.",
+      label: translateText("Étanchéité toiture terrasse avec couvertine", locale),
+      description: translateText("Isolation pour toiture terrasse.", locale),
       priceMode: "roof_m2",
       selectionMode: "checkbox",
       options: buildCategoryOptions(
@@ -374,14 +383,15 @@ export function mapHouseDocToConfiguratorData(
         ],
         globalOptions?.global_terrace_etancheite_options,
         layers,
-        houseDoc
+        houseDoc,
+        locale
       )
     },
     {
       id: "etancheite",
       inputName: "house_etancheite",
-      label: "Étanchéité EPDM",
-      description: "Membrane d'étanchéité pour toiture plate.",
+      label: translateText("Étanchéité EPDM", locale),
+      description: translateText("Membrane d'étanchéité pour toiture plate.", locale),
       priceMode: "roof_m2",
       selectionMode: "checkbox",
       options: buildCategoryOptions(
@@ -397,14 +407,15 @@ export function mapHouseDocToConfiguratorData(
         ],
         globalOptions?.global_roof_options,
         layers,
-        houseDoc
+        houseDoc,
+        locale
       )
     },
     {
       id: "facade",
       inputName: "house_facade",
-      label: "Finition de la façade",
-      description: "Choisissez le revêtement extérieur de votre maison.",
+      label: translateText("Finition de la façade", locale),
+      description: translateText("Choisissez le revêtement extérieur de votre maison.", locale),
       priceMode: "wall_m2",
       selectionMode: "radio-toggle",
       options: buildCategoryOptions(
@@ -428,14 +439,15 @@ export function mapHouseDocToConfiguratorData(
         ],
         globalOptions?.global_facade_options,
         layers,
-        houseDoc
+        houseDoc,
+        locale
       )
     },
     {
       id: "roof",
       inputName: "house_roof_isolation",
-      label: "Isolation de la toiture par l'extérieur",
-      description: "Isolation pour charpente fermette.",
+      label: translateText("Isolation de la toiture par l'extérieur", locale),
+      description: translateText("Isolation pour charpente fermette.", locale),
       priceMode: "roof_m2",
       selectionMode: "radio-toggle",
       options: buildCategoryOptions(
@@ -467,14 +479,15 @@ export function mapHouseDocToConfiguratorData(
         ],
         globalOptions?.global_roof_isolation_options,
         layers,
-        houseDoc
+        houseDoc,
+        locale
       )
     },
     {
       id: "couverture",
       inputName: "house_couverture",
-      label: "Couverture",
-      description: "Matériaux de couverture pour toit incliné.",
+      label: translateText("Couverture", locale),
+      description: translateText("Matériaux de couverture pour toit incliné.", locale),
       priceMode: "roof_m2",
       selectionMode: "radio-toggle",
       options: buildCategoryOptions(
@@ -506,14 +519,15 @@ export function mapHouseDocToConfiguratorData(
         ],
         globalOptions?.global_couverture_options,
         layers,
-        houseDoc
+        houseDoc,
+        locale
       )
     },
     {
       id: "fauxPlafond",
       inputName: "house_faux_plafond",
-      label: "Faux plafond",
-      description: "Isolation acoustique et thermique des faux plafonds.",
+      label: translateText("Faux plafond", locale),
+      description: translateText("Isolation acoustique et thermique des faux plafonds.", locale),
       priceMode: "wall_m2",
       selectionMode: "radio-toggle",
       options: buildCategoryOptions(
@@ -545,14 +559,15 @@ export function mapHouseDocToConfiguratorData(
         ],
         globalOptions?.global_faux_plafond_options,
         layers,
-        houseDoc
+        houseDoc,
+        locale
       )
     },
     {
       id: "dritaret",
       inputName: "house_windows",
-      label: "Menuiseries extérieures",
-      description: "Choisissez les huisseries de votre maison (fenêtres et baies).",
+      label: translateText("Menuiseries extérieures", locale),
+      description: translateText("Choisissez les huisseries de votre maison (fenêtres et baies).", locale),
       priceMode: "fixed",
       selectionMode: "radio-toggle",
       options: buildCategoryOptions(
@@ -576,7 +591,8 @@ export function mapHouseDocToConfiguratorData(
         ],
         globalOptions?.global_menuiseries_options,
         layers,
-        houseDoc
+        houseDoc,
+        locale
       )
     }
   ];
@@ -626,11 +642,11 @@ export function mapHouseDocToConfiguratorData(
 
   return {
     id: houseDoc.slug,
-    name: houseDoc.title,
-    category: houseDoc.category?.name || 'Maison ossature bois',
-    subheading: houseDoc.subheading || '',
-    description: houseDoc.description || '',
-    specification: houseDoc.specification || '',
+    name: translateText(houseDoc.title, locale),
+    category: translateText(houseDoc.category?.name || 'Maison ossature bois', locale),
+    subheading: translateText(houseDoc.subheading || '', locale),
+    description: translateHouseDescription(houseDoc.description || houseDoc.subheading || '', houseDoc.slug, locale),
+    specification: translateText(houseDoc.specification || '', locale),
     defaultImage,
     finalImage: finalImage || defaultImage,
     backgroundLayer,
@@ -668,7 +684,7 @@ export function mapHouseDocToConfiguratorData(
       enableCouvertureOption: houseDoc.enableFlags?.enableCouvertureOption ?? false,
       enableFauxPlafondOption: houseDoc.enableFlags?.enableFauxPlafondOption ?? false,
     },
-    structureInfo: houseDoc.structureInfo || 'Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant rigidité et stabilité de l’ensemble. Comprend les murs porteurs, murs de séparation et charpente industrielle type fermette. Le prix inclut le transport et le montage sur site sous garantie décennale.',
+    structureInfo: translateText(houseDoc.structureInfo || 'Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant rigidité et stabilité de l’ensemble. Comprend les murs porteurs, murs de séparation et charpente industrielle type fermette. Le prix inclut le transport et le montage sur site sous garantie décennale.', locale),
     customFields,
     sliderConfig: houseDoc.sliderConfig || (isComble ? {
       top: "10%",

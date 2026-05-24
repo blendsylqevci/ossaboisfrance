@@ -1,0 +1,405 @@
+{
+  "header": {
+    "home": "Home",
+    "models": "Huismodellen",
+    "allModels": "Alle modellen",
+    "about": "Over ons",
+    "b2b": "B2B",
+    "realisations": "Realisaties",
+    "contactUs": "Neem contact op",
+    "closeMenu": "Menu sluiten",
+    "categories": {
+      "terrace": "Plat dak huizen",
+      "terraceEtage": "Plat dak huizen met verdieping",
+      "plainPied": "Gelijkvloerse huizen",
+      "combles": "Huizen met zolder",
+      "etage": "Huizen met verdieping"
+    }
+  },
+  "footer": {
+    "description": "Bouwer van modulaire houtskeletbouwhuizen.",
+    "navigation": "Navigatie",
+    "address": "Ons Adres",
+    "contactUs": "Neem contact op",
+    "socialMedia": "Sociale media",
+    "newsletterLabel": "Contact bij vragen",
+    "emailPlaceholder": "E-mail",
+    "send": "Verzenden",
+    "copyright": "Copyright © 2025. Ossabois",
+    "madeBy": "Gemaakt door iCode"
+  },
+  "home": {
+    "heroKicker": "Fabrikant van houtskeletbouwhuizen",
+    "heroTitle": "Uw premium modulaire woning",
+    "heroDescription": "Ontdek onze volledig configureerbare, hoogwaardige modellen, geleverd in heel Frankrijk.",
+    "exploreCta": "Ontdek onze modellen",
+    "contactCta": "Neem contact op",
+    "whyTitle": "Waarom kiezen voor Ossa Bois France?",
+    "whySubtitle": "Uitzonderlijke diensten afgestemd op uw levensprojecten.",
+    "whyCards": [
+      {
+        "title": "Zeer gunstige prijzen",
+        "text": "Onze modulaire woningen worden aangeboden tegen concurrerende prijzen dankzij onze eigen productiefabriek. Uitstekende prijs-kwaliteitverhouding zonder concessies te doen aan stevigheid of afwerking."
+      },
+      {
+        "title": "Volledige online personalisatie",
+        "text": "U kunt uw woning direct op onze website naar wens configureren: model, oppervlakte, isolatie, materialen, ramen en afwerkingen — alles is aanpasbaar."
+      },
+      {
+        "title": "Snelle levering in heel Europa",
+        "text": "Wij regelen het transport en leveren uw modulaire woning dankzij geoptimaliseerde logistiek in korte tijd af, overal in Europa."
+      },
+      {
+        "title": "Gecontroleerde fabrieksproductie",
+        "text": "Productie uitgevoerd in onze moderne fabriek in Frankrijk onder strenge kwaliteitscontrole: solide structuur, millimeterprecisie en gecertificeerde materialen."
+      },
+      {
+        "title": "Eenvoudige en snelle installatie",
+        "text": "Dankzij modulaire bouw is installatie op uw grond schoon, snel en zonder verrassingen. Een veel efficiënter proces dan traditionele bouw."
+      },
+      {
+        "title": "Betrouwbaar bedrijf & volledige begeleiding",
+        "text": "Wij begeleiden u bij elke stap van uw project, van de eerste 3D-plannen tot de formaliteiten en eindmontage, voor volledige gemoedsrust."
+      }
+    ],
+    "featuredTitle": "Ontdek onze uitgelichte advertenties",
+    "featuredSubtitle": "Onze vlaggenschipmodellen die zeer worden gewaardeerd door onze klanten.",
+    "statsTitle": "Onze fabriek in cijfers",
+    "statsSubtitle": "Een moderne industriële capaciteit om uw projecten werkelijkheid te laten worden.",
+    "reviewsTitle": "Wat onze klanten zeggen",
+    "reviewsSubtitle": "De tevredenheid van onze klanten is ons grootste succes.",
+    "clientReviews": [
+      {
+        "content": "Onberispelijke service, snelle levering en superieure kwaliteit. Onze modulaire woning is perfect geïnstalleerd en het resultaat overtreft onze verwachtingen. We raden Ossa Bois France ten zeerste aan.",
+        "name": "Mevr. Khorsan",
+        "title": "13/04/2025"
+      },
+      {
+        "content": "Een zeer professioneel team, volledige begeleiding van begin tot eind. De kwaliteit van de constructie is opmerkelijk en de deadlines werden perfect gerespecteerd. Ik ben erg blij met mijn modulaire woning.",
+        "name": "Sophie L.",
+        "title": "@sophie.l"
+      },
+      {
+        "content": "Snelle installatie, solide materialen en een klantenservice die altijd bereikbaar is. Ons huis is precies zoals we het ons hadden voorgesteld. Dank aan Ossa Bois France voor dit kwaliteitswerk.",
+        "name": "Marc en Élodie R.",
+        "title": "@marc_elodie"
+      },
+      {
+        "content": "Uitstekende prijs-kwaliteitverhouding. Transport en montage verliepen probleemloos. Ik raad dit bedrijf 100% aan.",
+        "name": "Jean-Michel D.",
+        "title": "@jm_dubois"
+      }
+    ],
+    "aboutTitle": "Wij zijn Ossa Bois France",
+    "aboutCta": "Ontdek wie we zijn",
+    "aboutText1": "Ossa Bois France herdefinieert individuele en collectieve huisvesting via een moderne, ecologische en hoogwaardige benadering van houtbouw. Voortbouwend op onze technische expertise en industriële knowhow ontwerpen we uitzonderlijke structuren die hedendaags design, ecologische duurzaamheid en ongeëvenaard wooncomfort combineren.",
+    "aboutText2": "Van op maat gemaakt ontwerp tot uiterst nauwkeurige productie in onze geavanceerde werkplaatsen, elk project profiteert van nauwgezette opvolging. Dankzij geïntegreerde logistiek en gekwalificeerde montageteams garanderen we sleutelklare ondersteuning in heel Europa, waardoor de risico's van traditionele bouwplaatsen worden geëliminiert en uw budgetten en deadlines strikt worden gerespecteerd.",
+    "aboutBold": "Een duurzame en gecertificeerde constructie van de toekomst om uw meest veeleisende architectonische projecten te realiseren.",
+    "stats": {
+      "experience": "jaar ervaring in modulaire bouw",
+      "projects": "projecten opgeleverd in Europa",
+      "quality": "gecontroleerde productie en gecertificeerde kwaliteit"
+    },
+    "reviewsMore": "Bekijk meer beoordelingen",
+    "collabsTitle": "Onze Europese partners",
+    "ctaTitle": "Bouw uw ideale huis",
+    "ctaDesc": "Kies uw model, pas elk detail aan en volg de prijs in realtime. Eenvoudig. Snel. Transparant.",
+    "ctaCta": "Neem contact op"
+  },
+  "archive": {
+    "pageTitle": "Huismodellen",
+    "pageSubtitle": "Ontdek onze selectie van eerstklas modulaire houtskeletbouwhuizen. Volledig aanpasbaar aan uw leven.",
+    "commitmentsTitle": "Onze Beloften & Garanties",
+    "commitmentsSubtitle": "Bouwen met Ossa Bois France is de garantie voor een rustig, duurzaam en hochefficiënt project.",
+    "commitmentsList": [
+      {
+        "title": "Tienjarige Garantie",
+        "desc": "Alle wettelijk vereiste bouwgaranties, inclusief een 10-jarige verzekering op de draagstructuur."
+      },
+      {
+        "title": "RE2020 Conformiteit",
+        "desc": "Bioklimatisch ontwerp met hoge thermische prestaties, conform de RE2020 milieunormen."
+      },
+      {
+        "title": "Milieuvriendelijk Hout",
+        "desc": "Gecertificeerde materialen van hoge kwaliteit afkomstig uit duurzaam beheerde bossen."
+      },
+      {
+        "title": "Millimeterprecisie",
+        "desc": "Gerobotiseerde prefabricage in de werkplaats garandeert een snelle en foutloze montage op locatie."
+      }
+    ],
+    "favoritesLabel": "Favorieten",
+    "modelsCount": "Modellen",
+    "modelCount": "Model",
+    "startingFrom": "vanaf",
+    "onQuote": "Op aanvraag",
+    "configureBtn": "Configureren",
+    "favoritesInfoTitle": "Hoe werken uw favorieten?",
+    "favoritesInfoText": "Vind hier de modellen die u leuk vond. Uw favorieten worden op dit apparaat opgeslagen.",
+    "favoritesExplanationTitle": "Hoe werken lokale favorieten?",
+    "favoritesExplanationStorage": "Uw favorieten worden lokaal in uw browser (localStorage) opgeslagen. Als u een model op uw telefoon opslaat, is het alleen op die telefoon zichtbaar. Als u het op uw computer opslaat, is het alleen daar zichtbaar.",
+    "favoritesExplanationAccount": "Ze blijven bewaard bij uw volgende bezoeken en vernieuwingen zonder dat u een account hoeft aan te maken.",
+    "favoritesExplanationCache": "Als u uw browsergeschiedenis of cache op dit apparaat wist, worden uw favorieten gereset.",
+    "favoritesEmptyTitle": "Nog geen favorieten",
+    "favoritesEmptyText": "Klik op het hartpictogram op een willekeurig huismodel om het hier op te slaan.",
+    "favoritesEmptyBtn": "Blader door alle modellen",
+    "favoritesInfoTextShort": "Uw favorieten worden op dit apparaat opgeslagen."
+  },
+  "configurator": {
+    "startingPrice": "vanaf",
+    "steps": {
+      "dimensions": "Afmetingen",
+      "structure": "Structuur",
+      "isolation": "Isolatie",
+      "facade": "Gevel",
+      "menuiserie": "Kozijnen",
+      "options": "Opties",
+      "recap": "Overzicht"
+    },
+    "breakdown": {
+      "title": "Prijsdetails",
+      "basePrice": "Basisstructuur",
+      "dimensions": "Basisafmetingen",
+      "walls": "Buitenmuren",
+      "roof": "Dakconstructie",
+      "epdm": "EPDM waterdicht maken",
+      "isolationInter": "Interieurisolatie",
+      "isolationExt": "Exterieurisolatie",
+      "facade": "Gevelafwerking",
+      "windows": "Kozijnen",
+      "ceiling": "Verlaagd Plafond",
+      "atticTerrace": "Attic Terras",
+      "couverture": "Dakbedekking",
+      "options": "Aanvullende opties",
+      "subtotal": "Subtotaal excl. btw",
+      "transport": "Transportkosten",
+      "tva": "Btw (20%)",
+      "total": "Totaal incl. btw"
+    },
+    "labels": {
+      "configureYourHouse": "Configureer uw woning",
+      "selectSize": "Selecteer afmetingen",
+      "selected": "Geselecteerd",
+      "select": "Selecteer",
+      "materialsInfo": "Materiaalinformatie",
+      "close": "Sluiten",
+      "askQuote": "Informatie aanvragen",
+      "nextStep": "Volgende stap",
+      "prevStep": "Vorige stap",
+      "orderNow": "Project valideren",
+      "backToModels": "Terug naar modellen",
+      "atticOption": "Optie Attiek-Polystyreen",
+      "epdmOption": "Optie EPDM-Waterdichting",
+      "roofCover": "Optie Dakbedekking (pannen/staal)",
+      "ceilingOption": "Optie Verlaagd Plafond",
+      "interestFormTitle": "Interesseformulier",
+      "interestFormText": "Laat uw gegevens achter om een gepersonaliseerd aanbod voor deze configuratie te ontvangen.",
+      "name": "Volledige naam",
+      "email": "E-mailadres",
+      "phone": "Telefoonnummer",
+      "address": "Adres van de grond",
+      "message": "Bericht / Aanvullende vragen",
+      "submit": "Mijn aanvraag verzenden",
+      "loading": "Verzenden...",
+      "successTitle": "Aanvraag verzonden!",
+      "successText": "Bedankt voor uw interesse. We nemen snel contact met u op met een gedetailleerd voorstel.",
+      "zoomReset": "Zoom herstellen",
+      "description": "Beschrijving",
+      "specification": "Specificatie",
+      "preferredTime": "Gewenste tijd",
+      "anytime": "Altijd",
+      "morning": "Ochtend",
+      "afternoon": "Middag",
+      "preferredContact": "Voorkeur contactmethode",
+      "firstName": "Voornaam",
+      "lastName": "Achternaam",
+      "postalCode": "Postcode",
+      "city": "Stad",
+      "gdpr": "Ik accepteer de verwerking van mijn persoonsgegevens in overeenstemming met het privacybeleid.",
+      "sendInterest": "Interesseformulier verzenden",
+      "successInterest": "Dank u! Uw interesseformulier is succesvol verzonden. We nemen zeer snel contact met u op.",
+      "configuratorPrep": "Configurator in voorbereiding",
+      "configuratorPrepDesc": "De gegevens van dit huis worden geïmporteerd uit het CMS. De visuele configurator wordt geactiveerd nadat de grafische lagen volledig zijn geladen."
+    }
+  },
+  "checkout": {
+    "title": "Rond uw bouwproject af",
+    "deliveryAddress": "Afleveradres van het project",
+    "shippingMethod": "Transportwijze & Logistiek",
+    "legalAgreement": "Regelgevende validatie & Verplichtingen",
+    "orderSummary": "Samenvatting van uw configuratie",
+    "steps": {
+      "delivery": "Levering",
+      "shipping": "Logistiek",
+      "agreements": "Verplichtingen",
+      "confirmation": "Validatie"
+    },
+    "form": {
+      "firstName": "Voornaam",
+      "lastName": "Achternaam",
+      "email": "E-mailadres",
+      "phone": "Telefoon",
+      "address": "Volledig adres van de grond",
+      "city": "Stad",
+      "postalCode": "Postcode",
+      "country": "Land",
+      "selectCountry": "Selecteer een land",
+      "deliveryAccessibility": "Ik verklaar dat de grond toegankelijk is voor transportvrachtwagens (oplegger).",
+      "paymentMilestones": "Ik accepteer de betalingsstappen: 30% bij bestelling, 50% bij laden in fabriek, 20% bij levering.",
+      "urbanCompliance": "Ik verklaar dat ik de lokale stedenbouwkundige regels (bestemmingsplan) heb gecontroleerd.",
+      "gdpr": "Ik geef Ossa Bois France toestemming om mijn gegevens op te slaan om mijn bouwaanvraag te verwerken.",
+      "validationError": "Vul alle verplichte velden in en accepteer de verplichtingen."
+    },
+    "shippingCard": {
+      "title": "Gespecialiseerd Wegtransport",
+      "desc": "Veilige levering van uw geprefabriceerde huisstructuur met een gespecialiseerde transportvrachtwagen direct op uw bouwplaats.",
+      "time": "Geschatte levertijd: 3-4 weken"
+    },
+    "summary": {
+      "structuralData": "Structurele Gegevens",
+      "dimensions": "Afmetingen",
+      "basePrice": "Basis",
+      "subtotal": "Subtotaal",
+      "transport": "Transportkosten",
+      "tva": "Btw (20%)",
+      "total": "Totaal incl. btw",
+      "placeRequest": "Mijn projectaanvraag verzenden",
+      "processing": "Uw aanvraag wordt verwerkt...",
+      "successTitle": "Bedankt voor uw aanvraag!",
+      "successSubtitle": "Uw modulaire houtskeletbouwwoningproject is naar ons team verzonden.",
+      "refCode": "Uw dossierreferentie",
+      "nextSteps": "Volgende stappen",
+      "step1": "Ons partner ingenieursbureau controleert de toegankelijkheid van uw grond.",
+      "step2": "Een verkoopadviseur neemt binnen 24-48 uur contact met u op om uw keuzes te valideren.",
+      "step3": "Wij sturen u een volledige contractuele offerte, gereed voor de aanvraag van de bouwvergunning.",
+      "downloadPdf": "Download PDF-samenvatting",
+      "anyQuestion": "Heeft u vragen?",
+      "contactInfo": "Neem bij wijzigingen contact met ons op via sylqevci@gmail.com."
+    }
+  },
+  "contact": {
+    "title": "Neem contact met ons op",
+    "subtitle": "Een project? Een vraag? Ons team staat voor u klaar.",
+    "formTitle": "Stuur ons een bericht",
+    "name": "Volledige naam",
+    "email": "E-mailadres",
+    "phone": "Telefoonnummer",
+    "subject": "Onderwerp van uw aanvraag",
+    "message": "Bericht",
+    "submit": "Mijn bericht verzenden",
+    "success": "Uw bericht is succesvol verzonden. We zullen zeer snel reageren.",
+    "loading": "Verzenden...",
+    "details": {
+      "address": "Ons Adres",
+      "phone": "Telefoon",
+      "email": "E-mailadres",
+      "hours": "Openingstijden",
+      "hoursText": "Maandag - Vrijdag: 9:00 - 18:00"
+    }
+  },
+  "about": {
+    "title": "Over ons",
+    "introText": "Fabrikant van modulaire houtskeletbouwhuizen in heel Frankrijk. Opgericht door bouwers met meer dan 30 jaar ervaring in de bouw, is Ossa Bois France gespecialiseerd in de bouw van modulaire houtskeletbouwhuizen.",
+    "conceptTitle": "Ons concept",
+    "conceptText": "De bouw van in de fabriek geproduceerde huizen in heel Frankrijk.",
+    "advantagesTitle": "Onze voordelen",
+    "advantagesText": "Gecontroleerde kosten en verkorte levertijden onder naleving van de geldende kwaliteitsnormen en milieuvoorschriften.",
+    "processTitle": "Prefab woning: hoe verloopt het?",
+    "processText1": "Het bouwproces van een houtskeletbouwwoning is gebaseerd op precisietechniek en een streng gecontroleerde industriële organisatie. Gevestigd in Chartres (Eure-et-Loir) werkt Ossa Bois France samen met een gespecialiseerd ingenieursbureau en steunt op een moderne productiefabriek uitgerust met machines van de nieuwste generatie in Kosovo. Deze synergie garandeert een ontwerp op maat en witterbestendige productie in de fabriek, wat een kwaliteitsconsistentie garandeert die op een traditionele bouwplaats onmogelijk te bereiken is.",
+    "processText2": "Ons prefabricageproces in de werkplaats maakt het mogelijk om de meeste ruwbouwwerkzaamheden (wandmontage, geïntegreerde isolatie, raaminstallatie) onder optimale veiligheids- en controleomstandigheden uit te voeren. Deze moderne methode reduceert de totale bouwtijd aanzienlijk en optimaliseert het gebruik van grondstoffen door bouwafval ter plaatse te minimaliseren.",
+    "processText3": "Zodra de verschillende modules of panelen klaar en gecertificeerd zijn, worden ze met de grootste zorg naar uw grond getransporteerd. De eindmontage wordt vervolgens uitgevoerd door onze gecertificeerde montagepartners in heel Frankrijk. In slechts enkele dagen staat de wind- en waterdichte structuur klaar om de binnenafwerking op te nemen en u een snelle en zorgeloze intrek te bieden.",
+    "processCta": "Ontdek onze huismodellen",
+    "commitmentsTitle": "Onze beloften en garanties",
+    "commitmentsText": "Elk huis gebouwd door Ossa Bois France profiteert van alle wettelijk vereiste bouwgaranties, inclusief een tienjarige structuurverzekering.",
+    "faqsTitle": "Vragen en antwoorden over houtskeletbouw",
+    "faqsSubtitle": "Vind antwoorden op de meest gestelde vragen over modulaire woningbouw en conformiteit met normen.",
+    "faqs": [
+      {
+        "question": "Kan er gebouwd worden op hellende grond?",
+        "answer": "Ja, houtskeletbouw is bijzonder geschikt voor hellende grond. Dankzij de structurele lichtheid van hout zijn funderingen (zoals betonpoeren of schroeffunderingen) minder beperkend en voordeliger dan bij traditionele betonbouw, en passen ze zich perfect aan het natuurlijke reliëf van de grond aan."
+      },
+      {
+        "question": "Wat is de levensduur van een houtskeletbouwhuis?",
+        "answer": "De kwaliteit van het ontwerp, de behandelde materialen en de fabrieksmatige productie van onze woningen maakt een levensduur over meerdere generaties mogelijk. Moderne houten structuren profiteren van geavanceerde behandelingen tegen vocht en insecten en bieden een levensduur die gelijk is aan of groter is dan traditionele steen- of baksteenbouw."
+      },
+      {
+        "question": "Welke garanties biedt u voor uw constructies?",
+        "answer": "Elk huis gebouwd door Ossa Bois France geniet alle wettelijke bouwgaranties volgens het Franse recht, waaronder de tienjarige garantie (décennale, die de structuur en wind-/waterdichtheid gedurende 10 jaar garandeert), de opleveringsgarantie (1 jaar) en de garantie op een goede werking van apparatuur (2 jaar)."
+      },
+      {
+        "question": "Wat zijn de voordelen van prefabricage in de fabriek?",
+        "answer": "Werkplaatsprefabricage garandeert millimeterprecisie dankzij onze digitale apparatuur en constante kwaliteitscontrole beschermd tegen weersinvloeden. Het halving ook de bouwtijd ter plaatse en minimaliseert afval bij een vlekkeloze afwerking."
+      }
+    ],
+    "steps": {
+      "step1": "01. Structuur",
+      "step2": "02. Glaswol",
+      "step3": "03. Steenwol",
+      "step4": "04. Houtwol",
+      "step5": "05. EPS-Isolatie",
+      "step6": "06. Houtvezel",
+      "step7": "07. Steenwol Buiten",
+      "step8": "08. EPDM-Dak",
+      "step9": "09. Witte Pleister",
+      "step10": "10. Houten Gevel",
+      "step11": "11. Alu Ramen",
+      "step12": "12. Afgewerkt Huis"
+    }
+  },
+  "b2b": {
+    "title": "B2B & Partnerships",
+    "subtitle": "Word partner van een bouwer in de voorhoede van modulaire innovatie.",
+    "introText": "Ossa Bois France werkt samen met vastgoedprofessionals, architecten, ontwikkelaars en monteurs in het hele land. Maak gebruik van onze industriële productiekracht om uw aanbod te verrijken en uw bouwplaatsen te versnellen.",
+    "advantagesTitle": "Waarom met ons samenwerken?",
+    "advantage1Title": "Competitieve professionele tarieven",
+    "advantage1Text": "Aantrekkelijke volumekortingen die u optimale marges garanderen voor uw marketing of geïntegreerde projecten.",
+    "advantage2Title": "Engineering & Toegewijde 3D-plannen",
+    "advantage2Text": "Toegang to ons partner ingenieursbureau om onze modellen aan te passen of grootschalige modulaire projecten op maat te ontwerpen.",
+    "advantage3Title": "Logistiek & Traceren",
+    "advantage3Text": "Wij beheren het transport en lossen de modules direct ter plaatse. Een toegewijde coördinator volgt de verzending in real-time.",
+    "formTitle": "Ossa Bois Partner worden",
+    "formSubtitle": "Vul dit formulier in en upload uw presentatiedossier of Kbis. Onze afdeling samenwerkingen neemt contact met u op.",
+    "companyName": "Bedrijfsnaam",
+    "contactName": "Naam contactpersoon",
+    "email": "Professioneel e-mailadres",
+    "phone": "Direct telefoonnummer",
+    "activity": "Activiteitensector",
+    "activityOptions": {
+      "select": "Selecteer uw sector",
+      "architect": "Architect / Ingenieursbureau",
+      "developer": "Ontwikkelaar / Bouwer",
+      "assembler": "Monteur / Timmerman",
+      "agent": "Vastgoedmakelaar / Bemiddelaar",
+      "other": "Andere activiteit"
+    },
+    "uploadLabel": "Document uploaden (Kbis, Presentatie, Brochure)",
+    "uploadPlaceholder": "Klik om te uploaden (PDF, JPG, PNG - Max 10MB)",
+    "message": "Beschrijf uw samenwerkingsproject",
+    "submit": "Mijn samenwerkingsdossier indienen",
+    "loading": "Indienen...",
+    "success": "Dossier ontvangen! Onze B2B-ontwikkelingsteams analyseren uw profiel en nemen snel contact met u op."
+  },
+  "realisations": {
+    "title": "Onze Realisaties",
+    "subtitle": "Ontdek concrete voorbeelden van modulaire houtskeletbouwwoningen die door onze klanten en partners zijn gebouwd.",
+    "filters": {
+      "all": "Alle projecten",
+      "terrace": "Plat Dak",
+      "stage": "Met Verdieping",
+      "classic": "Klassiek / Zolder"
+    },
+    "quoteCta": "Hetzelfde huis aanvragen",
+    "surface": "Oppervlakte",
+    "duration": "Montage",
+    "location": "Locatie",
+    "items": {
+      "project1Title": "Hedendaagse Villa - Baai van Arcachon",
+      "project1Desc": "Moderne modulaire platdakwoning met master suite en grote glazen schuifpuien.",
+      "project2Title": "Ecologische Gezinswoning - Annecy",
+      "project2Desc": "Woning met twee verdiepingen en hoge thermische prestaties (RE2020), perfect geïntegreerd in de alpiene omgeving.",
+      "project3Title": "Gelijkvloers Paviljoen - Orléans",
+      "project3Desc": "Gelijkvloerse modulaire bouw, geoptimaliseerd voor toegankelijkheid, met een dubbele garage."
+    }
+  }
+}

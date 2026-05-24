@@ -6,13 +6,16 @@ export const metadata: Metadata = {
   description: "Maisons modulaires a ossature bois."
 };
 
-export default function RootLayout({
-  children
+export default async function RootLayout({
+  children,
+  params
 }: Readonly<{
   children: React.ReactNode;
+  params: Promise<{ locale?: string }>;
 }>) {
+  const { locale } = await params;
   return (
-    <html lang="fr">
+    <html lang={locale || "fr"}>
       <body>{children}</body>
     </html>
   );

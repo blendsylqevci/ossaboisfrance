@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getPayload } from "payload";
 import config from "@/payload.config";
 import { mapHouseDocToConfiguratorData } from "@/lib/house-mapper";
+import { Locale } from "@/lib/i18n";
 
 const euroFormatter = new Intl.NumberFormat("fr-FR", {
   style: "currency",
@@ -13,7 +14,7 @@ const euroFormatter = new Intl.NumberFormat("fr-FR", {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { selection, personalInfo, deliveryInfo, orderRef, total, transportCost } = body;
+    const { selection, personalInfo, deliveryInfo, orderRef, total, transportCost, locale = "fr" } = body;
 
     const clientName = personalInfo?.fullName || "Client";
     const clientEmail = personalInfo?.email;
@@ -56,7 +57,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Map house doc using configurator mapper
-    const configData = mapHouseDocToConfiguratorData(houseDoc, globalOptions);
+    const configData = mapHouseDocToConfiguratorData(houseDoc, globalOptions, undefined, locale as Locale);
     if (!configData) {
       return NextResponse.json(
         { success: false, error: "Failed to map configurator config." },

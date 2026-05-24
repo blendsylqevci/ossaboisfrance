@@ -40,23 +40,28 @@ const euroFormatter = new Intl.NumberFormat("fr-FR", {
   maximumFractionDigits: 0
 });
 
-const PERDHESA_LABELS: Record<string, { fr: string; en: string }> = {
-  bruto: { fr: "Surface Brute", en: "Gross Surface" },
-  neto: { fr: "Surface Nette", en: "Net Surface" },
-  mure_te_jashtme: { fr: "Murs Extérieurs", en: "Exterior Walls" },
-  mure_mbajtese: { fr: "Murs Porteurs", en: "Load-bearing Walls" },
-  mure_ndarese: { fr: "Murs Séparateurs", en: "Partition Walls" },
-  pllaka_e_kulmit: { fr: "Dalle de Toit", en: "Roof Plate" },
-  pllaka_e_katit_0: { fr: "Dalle d'Étage 0", en: "Floor Slab 0" },
-  pllaka_e_katit_1: { fr: "Dalle d'Étage 1", en: "Floor Slab 1" },
-  pllaka_e_katit_2: { fr: "Dalle d'Étage 2", en: "Floor Slab 2" },
-  pllaka_e_katit: { fr: "Dalle d'Étage", en: "Floor Slab" },
-  kulmi: { fr: "Toiture", en: "Roof Area" },
+type CheckoutPageProps = {
+  locale: string;
+  dict: any;
 };
 
-export function CheckoutPage() {
+const PERDHESA_LABELS: Record<string, { fr: string; en: string; de: string; nl: string }> = {
+  bruto: { fr: "Surface Brute", en: "Gross Surface", de: "Bruttofläche", nl: "Bruto oppervlakte" },
+  neto: { fr: "Surface Nette", en: "Net Surface", de: "Nettofläche", nl: "Netto oppervlakte" },
+  mure_te_jashtme: { fr: "Murs Extérieurs", en: "Exterior Walls", de: "Außenwände", nl: "Buitenmuren" },
+  mure_mbajtese: { fr: "Murs Porteurs", en: "Load-bearing Walls", de: "Tragende Wände", nl: "Dragende muren" },
+  mure_ndarese: { fr: "Murs Séparateurs", en: "Partition Walls", de: "Trennwände", nl: "Tussenmuren" },
+  pllaka_e_kulmit: { fr: "Dalle de Toit", en: "Roof Plate", de: "Dachplatte", nl: "Dakplaat" },
+  pllaka_e_katit_0: { fr: "Dalle d'Étage 0", en: "Floor Slab 0", de: "Bodenplatte 0", nl: "Vloerplaat 0" },
+  pllaka_e_katit_1: { fr: "Dalle d'Étage 1", en: "Floor Slab 1", de: "Bodenplatte 1", nl: "Vloerplaat 1" },
+  pllaka_e_katit_2: { fr: "Dalle d'Étage 2", en: "Floor Slab 2", de: "Bodenplatte 2", nl: "Vloerplaat 2" },
+  pllaka_e_katit: { fr: "Dalle d'Étage", en: "Floor Slab", de: "Bodenplatte", nl: "Vloerplaat" },
+  kulmi: { fr: "Toiture", en: "Roof Area", de: "Dachbereich", nl: "Dakgebied" },
+};
+
+export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
   const pathname = usePathname();
-  const isEn = pathname.startsWith("/en");
+  const isEn = locale === "en";
 
   const [selection, setSelection] = useState<StoredSelection | null>(null);
   const [success, setSuccess] = useState(false);
@@ -225,80 +230,107 @@ export function CheckoutPage() {
     );
   }, [selection]);
 
+
   const t = {
-    title: isEn ? "Finalize Your Wooden House Project" : "Finalisation de votre projet bois",
-    step1: isEn ? "Configuration" : "Configuration",
-    step2: isEn ? "Your Details" : "Informations",
-    step3: isEn ? "Confirmation" : "Validation",
-    selectedCustoms: isEn ? "Selected Customizations" : "Personnalisations choisies",
-    archSpecs: isEn ? "Architectural Specifications" : "Spécifications Architecturales",
-    personalInfo: isEn ? "Personal Information" : "Informations personnelles",
-    fullName: isEn ? "Full Name" : "Nom complet",
-    email: isEn ? "Email Address" : "Adresse e-mail",
-    phone: isEn ? "Phone Number" : "Numéro de téléphone",
-    deliveryTitle: isEn ? "Construction Site / Delivery Address" : "Lieu de construction / Livraison",
-    address: isEn ? "Street Address" : "Adresse (rue)",
-    city: isEn ? "City" : "Ville",
-    zipCode: isEn ? "Zip Code" : "Code postal",
-    region: isEn ? "Region / State" : "Région / Département",
-    country: isEn ? "Country" : "Pays",
-    additionalNotes: isEn ? "Additional Notes" : "Notes supplémentaires",
-    notesPlaceholder: isEn 
+    title: locale === "en" ? "Finalize Your Wooden House Project" : locale === "de" ? "Schließen Sie Ihr Holzhausprojekt ab" : locale === "nl" ? "Rond uw houtskeletbouwproject af" : "Finalisation de votre projet bois",
+    step1: locale === "en" ? "Configuration" : locale === "de" ? "Konfiguration" : locale === "nl" ? "Configuratie" : "Configuration",
+    step2: locale === "en" ? "Your Details" : locale === "de" ? "Ihre Daten" : locale === "nl" ? "Uw gegevens" : "Informations",
+    step3: locale === "en" ? "Confirmation" : locale === "de" ? "Bestätigung" : locale === "nl" ? "Bevestiging" : "Validation",
+    selectedCustoms: locale === "en" ? "Selected Customizations" : locale === "de" ? "Ausgewählte Anpassungen" : locale === "nl" ? "Geselecteerde aanpassingen" : "Personnalisations choisies",
+    archSpecs: locale === "en" ? "Architectural Specifications" : locale === "de" ? "Architektonische Spezifikationen" : locale === "nl" ? "Architectonische specificaties" : "Spécifications Architecturales",
+    personalInfo: locale === "en" ? "Personal Information" : locale === "de" ? "Persönliche Informationen" : locale === "nl" ? "Persoonlijke informatie" : "Informations personnelles",
+    fullName: locale === "en" ? "Full Name" : locale === "de" ? "Vollständiger Name" : locale === "nl" ? "Volledige naam" : "Nom complet",
+    email: locale === "en" ? "Email Address" : locale === "de" ? "E-Mail-Adresse" : locale === "nl" ? "E-mailadres" : "Adresse e-mail",
+    phone: locale === "en" ? "Phone Number" : locale === "de" ? "Telefonnummer" : locale === "nl" ? "Telefoonnummer" : "Numéro de téléphone",
+    deliveryTitle: locale === "en" ? "Construction Site / Delivery Address" : locale === "de" ? "Bauort / Lieferadresse" : locale === "nl" ? "Bouwlocatie / Afleveradres" : "Lieu de construction / Livraison",
+    address: locale === "en" ? "Street Address" : locale === "de" ? "Straße und Hausnummer" : locale === "nl" ? "Adres (straat)" : "Adresse (rue)",
+    city: locale === "en" ? "City" : locale === "de" ? "Stadt" : locale === "nl" ? "Stad" : "Ville",
+    zipCode: locale === "en" ? "Zip Code" : locale === "de" ? "Postleitzahl" : locale === "nl" ? "Postcode" : "Code postal",
+    region: locale === "en" ? "Region / State" : locale === "de" ? "Region / Bundesland" : locale === "nl" ? "Regio / Provincie" : "Région / Département",
+    country: locale === "en" ? "Country" : locale === "de" ? "Land" : locale === "nl" ? "Land" : "Pays",
+    additionalNotes: locale === "en" ? "Additional Notes" : locale === "de" ? "Zusätzliche Notizen" : locale === "nl" ? "Aanvullende opmerkingen" : "Notes supplémentaires",
+    notesPlaceholder: locale === "en" 
       ? "Tell us about your plot, accessibility, or special requests..." 
+      : locale === "de" ? "Geben Sie hier Details zum Grundstück, Zugang oder andere spezifische Wünsche an..."
+      : locale === "nl" ? "Geef hier details over de grond, toegankelijkheid of andere specifieke verzoeken op..."
       : "Précisez ici les détails du terrain, l'accès, ou toute autre demande spécifique...",
-    shippingTitle: isEn ? "Shipping & Logistics" : "Mode de transport & Logistique",
-    shippingMethod: isEn ? "Standard Secure Convoy" : "Transport standard sécurisé",
-    shippingDesc: isEn
+    shippingTitle: locale === "en" ? "Shipping & Logistics" : locale === "de" ? "Transport & Logistik" : locale === "nl" ? "Transport & Logistiek" : "Mode de transport & Logistique",
+    shippingMethod: locale === "en" ? "Standard Secure Convoy" : locale === "de" ? "Gesicherter Standardtransport" : locale === "nl" ? "Standaard beveiligd transport" : "Transport standard sécurisé",
+    shippingDesc: locale === "en"
       ? "Delivery by crane truck directly to your plot under secure conditions within 3 to 4 weeks"
+      : locale === "de" ? "Lieferung per Kranwagen direkt auf Ihr Grundstück unter sicheren Bedingungen innerhalb von 3 bis 4 Wochen"
+      : locale === "nl" ? "Levering met kraanwagen direct op uw grond onder veilige omstandigheden binnen 3 tot 4 weken"
       : "Livraison par camion grue directement sur votre terrain sous 3 à 4 semaines avec encadrement de sécurité",
-    agreeShippingText: isEn
+    agreeShippingText: locale === "en"
       ? "I accept the delivery conditions by special convoy. I certify that my plot is accessible for heavy crane trucks."
+      : locale === "de" ? "Ich akzeptiere die Lieferbedingungen per Spezialtransport. Ich bestätige, dass mein Grundstück für schwere Kranwagen zugänglich ist."
+      : locale === "nl" ? "Ik accepteer de leveringsvoorwaarden per speciaal transport. Ik verklaar dat mijn grond toegankelijk is voor zware kraanwagens."
       : "J'accepte les conditions de livraison par convoi exceptionnel. Je certifie que mon terrain est accessible aux camions grues de gros tonnage.",
-    agreeTermsText: isEn
+    agreeTermsText: locale === "en"
       ? "I accept the general terms of sale and payment conditions (30% downpayment on order, 40% on timber frame assembly, 30% on key handover)."
+      : locale === "de" ? "Ich akzeptiere die Allgemeinen Geschäftsbedingungen und Zahlungsbedingungen (30% Anzahlung bei Bestellung, 40% bei Montage der Struktur, 30% bei Schlüsselübergabe)."
+      : locale === "nl" ? "Ik accepteer de algemene verkoopvoorwaarden en betalingsvoorwaarden (30% aanbetaling bij bestelling, 40% bij montage van de structuur, 30% bij sleuteloverdracht)."
       : "J'accepte les conditions générales de vente et les modalités de paiement (30% d'acompte à la commande, 40% au montage de la structure, 30% à la remise des clés).",
-    agreeUrbanText: isEn
+    agreeUrbanText: locale === "en"
       ? "I confirm the compliance of my project with local urban planning regulations (PLU) and accept the building permit steps."
+      : locale === "de" ? "Ich bestätige die Übereinstimmung meines Projekts mit den lokalen Bauvorschriften (B-Plan) und nehme die erforderlichen Baugenehmigungsschritte zur Kenntnis."
+      : locale === "nl" ? "Ik bevestig de conformiteit van mijn project met de lokale bestemmingsplannen (PLU) en neem kennis van de vereiste bouwvergunningstappen."
       : "Je confirme la conformité de mon projet avec les règles d'urbanisme locales (PLU) et prends connaissance des démarches de permis de construire requises.",
-    agreePrivacyText: isEn
+    agreePrivacyText: locale === "en"
       ? "I authorize Ossa Bois to process my personal data in order to conduct the technical and financial feasibility study of my project."
+      : locale === "de" ? "Ich ermächtige Ossa Bois, meine personenbezogenen Daten zu verarbeiten, um die technische und finanzielle Machbarkeitsstudie meines Projekts durchzuführen."
+      : locale === "nl" ? "Ik geef Ossa Bois toestemming om mijn persoonsgegevens te verwerken om de technische en financiële haalbaarheidsstudie van mijn project uit te voeren."
       : "J'autorise Ossa Bois à traiter mes données personnelles afin de réaliser l'étude de faisabilité technique et financière de mon projet.",
-    agreementsErrorText: isEn
+    agreementsErrorText: locale === "en"
       ? "Please accept all terms and conditions above to submit your request."
+      : locale === "de" ? "Bitte akzeptieren Sie alle oben genannten Bedingungen, um Ihre Anfrage zu senden."
+      : locale === "nl" ? "Accepteer alle bovenstaande voorwaarden om uw verzoek in te dienen."
       : "Veuillez accepter toutes les conditions ci-dessus pour envoyer votre demande.",
-    summaryTitle: isEn ? "Project Summary" : "Récapitulatif du projet",
-    selectedModel: isEn ? "Selected Model" : "Modèle choisi",
-    basePriceLabel: isEn ? "Base Price" : "Prix de base",
-    shippingCost: isEn ? "Transport Estimate" : "Estimation transport",
-    totalEst: isEn ? "Total Estimate" : "Estimation totale",
-    vatIncl: isEn ? "incl. VAT" : "TTC",
-    submitButton: isEn ? "Submit Project Request" : "Envoyer ma demande de projet",
-    submitLoading: isEn ? "Processing Request..." : "Traitement en cours...",
-    terms: isEn 
+    summaryTitle: locale === "en" ? "Project Summary" : locale === "de" ? "Projektzusammenfassung" : locale === "nl" ? "Projectsamenvatting" : "Récapitulatif du projet",
+    selectedModel: locale === "en" ? "Selected Model" : locale === "de" ? "Ausgewähltes Modell" : locale === "nl" ? "Geselecteerd model" : "Modèle choisi",
+    basePriceLabel: locale === "en" ? "Base Price" : locale === "de" ? "Basispreis" : locale === "nl" ? "Basisprijs" : "Prix de base",
+    shippingCost: locale === "en" ? "Transport Estimate" : locale === "de" ? "Transportkosten-Schätzung" : locale === "nl" ? "Geschatte transportkosten" : "Estimation transport",
+    totalEst: locale === "en" ? "Total Estimate" : locale === "de" ? "Gesamtschätzung" : locale === "nl" ? "Totale schatting" : "Estimation totale",
+    vatIncl: locale === "en" ? "incl. VAT" : locale === "de" ? "inkl. MwSt." : locale === "nl" ? "incl. btw" : "TTC",
+    submitButton: locale === "en" ? "Submit Project Request" : locale === "de" ? "Projektanfrage senden" : locale === "nl" ? "Projectaanvraag indienen" : "Envoyer ma demande de projet",
+    submitLoading: locale === "en" ? "Processing Request..." : locale === "de" ? "Anfrage wird verarbeitet..." : locale === "nl" ? "Aanvraag wordt verwerkt..." : "Traitement en cours...",
+    terms: locale === "en" 
       ? "By submitting your request, you agree to our general terms of service." 
-      : "En envoyant votre demande, vous acceptez nos conditions générales et notre politique de confidentialité.",
-    emptyTitle: isEn ? "Your Selection is Empty" : "Votre sélection est vide",
-    emptyDesc: isEn 
+      : locale === "de" ? "Mit dem Absenden Ihrer Anfrage stimmen Sie unseren Allgemeinen Geschäftsbedingungen zu."
+      : locale === "nl" ? "Door uw verzoek in te dienen, gaat u akkoord met onze algemene voorwaarden."
+      : "En voyant votre demande, vous acceptez nos conditions générales et notre politique de confidentialité.",
+    emptyTitle: locale === "en" ? "Your Selection is Empty" : locale === "de" ? "Ihre Auswahl ist leer" : locale === "nl" ? "Uw selectie is leeg" : "Votre sélection est vide",
+    emptyDesc: locale === "en" 
       ? "Please go back to our models and customize your dream home first." 
+      : locale === "de" ? "Bitte kehren Sie zu unseren Modellen zurück und konfigurieren Sie zuerst Ihr Traumhaus."
+      : locale === "nl" ? "Ga terug naar onze modellen en configureer eerst uw droomhuis."
       : "Veuillez d'abord configurer la maison de vos rêves dans notre catalogue.",
-    discoverModels: isEn ? "Discover Our Models" : "Découvrir nos modèles",
-    successTitle: isEn ? "Project Request Submitted!" : "Demande envoyée avec succès !",
-    successDesc: (name: string) => isEn 
+    discoverModels: locale === "en" ? "Discover Our Models" : locale === "de" ? "Unsere Modelle entdecken" : locale === "nl" ? "Ontdek onze modellen" : "Découvrir nos modèles",
+    successTitle: locale === "en" ? "Project Request Submitted!" : locale === "de" ? "Anfrage erfolgreich versendet!" : locale === "nl" ? "Aanvraag succesvol ingediend!" : "Demande envoyée avec succès !",
+    successDesc: (name: string) => locale === "en" 
       ? `Thank you, ${name}. Our technical team is reviewing your project details. A modular housing expert will contact you within 24 hours to discuss the next steps.`
+      : locale === "de" ? `Vielen Dank, ${name}. Unser technisches Team prüft Ihre Projektdetails. Ein Experte für Modulbau wird sich innerhalb von 24 Stunden mit Ihnen in Verbindung setzen, um die nächsten Schritte zu besprechen.`
+      : locale === "nl" ? `Dank u, ${name}. Ons technisch team beoordeelt uw projectgegevens. Een expert in modulaire bouw neemt binnen 24 uur contact met u op om de volgende stappen te bespreken.`
       : `Merci, ${name}. Notre bureau d'études analyse les détails de votre configuration. Un expert en construction bois vous recontactera sous 24h pour affiner votre projet.`,
-    orderRefLabel: isEn ? "Project Reference" : "Référence du projet",
-    goHome: isEn ? "Back to Homepage" : "Retour à l'accueil",
-    trust1Title: isEn ? "10-Year CCMI Guarantee" : "Garantie Décennale CCMI",
-    trust1Desc: isEn 
+    orderRefLabel: locale === "en" ? "Project Reference" : locale === "de" ? "Projekt-Referenz" : locale === "nl" ? "Projectreferentie" : "Référence du projet",
+    goHome: locale === "en" ? "Back to Homepage" : locale === "de" ? "Zurück zur Startseite" : locale === "nl" ? "Terug naar startpagina" : "Retour à l'accueil",
+    trust1Title: locale === "en" ? "10-Year CCMI Guarantee" : locale === "de" ? "10 Jahre CCMI-Garantie" : locale === "nl" ? "10 jaar CCMI-garantie" : "Garantie Décennale CCMI",
+    trust1Desc: locale === "en" 
       ? "All structural components are insured for 10 years by French law." 
+      : locale === "de" ? "Alle tragenden Teile sind gesetzlich für 10 Jahre versichert."
+      : locale === "nl" ? "Alle structurele componenten zijn wettelijk verzekerd voor 10 jaar."
       : "Garantie de livraison et assurance décennale structurelle incluses.",
-    trust2Title: isEn ? "RE2020 Energy Standards" : "Normes Thermiques RE2020",
-    trust2Desc: isEn 
+    trust2Title: locale === "en" ? "RE2020 Energy Standards" : locale === "de" ? "RE2020 Energiestandards" : locale === "nl" ? "RE2020 energiestandaarden" : "Normes Thermiques RE2020",
+    trust2Desc: locale === "en" 
       ? "Engineered for superior energy savings and insulation." 
+      : locale === "de" ? "Ausgelegt auf hervorragende Energieeinsparung und Isolierung."
+      : locale === "nl" ? "Ontworpen voor superieure energiebesparing en isolatie."
       : "Conception bioclimatique à très haute performance énergétique.",
-    trust3Title: isEn ? "Ecological Timber" : "Bois Certifié PEFC",
-    trust3Desc: isEn 
+    trust3Title: locale === "en" ? "Ecological Timber" : locale === "de" ? "Ökologisches Holz" : locale === "nl" ? "Ecologisch hout" : "Bois Certifié PEFC",
+    trust3Desc: locale === "en" 
       ? "100% sustainably sourced wood from local European forests." 
+      : locale === "de" ? "100 % nachhaltig gewonnenes Holz aus europäischen Wäldern."
+      : locale === "nl" ? "100% duurzaam verkregen hout uit Europese bossen."
       : "Provenance certifiée de forêts gérées durablement."
   };
 
@@ -346,7 +378,8 @@ export function CheckoutPage() {
         deliveryInfo,
         orderRef: ref,
         total,
-        transportCost: TRANSPORTATION_COST
+        transportCost: TRANSPORTATION_COST,
+        locale
       })
     })
       .then((res) => res.json())
@@ -357,13 +390,13 @@ export function CheckoutPage() {
           sessionStorage.removeItem("house_selections");
           window.scrollTo({ top: 0, behavior: "smooth" });
         } else {
-          alert(isEn ? "Failed to send request. Please try again." : "Échec de l'envoi de la demande. Veuillez réessayer.");
+          alert(locale === "en" ? "Failed to send request. Please try again." : locale === "de" ? "Fehler beim Senden der Anfrage. Bitte versuchen Sie es erneut." : locale === "nl" ? "Verzenden van verzoek mislukt. Probeer het opnieuw." : "Échec de l'envoi de la demande. Veuillez réessayer.");
         }
       })
       .catch((err) => {
         console.error(err);
         setIsSubmitting(false);
-        alert(isEn ? "An error occurred. Please try again." : "Une erreur est survenue. Veuillez réessayer.");
+        alert(locale === "en" ? "An error occurred. Please try again." : locale === "de" ? "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut." : locale === "nl" ? "Er is een fout opgetreden. Probeer het opnieuw." : "Une erreur est survenue. Veuillez réessayer.");
       });
   }
 
@@ -671,7 +704,7 @@ export function CheckoutPage() {
                                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="config-item-svg">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.751h-.152c-3.196 0-6.1-1.249-8.25-3.286zm0 30v-30z" />
                                   </svg>
-                                  {isEn ? "Insulation" : "Isolation"}
+                                  {locale === "en" ? "Insulation" : locale === "de" ? "Isolierung" : locale === "nl" ? "Isolatie" : "Isolation"}
                                 </span>
                                 <span>{selection.isolation.value}</span>
                               </div>
@@ -682,7 +715,7 @@ export function CheckoutPage() {
                                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="config-item-svg">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.751h-.152c-3.196 0-6.1-1.249-8.25-3.286zm0 30v-30z" />
                                   </svg>
-                                  {isEn ? "Ext. Insulation" : "Isolation Ext."}
+                                  {locale === "en" ? "Ext. Insulation" : locale === "de" ? "Außenisolierung" : locale === "nl" ? "Buitenisolatie" : "Isolation Ext."}
                                 </span>
                                 <span>{selection.outerIsolation.value}</span>
                               </div>
@@ -693,7 +726,7 @@ export function CheckoutPage() {
                                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="config-item-svg">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M12.75 7.5h.008v.008h-.008V7.5zm0 2.25h.008v.008h-.008V9.75zM3.75 21h.008v-.008H3.75V21zm0-3h.008v-.008H3.75V18zm0-3h.008v-.008H3.75V15zm0-3h.008v-.008H3.75V12zm0-3h.008v-.008H3.75V9zm0-3h.008v-.008H3.75V6zm0-3h.008v-.008H3.75V3z" />
                                   </svg>
-                                  {isEn ? "Facade" : "Façade"}
+                                  {locale === "en" ? "Facade" : locale === "de" ? "Fassade" : locale === "nl" ? "Gevel" : "Façade"}
                                 </span>
                                 <span>{selection.facade.value}</span>
                               </div>
@@ -704,7 +737,7 @@ export function CheckoutPage() {
                                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="config-item-svg">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
                                   </svg>
-                                  {isEn ? "Roof Cover" : "Couverture"}
+                                  {locale === "en" ? "Roof Cover" : locale === "de" ? "Dacheindeckung" : locale === "nl" ? "Dakbedekking" : "Couverture"}
                                 </span>
                                 <span>{selection.toiture.value}</span>
                               </div>
@@ -715,7 +748,7 @@ export function CheckoutPage() {
                                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="config-item-svg">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3.75v16.5m16.5-16.5v16.5m-16.5-16.5h16.5m-16.5 16.5h16.5M12 3.75v16.5M3.75 12h16.5" />
                                   </svg>
-                                  {isEn ? "Windows" : "Menuiseries"}
+                                  {locale === "en" ? "Windows" : locale === "de" ? "Fenster" : locale === "nl" ? "Ramen" : "Menuiseries"}
                                 </span>
                                 <span>{selection.dritaret.value}</span>
                               </div>
@@ -726,7 +759,7 @@ export function CheckoutPage() {
                                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="config-item-svg">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
                                   </svg>
-                                  {isEn ? "EPDM Waterproofing" : "Étanchéité EPDM"}
+                                  {locale === "en" ? "EPDM Waterproofing" : locale === "de" ? "EPDM-Abdichtung" : locale === "nl" ? "EPDM-waterdichting" : "Étanchéité EPDM"}
                                 </span>
                                 <span>{selection.etancheite.value}</span>
                               </div>
@@ -737,7 +770,7 @@ export function CheckoutPage() {
                                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="config-item-svg">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-.778.099-1.533.284-2.253" />
                                   </svg>
-                                  {isEn ? "Attic Isolation" : "Isolation de l'attique"}
+                                  {locale === "en" ? "Attic Isolation" : locale === "de" ? "Attika-Isolierung" : locale === "nl" ? "Attiek-isolatie" : "Isolation de l'attique"}
                                 </span>
                                 <span>{selection.etancheiteTerrasse.value}</span>
                               </div>
@@ -748,7 +781,7 @@ export function CheckoutPage() {
                                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="config-item-svg">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.751h-.152c-3.196 0-6.1-1.249-8.25-3.286zm0 30v-30z" />
                                   </svg>
-                                  {isEn ? "Roof Insulation" : "Isolation de la toiture"}
+                                  {locale === "en" ? "Roof Insulation" : locale === "de" ? "Dachisolierung" : locale === "nl" ? "Dakisolatie" : "Isolation de la toiture"}
                                 </span>
                                 <span>{selection.strukturaPlloqes.value}</span>
                               </div>
@@ -759,7 +792,7 @@ export function CheckoutPage() {
                                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="config-item-svg">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-.778.099-1.533.284-2.253" />
                                   </svg>
-                                  {isEn ? "Faux Plafond" : "Faux plafond"}
+                                  {locale === "en" ? "False Ceiling" : locale === "de" ? "Zwischendecke" : locale === "nl" ? "Verlaagd plafond" : "Faux plafond"}
                                 </span>
                                 <span>{selection.izolimiPlloqes.value}</span>
                               </div>
@@ -777,7 +810,7 @@ export function CheckoutPage() {
                               .filter(([_, value]) => value && Number(value) > 0)
                               .map(([key, value]) => {
                                 const translation = PERDHESA_LABELS[key];
-                                const label = translation ? (isEn ? translation.en : translation.fr) : key.replaceAll("_", " ");
+                                const label = translation ? (translation[locale as keyof typeof translation] || translation.fr) : key.replaceAll("_", " ");
                                 return (
                                   <div className="config-option-item" key={key}>
                                     <span>

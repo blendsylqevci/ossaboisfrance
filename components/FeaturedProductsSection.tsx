@@ -23,12 +23,20 @@ type FeaturedProductsSectionProps = {
   locale: string;
   categories: Category[];
   allHouses: FeaturedHouseItem[];
+  dict: {
+    featuredTitle: string;
+    featuredSubtitle: string;
+    exploreCta: string;
+    startingFrom: string;
+    configureBtn: string;
+  };
 };
 
 export function FeaturedProductsSection({
   locale,
   categories,
   allHouses,
+  dict,
 }: FeaturedProductsSectionProps) {
   // Filter out any categories that have 0 houses in our data to keep the carousel clean
   const activeCategories = categories.filter((cat) => {
@@ -77,12 +85,12 @@ export function FeaturedProductsSection({
         <div className="products-section-header-block">
           <div className="products-section-header">
             <div className="header-left">
-              <h2 className="products-title">Découvrez nos annonces en vedette</h2>
-              <p className="products-subtitle">Découvrez une sélection de modèles populaires, conçus pour répondre à tous les besoins.</p>
+              <h2 className="products-title">{dict.featuredTitle}</h2>
+              <p className="products-subtitle">{dict.featuredSubtitle}</p>
             </div>
             <div className="header-right">
               <a href={`/${locale}/maisons`} className="view-all-products-btn">
-                <span>Voir tous les produits</span>
+                <span>{dict.exploreCta}</span>
                 <svg className="btn-vector-arrow" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M7 17L17 7M17 7H9M17 7V15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
@@ -148,6 +156,10 @@ export function FeaturedProductsSection({
                         const lastHouseIdx = Math.max(0, Math.min(prevCategoryHousesCount, 6) - 1);
                         setHouseInitialIndex(lastHouseIdx);
                         setCurrentIndex(prevCatIdx);
+                      }}
+                      dict={{
+                        startingFrom: dict.startingFrom,
+                        configureBtn: dict.configureBtn,
                       }}
                     />
                   </div>

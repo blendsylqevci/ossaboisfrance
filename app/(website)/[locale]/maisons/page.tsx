@@ -2,6 +2,8 @@ import { getPayload } from "payload";
 import config from "@/payload.config";
 import { HousesArchive, CMSHouseItem, CMSCategoryItem } from "@/components/HousesArchive";
 import { Locale } from "@/lib/i18n";
+import { getDictionary } from "@/lib/dictionary";
+import { translateText, translateHouseDescription } from "@/lib/translation-helper";
 
 type HousesPageProps = {
   params: Promise<{ locale: Locale }>;
@@ -9,6 +11,7 @@ type HousesPageProps = {
 
 export default async function HousesPage({ params }: HousesPageProps) {
   const { locale } = await params;
+  const dict = await getDictionary(locale);
 
   const payload = await getPayload({ config });
   
@@ -47,13 +50,26 @@ export default async function HousesPage({ params }: HousesPageProps) {
     "maison-avec-etage"
   ];
 
+  const categorySlugToKey: Record<string, string> = {
+    "maison-toitu-terrasse": "terrace",
+    "maison-sans-faitage": "terraceEtage",
+    "maison-plein-pied": "plainPied",
+    "maison-combles-ammenageable": "combles",
+    "maison-avec-etage": "etage"
+  };
+
   // Map to client-friendly props
   const categories: CMSCategoryItem[] = categoriesRes.docs
-    .map((doc) => ({
-      id: doc.slug,
-      title: doc.name,
-      slug: doc.slug,
-    }))
+    .map((doc) => {
+      const key = categorySlugToKey[doc.slug];
+      const categoriesObj = dict.header?.categories as Record<string, string> | undefined;
+      const translatedTitle = key && categoriesObj?.[key] ? categoriesObj[key] : translateText(doc.name, locale);
+      return {
+        id: doc.slug,
+        title: translatedTitle,
+        slug: doc.slug,
+      };
+    })
     .sort((a, b) => {
       const idxA = categoryOrder.indexOf(a.id);
       const idxB = categoryOrder.indexOf(b.id);
@@ -71,10 +87,10 @@ export default async function HousesPage({ params }: HousesPageProps) {
     
     return {
       slug: doc.slug,
-      title: doc.title,
-      categoryName: catObj?.name || 'Maison',
+      title: translateText(doc.title, locale),
+      categoryName: translateText(catObj?.name || 'Maison', locale),
       categorySlug: catObj?.slug || '',
-      description: doc.description || doc.subheading || '',
+      description: translateHouseDescription(doc.description || doc.subheading || '', doc.slug, locale),
       image: imageUrl || '',
       imageBardage: finalImageUrl || '',
       price60x160: finalPrice,
@@ -86,6 +102,7 @@ export default async function HousesPage({ params }: HousesPageProps) {
       locale={locale} 
       initialHouses={houses} 
       initialCategories={categories} 
+      dict={dict.archive}
     />
   );
 }

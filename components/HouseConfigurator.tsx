@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ConfigCategory, ConfigOption, HouseConfiguratorData, SizeOption } from "@/data/house-configurator";
+import { Locale } from "@/lib/i18n";
 
 function formatPrice(value: number) {
   // Format exactly with space as thousands separator and comma for decimals
@@ -23,6 +24,8 @@ function checkIcon() {
 
 type HouseConfiguratorProps = {
   config: HouseConfiguratorData;
+  locale: Locale;
+  dict: any;
 };
 
 /**
@@ -45,24 +48,24 @@ function isOuterLayer(key: string): boolean {
   );
 }
 
-export const PERDHESA_LABELS: Record<string, { fr: string; en: string }> = {
-  bruto: { fr: "Surface Brute", en: "Gross Surface" },
-  neto: { fr: "Surface Nette", en: "Net Surface" },
-  mure_te_jashtme: { fr: "Murs Extérieurs", en: "Exterior Walls" },
-  mure_mbajtese: { fr: "Murs Porteurs", en: "Load-bearing Walls" },
-  mure_ndarese: { fr: "Murs Séparateurs", en: "Partition Walls" },
-  pllaka_e_kulmit: { fr: "Dalle de Toit", en: "Roof Plate" },
-  pllaka_e_katit_0: { fr: "Dalle d'Étage 0", en: "Floor Slab 0" },
-  pllaka_e_katit_1: { fr: "Dalle d'Étage 1", en: "Floor Slab 1" },
-  pllaka_e_katit_2: { fr: "Dalle d'Étage 2", en: "Floor Slab 2" },
-  pllaka_e_katit: { fr: "Dalle d'Étage", en: "Floor Slab" },
-  kulmi: { fr: "Toiture", en: "Roof Area" },
+export const PERDHESA_LABELS: Record<string, { fr: string; en: string; de: string; nl: string }> = {
+  bruto: { fr: "Surface Brute", en: "Gross Surface", de: "Bruttofläche", nl: "Bruto oppervlakte" },
+  neto: { fr: "Surface Nette", en: "Net Surface", de: "Nettofläche", nl: "Netto oppervlakte" },
+  mure_te_jashtme: { fr: "Murs Extérieurs", en: "Exterior Walls", de: "Außenwände", nl: "Buitenmuren" },
+  mure_mbajtese: { fr: "Murs Porteurs", en: "Load-bearing Walls", de: "Tragende Wände", nl: "Dragende muren" },
+  mure_ndarese: { fr: "Murs Séparateurs", en: "Partition Walls", de: "Trennwände", nl: "Tussenmuren" },
+  pllaka_e_kulmit: { fr: "Dalle de Toit", en: "Roof Plate", de: "Dachplatte", nl: "Dakplaat" },
+  pllaka_e_katit_0: { fr: "Dalle d'Étage 0", en: "Floor Slab 0", de: "Bodenplatte 0", nl: "Vloerplaat 0" },
+  pllaka_e_katit_1: { fr: "Dalle d'Étage 1", en: "Floor Slab 1", de: "Bodenplatte 1", nl: "Vloerplaat 1" },
+  pllaka_e_katit_2: { fr: "Dalle d'Étage 2", en: "Floor Slab 2", de: "Bodenplatte 2", nl: "Vloerplaat 2" },
+  pllaka_e_katit: { fr: "Dalle d'Étage", en: "Floor Slab", de: "Bodenplatte", nl: "Vloerplaat" },
+  kulmi: { fr: "Toiture", en: "Roof Area", de: "Dachbereich", nl: "Dakgebied" },
 };
 
-export function HouseConfigurator({ config }: HouseConfiguratorProps) {
+export function HouseConfigurator({ config, locale, dict }: HouseConfiguratorProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const isEn = pathname?.startsWith("/en") || false;
+  const isEn = locale === "en";
   const [selection, setSelection] = useState(config.defaultSelection);
   const [breakdownOpen, setBreakdownOpen] = useState(false);
   const [sliderPos, setSliderPos] = useState(50);
@@ -256,7 +259,7 @@ export function HouseConfigurator({ config }: HouseConfiguratorProps) {
 
   const priceBreakdown = useMemo(() => {
     const baseItem = {
-      label: "Structure en ossature bois",
+      label: dict.breakdown.basePrice,
       value: selectedSize.price
     };
     const optionItems = selectedOptions.map((item) => ({
@@ -492,7 +495,7 @@ L'équipe Ossa Bois France`;
       perdhesa: config.perdhesa
     };
     sessionStorage.setItem("house_selections", JSON.stringify(payload));
-    router.push("/fr/checkout");
+    router.push(`/${locale}/checkout`);
   }
 
   function renderLayerStage(className = "house-layer-stage") {
@@ -750,7 +753,12 @@ L'équipe Ossa Bois France`;
                   <div className="option-details">
                     <span className="option-name">{option.label}</span>
                     {category.id === "couverture" && option.id === "pare-pluie" && (
-                      <span className="option-included-note">Inclus dans le prix de la structure</span>
+                      <span className="option-included-note">
+                        {locale === "en" ? "Included in the structure price" :
+                         locale === "de" ? "Im Preis der Struktur enthalten" :
+                         locale === "nl" ? "Inbegrepen in de prijs van de structuur" :
+                         "Inclus dans le prix de la structure"}
+                      </span>
                     )}
                   </div>
                   <button
@@ -827,7 +835,9 @@ L'équipe Ossa Bois France`;
                 <div className="house-description">{config.subheading}</div>
               </div>
               <div className="house-option-group">
-                <h3 className="option-group-title">Structure en ossature bois</h3>
+                <h3 className="option-group-title">
+                  {locale === "en" ? "Timber frame structure" : locale === "de" ? "Holzrahmenstruktur" : locale === "nl" ? "Houtskeletstructuur" : "Structure en ossature bois"}
+                </h3>
                 <div className="size-options">
                   {config.sizes.map((size) => (
                     <div className="size-option-wrapper" key={size.id}>
@@ -866,14 +876,14 @@ L'équipe Ossa Bois France`;
                     type="button"
                     onClick={() => setActiveTab("description")}
                   >
-                    Description
+                    {dict.labels.description}
                   </button>
                   <button
                     className={`tab-button${activeTab === "specification" ? " active" : ""}`}
                     type="button"
                     onClick={() => setActiveTab("specification")}
                   >
-                    Specification
+                    {dict.labels.specification}
                   </button>
                 </div>
                 <div className="tab-content">
@@ -888,7 +898,7 @@ L'équipe Ossa Bois France`;
                           .filter(([_, value]) => value && Number(value) > 0)
                           .map(([key, value]) => {
                             const translation = PERDHESA_LABELS[key];
-                            const label = translation ? (isEn ? translation.en : translation.fr) : key.replaceAll("_", " ");
+                            const label = translation ? (translation[locale as keyof typeof translation] || translation.fr) : key.replaceAll("_", " ");
                             return (
                               <div className="perdhesa-row" key={key}>
                                 <span>{label}</span>
@@ -904,9 +914,9 @@ L'équipe Ossa Bois France`;
 
               {/* Expression of Interest Form */}
               <div className="interest-form-container">
-                <h2 className="interest-form-title">Envoyer une expression d&apos;intérêt</h2>
+                <h2 className="interest-form-title">{dict.labels.interestFormTitle}</h2>
                 <p className="interest-form-subtitle">
-                  Nous rendons les choses simples et pratiques pour vous. Remplissez le formulaire ci-dessous et nous vous contacterons pour répondre à toutes vos questions. Cette demande d&apos;intérêt est entièrement gratuite et sans engagement.
+                  {dict.labels.interestFormText}
                 </p>
                 
                 <form onSubmit={handleInterestSubmit} className="interest-form">
@@ -914,7 +924,7 @@ L'équipe Ossa Bois France`;
                     <div className="form-group">
                       <input
                         type="text"
-                        placeholder="Prénom"
+                        placeholder={dict.labels.firstName}
                         required
                         value={formFields.emri}
                         onChange={(e) => setFormFields({ ...formFields, emri: e.target.value })}
@@ -923,7 +933,7 @@ L'équipe Ossa Bois France`;
                     <div className="form-group">
                       <input
                         type="text"
-                        placeholder="Nom"
+                        placeholder={dict.labels.lastName}
                         required
                         value={formFields.mbiemri}
                         onChange={(e) => setFormFields({ ...formFields, mbiemri: e.target.value })}
@@ -939,10 +949,10 @@ L'équipe Ossa Bois France`;
                           value={formFields.orari}
                           onChange={(e) => setFormFields({ ...formFields, orari: e.target.value })}
                         >
-                          <option value="">Horaire souhaité</option>
-                          <option value="Kurdo">À tout moment</option>
-                          <option value="Mëngjes">Matin</option>
-                          <option value="Pasdite">Après-midi</option>
+                          <option value="">{dict.labels.preferredTime}</option>
+                          <option value="Kurdo">{dict.labels.anytime}</option>
+                          <option value="Mëngjes">{dict.labels.morning}</option>
+                          <option value="Pasdite">{dict.labels.afternoon}</option>
                         </select>
                       </div>
                     </div>
@@ -953,9 +963,9 @@ L'équipe Ossa Bois France`;
                           value={formFields.kontaktimi}
                           onChange={(e) => setFormFields({ ...formFields, kontaktimi: e.target.value })}
                         >
-                          <option value="">Mode de contact préféré</option>
-                          <option value="Telefon">Téléphone</option>
-                          <option value="E-mail">E-mail</option>
+                          <option value="">{dict.labels.preferredContact}</option>
+                          <option value="Telefon">{dict.labels.phone}</option>
+                          <option value="E-mail">{dict.labels.email}</option>
                         </select>
                       </div>
                     </div>
@@ -977,7 +987,7 @@ L'équipe Ossa Bois France`;
                       </div>
                       <input
                         type="tel"
-                        placeholder="Numéro de téléphone"
+                        placeholder={dict.labels.phone}
                         required
                         value={formFields.telefon}
                         onChange={(e) => setFormFields({ ...formFields, telefon: e.target.value })}
@@ -986,7 +996,7 @@ L'équipe Ossa Bois France`;
                     <div className="form-group">
                       <input
                         type="email"
-                        placeholder="E-mail"
+                        placeholder={dict.labels.email}
                         required
                         value={formFields.email}
                         onChange={(e) => setFormFields({ ...formFields, email: e.target.value })}
@@ -998,7 +1008,7 @@ L'équipe Ossa Bois France`;
                     <div className="form-group">
                       <input
                         type="text"
-                        placeholder="Code postal"
+                        placeholder={dict.labels.postalCode}
                         required
                         value={formFields.kodiPostar}
                         onChange={(e) => setFormFields({ ...formFields, kodiPostar: e.target.value })}
@@ -1007,7 +1017,7 @@ L'équipe Ossa Bois France`;
                     <div className="form-group">
                       <input
                         type="text"
-                        placeholder="Ville"
+                        placeholder={dict.labels.city}
                         required
                         value={formFields.qyteti}
                         onChange={(e) => setFormFields({ ...formFields, qyteti: e.target.value })}
@@ -1018,7 +1028,7 @@ L'équipe Ossa Bois France`;
                   <div className="form-group-full">
                     <input
                       type="text"
-                      placeholder="Adresse"
+                      placeholder={dict.labels.address}
                       value={formFields.adresa}
                       onChange={(e) => setFormFields({ ...formFields, adresa: e.target.value })}
                     />
@@ -1026,7 +1036,7 @@ L'équipe Ossa Bois France`;
 
                   <div className="form-group-full">
                     <textarea
-                      placeholder="Écrivez votre message ici..."
+                      placeholder={dict.labels.message}
                       value={formFields.mesazh}
                       onChange={(e) => setFormFields({ ...formFields, mesazh: e.target.value })}
                     />
@@ -1041,18 +1051,18 @@ L'équipe Ossa Bois France`;
                         onChange={(e) => setFormFields({ ...formFields, pranoje: e.target.checked })}
                       />
                       <span className="checkbox-text">
-                        J&apos;accepte le traitement de mes données personnelles conformément à la politique de confidentialité.
+                        {dict.labels.gdpr}
                       </span>
                     </label>
                   </div>
 
                   <button type="submit" className="interest-submit-button">
-                    Envoyer l&apos;expression d&apos;intérêt
+                    {dict.labels.sendInterest}
                   </button>
 
                   {formStatus === "success" && (
                     <div className="form-success-msg">
-                      Merci ! Votre expression d&apos;intérêt a été envoyée avec succès. Nous vous contacterons très prochainement.
+                      {dict.labels.successInterest}
                     </div>
                   )}
                 </form>
@@ -1068,7 +1078,7 @@ L'équipe Ossa Bois France`;
                     type="button"
                     className={`price-dropdown${breakdownOpen ? " active" : ""}`}
                     id="price-dropdown"
-                    aria-label="Voir le detail du prix"
+                    aria-label={dict.breakdown.title}
                     onClick={() => setBreakdownOpen((open) => !open)}
                   >
                     <svg className="dropdown-arrow" width="20" height="10" viewBox="0 0 20 10" fill="none">
@@ -1077,7 +1087,7 @@ L'équipe Ossa Bois France`;
                   </button>
                 </div>
                 <button className="continue-button" type="button" onClick={continueToCheckout}>
-                  Continuer
+                  {dict.labels.orderNow}
                 </button>
               </div>
 
@@ -1090,7 +1100,7 @@ L'équipe Ossa Bois France`;
                     </div>
                   ))}
                   <div className="breakdown-total">
-                    <span className="breakdown-label">Total:</span>
+                    <span className="breakdown-label">{dict.breakdown.total}:</span>
                     <span className="breakdown-value">€ {formatPrice(total)}</span>
                   </div>
                 </div>
@@ -1111,7 +1121,7 @@ L'équipe Ossa Bois France`;
             <button
               type="button"
               className="material-modal-close"
-              aria-label="Fermer"
+              aria-label={dict.labels.close}
               onClick={() => setMaterialModal(null)}
             >
               ×
@@ -1122,14 +1132,19 @@ L'équipe Ossa Bois France`;
                 alt={materialModal.option.label}
                 width={1100}
                 height={620}
+                className="modal-image-el"
               />
             </div>
             <div className="material-modal-content">
               <p className="material-modal-kicker">{materialModal.category.label}</p>
               <h2 id="material-modal-title">{materialModal.option.label}</h2>
               <p>
-                {materialModal.option.materialDescription ??
-                  "Information du materiau a completer depuis le CMS lors de la migration finale."}
+                {materialModal.option.materialDescription ?? (
+                  locale === "en" ? "Material information to be completed from the CMS during the final migration." :
+                  locale === "de" ? "Materialinformationen, die während der finalen Migration aus dem CMS ausgefüllt werden müssen." :
+                  locale === "nl" ? "Materiaalgegevens die tijdens de uiteindelijke migratie vanuit het CMS moeten worden ingevuld." :
+                  "Information du materiau a completer depuis le CMS lors de la migration finale."
+                )}
               </p>
               {materialModal.option.attributes && materialModal.option.attributes.length > 0 && (
                 <div className="material-attributes-grid">
@@ -1157,7 +1172,7 @@ L'équipe Ossa Bois France`;
             <button
               type="button"
               className="image-zoom-close"
-              aria-label="Fermer"
+              aria-label={dict.labels.close}
               onClick={() => setIsZoomed(false)}
             >
               ×

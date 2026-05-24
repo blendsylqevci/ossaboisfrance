@@ -1,0 +1,405 @@
+{
+  "header": {
+    "home": "Accueil",
+    "models": "Modèles De Maisons",
+    "allModels": "Tous les modèles",
+    "about": "Qui Sommes-Nous",
+    "b2b": "B2B",
+    "realisations": "Réalisations",
+    "contactUs": "Contactez-Nous",
+    "closeMenu": "Fermer le menu",
+    "categories": {
+      "terrace": "Maisons à toiture terrasse",
+      "terraceEtage": "Maisons à toiture terrasse avec étage",
+      "plainPied": "Maisons de plain-pied",
+      "combles": "Maisons avec combles aménageables",
+      "etage": "Maisons avec étage"
+    }
+  },
+  "footer": {
+    "description": "Construction de maison à ossature bois.",
+    "navigation": "Navigation",
+    "address": "Notre Adresse",
+    "contactUs": "Contactez-Nous",
+    "socialMedia": "Réseaux sociaux",
+    "newsletterLabel": "Contact for any question",
+    "emailPlaceholder": "E-mail",
+    "send": "Envoyer",
+    "copyright": "Copyright © 2025. Ossabois",
+    "madeBy": "Réalisé par iCode"
+  },
+  "home": {
+    "heroKicker": "Fabricant de maisons à ossature bois",
+    "heroTitle": "Votre maison modulaire haut de gamme",
+    "heroDescription": "Découvrez nos modèles entièrement personnalisables et performants, livrés partout en France.",
+    "exploreCta": "Découvrir nos modèles",
+    "contactCta": "Contactez-nous",
+    "whyTitle": "Pourquoi choisir Ossa Bois France ?",
+    "whySubtitle": "Des prestations d'exception adaptées à vos projets de vie.",
+    "whyCards": [
+      {
+        "title": "Prix très avantageux",
+        "text": "Nos maisons modulaires sont proposées à des prix compétitifs grâce à notre propre usine de production. Un excellent rapport qualité-prix sans compromis sur la solidité ou la finition."
+      },
+      {
+        "title": "Personnalisation complète en ligne",
+        "text": "Vous pouvez configurer votre maison comme vous le souhaitez directement sur notre site : modèle, surface, isolation, matériaux, fenêtres et finitions — tout est personnalisable selon vos besoins."
+      },
+      {
+        "title": "Livraison rapide dans toute l'Europe",
+        "text": "Nous prenons en charge le transport et livrons votre maison modulaire en un délai court, partout en Europe, grâce à une logistique optimisée."
+      },
+      {
+        "title": "Fabrication contrôlée en usine",
+        "text": "Production réalisée dans notre usine moderne au France, sous contrôle strict de qualité : structure solide, précision millimétrique et matériaux certifiés."
+      },
+      {
+        "title": "Installation simple et rapide",
+        "text": "Grâce à la construction modulaire, l'installation sur votre terrain est propre, rapide et sans surprises. Un processus beaucoup plus efficace que la construction traditionnelle."
+      },
+      {
+        "title": "Entreprise sérieuse & accompagnement complet",
+        "text": "Nous vous accompagnons à chaque étape de votre projet, des plans 3D initiaux aux formalités et au montage final pour une totale tranquillité d'esprit."
+      }
+    ],
+    "featuredTitle": "Découvrez nos annonces en vedette",
+    "featuredSubtitle": "Nos modèles phares plébiscités par nos clients.",
+    "statsTitle": "Notre usine en chiffres",
+    "statsSubtitle": "Une capacité industrielle moderne pour concrétiser vos projets.",
+    "reviewsTitle": "Ce que disent nos clients",
+    "reviewsSubtitle": "La satisfaction de nos clients est notre plus belle réussite.",
+    "clientReviews": [
+      {
+        "content": "Service impeccable, livraison rapide et qualité supérieure. Notre maison modulaire a été installée parfaitement et le résultat dépasse nos attentes. Nous recommandons fortement Ossa Bois France.",
+        "name": "Mme Khorsan",
+        "title": "13/04/2025"
+      },
+      {
+        "content": "Une équipe très professionnelle, un accompagnement complet du début à la fin. La qualité de la construction est remarquable et les délais ont été parfaitement respectés. Je suis ravie de ma maison modulaire.",
+        "name": "Sophie L.",
+        "title": "@sophie.l"
+      },
+      {
+        "content": "Installation rapide, matériaux solides et un service client toujours disponible. Notre maison est exactement comme nous l’avions imaginée. Merci à Ossa Bois France pour ce travail de qualité.",
+        "name": "Marc et Élodie R.",
+        "title": "@marc_elodie"
+      },
+      {
+        "content": "Excellent rapport qualité-prix. Le transport et le montage se sont déroulés sans aucun problème. Je recommande cette entreprise à 100 %.",
+        "name": "Jean-Michel D.",
+        "title": "@jm_dubois"
+      }
+    ],
+    "aboutTitle": "C’est nous, Ossa Bois France",
+    "aboutCta": "Découvrez qui nous sommes",
+    "aboutText1": "Ossa Bois France réinvente l’habitat individuel et collectif à travers une approche moderne, écologique et hautement performante de la construction en bois. Forts de notre expertise d’ingénierie et de notre savoir-faire industriel, nous concevons des structures d'exception qui allient design contemporain, durabilité environnementale et confort de vie inégalé.",
+    "aboutText2": "De la conception sur-mesure à la fabrication de haute précision dans nos ateliers de pointe, chaque projet bénéficie d'un suivi rigoureux. Grâce à une logistique intégrée et des équipes d'assemblage qualifiées, nous garantissons un accompagnement clé en main à travers toute l'Europe, éliminant les aléas des chantiers traditionnels en respectant strictement vos budgets et vos délais.",
+    "aboutBold": "Une construction d'avenir, durable et certifiée, pour concrétiser vos projets architecturaux les plus exigeants.",
+    "stats": {
+      "experience": "années d’expérience dans la construction modulaire",
+      "projects": "projets livrés en Europe",
+      "quality": "production maîtrisée et qualité certifiée"
+    },
+    "reviewsMore": "Voir plus d’avis",
+    "collabsTitle": "Nos Collaborateurs Européens",
+    "ctaTitle": "Construisez votre maison idéale",
+    "ctaDesc": "Choisissez votre modèle, personnalisez chaque détail et suivez le prix en temps réel. Simple. Rapide. Transparent.",
+    "ctaCta": "Contactez-nous"
+  },
+  "archive": {
+    "pageTitle": "Modèles de Maisons",
+    "pageSubtitle": "Découvrez notre gamme de maisons modulaires à ossature bois haut de gamme. Entièrement personnalisables pour s'adapter à votre vie.",
+    "commitmentsTitle": "Engagements & Garanties",
+    "commitmentsSubtitle": "Construire avec Ossa Bois France, c'est l'assurance d'un projet serein, durable et performant.",
+    "commitmentsList": [
+      {
+        "title": "Garantie Décennale",
+        "desc": "Toutes les garanties constructeurs requises par la loi, y compris l'assurance décennale de structure."
+      },
+      {
+        "title": "Conformité RE2020",
+        "desc": "Conception bioclimatique à haute performance thermique, conforme aux normes environnementales RE2020."
+      },
+      {
+        "title": "Bois Éco-responsable",
+        "desc": "Matériaux certifiés de haute qualité issus de forêts gérées durablement."
+      },
+      {
+        "title": "Précision Millimétrique",
+        "desc": "Préfabrication robotisée en atelier garantissant un assemblage rapide et sans défaut sur chantier."
+      }
+    ],
+    "favoritesLabel": "Favoris",
+    "modelsCount": "Modèles",
+    "modelCount": "Modèle",
+    "startingFrom": "à partir de",
+    "onQuote": "Sur devis",
+    "configureBtn": "Configurer",
+    "favoritesInfoTitle": "Comment fonctionnent vos favoris ?",
+    "favoritesInfoText": "Retrouvez ici les modèles que vous avez aimés. Vos favoris sont enregistrés sur cet appareil.",
+    "favoritesExplanationTitle": "Comment fonctionnent les favoris locaux ?",
+    "favoritesExplanationStorage": "Vos favoris sont enregistrés localement dans votre navigateur (localStorage). Si vous enregistrez un modèle depuis votre téléphone, il s'affichera uniquement sur ce téléphone. Si vous l'enregistrez depuis votre ordinateur, il s'affichera uniquement sur cet ordinateur.",
+    "favoritesExplanationAccount": "Ils restent sauvegardés lors de vos prochaines visites et rafraîchissements sans avoir besoin de créer un compte.",
+    "favoritesExplanationCache": "Si vous videz le cache ou l'historique de votre navigateur sur cet appareil, vos favoris seront réinitialisés.",
+    "favoritesEmptyTitle": "Aucun favori pour le moment",
+    "favoritesEmptyText": "Cliquez sur l'icône de cœur sur n'importe quel modèle de maison pour l'enregistrer ici.",
+    "favoritesEmptyBtn": "Voir tous les modèles",
+    "favoritesInfoTextShort": "Vos favoris sont enregistrés sur cet appareil."
+  },
+  "configurator": {
+    "startingPrice": "à partir de",
+    "steps": {
+      "dimensions": "Dimensions",
+      "structure": "Structure",
+      "isolation": "Isolation",
+      "facade": "Façade",
+      "menuiserie": "Menuiserie",
+      "options": "Options",
+      "recap": "Récapitulatif"
+    },
+    "breakdown": {
+      "title": "Détails du prix",
+      "basePrice": "Structure de base",
+      "dimensions": "Dimensions de base",
+      "walls": "Murs extérieurs",
+      "roof": "Toiture",
+      "epdm": "Étanchéité EPDM",
+      "isolationInter": "Isolation intérieure",
+      "isolationExt": "Isolation extérieure",
+      "facade": "Finition façade",
+      "windows": "Menuiseries",
+      "ceiling": "Faux Plafond",
+      "atticTerrace": "Attic Terrasse",
+      "couverture": "Couverture de toit",
+      "options": "Options additionnelles",
+      "subtotal": "Sous-total HT",
+      "transport": "Frais de transport",
+      "tva": "TVA (20%)",
+      "total": "Total TTC"
+    },
+    "labels": {
+      "configureYourHouse": "Configurez votre maison",
+      "selectSize": "Sélectionnez les dimensions",
+      "selected": "Sélectionné",
+      "select": "Sélectionner",
+      "materialsInfo": "Informations matériaux",
+      "close": "Fermer",
+      "askQuote": "Demander des informations",
+      "nextStep": "Étape suivante",
+      "prevStep": "Étape précédente",
+      "orderNow": "Valider le projet",
+      "backToModels": "Retour aux modèles",
+      "atticOption": "Option Attique Polystyrène",
+      "epdmOption": "Option Étanchéité EPDM",
+      "roofCover": "Option Couverture de Toit (tuiles/métal)",
+      "ceilingOption": "Option Faux Plafond",
+      "interestFormTitle": "Formulaire d'intérêt",
+      "interestFormText": "Laissez-nous vos coordonnées pour recevoir une offre personnalisée de cette configuration.",
+      "name": "Nom complet",
+      "email": "Adresse e-mail",
+      "phone": "Téléphone",
+      "address": "Adresse du terrain",
+      "message": "Message / Questions additionnelles",
+      "submit": "Envoyer ma demande",
+      "loading": "Envoi en cours...",
+      "successTitle": "Demande envoyée !",
+      "successText": "Merci pour votre intérêt. Nous vous recontacterons très rapidement avec une proposition détaillée.",
+      "zoomReset": "Réinitialiser le zoom",
+      "description": "Description",
+      "specification": "Spécification",
+      "preferredTime": "Horaire souhaité",
+      "anytime": "À tout moment",
+      "morning": "Matin",
+      "afternoon": "Après-midi",
+      "preferredContact": "Mode de contact préféré",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "postalCode": "Code postal",
+      "city": "Ville",
+      "gdpr": "J'accepte le traitement de mes données personnelles conformément à la politique de confidentialité.",
+      "sendInterest": "Envoyer l'expression d'intérêt",
+      "successInterest": "Merci ! Votre expression d'intérêt a été envoyée avec succès. Nous vous contacterons très prochainement.",
+      "configuratorPrep": "Configurateur en préparation",
+      "configuratorPrepDesc": "Les données de cette maison sont importées depuis le CMS. Le configurateur visuel sera activé après chargement complet des calques graphiques."
+    }
+  },
+  "checkout": {
+    "title": "Finaliser votre projet de construction",
+    "deliveryAddress": "Adresse de livraison du projet",
+    "shippingMethod": "Mode de transport & Logistique",
+    "legalAgreement": "Validation réglementaire & Engagements",
+    "orderSummary": "Résumé de votre configuration",
+    "steps": {
+      "delivery": "Livraison",
+      "shipping": "Logistique",
+      "agreements": "Engagements",
+      "confirmation": "Validation"
+    },
+    "form": {
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "email": "Adresse e-mail",
+      "phone": "Téléphone",
+      "address": "Adresse complète du terrain",
+      "city": "Ville",
+      "postalCode": "Code postal",
+      "country": "Pays",
+      "selectCountry": "Sélectionnez un pays",
+      "deliveryAccessibility": "Je certifie que le terrain est accessible aux camions de transport (semi-remorque).",
+      "paymentMilestones": "J'accepte les étapes de paiement : 30% à la commande, 50% au chargement à l'usine, 20% à la livraison.",
+      "urbanCompliance": "Je certifie avoir vérifié les règles d'urbanisme locales (PLU) applicables à mon terrain.",
+      "gdpr": "J'autorise Ossa Bois France à conserver mes données pour traiter ma demande de construction.",
+      "validationError": "Veuillez remplir tous les champs obligatoires et accepter les engagements."
+    },
+    "shippingCard": {
+      "title": "Transport Routier Spécialisé",
+      "desc": "Livraison sécurisée de votre structure de maison préfabriquée par camion de convoi spécialisé directement sur votre chantier.",
+      "time": "Délai de livraison estimé : 3-4 semaines"
+    },
+    "summary": {
+      "structuralData": "Données Structurelles",
+      "dimensions": "Dimensions",
+      "basePrice": "Base",
+      "subtotal": "Sous-total",
+      "transport": "Frais de transport",
+      "tva": "TVA (20%)",
+      "total": "Total TTC",
+      "placeRequest": "Envoyer ma demande de projet",
+      "processing": "Traitement de votre demande...",
+      "successTitle": "Merci pour votre demande !",
+      "successSubtitle": "Votre projet de construction modulaire à ossature bois a été transmis à notre équipe.",
+      "refCode": "Référence de votre dossier",
+      "nextSteps": "Prochaines étapes",
+      "step1": "Notre bureau d'études analyse l'accessibilité de votre terrain.",
+      "step2": "Un conseiller commercial vous contactera sous 24-48h pour valider vos choix et affiner le projet.",
+      "step3": "Nous vous enverrons un devis contractuel complet prêt pour dépôt de permis de construire.",
+      "downloadPdf": "Télécharger le récapitulatif PDF",
+      "anyQuestion": "Une question ?",
+      "contactInfo": "Contactez-nous à sylqevciblendi@gmail.com pour toute modification."
+    }
+  },
+  "contact": {
+    "title": "Contactez-nous",
+    "subtitle": "Un projet ? Une question ? Notre équipe est à votre écoute.",
+    "formTitle": "Envoyez-nous un message",
+    "name": "Nom complet",
+    "email": "Adresse e-mail",
+    "phone": "Téléphone",
+    "subject": "Sujet de votre demande",
+    "message": "Message",
+    "submit": "Envoyer mon message",
+    "success": "Votre message a été envoyé avec succès. Nous vous répondrons très rapidement.",
+    "loading": "Envoi en cours...",
+    "details": {
+      "address": "Notre Adresse",
+      "phone": "Téléphone",
+      "email": "Adresse e-mail",
+      "hours": "Heures d'ouverture",
+      "hoursText": "Lundi - Vendredi: 9:00 - 18:00"
+    }
+  },
+  "about": {
+    "title": "À propos de nous",
+    "introText": "Fabricant de maison modulaire à ossature bois dans toute la France. Créée par des constructeurs disposant de plus de 30 ans d'expérience dans le bâtiment, Ossa Bois France est spécialisée dans la construction de maison modulaire à ossature bois.",
+    "conceptTitle": "Notre concept",
+    "conceptText": "La construction, dans toute la France, de maisons fabriquées en usine.",
+    "advantagesTitle": "Nos avantages",
+    "advantagesText": "Des coûts maîtrisés et des délais raccourcis, dans le respect des standards de qualité et des réglementations environnementales en vigueur.",
+    "processTitle": "Maison préfabriquée : comment ça se passe ?",
+    "processText1": "Le parcours de construction d'une maison à ossature bois repose sur une ingénierie de précision et une organisation industrielle rigoureusement maîtrisée. Implantée à Chartres, en Eure-et-Loir, Ossa Bois France collabore avec un bureau d’études spécialisé et s’appuie sur une usine de production moderne dotée d'équipements de dernière génération au Kosovo. Cette synergie garantit une conception sur-mesure et une fabrication à l'abri des intempéries, assurant une régularité de qualité impossible à obtenir sur un chantier classique.",
+    "processText2": "Notre processus de préfabrication en atelier permet de réaliser l'essentiel du gros œuvre (assemblage des murs, isolation intégrée, pose des menuiseries) dans des conditions optimales de sécurité et de contrôle. Cette méthode moderne réduit considérablement le temps de mise en œuvre global et optimise l'utilisation des ressources en minimisant les déchets de construction sur site.",
+    "processText3": "Une fois les différents modules ou panneaux achevés et certifiés conformes, ils sont transportés avec le plus grand soin vers votre terrain. L'assemblage final est alors réalisé par nos partenaires monteurs agréés dans toute la France. En quelques jours seulement, la structure hors d'eau et hors d'air est érigée, prête à accueillir les finitions intérieures pour vous offrir un emménagement rapide et serein.",
+    "processCta": "Découvrir nos modèles de maisons",
+    "commitmentsTitle": "Nos engagements et garanties",
+    "commitmentsText": "Chaque maison construite par Ossa Bois France bénéficie de toutes les garanties constructeurs requises par la loi, y compris l'assurance décennale.",
+    "faqsTitle": "Questions-réponses sur l’ossature bois",
+    "faqsSubtitle": "Retrouvez les réponses aux questions les plus fréquentes sur la construction de maisons modulaires et le respect des normes.",
+    "faqs": [
+      {
+        "question": "Peut-on construire sur un terrain en pente ?",
+        "answer": "Oui, la construction à ossature bois est particulièrement adaptée aux terrains en pente. Grâce à la légèreté structurelle du bois, les fondations (comme des plots en béton ou des vis de fondation) sont moins contraignantes et plus économiques que pour une construction traditionnelle en béton, s'adaptant parfaitement au relief naturel du sol."
+      },
+      {
+        "question": "Quelle est la durée de vie d'une maison à ossature bois ?",
+        "answer": "La qualité de la conception, des matériaux traités et du mode de construction en usine de nos maisons leur permet de durer plusieurs générations. Les structures en bois moderne bénéficient de traitements de pointe contre l'humidité et les insectes, offrant une longévité équivalente ou supérieure aux constructions traditionnelles en parpaing ou brique."
+      },
+      {
+        "question": "Quelles garanties offrez-vous pour vos constructions ?",
+        "answer": "Chaque maison construite par Ossa Bois France bénéficie de toutes les garanties constructeurs exigées par la loi française, incluant l'assurance décennale (qui garantit la structure et le clos-couvert pendant 10 ans), la garantie de parfait achèvement (1 an) et la garantie de bon fonctionnement des équipements (2 ans)."
+      },
+      {
+        "question": "Quels sont les avantages de la préfabrication en usine ?",
+        "answer": "La préfabrication en atelier garantit une précision millimétrique grâce à nos équipements numériques et un contrôle qualité constant à l'abri des intempéries. Cela permet également de diviser par deux les délais de chantier et de minimiser les déchets, tout en garantissant des finitions impeccables."
+      }
+    ],
+    "steps": {
+      "step1": "01. Structure",
+      "step2": "02. Laine Verre",
+      "step3": "03. Laine Roche",
+      "step4": "04. Laine Bois",
+      "step5": "05. Isolation EPS",
+      "step6": "06. Fibre Bois",
+      "step7": "07. Roche Ext",
+      "step8": "08. Toit EPDM",
+      "step9": "09. Façade Blanc",
+      "step10": "10. Bardage Bois",
+      "step11": "11. Fenêtres Alu",
+      "step12": "12. Maison Finie"
+    }
+  },
+  "b2b": {
+    "title": "B2B & Partenariats",
+    "subtitle": "Devenez partenaire d'un constructeur à la pointe de l'innovation modulaire.",
+    "introText": "Ossa Bois France collabore avec les professionnels de l'immobilier, les architectes, les promoteurs et les monteurs sur tout le territoire national. Profitez de notre puissance industrielle de production pour enrichir vos offres et accélérer vos chantiers.",
+    "advantagesTitle": "Pourquoi travailler avec nous ?",
+    "advantage1Title": "Tarifs professionnels compétitifs",
+    "advantage1Text": "Des remises volumétriques attractives vous garantissant des marges optimales pour vos commercialisations ou projets intégrés.",
+    "advantage2Title": "Ingénierie & Plans 3D dédiés",
+    "advantage2Text": "Accès à notre bureau d'études partenaire pour adapter nos modèles ou concevoir des projets modulaires sur-mesure de grande envergure.",
+    "advantage3Title": "Logistique & Suivi logistique",
+    "advantage3Text": "Nous gérons le transport et déchargeons les modules directement sur site. Un coordinateur dédié suit le transit en temps réel.",
+    "formTitle": "Devenir partenaire Ossa Bois",
+    "formSubtitle": "Remplissez ce formulaire et déposez votre dossier de présentation ou Kbis. Notre pôle partenariats vous contactera.",
+    "companyName": "Nom de l'entreprise",
+    "contactName": "Nom du contact",
+    "email": "Adresse e-mail professionnelle",
+    "phone": "Téléphone direct",
+    "activity": "Secteur d'activité",
+    "activityOptions": {
+      "select": "Sélectionnez votre secteur",
+      "architect": "Architecte / Bureau d'études",
+      "developer": "Promoteur / Constructeur",
+      "assembler": "Monteur / Charpentier",
+      "agent": "Agent immobilier / Négociateur",
+      "other": "Autre activité"
+    },
+    "uploadLabel": "Télécharger un document (Kbis, Présentation, Brochure)",
+    "uploadPlaceholder": "Cliquez pour téléverser (PDF, JPG, PNG - Max 10Mo)",
+    "message": "Décrivez votre projet de partenariat",
+    "submit": "Soumettre mon dossier de partenariat",
+    "loading": "Envoi en cours...",
+    "success": "Dossier reçu ! Nos équipes de développement B2B vont analyser votre profil et vous recontacter rapidement."
+  },
+  "realisations": {
+    "title": "Nos Réalisations",
+    "subtitle": "Découvrez des exemples concrets de maisons modulaires à ossature bois installées par nos clients et partenaires.",
+    "filters": {
+      "all": "Tous les projets",
+      "terrace": "Toiture Terrasse",
+      "stage": "À Étage",
+      "classic": "Classique / Combles"
+    },
+    "quoteCta": "Demander la même maison",
+    "surface": "Surface",
+    "duration": "Montage",
+    "location": "Localisation",
+    "items": {
+      "project1Title": "Villa Contemporaine - Bassin d'Arcachon",
+      "project1Desc": "Maison modulaire contemporaine à toiture terrasse avec suite parentale et larges baies vitrées.",
+      "project2Title": "Maison Familiale Éco-conçue - Annecy",
+      "project2Desc": "Maison à deux étages à haut rendement thermique (RE2020) parfaitement intégrée dans son environnement montagneux.",
+      "project3Title": "Pavillon Plain-pied - Orléans",
+      "project3Desc": "Construction modulaire de plain-pied optimisée pour l'accessibilité PMR et disposant d'un double garage."
+    }
+  }
+}

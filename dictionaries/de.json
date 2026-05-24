@@ -1,0 +1,405 @@
+{
+  "header": {
+    "home": "Startseite",
+    "models": "Hausmodelle",
+    "allModels": "Alle Modelle",
+    "about": "Über uns",
+    "b2b": "B2B",
+    "realisations": "Realisierungen",
+    "contactUs": "Kontaktieren Sie uns",
+    "closeMenu": "Menü schließen",
+    "categories": {
+      "terrace": "Häuser mit Flachdach",
+      "terraceEtage": "Flachdachhäuser mit Etage",
+      "plainPied": "Eingeschossige Häuser",
+      "combles": "Häuser mit ausbaubarem Dachboden",
+      "etage": "Zweigeschossige Häuser"
+    }
+  },
+  "footer": {
+    "description": "Hersteller von modularen Holzhäusern.",
+    "navigation": "Navigation",
+    "address": "Unsere Adresse",
+    "contactUs": "Kontaktieren Sie uns",
+    "socialMedia": "Soziale Medien",
+    "newsletterLabel": "Kontakt bei Fragen",
+    "emailPlaceholder": "E-Mail",
+    "send": "Senden",
+    "copyright": "Copyright © 2025. Ossabois",
+    "madeBy": "Erstellt von iCode"
+  },
+  "home": {
+    "heroKicker": "Hersteller von Holzrahmenhäusern",
+    "heroTitle": "Ihr erstklassiges Modulhaus",
+    "heroDescription": "Entdecken Sie unsere voll konfigurierbaren, hocheffizienten Modelle, geliefert in ganz Frankreich.",
+    "exploreCta": "Unsere Modelle entdecken",
+    "contactCta": "Kontaktieren Sie uns",
+    "whyTitle": "Warum Ossa Bois France wählen?",
+    "whySubtitle": "Außergewöhnliche Leistungen, abgestimmt auf Ihre Lebensprojekte.",
+    "whyCards": [
+      {
+        "title": "Sehr vorteilhafte Preise",
+        "text": "Unsere Modulhäuser werden dank unserer eigenen Produktionsstätte zu wettbewerbsfähigen Preisen angeboten. Ein hervorragendes Preis-Leistungs-Verhältnis ohne Kompromisse bei Stabilität oder Verarbeitung."
+      },
+      {
+        "title": "Vollständige Online-Personalisierung",
+        "text": "Sie können Ihr Haus direkt auf unserer Website nach Ihren Wünschen konfigurieren: Modell, Fläche, Isolierung, Materialien, Fenster und Ausführungen — alles ist anpassbar."
+      },
+      {
+        "title": "Schnelle Lieferung in ganz Europa",
+        "text": "Wir kümmern uns um den Transport und liefern Ihr Modulhaus dank optimierter Logistik in kurzer Zeit überall in Europa aus."
+      },
+      {
+        "title": "Kontrollierte Fabrikherstellung",
+        "text": "Die Produktion erfolgt in unserer modernen Fabrik in Frankreich unter strenger Qualitätskontrolle: solide Struktur, millimetergenaue Präzision und zertifizierte Materialien."
+      },
+      {
+        "title": "Einfache und schnelle Installation",
+        "text": "Dank modularer Bauweise ist die Installation auf Ihrem Grundstück sauber, schnell und ohne Überraschungen. Ein viel effizienterer Prozess als beim traditionellen Bauen."
+      },
+      {
+        "title": "Seriöses Unternehmen & vollständige Betreuung",
+        "text": "Wir begleiten Sie bei jedem Schritt Ihres Projekts, von den ersten 3D-Plänen bis zu den Formalitäten und der Endmontage, für absolute Sicherheit."
+      }
+    ],
+    "featuredTitle": "Entdecken Sie unsere Highlights",
+    "featuredSubtitle": "Unsere von Kunden am meisten geschätzten Spitzenmodelle.",
+    "statsTitle": "Unsere Fabrik in Zahlen",
+    "statsSubtitle": "Eine moderne industrielle Kapazität, um Ihre Projekte Realität werden zu lassen.",
+    "reviewsTitle": "Was unsere Kunden sagen",
+    "reviewsSubtitle": "Die Zufriedenheit unserer Kunden ist unser größter Erfolg.",
+    "clientReviews": [
+      {
+        "content": "Tadelloser Service, schnelle Lieferung und hervorragende Qualität. Unser Modulhaus wurde perfekt aufgebaut, das Ergebnis übertrifft unsere Erwartungen. Wir können Ossa Bois France nur wärmstens empfehlen.",
+        "name": "Frau Khorsan",
+        "title": "13.04.2025"
+      },
+      {
+        "content": "Ein sehr professionelles Team, umfassende Betreuung von Anfang bis Ende. Die Qualität der Konstruktion ist bemerkenswert und die Termine wurden perfekt eingehalten. Ich bin begeistert von meinem Modulhaus.",
+        "name": "Sophie L.",
+        "title": "@sophie.l"
+      },
+      {
+        "content": "Schneller Aufbau, solide Materialien und ein stets erreichbarer Kundenservice. Unser Haus ist genau so, wie wir es uns vorgestellt haben. Vielen Dank an Ossa Bois France für diese Qualitätsarbeit.",
+        "name": "Marc und Élodie R.",
+        "title": "@marc_elodie"
+      },
+      {
+        "content": "Hervorragendes Preis-Leistungs-Verhältnis. Transport und Montage verliefen völlig reibungslos. Ich empfehle dieses Unternehmen zu 100%.",
+        "name": "Jean-Michel D.",
+        "title": "@jm_dubois"
+      }
+    ],
+    "aboutTitle": "Wir sind Ossa Bois France",
+    "aboutCta": "Entdecken Sie, wer wir sind",
+    "aboutText1": "Ossa Bois France gestaltet das individuelle und kollektive Wohnen neu durch einen modernen, ökologischen und leistungsstarken Ansatz im Holzbau. Basierend auf unserer Ingenieurkompetenz und unserem industriellen Know-how entwerfen wir außergewöhnliche Strukturen, die zeitgemäßes Design, Umweltverträglichkeit und unvergleichlichen Wohnkomfort vereinen.",
+    "aboutText2": "Vom maßgeschneiderten Entwurf bis zur hochpräzisen Fertigung in unseren hochmodernen Werkstätten profitiert jedes Projekt von einer strengen Überwachung. Dank integrierter Logistik und qualifizierter Montageteams garantieren wir eine schlüsselfertige Betreuung in ganz Europa, wodurch die Risiken traditioneller Baustellen eliminiert und Ihre Budgets und Fristen strikt eingehalten werden.",
+    "aboutBold": "Ein zukunftsweisender, nachhaltiger und zertifizierter Bau, um Ihre anspruchsvollsten architektonischen Projekte zu verwirklichen.",
+    "stats": {
+      "experience": "Jahre Erfahrung im Modulbau",
+      "projects": "in Europa gelieferte Projekte",
+      "quality": "kontrollierte Produktion und zertifizierte Qualität"
+    },
+    "reviewsMore": "Mehr Bewertungen anzeigen",
+    "collabsTitle": "Unsere europäischen Partner",
+    "ctaTitle": "Bauen Sie Ihr ideales Zuhause",
+    "ctaDesc": "Wählen Sie Ihr Modell, passen Sie jedes Detail an und verfolgen Sie den Preis in Echtzeit. Einfach. Schnell. Transparent.",
+    "ctaCta": "Kontaktieren Sie uns"
+  },
+  "archive": {
+    "pageTitle": "Hausmodelle",
+    "pageSubtitle": "Entdecken Sie unsere Auswahl an erstklassigen modularen Holzhäusern. Vollständig anpassbar an Ihr Leben.",
+    "commitmentsTitle": "Unsere Zusagen & Garantien",
+    "commitmentsSubtitle": "Bauen mit Ossa Bois France bedeutet die Sicherheit eines entspannten, nachhaltigen und hocheffizienten Projekts.",
+    "commitmentsList": [
+      {
+        "title": "Zehnjährige Garantie",
+        "desc": "Alle gesetzlich vorgeschriebenen Baugarantien inklusive einer 10-jährigen Gewährleistung auf die Tragstruktur."
+      },
+      {
+        "title": "RE2020-Konformität",
+        "desc": "Bioklimatisches Design mit hoher Wärmeleistung, konform mit den Umweltstandards RE2020."
+      },
+      {
+        "title": "Ökologisches Holz",
+        "desc": "Zertifizierte, hochwertige Hölzer aus nachhaltig bewirtschafteten Wäldern."
+      },
+      {
+        "title": "Millimetergenaue Präzision",
+        "desc": "Robotergestützte Vorfertigung in der Werkstatt garantiert einen schnellen und fehlerfreien Aufbau vor Ort."
+      }
+    ],
+    "favoritesLabel": "Favoriten",
+    "modelsCount": "Modelle",
+    "modelCount": "Modell",
+    "startingFrom": "ab",
+    "onQuote": "Auf Anfrage",
+    "configureBtn": "Konfigurieren",
+    "favoritesInfoTitle": "Wie funktionieren Ihre Favoriten?",
+    "favoritesInfoText": "Hier finden Sie die Modelle, die Ihnen gefallen haben. Ihre Favoriten werden auf diesem Gerät gespeichert.",
+    "favoritesExplanationTitle": "Wie funktionieren lokale Favoriten?",
+    "favoritesExplanationStorage": "Ihre Favoriten werden lokal in Ihrem Browser (localStorage) gespeichert. Wenn Sie ein Modell auf Ihrem Telefon speichern, ist es nur auf diesem Telefon sichtbar. Wenn Sie es auf Ihrem Computer speichern, ist es nur dort sichtbar.",
+    "favoritesExplanationAccount": "Sie bleiben bei Ihren nächsten Besuchen und Aktualisierungen gespeichert, ohne dass ein Konto erstellt werden muss.",
+    "favoritesExplanationCache": "Wenn Sie Ihren Browserverlauf oder Cache auf diesem Gerät leeren, werden Ihre Favoriten zurückgesetzt.",
+    "favoritesEmptyTitle": "Noch keine Favoriten",
+    "favoritesEmptyText": "Klicken Sie bei einem beliebigen Hausmodell auf das Herzsymbol, um es hier zu speichern.",
+    "favoritesEmptyBtn": "Alle Modelle durchsuchen",
+    "favoritesInfoTextShort": "Ihre Favoriten werden auf diesem Gerät gespeichert."
+  },
+  "configurator": {
+    "startingPrice": "ab",
+    "steps": {
+      "dimensions": "Maße",
+      "structure": "Struktur",
+      "isolation": "Dämmung",
+      "facade": "Fassade",
+      "menuiserie": "Fenster & Türen",
+      "options": "Optionen",
+      "recap": "Übersicht"
+    },
+    "breakdown": {
+      "title": "Preisdetails",
+      "basePrice": "Basisstruktur",
+      "dimensions": "Basismaße",
+      "walls": "Außenwände",
+      "roof": "Dachkonstruktion",
+      "epdm": "EPDM-Abdichtung",
+      "isolationInter": "Innere Dämmung",
+      "isolationExt": "Äußere Dämmung",
+      "facade": "Fassadenfinish",
+      "windows": "Fenster & Türen",
+      "ceiling": "Zwischendecke",
+      "atticTerrace": "Attika-Terrasse",
+      "couverture": "Dacheindeckung",
+      "options": "Zusatzoptionen",
+      "subtotal": "Zwischensumme zzgl. MwSt.",
+      "transport": "Transportkosten",
+      "tva": "MwSt. (20%)",
+      "total": "Gesamtsumme inkl. MwSt."
+    },
+    "labels": {
+      "configureYourHouse": "Konfigurieren Sie Ihr Haus",
+      "selectSize": "Maße auswählen",
+      "selected": "Ausgewählt",
+      "select": "Auswählen",
+      "materialsInfo": "Materialinformationen",
+      "close": "Schließen",
+      "askQuote": "Informationen anfordern",
+      "nextStep": "Nächster Schritt",
+      "prevStep": "Vorheriger Schritt",
+      "orderNow": "Projekt bestätigen",
+      "backToModels": "Zurück zu den Modellen",
+      "atticOption": "Option Attika-Styropor",
+      "epdmOption": "Option EPDM-Abdichtung",
+      "roofCover": "Option Dacheindeckung (Ziegel/Stahl)",
+      "ceilingOption": "Option Zwischendecke",
+      "interestFormTitle": "Interessenformular",
+      "interestFormText": "Hinterlassen Sie uns Ihre Kontaktdaten, um ein personalisiertes Angebot für diese Konfiguration zu erhalten.",
+      "name": "Vollständiger Name",
+      "email": "E-Mail-Adresse",
+      "phone": "Telefonnummer",
+      "address": "Grundstücksadresse",
+      "message": "Nachricht / Zusätzliche Fragen",
+      "submit": "Meine Anfrage senden",
+      "loading": "Wird gesendet...",
+      "successTitle": "Anfrage gesendet!",
+      "successText": "Vielen Dank für Ihr Interesse. Wir werden sich sehr schnell mit einem detaillierten Angebot bei Ihnen melden.",
+      "zoomReset": "Zoom zurücksetzen",
+      "description": "Beschreibung",
+      "specification": "Spezifikation",
+      "preferredTime": "Bevorzugte Zeit",
+      "anytime": "Jederzeit",
+      "morning": "Morgen",
+      "afternoon": "Nachmittag",
+      "preferredContact": "Bevorzugte Kontaktmethode",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "postalCode": "Postleitzahl",
+      "city": "Stadt",
+      "gdpr": "Ich akzeptiere die Verarbeitung meiner personenbezogenen Daten gemäß der Datenschutzerklärung.",
+      "sendInterest": "Interessenbekundung absenden",
+      "successInterest": "Vielen Dank! Ihre Interessenbekundung wurde erfolgreich versendet. Wir werden uns in Kürze mit Ihnen in Verbindung setzen.",
+      "configuratorPrep": "Konfigurator in Vorbereitung",
+      "configuratorPrepDesc": "Die Daten dieses Hauses werden aus dem CMS importiert. Der visuelle Konfigurator wird nach dem vollständigen Laden der Grafik-Ebenen aktiviert."
+    }
+  },
+  "checkout": {
+    "title": "Schließen Sie Ihr Bauprojekt ab",
+    "deliveryAddress": "Lieferadresse des Projekts",
+    "shippingMethod": "Transportart & Logistik",
+    "legalAgreement": "Regulatorische Validierung & Verpflichtungen",
+    "orderSummary": "Zusammenfassung Ihrer Konfiguration",
+    "steps": {
+      "delivery": "Lieferung",
+      "shipping": "Logistik",
+      "agreements": "Verpflichtungen",
+      "confirmation": "Validierung"
+    },
+    "form": {
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "email": "E-Mail-Adresse",
+      "phone": "Telefon",
+      "address": "Vollständige Grundstücksadresse",
+      "city": "Stadt",
+      "postalCode": "Postleitzahl",
+      "country": "Land",
+      "selectCountry": "Land auswählen",
+      "deliveryAccessibility": "Ich bestätige, dass das Grundstück für Transport-LKW (Sattelauflieger) zugänglich ist.",
+      "paymentMilestones": "Ich akzeptiere die Zahlungsschritte: 30% bei Bestellung, 50% bei Verladung im Werk, 20% bei Lieferung.",
+      "urbanCompliance": "Ich bestätige, dass ich die für mein Grundstück geltenden örtlichen Bauvorschriften (Bebauungsplan) geprüft habe.",
+      "gdpr": "Ich autorisiere Ossa Bois France, meine Daten zur Bearbeitung meiner Bauanfrage zu speichern.",
+      "validationError": "Bitte füllen Sie alle Pflichtfelder aus und akzeptieren Sie die Verpflichtungen."
+    },
+    "shippingCard": {
+      "title": "Spezialisierter Straßentransport",
+      "desc": "Sichere Lieferung Ihrer vorgefertigten Hausstruktur durch einen spezialisierten Konvoi-LKW direkt auf Ihre Baustelle.",
+      "time": "Voraussichtliche Lieferzeit: 3-4 Wochen"
+    },
+    "summary": {
+      "structuralData": "Strukturdaten",
+      "dimensions": "Maße",
+      "basePrice": "Basis",
+      "subtotal": "Zwischensumme",
+      "transport": "Transportkosten",
+      "tva": "MwSt. (20%)",
+      "total": "Gesamtsumme inkl. MwSt.",
+      "placeRequest": "Meine Projektanfrage senden",
+      "processing": "Ihre Anfrage wird bearbeitet...",
+      "successTitle": "Vielen Dank für Ihre Anfrage!",
+      "successSubtitle": "Ihr modulares Holzhausprojekt wurde an unser Team übermittelt.",
+      "refCode": "Ihre Vorgangsreferenz",
+      "nextSteps": "Nächste Schritte",
+      "step1": "Unser Partner-Ingenieurbüro prüft die Erreichbarkeit Ihres Grundstücks.",
+      "step2": "Ein Verkaufsberater wird sich innerhalb von 24-48 Stunden mit Ihnen in Verbindung setzen, um Ihre Auswahl zu validieren.",
+      "step3": "Wir senden Ihnen ein vollständiges vertragliches Angebot, bereit für den Bauantrag.",
+      "downloadPdf": "PDF-Zusammenfassung herunterladen",
+      "anyQuestion": "Haben Sie Fragen?",
+      "contactInfo": "Kontaktieren Sie uns bei Änderungen unter sylqevci@gmail.com."
+    }
+  },
+  "contact": {
+    "title": "Kontaktieren Sie uns",
+    "subtitle": "Ein Projekt? Eine Frage? Unser Team steht Ihnen zur Verfügung.",
+    "formTitle": "Schreiben Sie uns eine Nachricht",
+    "name": "Vollständiger Name",
+    "email": "E-Mail-Adresse",
+    "phone": "Telefonnummer",
+    "subject": "Betreff Ihrer Anfrage",
+    "message": "Nachricht",
+    "submit": "Meine Nachricht senden",
+    "success": "Ihre Nachricht wurde erfolgreich gesendet. Wir werden Ihnen sehr schnell antworten.",
+    "loading": "Wird gesendet...",
+    "details": {
+      "address": "Unsere Adresse",
+      "phone": "Telefon",
+      "email": "E-Mail-Adresse",
+      "hours": "Öffnungszeiten",
+      "hoursText": "Montag - Freitag: 9:00 - 18:00"
+    }
+  },
+  "about": {
+    "title": "Über uns",
+    "introText": "Hersteller von modularen Holzhäusern in ganz Frankreich. Gegründet von Bauherren mit mehr als 30 Jahren Erfahrung im Bauwesen, ist Ossa Bois France auf den Bau von modularen Holzhäusern spezialisiert.",
+    "conceptTitle": "Unser Konzept",
+    "conceptText": "Der Bau von werkseitig hergestellten Häusern in ganz Frankreich.",
+    "advantagesTitle": "Unsere Vorteile",
+    "advantagesText": "Kontrollierte Kosten und verkürzte Lieferzeiten unter Einhaltung der geltenden Qualitätsstandards und Umweltvorschriften.",
+    "processTitle": "Fertighaus: Wie läuft es ab?",
+    "processText1": "Der Bauprozess eines Holzrahmenhauses basiert auf Präzisionstechnik und einer streng kontrollierten industriellen Organisation. Mit Sitz in Chartres (Eure-et-Loir) arbeitet Ossa Bois France mit einem spezialisierten Ingenieurbüro zusammen und stützt sich auf ein modernes Produktionswerk mit Maschinen der neuesten Generation im Kosovo. Diese Synergie garantiert ein maßgeschneidertes Design und eine witterungsgeschützte Fertigung im Werk, was eine Qualitätskonstanz gewährleistet, die auf einer traditionellen Baustelle unmöglich zu erreichen ist.",
+    "processText2": "Unsere Vorfertigung im Werk ermöglicht es, die meisten Rohbauarbeiten (Wandmontage, integrierte Dämmung, Fenstereinbau) unter optimalen Sicherheits- und Kontrollbedingungen durchzuführen. Diese moderne Methode reduziert die Gesamtbauzeit erheblich und optimiert den Ressourceneinsatz durch Minimierung des Bauabfalls vor Ort.",
+    "processText3": "Sobald die verschiedenen Module oder Paneele fertiggestellt und zertifiziert sind, werden sie mit größter Sorgfalt auf Ihr Grundstück transportiert. Die Endmontage erfolgt dann durch unsere zertifizierten Montagepartner in ganz Frankreich. In nur wenigen Tagen steht die wind- und wasserdichte Struktur bereit, um den Innenausbau aufzunehmen und Ihnen einen schnellen und sorgenfreien Einzug zu ermöglichen.",
+    "processCta": "Entdecken Sie unsere Hausmodelle",
+    "commitmentsTitle": "Unsere Verpflichtungen und Garantien",
+    "commitmentsText": "Jedes von Ossa Bois France gebaute Haus profitiert von allen gesetzlich vorgeschriebenen Baugarantien, einschließlich einer zehnjährigen Strukturversicherung.",
+    "faqsTitle": "Fragen und Antworten zum Holzrahmenbau",
+    "faqsSubtitle": "Finden Sie Antworten auf die am häufigsten gestellten Fragen zum Modulhausbau und zur Einhaltung von Normen.",
+    "faqs": [
+      {
+        "question": "Kann man auf einem Hanggrundstück bauen?",
+        "answer": "Ja, der Holzrahmenbau eignet sich besonders für Hanggrundstücke. Dank der strukturellen Leichtigkeit des Holzes sind Fundamente (wie Betonpfeiler oder Schraubfundamente) weniger einschränkend und kostengünstiger als bei herkömmlichen Betonbauten und passen sich perfekt dem natürlichen Relief des Bodens an."
+      },
+      {
+        "question": "Wie hoch ist die Lebensdauer eines Holzrahmenhauses?",
+        "answer": "Die Qualität der Konstruktion, die behandelten Materialien und die werkseitige Herstellung unserer Häuser ermöglichen eine Lebensdauer über mehrere Generationen. Moderne Holzstrukturen profitieren von fortschrittlichen Behandlungen gegen Feuchtigkeit und Insekten und bieten eine Lebensdauer, die der von traditionellen Stein- oder Ziegelbauten entspricht oder diese übertrifft."
+      },
+      {
+        "question": "Welche Garantien bieten Sie für Ihre Bauten an?",
+        "answer": "Jedes von Ossa Bois France gebaute Haus profitiert von allen nach französischem Recht vorgeschriebenen Baugarantien, einschließlich der zehnjährigen Gewährleistung (Garantie Décennale, die die Struktur und Wind-/Wasserdichtigkeit für 10 Jahre garantiert), der Fertigstellungsgarantie (1 Jahr) und der Garantie auf das einwandfreie Funktionieren der Ausrüstung (2 Jahre)."
+      },
+      {
+        "question": "Was sind die Vorteile der Vorfertigung im Werk?",
+        "answer": "Die Vorfertigung in der Werkstatt garantiert millimetergenaue Präzision dank unserer digitalen Ausrüstung und einer ständigen Qualitätskontrolle geschützt vor Witterungseinflüssen. Zudem halbiert sie die Bauzeit vor Ort und minimiert Abfälle bei gleichzeitig makellosen Oberflächen."
+      }
+    ],
+    "steps": {
+      "step1": "01. Tragstruktur",
+      "step2": "02. Glaswolle",
+      "step3": "03. Steinwolle",
+      "step4": "04. Holzwolle",
+      "step5": "05. EPS-Isolierung",
+      "step6": "06. Holzfaser",
+      "step7": "07. Steinwolle Aussen",
+      "step8": "08. EPDM-Dach",
+      "step9": "09. Weißer Putz",
+      "step10": "10. Holzverschalung",
+      "step11": "11. Alu-Fenster",
+      "step12": "12. Fertiges Haus"
+    }
+  },
+  "b2b": {
+    "title": "B2B & Partnerschaften",
+    "subtitle": "Werden Sie Partner eines Bauunternehmens an der Spitze der modularen Innovation.",
+    "introText": "Ossa Bois France arbeitet mit Immobilienfachleuten, Architekten, Bauträgern und Monteuren im gesamten Staatsgebiet zusammen. Nutzen Sie unsere industrielle Produktionskapazität, um Ihr Angebot zu bereichern und Ihre Baustellen zu beschleunigen.",
+    "advantagesTitle": "Warum mit uns arbeiten?",
+    "advantage1Title": "Wettbewerbsfähige Profi-Konditionen",
+    "advantage1Text": "Attraktive Mengenrabatte, die Ihnen optimale Margen für Ihren Vertrieb oder Ihre integrierten Projekte garantieren.",
+    "advantage2Title": "Konstruktion & Eigene 3D-Pläne",
+    "advantage2Text": "Zugang zu unserem Partner-Ingenieurbüro, um unsere Modelle anzupassen oder maßgeschneiderte modulare Großprojekte zu entwerfen.",
+    "advantage3Title": "Logistik & Sendungsverfolgung",
+    "advantage3Text": "Wir verwalten den Transport und entladen die Module direkt vor Ort. Ein dedizierter Koordinator verfolgt den Transport in Echtzeit.",
+    "formTitle": "Ossa Bois Partner werden",
+    "formSubtitle": "Füllen Sie dieses Formular aus und laden Sie Ihre Präsentationsunterlagen oder Ihren Handelsregisterauszug hoch. Unsere Partnerschaftsabteilung wird sich mit Ihnen in Verbindung setzen.",
+    "companyName": "Firmenname",
+    "contactName": "Name des Ansprechpartners",
+    "email": "Professionelle E-Mail-Adresse",
+    "phone": "Direkte Telefonnummer",
+    "activity": "Tätigkeitsbereich",
+    "activityOptions": {
+      "select": "Wählen Sie Ihren Bereich",
+      "architect": "Architekt / Ingenieurbüro",
+      "developer": "Bauträger / Bauunternehmer",
+      "assembler": "Monteur / Zimmermann",
+      "agent": "Immobilienmakler / Vermittler",
+      "other": "Andere Tätigkeit"
+    },
+    "uploadLabel": "Dokument hochladen (Handelsregisterauszug, Präsentation, Broschüre)",
+    "uploadPlaceholder": "Zum Hochladen klicken (PDF, JPG, PNG - Max. 10MB)",
+    "message": "Beschreiben Sie Ihr Partnerschaftsprojekt",
+    "submit": "Meine Partnerschaftsanfrage einreichen",
+    "loading": "Wird eingereicht...",
+    "success": "Unterlagen erhalten! Unsere B2B-Entwicklungsteams werden Ihr Profil analysieren und sich schnell mit Ihnen in Verbindung setzen."
+  },
+  "realisations": {
+    "title": "Unsere Realisierungen",
+    "subtitle": "Entdecken Sie konkrete Beispiele für modulare Holzhäuser, die von unseren Kunden und Partnern errichtet wurden.",
+    "filters": {
+      "all": "Alle Projekte",
+      "terrace": "Flachdach",
+      "stage": "Zweigeschossig",
+      "classic": "Klassisch / Loft"
+    },
+    "quoteCta": "Dasselbe Haus anfragen",
+    "surface": "Fläche",
+    "duration": "Montage",
+    "location": "Ort",
+    "items": {
+      "project1Title": "Moderne Villa - Bucht von Arcachon",
+      "project1Desc": "Modernes modulares Flachdachhaus mit Master-Suite und großen Fensterfronten.",
+      "project2Title": "Ökologisch gestaltetes Familienhaus - Annecy",
+      "project2Desc": "Zweigeschossiges Haus mit hoher Wärmeleistung (RE2020), perfekt in seine alpine Umgebung integriert.",
+      "project3Title": "Eingeschossiger Pavillon - Orléans",
+      "project3Desc": "Eingeschossiges Modulhaus, optimiert für Barrierefreiheit, mit einer Doppelgarage."
+    }
+  }
+}

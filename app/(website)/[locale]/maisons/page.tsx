@@ -5,6 +5,8 @@ import { Locale } from "@/lib/i18n";
 import { getDictionary } from "@/lib/dictionary";
 import { translateText, translateHouseDescription } from "@/lib/translation-helper";
 
+export const revalidate = 3600; // Cache page for 1 hour
+
 type HousesPageProps = {
   params: Promise<{ locale: Locale }>;
 };

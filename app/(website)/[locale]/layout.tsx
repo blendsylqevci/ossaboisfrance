@@ -5,6 +5,15 @@ import { CookieConsent } from "@/components/CookieConsent";
 import { isLocale, Locale } from "@/lib/i18n";
 import { getDictionary } from "@/lib/dictionary";
 
+export function generateStaticParams() {
+  return [
+    { locale: "fr" },
+    { locale: "en" },
+    { locale: "de" },
+    { locale: "nl" },
+  ];
+}
+
 export default async function LocaleLayout({
   children,
   params

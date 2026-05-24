@@ -11,9 +11,13 @@ const nextConfig = {
         protocol: "https",
         hostname: "ossaboisfrance.com",
         pathname: "/wp-content/uploads/**"
+      },
+      {
+        protocol: "https",
+        hostname: "spyhpakoxxzceltbdehn.supabase.co",
+        pathname: "/**"
       }
-    ],
-    unoptimized: true
+    ]
   }
 };
 

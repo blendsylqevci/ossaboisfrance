@@ -410,6 +410,15 @@ export const houseArchiveItems: HouseArchiveItem[] = [
       "Le modèle Maison 2 etage avec Attique séduit par son design contemporain, son architecture sur deux étages et sa terrasse moderne avec vue panoramique.",
     image: "/images/houses/maison 2 etage me atike/maison 2 me atike 7.jpg",
     price60x160: 1
+  },
+  {
+    slug: "australe",
+    title: "Australe",
+    category: "Maison toiture terrasse avec étage",
+    description:
+      "AUSTRALE avec attique est une maison modulaire contemporaine à deux étages, construite sur une ossature bois robuste.",
+    image: "/images/houses/Australe/australe 7.jpg",
+    price60x160: 1
   }
 ];
 

@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
+import { CookieConsent } from "@/components/CookieConsent";
 import { isLocale, Locale } from "@/lib/i18n";
 import { getDictionary } from "@/lib/dictionary";
 
@@ -24,6 +25,7 @@ export default async function LocaleLayout({
       <SiteHeader locale={locale as Locale} dict={dict.header} />
       <main>{children}</main>
       <SiteFooter locale={locale as Locale} dict={dict.footer} />
+      <CookieConsent locale={locale as Locale} />
     </div>
   );
 }

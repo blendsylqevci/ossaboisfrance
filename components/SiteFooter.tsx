@@ -48,6 +48,13 @@ export function SiteFooter({ locale, dict }: SiteFooterProps) {
       </div>
       <div className="container footer-bottom">
         <span>{dict?.copyright || "Copyright © 2025. Ossabois"}</span>
+        <span className="footer-links-divider">|</span>
+        <Link href={`/${locale}/mentions-legales`}>Mentions Légales</Link>
+        <span className="footer-links-divider">|</span>
+        <Link href={`/${locale}/politique-de-confidentialite`}>Confidentialité</Link>
+        <span className="footer-links-divider">|</span>
+        <Link href={`/${locale}/cgu`}>CGU</Link>
+        <span className="footer-links-divider">|</span>
         <a href="https://www.icode-ks.com" target="_blank" rel="noreferrer">{dict?.madeBy || "Made by iCode"}</a>
       </div>
     </footer>

@@ -53,6 +53,7 @@ export default buildConfig({
       connectionString: process.env.DATABASE_URI || '',
       max: 10,
       idleTimeoutMillis: 1000,
+      ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
     },
     push: false,
   }),

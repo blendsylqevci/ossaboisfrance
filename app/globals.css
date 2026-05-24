@@ -2012,6 +2012,7 @@ img {
     display: flex;
     flex-direction: column;
     border-right: 1px solid #e5e6e5;
+    overflow: hidden;
   }
 }
 
@@ -8945,7 +8946,7 @@ img {
   height: 0;
 }
 
-.checkbox-label, .disabled-checkbox-label {
+.cookie-checkbox-wrapper .checkbox-label, .cookie-checkbox-wrapper .disabled-checkbox-label {
   position: absolute;
   cursor: pointer;
   top: 0;
@@ -8957,7 +8958,7 @@ img {
   border-radius: 34px;
 }
 
-.checkbox-label:before, .disabled-checkbox-label:before {
+.cookie-checkbox-wrapper .checkbox-label:before, .cookie-checkbox-wrapper .disabled-checkbox-label:before {
   position: absolute;
   content: "";
   height: 14px;
@@ -9228,6 +9229,15 @@ img {
     gap: 12px;
     text-align: center;
   }
+}
+
+.phone-notice-legal {
+  display: block;
+  font-size: 11px;
+  color: #6b7280;
+  margin-top: 6px;
+  line-height: 1.4;
+  font-weight: 400;
 }
 
 

@@ -1,0 +1,776 @@
+{
+  "docs": [
+    {
+      "id": 58,
+      "title": "Monna avec Attique",
+      "slug": "monna-me-atike",
+      "category": {
+        "id": 1,
+        "name": "Maisons à toiture terrasse",
+        "slug": "maison-toitu-terrasse",
+        "updatedAt": "2026-05-20T21:10:43.710Z",
+        "createdAt": "2026-05-20T21:10:43.710Z"
+      },
+      "subheading": "Le modèle Monna avec Attique réunit l'élégance d'une toiture terrasse plate à la fonctionnalité d'un attique moderne.",
+      "description": "Le modèle Monna avec Attique réunit l'élégance d'une toiture terrasse plate à la fonctionnalité d'un attique moderne. Bâtie sur une structure robuste en ossature bois à haute performance énergétique (conforme RE2020), cette maison modulaire contemporaine offre des volumes intérieurs baignés de lumière grâce à ses larges ouvertures.",
+      "specification": "Fiche technique disponible sur demande.",
+      "defaultImage": {
+        "id": 878,
+        "alt": "Maison Monna avec Attique 60x160",
+        "house": 58,
+        "mediaType": "hero",
+        "layerKey": null,
+        "updatedAt": "2026-05-23T23:41:28.351Z",
+        "createdAt": "2026-05-23T23:40:59.193Z",
+        "url": "/api/media/file/7%20monna.jpg",
+        "thumbnailURL": "/api/media/file/7%20monna-400x300.jpg",
+        "filename": "7 monna.jpg",
+        "mimeType": "image/jpeg",
+        "filesize": 1681036,
+        "width": 3840,
+        "height": 2160,
+        "focalX": 50,
+        "focalY": 50,
+        "sizes": {
+          "thumbnail": {
+            "url": "/api/media/file/7%20monna-400x300.jpg",
+            "width": 400,
+            "height": 300,
+            "mimeType": "image/jpeg",
+            "filesize": 25354,
+            "filename": "7 monna-400x300.jpg"
+          },
+          "card": {
+            "url": "/api/media/file/7%20monna-768x512.jpg",
+            "width": 768,
+            "height": 512,
+            "mimeType": "image/jpeg",
+            "filesize": 76503,
+            "filename": "7 monna-768x512.jpg"
+          },
+          "tablet": {
+            "url": "/api/media/file/7%20monna-1024x576.jpg",
+            "width": 1024,
+            "height": 576,
+            "mimeType": "image/jpeg",
+            "filesize": 117074,
+            "filename": "7 monna-1024x576.jpg"
+          }
+        }
+      },
+      "finalImage": {
+        "id": 868,
+        "alt": "Maison Monna avec Attique 60x200",
+        "house": 58,
+        "mediaType": "final_render",
+        "layerKey": null,
+        "updatedAt": "2026-05-23T23:41:17.959Z",
+        "createdAt": "2026-05-23T23:40:20.633Z",
+        "url": "/api/media/file/10%20monna.jpg",
+        "thumbnailURL": "/api/media/file/10%20monna-400x300.jpg",
+        "filename": "10 monna.jpg",
+        "mimeType": "image/jpeg",
+        "filesize": 1837257,
+        "width": 3840,
+        "height": 2160,
+        "focalX": 50,
+        "focalY": 50,
+        "sizes": {
+          "thumbnail": {
+            "url": "/api/media/file/10%20monna-400x300.jpg",
+            "width": 400,
+            "height": 300,
+            "mimeType": "image/jpeg",
+            "filesize": 26577,
+            "filename": "10 monna-400x300.jpg"
+          },
+          "card": {
+            "url": "/api/media/file/10%20monna-768x512.jpg",
+            "width": 768,
+            "height": 512,
+            "mimeType": "image/jpeg",
+            "filesize": 82880,
+            "filename": "10 monna-768x512.jpg"
+          },
+          "tablet": {
+            "url": "/api/media/file/10%20monna-1024x576.jpg",
+            "width": 1024,
+            "height": 576,
+            "mimeType": "image/jpeg",
+            "filesize": 125302,
+            "filename": "10 monna-1024x576.jpg"
+          }
+        }
+      },
+      "price60x160": 1,
+      "price60x200": 1,
+      "marginPercent": null,
+      "perdhesa": {
+        "bruto": 1,
+        "neto": 1,
+        "mure_te_jashtme": 1,
+        "mure_mbajtese": 1,
+        "mure_ndarese": 1,
+        "pllaka_e_kulmit": 1,
+        "pllaka_e_katit_0": 1,
+        "pllaka_e_katit_1": 1,
+        "pllaka_e_katit_2": 1,
+        "pllaka_e_katit": 1,
+        "kulmi": 1
+      },
+      "windows": {
+        "aluminiumPrice": 1,
+        "pvcPrice": 1
+      },
+      "enableFlags": {
+        "enableRoofOption": false,
+        "enableEtancheiteOption": true,
+        "enableEtancheiteTerrasse": true,
+        "enableCouvertureOption": false,
+        "enableFauxPlafondOption": false
+      },
+      "structureInfo": "Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant rigidité et stabilité de l’ensemble. Comprend les murs porteurs, murs de séparation et charpente industrielle type fermette. Le prix inclut le transport et le montage sur site sous garantie décennale.",
+      "layers": {
+        "backgroundLayer": {
+          "id": 866,
+          "alt": "Arrière-plan Monna avec Attique",
+          "house": 58,
+          "mediaType": "hero",
+          "layerKey": null,
+          "updatedAt": "2026-05-23T23:41:15.962Z",
+          "createdAt": "2026-05-23T23:40:12.509Z",
+          "url": "/api/media/file/1.%20prapavija-12.png",
+          "thumbnailURL": "/api/media/file/1.%20prapavija-12-400x300.png",
+          "filename": "1. prapavija-12.png",
+          "mimeType": "image/png",
+          "filesize": 4237626,
+          "width": 3840,
+          "height": 2160,
+          "focalX": 50,
+          "focalY": 50,
+          "sizes": {
+            "thumbnail": {
+              "url": "/api/media/file/1.%20prapavija-12-400x300.png",
+              "width": 400,
+              "height": 300,
+              "mimeType": "image/png",
+              "filesize": 176871,
+              "filename": "1. prapavija-12-400x300.png"
+            },
+            "card": {
+              "url": "/api/media/file/1.%20prapavija-12-768x512.png",
+              "width": 768,
+              "height": 512,
+              "mimeType": "image/png",
+              "filesize": 609350,
+              "filename": "1. prapavija-12-768x512.png"
+            },
+            "tablet": {
+              "url": "/api/media/file/1.%20prapavija-12-1024x576.png",
+              "width": 1024,
+              "height": 576,
+              "mimeType": "image/png",
+              "filesize": 960369,
+              "filename": "1. prapavija-12-1024x576.png"
+            }
+          }
+        },
+        "constructionLayer": {
+          "id": 873,
+          "alt": "Structure bois Monna avec Attique",
+          "house": 58,
+          "mediaType": "construction_layer",
+          "layerKey": null,
+          "updatedAt": "2026-05-23T23:41:23.439Z",
+          "createdAt": "2026-05-23T23:40:38.223Z",
+          "url": "/api/media/file/2.%20konstruksioni.png",
+          "thumbnailURL": "/api/media/file/2.%20konstruksioni-400x300.png",
+          "filename": "2. konstruksioni.png",
+          "mimeType": "image/png",
+          "filesize": 1024314,
+          "width": 3840,
+          "height": 2160,
+          "focalX": 50,
+          "focalY": 50,
+          "sizes": {
+            "thumbnail": {
+              "url": "/api/media/file/2.%20konstruksioni-400x300.png",
+              "width": 400,
+              "height": 300,
+              "mimeType": "image/png",
+              "filesize": 91545,
+              "filename": "2. konstruksioni-400x300.png"
+            },
+            "card": {
+              "url": "/api/media/file/2.%20konstruksioni-768x512.png",
+              "width": 768,
+              "height": 512,
+              "mimeType": "image/png",
+              "filesize": 258032,
+              "filename": "2. konstruksioni-768x512.png"
+            },
+            "tablet": {
+              "url": "/api/media/file/2.%20konstruksioni-1024x576.png",
+              "width": 1024,
+              "height": 576,
+              "mimeType": "image/png",
+              "filesize": 328135,
+              "filename": "2. konstruksioni-1024x576.png"
+            }
+          }
+        },
+        "iso_inter_verre": {
+          "id": 876,
+          "alt": "Isolation laine de verre Monna",
+          "house": 58,
+          "mediaType": "material_layer",
+          "layerKey": null,
+          "updatedAt": "2026-05-23T23:41:26.398Z",
+          "createdAt": "2026-05-23T23:40:50.769Z",
+          "url": "/api/media/file/5.%20lesh%20xhami-13.png",
+          "thumbnailURL": "/api/media/file/5.%20lesh%20xhami-13-400x300.png",
+          "filename": "5. lesh xhami-13.png",
+          "mimeType": "image/png",
+          "filesize": 512529,
+          "width": 3840,
+          "height": 2160,
+          "focalX": 50,
+          "focalY": 50,
+          "sizes": {
+            "thumbnail": {
+              "url": "/api/media/file/5.%20lesh%20xhami-13-400x300.png",
+              "width": 400,
+              "height": 300,
+              "mimeType": "image/png",
+              "filesize": 52179,
+              "filename": "5. lesh xhami-13-400x300.png"
+            },
+            "card": {
+              "url": "/api/media/file/5.%20lesh%20xhami-13-768x512.png",
+              "width": 768,
+              "height": 512,
+              "mimeType": "image/png",
+              "filesize": 132947,
+              "filename": "5. lesh xhami-13-768x512.png"
+            },
+            "tablet": {
+              "url": "/api/media/file/5.%20lesh%20xhami-13-1024x576.png",
+              "width": 1024,
+              "height": 576,
+              "mimeType": "image/png",
+              "filesize": 166314,
+              "filename": "5. lesh xhami-13-1024x576.png"
+            }
+          }
+        },
+        "iso_inter_roche": {
+          "id": 874,
+          "alt": "Isolation laine de roche Monna",
+          "house": 58,
+          "mediaType": "material_layer",
+          "layerKey": null,
+          "updatedAt": "2026-05-23T23:41:24.498Z",
+          "createdAt": "2026-05-23T23:40:42.371Z",
+          "url": "/api/media/file/3.%20lesh%20guri-15.png",
+          "thumbnailURL": "/api/media/file/3.%20lesh%20guri-15-400x300.png",
+          "filename": "3. lesh guri-15.png",
+          "mimeType": "image/png",
+          "filesize": 283152,
+          "width": 3840,
+          "height": 2160,
+          "focalX": 50,
+          "focalY": 50,
+          "sizes": {
+            "thumbnail": {
+              "url": "/api/media/file/3.%20lesh%20guri-15-400x300.png",
+              "width": 400,
+              "height": 300,
+              "mimeType": "image/png",
+              "filesize": 37250,
+              "filename": "3. lesh guri-15-400x300.png"
+            },
+            "card": {
+              "url": "/api/media/file/3.%20lesh%20guri-15-768x512.png",
+              "width": 768,
+              "height": 512,
+              "mimeType": "image/png",
+              "filesize": 95393,
+              "filename": "3. lesh guri-15-768x512.png"
+            },
+            "tablet": {
+              "url": "/api/media/file/3.%20lesh%20guri-15-1024x576.png",
+              "width": 1024,
+              "height": 576,
+              "mimeType": "image/png",
+              "filesize": 118208,
+              "filename": "3. lesh guri-15-1024x576.png"
+            }
+          }
+        },
+        "iso_inter_bois": {
+          "id": 875,
+          "alt": "Isolation laine de bois Monna",
+          "house": 58,
+          "mediaType": "material_layer",
+          "layerKey": null,
+          "updatedAt": "2026-05-23T23:41:25.390Z",
+          "createdAt": "2026-05-23T23:40:46.724Z",
+          "url": "/api/media/file/4.%20lesh%20druri-16.png",
+          "thumbnailURL": "/api/media/file/4.%20lesh%20druri-16-400x300.png",
+          "filename": "4. lesh druri-16.png",
+          "mimeType": "image/png",
+          "filesize": 449586,
+          "width": 3840,
+          "height": 2160,
+          "focalX": 50,
+          "focalY": 50,
+          "sizes": {
+            "thumbnail": {
+              "url": "/api/media/file/4.%20lesh%20druri-16-400x300.png",
+              "width": 400,
+              "height": 300,
+              "mimeType": "image/png",
+              "filesize": 48012,
+              "filename": "4. lesh druri-16-400x300.png"
+            },
+            "card": {
+              "url": "/api/media/file/4.%20lesh%20druri-16-768x512.png",
+              "width": 768,
+              "height": 512,
+              "mimeType": "image/png",
+              "filesize": 123048,
+              "filename": "4. lesh druri-16-768x512.png"
+            },
+            "tablet": {
+              "url": "/api/media/file/4.%20lesh%20druri-16-1024x576.png",
+              "width": 1024,
+              "height": 576,
+              "mimeType": "image/png",
+              "filesize": 154616,
+              "filename": "4. lesh druri-16-1024x576.png"
+            }
+          }
+        },
+        "iso_ext_roche_comprimee": {
+          "id": 880,
+          "alt": "Isolation extérieure laine de roche Monna",
+          "house": 58,
+          "mediaType": "material_layer",
+          "layerKey": null,
+          "updatedAt": "2026-05-23T23:41:31.390Z",
+          "createdAt": "2026-05-23T23:41:08.897Z",
+          "url": "/api/media/file/8.%20lesh%20guri%20jashte-5.png",
+          "thumbnailURL": "/api/media/file/8.%20lesh%20guri%20jashte-5-400x300.png",
+          "filename": "8. lesh guri jashte-5.png",
+          "mimeType": "image/png",
+          "filesize": 457072,
+          "width": 3840,
+          "height": 2160,
+          "focalX": 50,
+          "focalY": 50,
+          "sizes": {
+            "thumbnail": {
+              "url": "/api/media/file/8.%20lesh%20guri%20jashte-5-400x300.png",
+              "width": 400,
+              "height": 300,
+              "mimeType": "image/png",
+              "filesize": 47797,
+              "filename": "8. lesh guri jashte-5-400x300.png"
+            },
+            "card": {
+              "url": "/api/media/file/8.%20lesh%20guri%20jashte-5-768x512.png",
+              "width": 768,
+              "height": 512,
+              "mimeType": "image/png",
+              "filesize": 126152,
+              "filename": "8. lesh guri jashte-5-768x512.png"
+            },
+            "tablet": {
+              "url": "/api/media/file/8.%20lesh%20guri%20jashte-5-1024x576.png",
+              "width": 1024,
+              "height": 576,
+              "mimeType": "image/png",
+              "filesize": 155184,
+              "filename": "8. lesh guri jashte-5-1024x576.png"
+            }
+          }
+        },
+        "iso_ext_polystyrene": {
+          "id": 877,
+          "alt": "Isolation extérieure polystyrène Monna",
+          "house": 58,
+          "mediaType": "material_layer",
+          "layerKey": null,
+          "updatedAt": "2026-05-23T23:41:27.310Z",
+          "createdAt": "2026-05-23T23:40:57.192Z",
+          "url": "/api/media/file/6.%20stiropori-14.png",
+          "thumbnailURL": "/api/media/file/6.%20stiropori-14-400x300.png",
+          "filename": "6. stiropori-14.png",
+          "mimeType": "image/png",
+          "filesize": 98413,
+          "width": 3840,
+          "height": 2160,
+          "focalX": 50,
+          "focalY": 50,
+          "sizes": {
+            "thumbnail": {
+              "url": "/api/media/file/6.%20stiropori-14-400x300.png",
+              "width": 400,
+              "height": 300,
+              "mimeType": "image/png",
+              "filesize": 32393,
+              "filename": "6. stiropori-14-400x300.png"
+            },
+            "card": {
+              "url": "/api/media/file/6.%20stiropori-14-768x512.png",
+              "width": 768,
+              "height": 512,
+              "mimeType": "image/png",
+              "filesize": 69151,
+              "filename": "6. stiropori-14-768x512.png"
+            },
+            "tablet": {
+              "url": "/api/media/file/6.%20stiropori-14-1024x576.png",
+              "width": 1024,
+              "height": 576,
+              "mimeType": "image/png",
+              "filesize": 86740,
+              "filename": "6. stiropori-14-1024x576.png"
+            }
+          }
+        },
+        "iso_ext_fibre": {
+          "id": 879,
+          "alt": "Isolation extérieure fibre de bois Monna",
+          "house": 58,
+          "mediaType": "material_layer",
+          "layerKey": null,
+          "updatedAt": "2026-05-23T23:41:30.171Z",
+          "createdAt": "2026-05-23T23:41:05.704Z",
+          "url": "/api/media/file/7.%20fibra-5.png",
+          "thumbnailURL": "/api/media/file/7.%20fibra-5-400x300.png",
+          "filename": "7. fibra-5.png",
+          "mimeType": "image/png",
+          "filesize": 628812,
+          "width": 3840,
+          "height": 2160,
+          "focalX": 50,
+          "focalY": 50,
+          "sizes": {
+            "thumbnail": {
+              "url": "/api/media/file/7.%20fibra-5-400x300.png",
+              "width": 400,
+              "height": 300,
+              "mimeType": "image/png",
+              "filesize": 54594,
+              "filename": "7. fibra-5-400x300.png"
+            },
+            "card": {
+              "url": "/api/media/file/7.%20fibra-5-768x512.png",
+              "width": 768,
+              "height": 512,
+              "mimeType": "image/png",
+              "filesize": 146940,
+              "filename": "7. fibra-5-768x512.png"
+            },
+            "tablet": {
+              "url": "/api/media/file/7.%20fibra-5-1024x576.png",
+              "width": 1024,
+              "height": 576,
+              "mimeType": "image/png",
+              "filesize": 185432,
+              "filename": "7. fibra-5-1024x576.png"
+            }
+          }
+        },
+        "terrace_etancheite_epdm": {
+          "id": 881,
+          "alt": "Polystyrène d'attique Monna",
+          "house": 58,
+          "mediaType": "material_layer",
+          "layerKey": null,
+          "updatedAt": "2026-05-23T23:41:32.582Z",
+          "createdAt": "2026-05-23T23:41:14.073Z",
+          "url": "/api/media/file/9.%20stiropori%20atikes-12.png",
+          "thumbnailURL": "/api/media/file/9.%20stiropori%20atikes-12-400x300.png",
+          "filename": "9. stiropori atikes-12.png",
+          "mimeType": "image/png",
+          "filesize": 34544,
+          "width": 3840,
+          "height": 2160,
+          "focalX": 50,
+          "focalY": 50,
+          "sizes": {
+            "thumbnail": {
+              "url": "/api/media/file/9.%20stiropori%20atikes-12-400x300.png",
+              "width": 400,
+              "height": 300,
+              "mimeType": "image/png",
+              "filesize": 12185,
+              "filename": "9. stiropori atikes-12-400x300.png"
+            },
+            "card": {
+              "url": "/api/media/file/9.%20stiropori%20atikes-12-768x512.png",
+              "width": 768,
+              "height": 512,
+              "mimeType": "image/png",
+              "filesize": 27012,
+              "filename": "9. stiropori atikes-12-768x512.png"
+            },
+            "tablet": {
+              "url": "/api/media/file/9.%20stiropori%20atikes-12-1024x576.png",
+              "width": 1024,
+              "height": 576,
+              "mimeType": "image/png",
+              "filesize": 33654,
+              "filename": "9. stiropori atikes-12-1024x576.png"
+            }
+          }
+        },
+        "etancheite_epdm": {
+          "id": 867,
+          "alt": "Étanchéité EPDM Monna",
+          "house": 58,
+          "mediaType": "material_layer",
+          "layerKey": null,
+          "updatedAt": "2026-05-23T23:41:17.058Z",
+          "createdAt": "2026-05-23T23:40:19.491Z",
+          "url": "/api/media/file/10%20epdm-2.png",
+          "thumbnailURL": "/api/media/file/10%20epdm-2-400x300.png",
+          "filename": "10 epdm-2.png",
+          "mimeType": "image/png",
+          "filesize": 24101,
+          "width": 3840,
+          "height": 2160,
+          "focalX": 50,
+          "focalY": 50,
+          "sizes": {
+            "thumbnail": {
+              "url": "/api/media/file/10%20epdm-2-400x300.png",
+              "width": 400,
+              "height": 300,
+              "mimeType": "image/png",
+              "filesize": 8677,
+              "filename": "10 epdm-2-400x300.png"
+            },
+            "card": {
+              "url": "/api/media/file/10%20epdm-2-768x512.png",
+              "width": 768,
+              "height": 512,
+              "mimeType": "image/png",
+              "filesize": 19076,
+              "filename": "10 epdm-2-768x512.png"
+            },
+            "tablet": {
+              "url": "/api/media/file/10%20epdm-2-1024x576.png",
+              "width": 1024,
+              "height": 576,
+              "mimeType": "image/png",
+              "filesize": 23735,
+              "filename": "10 epdm-2-1024x576.png"
+            }
+          }
+        },
+        "facade_blanche": {
+          "id": 869,
+          "alt": "Façade blanche enduit Monna",
+          "house": 58,
+          "mediaType": "material_layer",
+          "layerKey": null,
+          "updatedAt": "2026-05-23T23:41:18.864Z",
+          "createdAt": "2026-05-23T23:40:25.093Z",
+          "url": "/api/media/file/11.%20fasada%20e%20bardhe-12.png",
+          "thumbnailURL": "/api/media/file/11.%20fasada%20e%20bardhe-12-400x300.png",
+          "filename": "11. fasada e bardhe-12.png",
+          "mimeType": "image/png",
+          "filesize": 473289,
+          "width": 3840,
+          "height": 2160,
+          "focalX": 50,
+          "focalY": 50,
+          "sizes": {
+            "thumbnail": {
+              "url": "/api/media/file/11.%20fasada%20e%20bardhe-12-400x300.png",
+              "width": 400,
+              "height": 300,
+              "mimeType": "image/png",
+              "filesize": 35438,
+              "filename": "11. fasada e bardhe-12-400x300.png"
+            },
+            "card": {
+              "url": "/api/media/file/11.%20fasada%20e%20bardhe-12-768x512.png",
+              "width": 768,
+              "height": 512,
+              "mimeType": "image/png",
+              "filesize": 95774,
+              "filename": "11. fasada e bardhe-12-768x512.png"
+            },
+            "tablet": {
+              "url": "/api/media/file/11.%20fasada%20e%20bardhe-12-1024x576.png",
+              "width": 1024,
+              "height": 576,
+              "mimeType": "image/png",
+              "filesize": 121373,
+              "filename": "11. fasada e bardhe-12-1024x576.png"
+            }
+          }
+        },
+        "facade_bardage": {
+          "id": 870,
+          "alt": "Façade bardage mélèze Monna",
+          "house": 58,
+          "mediaType": "material_layer",
+          "layerKey": null,
+          "updatedAt": "2026-05-23T23:41:19.865Z",
+          "createdAt": "2026-05-23T23:40:29.192Z",
+          "url": "/api/media/file/12.%20fasada%20arish-13.png",
+          "thumbnailURL": "/api/media/file/12.%20fasada%20arish-13-400x300.png",
+          "filename": "12. fasada arish-13.png",
+          "mimeType": "image/png",
+          "filesize": 673945,
+          "width": 3840,
+          "height": 2160,
+          "focalX": 50,
+          "focalY": 50,
+          "sizes": {
+            "thumbnail": {
+              "url": "/api/media/file/12.%20fasada%20arish-13-400x300.png",
+              "width": 400,
+              "height": 300,
+              "mimeType": "image/png",
+              "filesize": 59213,
+              "filename": "12. fasada arish-13-400x300.png"
+            },
+            "card": {
+              "url": "/api/media/file/12.%20fasada%20arish-13-768x512.png",
+              "width": 768,
+              "height": 512,
+              "mimeType": "image/png",
+              "filesize": 175162,
+              "filename": "12. fasada arish-13-768x512.png"
+            },
+            "tablet": {
+              "url": "/api/media/file/12.%20fasada%20arish-13-1024x576.png",
+              "width": 1024,
+              "height": 576,
+              "mimeType": "image/png",
+              "filesize": 224035,
+              "filename": "12. fasada arish-13-1024x576.png"
+            }
+          }
+        },
+        "windows_aluminium": {
+          "id": 871,
+          "alt": "Menuiseries aluminium Monna",
+          "house": 58,
+          "mediaType": "material_layer",
+          "layerKey": null,
+          "updatedAt": "2026-05-23T23:41:20.631Z",
+          "createdAt": "2026-05-23T23:40:33.392Z",
+          "url": "/api/media/file/13.%20dritaret%20alumin-12.png",
+          "thumbnailURL": "/api/media/file/13.%20dritaret%20alumin-12-400x300.png",
+          "filename": "13. dritaret alumin-12.png",
+          "mimeType": "image/png",
+          "filesize": 24408,
+          "width": 3840,
+          "height": 2160,
+          "focalX": 50,
+          "focalY": 50,
+          "sizes": {
+            "thumbnail": {
+              "url": "/api/media/file/13.%20dritaret%20alumin-12-400x300.png",
+              "width": 400,
+              "height": 300,
+              "mimeType": "image/png",
+              "filesize": 7156,
+              "filename": "13. dritaret alumin-12-400x300.png"
+            },
+            "card": {
+              "url": "/api/media/file/13.%20dritaret%20alumin-12-768x512.png",
+              "width": 768,
+              "height": 512,
+              "mimeType": "image/png",
+              "filesize": 15467,
+              "filename": "13. dritaret alumin-12-768x512.png"
+            },
+            "tablet": {
+              "url": "/api/media/file/13.%20dritaret%20alumin-12-1024x576.png",
+              "width": 1024,
+              "height": 576,
+              "mimeType": "image/png",
+              "filesize": 19007,
+              "filename": "13. dritaret alumin-12-1024x576.png"
+            }
+          }
+        },
+        "windows_pvc": {
+          "id": 872,
+          "alt": "Menuiseries PVC Monna",
+          "house": 58,
+          "mediaType": "material_layer",
+          "layerKey": null,
+          "updatedAt": "2026-05-23T23:41:21.756Z",
+          "createdAt": "2026-05-23T23:40:36.709Z",
+          "url": "/api/media/file/14.%20dritaret%20pvc-12.png",
+          "thumbnailURL": "/api/media/file/14.%20dritaret%20pvc-12-400x300.png",
+          "filename": "14. dritaret pvc-12.png",
+          "mimeType": "image/png",
+          "filesize": 28275,
+          "width": 3840,
+          "height": 2160,
+          "focalX": 50,
+          "focalY": 50,
+          "sizes": {
+            "thumbnail": {
+              "url": "/api/media/file/14.%20dritaret%20pvc-12-400x300.png",
+              "width": 400,
+              "height": 300,
+              "mimeType": "image/png",
+              "filesize": 8796,
+              "filename": "14. dritaret pvc-12-400x300.png"
+            },
+            "card": {
+              "url": "/api/media/file/14.%20dritaret%20pvc-12-768x512.png",
+              "width": 768,
+              "height": 512,
+              "mimeType": "image/png",
+              "filesize": 19339,
+              "filename": "14. dritaret pvc-12-768x512.png"
+            },
+            "tablet": {
+              "url": "/api/media/file/14.%20dritaret%20pvc-12-1024x576.png",
+              "width": 1024,
+              "height": 576,
+              "mimeType": "image/png",
+              "filesize": 23994,
+              "filename": "14. dritaret pvc-12-1024x576.png"
+            }
+          }
+        },
+        "roof_polystyrene": null,
+        "roof_roche": null,
+        "roof_verre": null,
+        "roof_bois": null,
+        "couverture_pare_pluie_lattage": null,
+        "couverture_tuiles_gouttieres": null,
+        "couverture_bac_acier_gouttieres": null,
+        "faux_plafond_verre": null,
+        "faux_plafond_roche": null,
+        "faux_plafond_bois": null
+      },
+      "dynamicFieldsConfig": null,
+      "updatedAt": "2026-05-23T23:41:38.168Z",
+      "createdAt": "2026-05-23T23:41:15.116Z",
+      "customFields": []
+    }
+  ],
+  "hasNextPage": false,
+  "hasPrevPage": false,
+  "limit": 10,
+  "nextPage": null,
+  "page": 1,
+  "pagingCounter": 1,
+  "prevPage": null,
+  "totalDocs": 1,
+  "totalPages": 1
+}

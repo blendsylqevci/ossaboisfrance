@@ -198,6 +198,7 @@
       "name": "Nom complet",
       "email": "Adresse e-mail",
       "phone": "Téléphone",
+      "phoneNotice": "Conformément à la loi, vous pouvez vous inscrire gratuitement sur la liste Bloctel (bloctel.gouv.fr).",
       "address": "Adresse du terrain",
       "message": "Message / Questions additionnelles",
       "submit": "Envoyer ma demande",

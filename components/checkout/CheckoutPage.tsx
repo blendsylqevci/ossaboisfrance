@@ -242,6 +242,13 @@ export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
     fullName: locale === "en" ? "Full Name" : locale === "de" ? "Vollständiger Name" : locale === "nl" ? "Volledige naam" : "Nom complet",
     email: locale === "en" ? "Email Address" : locale === "de" ? "E-Mail-Adresse" : locale === "nl" ? "E-mailadres" : "Adresse e-mail",
     phone: locale === "en" ? "Phone Number" : locale === "de" ? "Telefonnummer" : locale === "nl" ? "Telefoonnummer" : "Numéro de téléphone",
+    phoneNotice: locale === "en"
+      ? "Under French law, you can register on the Bloctel do-not-call list (bloctel.gouv.fr)."
+      : locale === "de"
+        ? "Nach französischem Recht können Sie sich in die Bloctel-Sperrliste eintragen (bloctel.gouv.fr)."
+        : locale === "nl"
+          ? "Onder de Franse wetgeving kunt u zich inschrijven op de Bloctel do-not-call-lijst (bloctel.gouv.fr)."
+          : "Conformément à la loi, vous disposez du droit de vous inscrire gratuitement sur la liste Bloctel (bloctel.gouv.fr).",
     deliveryTitle: locale === "en" ? "Construction Site / Delivery Address" : locale === "de" ? "Bauort / Lieferadresse" : locale === "nl" ? "Bouwlocatie / Afleveradres" : "Lieu de construction / Livraison",
     address: locale === "en" ? "Street Address" : locale === "de" ? "Straße und Hausnummer" : locale === "nl" ? "Adres (straat)" : "Adresse (rue)",
     city: locale === "en" ? "City" : locale === "de" ? "Stadt" : locale === "nl" ? "Stad" : "Ville",
@@ -487,6 +494,7 @@ export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
                           </label>
                           <div className="form-input-wrapper">
                             <input className="form-input" name="phone" required type="tel" placeholder="+33 6 12 34 56 78" />
+                            <span className="phone-notice-legal">{t.phoneNotice}</span>
                           </div>
                         </div>
                       </div>

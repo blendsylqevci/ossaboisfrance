@@ -150,6 +150,17 @@ export default async function PolitiqueConfidentialitePage({ params }: PageProps
               Nous mettons en œuvre toutes les mesures techniques, administratives et organisationnelles appropriées pour protéger vos données contre toute destruction, perte, altération, divulgation ou accès non autorisé. Le site utilise le protocole de chiffrement SSL (HTTPS) pour sécuriser le transfert des informations que vous saisissez dans nos formulaires.
             </p>
           </section>
+
+          {/* Section 9 */}
+          <section className="legal-section">
+            <h2>9. Opposition au démarchage téléphonique (Bloctel)</h2>
+            <p>
+              Conformément à l'article L. 223-2 du Code de la consommation, nous vous informons que si vous communiquez vos coordonnées téléphoniques via nos formulaires, vous avez le droit de vous inscrire gratuitement sur la liste d'opposition au démarchage téléphonique appelée <strong>Bloctel</strong> afin de ne pas faire l'objet de sollicitations commerciales par téléphone.
+            </p>
+            <p>
+              Pour vous inscrire ou obtenir plus d'informations, vous pouvez vous rendre sur le site officiel : <a href="https://www.bloctel.gouv.fr" target="_blank" rel="noopener noreferrer" className="legal-inline-link">www.bloctel.gouv.fr</a>.
+            </p>
+          </section>
         </div>
       </div>
     </div>

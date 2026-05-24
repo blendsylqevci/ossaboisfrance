@@ -80,6 +80,13 @@ export function ContactPageClient({ locale, dict }: ContactPageClientProps) {
     lastName: locale === "en" ? "Last Name" : locale === "de" ? "Nachname" : locale === "nl" ? "Achternaam" : "Nom",
     email: locale === "en" ? "Email Address" : locale === "de" ? "E-Mail-Adresse" : locale === "nl" ? "E-mailadres" : "Adresse e-mail",
     phone: locale === "en" ? "Phone Number" : locale === "de" ? "Telefonnummer" : locale === "nl" ? "Telefoonnummer" : "Téléphone",
+    phoneNotice: locale === "en"
+      ? "Under French law, you can register on the Bloctel do-not-call list (bloctel.gouv.fr)."
+      : locale === "de"
+        ? "Nach französischem Recht können Sie sich in die Bloctel-Sperrliste eintragen (bloctel.gouv.fr)."
+        : locale === "nl"
+          ? "Onder de Franse wetgeving kunt u zich inschrijven op de Bloctel do-not-call-lijst (bloctel.gouv.fr)."
+          : "Conformément à la loi, vous disposez du droit de vous inscrire gratuitement sur la liste Bloctel (bloctel.gouv.fr).",
     subjectLabel: locale === "en" ? "Subject of your request" : locale === "de" ? "Betreff Ihrer Anfrage" : locale === "nl" ? "Onderwerp van uw verzoek" : "Sujet de votre demande",
     messageLabel: locale === "en" ? "Message" : locale === "de" ? "Nachricht" : locale === "nl" ? "Bericht" : "Message",
     messagePlaceholder: locale === "en"
@@ -196,6 +203,7 @@ export function ContactPageClient({ locale, dict }: ContactPageClientProps) {
                 <div className="form-group-enterprise">
                   <label htmlFor="contact-phone">{t.phone || trans.phone}</label>
                   <input id="contact-phone" type="tel" name="phone" placeholder="+33 (0) 6 12 34 56 78" />
+                  <span className="phone-notice-legal">{trans.phoneNotice}</span>
                 </div>
               </div>
 

@@ -198,6 +198,7 @@
       "name": "Vollständiger Name",
       "email": "E-Mail-Adresse",
       "phone": "Telefonnummer",
+      "phoneNotice": "Nach französischem Recht können Sie sich in die Bloctel-Sperrliste eintragen (bloctel.gouv.fr).",
       "address": "Grundstücksadresse",
       "message": "Nachricht / Zusätzliche Fragen",
       "submit": "Meine Anfrage senden",

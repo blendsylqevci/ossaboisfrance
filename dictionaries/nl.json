@@ -198,6 +198,7 @@
       "name": "Volledige naam",
       "email": "E-mailadres",
       "phone": "Telefoonnummer",
+      "phoneNotice": "Onder de Franse wetgeving kunt u zich inschrijven op de Bloctel do-not-call-lijst (bloctel.gouv.fr).",
       "address": "Adres van de grond",
       "message": "Bericht / Aanvullende vragen",
       "submit": "Mijn aanvraag verzenden",

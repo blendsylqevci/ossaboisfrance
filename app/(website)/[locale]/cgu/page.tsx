@@ -75,6 +75,17 @@ export default async function CGUPage({ params }: PageProps) {
             </p>
           </section>
 
+          {/* Section 2.a */}
+          <section className="legal-section">
+            <h2>2.a Absence de vente en ligne et Droit de rétractation</h2>
+            <p>
+              Puisqu'aucun contrat n'est conclu à distance et qu'aucune transaction financière n'est effectuée directement sur le Site, les dispositions réglementaires relatives au droit de rétractation des ventes en ligne ne s'appliquent pas aux services de ce Site.
+            </p>
+            <p>
+              Toute signature ultérieure d'un contrat physique d'entreprise ou de construction de maison individuelle (CCMI) avec notre société s'effectuera dans le strict respect de la réglementation de la consommation, incluant le droit de rétractation légal (notamment le délai de rétractation de 10 jours prévu par l'article L. 271-1 du Code de la construction et de l'habitation pour les contrats de construction de maison individuelle).
+            </p>
+          </section>
+
           {/* Section 3 */}
           <section className="legal-section">
             <h2>3. Propriété intellectuelle et interdiction de copie</h2>

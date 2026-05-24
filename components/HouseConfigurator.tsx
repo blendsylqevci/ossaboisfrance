@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { ConfigCategory, ConfigOption, HouseConfiguratorData, SizeOption } from "@/data/house-configurator";
 import { Locale } from "@/lib/i18n";
 
@@ -95,6 +95,8 @@ export function HouseConfigurator({ config, locale, dict }: HouseConfiguratorPro
   });
   const [formStatus, setFormStatus] = useState<"idle" | "success" | "error">("idle");
 
+  const scrollableRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     setSelection(config.defaultSelection);
     setBreakdownOpen(false);
@@ -103,6 +105,9 @@ export function HouseConfigurator({ config, locale, dict }: HouseConfiguratorPro
     setFacadeWarning("");
     setMaterialModal(null);
     setLayoutMode("split");
+    if (scrollableRef.current) {
+      scrollableRef.current.scrollTop = 0;
+    }
   }, [config.id, config.defaultSelection]);
 
   useEffect(() => {
@@ -829,7 +834,7 @@ L'équipe Ossa Bois France`;
             >
               <div className="handle-bar" />
             </div>
-            <div className="details-scrollable-content">
+            <div ref={scrollableRef} className="details-scrollable-content">
               <div className="house-header-left">
                 <h1 className="house-title">{config.name}</h1>
                 <div className="house-description">{config.subheading}</div>
@@ -985,13 +990,21 @@ L'équipe Ossa Bois France`;
                           <option value="+49">+49</option>
                         </select>
                       </div>
-                      <input
-                        type="tel"
-                        placeholder={dict.labels.phone}
-                        required
-                        value={formFields.telefon}
-                        onChange={(e) => setFormFields({ ...formFields, telefon: e.target.value })}
-                      />
+                      <div className="phone-input-with-notice" style={{ width: '100%' }}>
+                        <input
+                          type="tel"
+                          placeholder={dict.labels.phone}
+                          required
+                          value={formFields.telefon}
+                          onChange={(e) => setFormFields({ ...formFields, telefon: e.target.value })}
+                          style={{ width: '100%' }}
+                        />
+                        {dict.labels.phoneNotice && (
+                          <span className="phone-notice-legal" style={{ display: 'block', marginTop: '6px' }}>
+                            {dict.labels.phoneNotice}
+                          </span>
+                        )}
+                      </div>
                     </div>
                     <div className="form-group">
                       <input

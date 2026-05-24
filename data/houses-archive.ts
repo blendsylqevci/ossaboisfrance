@@ -175,7 +175,7 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     description:
       "MAISON E est une maison modulaire contemporaine de plain-pied, réalisée avec une ossature bois solide.",
     image: "/images/houses/maison e me atike/5 Maison E.jpg",
-    price60x160: 1
+    price60x160: 21000
   },
   {
     slug: "medialuna",
@@ -245,90 +245,90 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     title: "Escape Villa avec Attique",
     category: "Maison toiture terrasse avec étage",
     description:
-      "Le modèle Escape Villa avec Attique incarne la modernité absolue avec son architecture contemporaine à toiture terrasse et son attique raffiné. Conçue sur une structure en ossature bois de haute performance thermique, elle propose des volumes intérieurs optimisés et baignés de lumière grâce à ses grandes menuiseries. Personnalisable selon vos souhaits avec un bardage mélèze ou un enduit blanc, elle garantit confort, élégance et durabilité conformes aux exigences environnementales RE2020.",
+      "Le modèle Escape Villa avec Attique incarne la modernité absolue avec son architecture contemporaine à toiture terrasse and son attique raffiné. Conçue sur une structure en ossature bois de haute performance thermique, elle propose des volumes intérieurs optimisés and baignés de lumière grâce à ses grandes menuiseries. Personnalisable selon vos souhaits avec un bardage mélèze ou un enduit blanc, elle garantit confort, élégance and durabilité conformes aux exigences environnementales RE2020.",
     image: "/images/houses/escape villa me atike/7 ESCAPE VILLA.jpg",
-    price60x160: 1
+    price60x160: 29500
   },
   {
     slug: "els-house-comble",
     title: "Els House comble",
     category: "Maison combles amenageable",
     description:
-      "Le modèle Els House Comble allie charme traditionnel et performance énergétique. Avec sa toiture à forte pente abritant des combles aménageables, il offre une flexibilité d'aménagement optimale.",
+      "Le modèle Els House Comble allie charme traditionnel and performance énergétique. Avec sa toiture à forte pente abritant des combles aménageables, il offre une flexibilité d'aménagement optimale.",
     image: "/images/houses/Els House comble/els house 7.jpg",
-    price60x160: 1
+    price60x160: 28000
   },
   {
     slug: "france-comble",
     title: "France comble",
     category: "Maison combles amenageable",
     description:
-      "Le modèle France Comble allie charme traditionnel et performance énergétique. Avec sa toiture à forte pente abritant des combles aménageables, il offre une flexibilité d'aménagement optimale.",
+      "Le modèle France Comble allie charme traditionnel and performance énergétique. Avec sa toiture à forte pente abritant des combles aménageables, il offre une flexibilité d'aménagement optimale.",
     image: "/images/houses/France comble/france comble 5.jpg",
-    price60x160: 1
+    price60x160: 29000
   },
   {
     slug: "mountain-valley-villa-comble",
     title: "Mountain valley villa comble",
     category: "Maison combles amenageable",
     description:
-      "Le modèle Mountain Valley Villa Comble allie charme traditionnel et performance énergétique. Avec sa toiture à forte pente abritant des combles aménageables, il offre une flexibilité d'aménagement optimale.",
+      "Le modèle Mountain Valley Villa Comble allie charme traditionnel and performance énergétique. Avec sa toiture à forte pente abritant des combles aménageables, il offre une flexibilité d'aménagement optimale.",
     image: "/images/houses/mountain valley villa comble/Mountain Valley Villa 7.jpg",
-    price60x160: 1
+    price60x160: 30000
   },
   {
     slug: "flora-me-atike",
     title: "Flora avec Attique",
     category: "Maison toiture terrasse avec étage",
     description:
-      "Le modèle Flora avec Attique séduit par son design contemporain, ses volumes harmonieux et sa structure robuste en ossature bois à haute performance thermique.",
+      "Le modèle Flora avec Attique séduit par son design contemporain, ses volumes harmonieux and sa structure robuste en ossature bois à haute performance thermique.",
     image: "/images/houses/flora me atike/7 flora.jpg",
-    price60x160: 1
+    price60x160: 27800
   },
   {
     slug: "forest-side-cabin-me-atike",
     title: "Forest side cabin me atike",
     category: "Maison toiture terrasse avec étage",
     description:
-      "Le modèle Forest Side Cabin avec Attique allie architecture contemporaine, compacité et isolation de haute performance énergétique dans un style forestier unique.",
+      "Le modèle Forest Side Cabin avec Attique allie architecture contemporaine, compacité and isolation de haute performance énergétique dans un style forestier unique.",
     image: "/images/houses/forest side cabin me atike/forest side cabin atike 7.jpg",
-    price60x160: 1
+    price60x160: 26500
   },
   {
     slug: "france-etage-me-atike",
     title: "France etage me atike",
     category: "Maison toiture terrasse avec étage",
     description:
-      "Le modèle France etage avec Attique séduit par son design contemporain, son architecture sur deux étages et sa terrasse moderne avec vue panoramique.",
+      "Le modèle France etage avec Attique séduit par son design contemporain, son architecture sur deux étages and sa terrasse moderne avec vue panoramique.",
     image: "/images/houses/France etage me atike/France atike 7.jpg",
-    price60x160: 1
+    price60x160: 32000
   },
   {
     slug: "maison-en-l-avec-attique",
     title: "Maison en L avec Attique",
     category: "Maison toiture terrasse avec étage",
     description:
-      "Le modèle Maison en L avec Attique séduit par son design contemporain en forme de L, ses volumes généreux et sa terrasse panoramique en attique.",
+      "Le modèle Maison en L avec Attique séduit par son design contemporain en forme de L, ses volumes généreux and sa terrasse panoramique en attique.",
     image: "/images/houses/l shaped house me atike/4 l shaped house.jpg",
-    price60x160: 1
+    price60x160: 34000
   },
   {
     slug: "liberte-etage-me-atike",
     title: "Liberte etage me atike",
     category: "Maison toiture terrasse avec étage",
     description:
-      "Le modèle Liberte etage avec Attique séduit par son design contemporain, son architecture sur deux étages et sa terrasse moderne avec vue panoramique.",
+      "Le modèle Liberte etage avec Attique séduit par son design contemporain, son architecture sur deux étages and sa terrasse moderne avec vue panoramique.",
     image: "/images/houses/liberte etage me atike/liberte 5.jpg",
-    price60x160: 1
+    price60x160: 31000
   },
   {
     slug: "maison-2-etage-me-atike",
     title: "Maison 2 etage me atike",
     category: "Maison toiture terrasse avec étage",
     description:
-      "Le modèle Maison 2 etage avec Attique séduit par son design contemporain, son architecture sur deux étages et sa terrasse moderne avec vue panoramique.",
+      "Le modèle Maison 2 etage avec Attique séduit par son design contemporain, son architecture sur deux étages and sa terrasse moderne avec vue panoramique.",
     image: "/images/houses/maison 2 etage me atike/maison 2 me atike 7.jpg",
-    price60x160: 1
+    price60x160: 33000
   },
   {
     slug: "australe",
@@ -337,7 +337,7 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     description:
       "AUSTRALE avec attique est une maison modulaire contemporaine à deux étages, construite sur une ossature bois robuste.",
     image: "/images/houses/Australe/australe 7.jpg",
-    price60x160: 1
+    price60x160: 41500
   }
 ];
 

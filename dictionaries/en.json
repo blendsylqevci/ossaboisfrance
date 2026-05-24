@@ -198,6 +198,7 @@
       "name": "Full name",
       "email": "E-mail address",
       "phone": "Phone number",
+      "phoneNotice": "Under French law, you can register on the Bloctel do-not-call list (bloctel.gouv.fr).",
       "address": "Land address",
       "message": "Message / Additional questions",
       "submit": "Submit my request",

@@ -180,7 +180,7 @@ export function HeroSlider({ houses, initialIdx }: HeroSliderProps) {
       <span className="hero-slider-label hero-slider-label-left" style={{ opacity: pos > 15 ? 1 : 0 }}>Enduit</span>
       <span className="hero-slider-label hero-slider-label-right" style={{ opacity: pos < 85 ? 1 : 0 }}>Bardage</span>
       
-      {/* Badge indicating active house name */}
+      {/* Badge indicating active house name (hidden on desktop via CSS, shown on mobile) */}
       <div className="hero-slider-badge">
         <span>{activeHouse.title}</span>
         <button 

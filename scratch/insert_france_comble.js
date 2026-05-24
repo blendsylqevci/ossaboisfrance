@@ -267,10 +267,10 @@ async function main() {
       await pgClient.query(`
         UPDATE houses
         SET 
-          default_image_id = 88,
-          final_image_id = 88,
-          layers_background_layer_id = 88,
-          layers_construction_layer_id = 88,
+          default_image_id = 294,
+          final_image_id = 294,
+          layers_background_layer_id = 294,
+          layers_construction_layer_id = 294,
           layers_iso_inter_roche_id = null,
           layers_iso_inter_bois_id = null,
           layers_iso_inter_verre_id = null,

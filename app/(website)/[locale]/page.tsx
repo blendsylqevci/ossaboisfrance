@@ -4,7 +4,7 @@ import Link from "next/link";
 import { getPayload } from "payload";
 import config from "@/payload.config";
 import { Locale } from "@/lib/i18n";
-export const revalidate = 3600; // Cache page for 1 hour
+import { cookies } from "next/headers";
 
 import { HeroSlider } from "@/components/HeroSlider";
 import { ReviewsCarousel } from "@/components/ReviewsCarousel";
@@ -204,9 +204,15 @@ export default async function HomePage({ params }: HomePageProps) {
       imageBardage: h.imageBardage,
     }));
 
-  // Default to 0, slider will adjust client-side if a cookie exists
-  let initialIdx = sliderHouses.findIndex((h) => h.slug === "maison-2-etage-me-atike");
-  if (initialIdx === -1) initialIdx = 0;
+  // Read cookie on the server to determine the initial house to render
+  const cookieStore = await cookies();
+  const heroHouseSlug = cookieStore.get("hero_house_slug")?.value || "maison-2-etage-me-atike";
+
+  let initialIdx = sliderHouses.findIndex((h) => h.slug === heroHouseSlug);
+  if (initialIdx === -1) {
+    initialIdx = sliderHouses.findIndex((h) => h.slug === "maison-2-etage-me-atike");
+    if (initialIdx === -1) initialIdx = 0;
+  }
 
   // Construct localized client reviews by merging text with static media links
   const carouselReviews = (dict.home.clientReviews || []).map((rev: any, index: number) => ({

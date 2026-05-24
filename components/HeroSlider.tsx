@@ -35,24 +35,11 @@ export function HeroSlider({ houses, initialIdx }: HeroSliderProps) {
     hasRunRotation.current = true;
 
     try {
-      // Read cookie client-side on mount
-      const match = document.cookie.match(/(^| )hero_house_slug=([^;]+)/);
-      const cookieSlug = match ? match[2] : null;
-      let activeIdx = initialIdx;
-      
-      if (cookieSlug) {
-        const found = houses.findIndex((h) => h.slug === cookieSlug);
-        if (found !== -1) {
-          activeIdx = found;
-          setCurrentIdx(found);
-        }
-      }
-
       // Calculate the index of the next house to display on next refresh
-      const nextIdx = (activeIdx + 1) % houses.length;
+      const nextIdx = (initialIdx + 1) % houses.length;
       
-      // Store the NEXT house slug in a cookie expiring in 1 hour (3600 seconds)
-      document.cookie = `hero_house_slug=${houses[nextIdx].slug}; path=/; max-age=3600; SameSite=Lax`;
+      // Store the NEXT house slug in a cookie expiring in 1 week (604800 seconds)
+      document.cookie = `hero_house_slug=${houses[nextIdx].slug}; path=/; max-age=604800; SameSite=Lax`;
     } catch (err) {
       console.warn("Failed to set cookie for HeroSlider:", err);
     }

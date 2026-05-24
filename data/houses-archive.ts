@@ -142,15 +142,6 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     price60x160: 27850
   },
   {
-    slug: "australe",
-    title: "Australe",
-    category: "Maison toiture terrasse avec étage",
-    description:
-      "AUSTRALE avec attique est une maison modulaire contemporaine à deux étages, construite sur une ossature bois robuste garantissant stabilité, durabilité et excellente performance thermique. Son architecture à toiture plate avec attique, complétée par deux terrasses au deuxième étage, offre de vastes espaces extérieurs idéals pour la détente tout en valorisant des lignes modernes et épurées. Grâce à une préfabrication soignée en atelier, AUSTRALE avec attique permet une installation rapide.",
-    image: "/images/houses/Australe/australe 7.jpg",
-    price60x160: 30393
-  },
-  {
     slug: "emmy-house-etage-toiture-terrasse",
     title: "Emmy House Étage Toiture Terrasse",
     category: "Maison toiture terrasse avec étage",

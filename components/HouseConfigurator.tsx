@@ -112,8 +112,11 @@ export function HouseConfigurator({ config, locale, dict }: HouseConfiguratorPro
 
   useEffect(() => {
     if (typeof window !== "undefined" && config?.name) {
-      const event = new CustomEvent("house-title-loaded", { detail: config.name });
-      window.dispatchEvent(event);
+      const timer = setTimeout(() => {
+        const event = new CustomEvent("house-title-loaded", { detail: config.name });
+        window.dispatchEvent(event);
+      }, 0);
+      return () => clearTimeout(timer);
     }
   }, [config?.name]);
 

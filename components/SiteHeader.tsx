@@ -1,19 +1,91 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Locale, localeLabels, locales } from "@/lib/i18n";
+import { translateText } from "@/lib/translation-helper";
 
 type SiteHeaderProps = {
   locale: Locale;
   dict: any;
 };
 
+const getCleanHouseName = (slug: string, locale: Locale) => {
+  if (!slug) return "";
+  const mapping: Record<string, string> = {
+    "monna-me-atike": "Monna avec Attique",
+    "diademe-toiture-terrasse": "Diademe Toiture Terrasse",
+    "cotage-toiture-terrasse": "Cotage Toiture Terrasse",
+    "asebra-me-atike": "Asebra avec Attique",
+    "ambre-me-atike": "Ambre avec Attique",
+    "boreale-me-atike": "Boreale avec Attique",
+    "enea-me-atike": "Enea avec combles aménageables",
+    "maison-enea-me-kulm": "Enea avec Toit",
+    "flora-me-atike": "Flora avec Attique",
+    "azura-comble": "Azura avec Combles",
+    "nina-house": "Nina",
+    "dianne": "Dianne",
+    "forest-side-cabin-me-atike": "Forest Side avec Attique",
+    "marinela-me-atike": "Marinela avec Attique",
+    "maison-e": "Maison E",
+    "maison-loren": "Maison Loren",
+    "a-frame-house": "A-Frame",
+    "sira-me-atike": "Sira avec Attique",
+    "emmy-house-etage-toiture-terrasse": "Emmy",
+    "emeraude-toiture-terrasse": "Émeraude",
+    "emeraude-me-atike": "Émeraude",
+    "symphonie-me-atike": "Symphonie",
+    "australe": "Australe",
+    "enea-toiture-terrasse": "Enea",
+    "maison-2-etage-me-atike": "Maison 2 Étages",
+    "flora-house": "Flora",
+    "forest-side-cabin": "Forest Side",
+    "france-etage": "France",
+    "liberte-house": "Liberté",
+    "maison-en-l": "Maison en L"
+  };
+
+  const baseName = mapping[slug] || slug
+    .replace("-me-atike", "")
+    .replace("-toiture-terrasse", "")
+    .replace("-house", "")
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+
+  return translateText(baseName, locale);
+};
+
 export function SiteHeader({ locale, dict }: SiteHeaderProps) {
   const pathname = usePathname();
   const mobileMenuRef = useRef<HTMLDetailsElement>(null);
+
+  const segments = pathname ? pathname.split("/") : [];
+  const isHouseDetailPage = segments[2] === "maisons" && segments[3] && segments[3] !== "";
+  const houseSlug = isHouseDetailPage ? segments[3] : "";
+
+  const [houseTitle, setHouseTitle] = useState("");
+
+  useEffect(() => {
+    // 1. Set initial title using fallback from slug
+    if (isHouseDetailPage && houseSlug) {
+      setHouseTitle(getCleanHouseName(houseSlug, locale));
+    } else {
+      setHouseTitle("");
+    }
+
+    // 2. Event listener for precise database title updates
+    const handleTitleLoaded = (e: Event) => {
+      const customEvent = e as CustomEvent<string>;
+      setHouseTitle(customEvent.detail);
+    };
+    window.addEventListener("house-title-loaded", handleTitleLoaded);
+    return () => {
+      window.removeEventListener("house-title-loaded", handleTitleLoaded);
+    };
+  }, [isHouseDetailPage, houseSlug]);
 
   const houseNav = [
     { href: "maisons#maison-toitu-terrasse", label: dict?.categories?.terrace || "Maisons à toiture terrasse" },
@@ -82,6 +154,11 @@ export function SiteHeader({ locale, dict }: SiteHeaderProps) {
         <Link href={`/${locale}`} className="brand-link" aria-label="Ossa Bois France" onClick={handleLogoClick}>
           <Image src="/images/brand/ossa-bois-logo.png" alt="" width={86} height={78} priority />
         </Link>
+        {isHouseDetailPage && houseTitle && (
+          <span className="mobile-header-house-title">
+            {houseTitle}
+          </span>
+        )}
         <nav className="main-nav" aria-label="Navigation principale">
           <Link href={`/${locale}`} className={isActive("") ? "active" : ""} onClick={handleLogoClick}>
             {dict?.home || "Accueil"}

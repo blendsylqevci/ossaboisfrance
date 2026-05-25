@@ -147,6 +147,10 @@ img {
   align-items: center;
 }
 
+.mobile-header-house-title {
+  display: none;
+}
+
 .brand-link img {
   width: 86px;
   height: auto;
@@ -3741,15 +3745,35 @@ img {
     max-height: calc(100vh - 20px);
   }
 
-  .price-total-section,
   .transportation-content,
   .order-product-details {
     align-items: stretch;
     flex-direction: column;
   }
 
-  .continue-button {
+  .price-total-section {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
     width: 100%;
+  }
+
+  .price-total {
+    font-size: 20px !important;
+    flex-shrink: 0;
+  }
+
+  .continue-button {
+    width: auto;
+    flex-grow: 1;
+    max-width: 55%;
+    min-height: 42px !important;
+    padding: 8px 14px !important;
+    font-size: 13px !important;
+    white-space: nowrap;
+    text-align: center;
+    justify-content: center;
   }
 
   .checkout-form-card,
@@ -6898,6 +6922,7 @@ img {
 @media (max-width: 991px) {
   /* Narrow header on mobile and scale down logo */
   .header-inner {
+    position: relative !important;
     min-height: 64px !important;
     padding-top: 0 !important;
     padding-bottom: 0 !important;
@@ -6909,6 +6934,29 @@ img {
     width: auto !important;
     transform: scale(1.12) !important;
     transform-origin: left center !important;
+  }
+
+  .mobile-header-house-title {
+    display: block !important;
+    position: absolute !important;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    color: var(--ink) !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 200px !important;
+    pointer-events: none !important;
+    z-index: 1 !important;
+  }
+
+  .house-title,
+  .house-header-left {
+    display: none !important;
   }
 
   .header-actions {

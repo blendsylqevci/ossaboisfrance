@@ -9,6 +9,8 @@ import { formatArchiveStartingPrice } from "@/data/houses-archive";
 import { Locale } from "@/lib/i18n";
 import { getDictionary } from "@/lib/dictionary";
 import { translateText, translateHouseDescription } from "@/lib/translation-helper";
+import { HouseTitleDispatcher } from "@/components/HouseTitleDispatcher";
+
 
 export const revalidate = 3600; // Cache page for 1 hour
 
@@ -131,6 +133,7 @@ export default async function HouseDetailPage({ params }: HouseDetailPageProps) 
 
   return (
     <section className="house-detail-shell">
+      <HouseTitleDispatcher title={translatedTitle} />
       <div className="container house-detail-back">
         <Link href={`/${locale}/maisons`}>← {dict.configurator.labels.backToModels}</Link>
       </div>

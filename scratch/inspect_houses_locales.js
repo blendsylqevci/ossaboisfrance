@@ -7,14 +7,15 @@ async function main() {
   });
   
   await client.connect();
-
-  console.log("=== Columns of houses_locales ===");
+  
   const res = await client.query(`
-    SELECT column_name, data_type 
-    FROM information_schema.columns 
-    WHERE table_name = 'houses_locales'
+    SELECT hl.id, hl._locale, hl.subheading, hl.description, h.slug
+    FROM houses_locales hl
+    JOIN houses h ON hl._parent_id = h.id
+    ORDER BY h.slug, hl._locale
   `);
-  res.rows.forEach(c => console.log(`  ${c.column_name}: ${c.data_type}`));
+  
+  console.log(JSON.stringify(res.rows, null, 2));
 
   await client.end();
 }

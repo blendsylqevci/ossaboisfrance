@@ -372,6 +372,84 @@ const textTranslations: Record<string, Record<Locale, string>> = {
     en: "Timber frame structure built according to current standards, braced by 12 mm OSB panels ensuring rigidity and stability of the whole. Includes load-bearing walls, partition walls, and industrial truss framework. Price includes transport and on-site assembly under a decennial guarantee.",
     de: "Holzrahmenstruktur nach den geltenden Normen gebaut, versteift durch 12 mm OSB-Platten zur Gewährleistung der Steifigkeit und Stabilität des Ganzen. Umfasst tragende Wände, Trennwände und Dachbinder. Der Preis beinhaltet Transport und Montage vor Ort unter einer zehnjährigen Garantie.",
     nl: "Houtskeletstructuur gebouwd volgens de geldende normen, geschoord met 12 mm OSB-platen om de stijfheid en stabiliteit van het geheel te garanderen. Inclusief dragende muren, scheidingswanden en spanten. Prijs is inclusief transport en montage ter plaatse onder een tienjarige garantie."
+  },
+  "Le modèle Monna avec Attique réunit l'élégance d'une toiture terrasse plate à la fonctionnalité d'un attique moderne.": {
+    fr: "Le modèle Monna avec Attique réunit l'élégance d'une toiture terrasse plate à la fonctionnalité d'un attique moderne.",
+    en: "The Monna with Penthouse model combines the elegance of a flat roof terrace with the functionality of a modern penthouse.",
+    de: "Das Modell Monna mit Attika verbindet die Eleganz einer Flachdach-Terrasse mit der Funktionalität einer modernen Attika.",
+    nl: "Het Monna met Attiek model combineert de elegantie van een plat dakterras met de functionaliteit van een moderne attiek."
+  },
+  "Diademe Toiture Terrasse — Simplicité architecturale, élégance naturelle et confort moderne.": {
+    fr: "Diademe Toiture Terrasse — Simplicité architecturale, élégance naturelle et confort moderne.",
+    en: "Diademe Toiture Terrasse — Architectural simplicity, natural elegance, and modern comfort.",
+    de: "Diademe Toiture Terrasse — Architektonische Schlichtheit, natürliche Eleganz und moderner Komfort.",
+    nl: "Diademe Toiture Terrasse — Architectonische eenvoud, natuurlijke elegantie en modern comfort."
+  },
+  "Cotage Toiture Terrasse — L’élégance contemporaine au service du confort naturel.": {
+    fr: "Cotage Toiture Terrasse — L’élégance contemporaine au service du confort naturel.",
+    en: "Cotage Toiture Terrasse — Contemporary elegance at the service of natural comfort.",
+    de: "Cotage Toiture Terrasse — Zeitgenössische Eleganz im Dienste des natürlichen Komforts.",
+    nl: "Cotage Toiture Terrasse — Eigentijdse elegantie in dienst van natuurlijk comfort."
+  },
+  "ASEBRA Toiture Terrasse — Une architecture moderne pensée pour une vie élégante et apaisante.": {
+    fr: "ASEBRA Toiture Terrasse — Une architecture moderne pensée pour une vie élégante et apaisante.",
+    en: "ASEBRA Toiture Terrasse — Modern architecture designed for an elegant and soothing life.",
+    de: "ASEBRA Toiture Terrasse — Moderne Architektur für ein elegantes und beruhigendes Leben.",
+    nl: "ASEBRA Toiture Terrasse — Moderne architectuur ontworpen voor een elegant en rustgevend leven."
+  },
+  "Le modèle Ambre avec Attique réunit l'élégance d'une toiture terrasse plate à la fonctionnalité d'un attique moderne.": {
+    fr: "Le modèle Ambre avec Attique réunit l'élégance d'une toiture terrasse plate à la fonctionnalité d'un attique moderne.",
+    en: "The Ambre with Penthouse model combines the elegance of a flat roof terrace with the functionality of a modern penthouse.",
+    de: "Das Modell Ambre mit Attika verbindet die Eleganz einer Flachdach-Terrasse mit der Funktionalität einer modernen Attika.",
+    nl: "Het Ambre met Attiek model combineert de elegantie van een plat dakterras met de functionaliteit van een moderne attiek."
+  },
+  "Le modèle Boreale avec Attique séduit par son design contemporain, ses volumes harmonieux et sa structure robuste en ossature bois à haute performance thermique (conforme RE2020).": {
+    fr: "Le modèle Boreale avec Attique séduit par son design contemporain, ses volumes harmonieux et sa structure robuste en ossature bois à haute performance thermique (conforme RE2020).",
+    en: "The Boreale with Penthouse model appeals with its contemporary design, harmonious volumes, and robust timber frame structure with high thermal performance (RE2020 compliant).",
+    de: "Das Modell Boreale mit Attika besticht durch sein zeitgenössisches design, seine harmonischen Volumina und seine robuste Holzrahmenstruktur mit hoher thermischer Leistung (RE2020-konform).",
+    nl: "Het Boreale met Attiek model spreekt aan met zijn eigentijdse design, harmonieuze volumes en robuuste houtskeletstructuur met hoge thermische prestaties (RE2020-conform)."
+  },
+  "Monna avec Attique": {
+    fr: "Monna avec Attique",
+    en: "Monna with Penthouse",
+    de: "Monna mit Attika",
+    nl: "Monna met Attiek"
+  },
+  "Ambre avec Attique": {
+    fr: "Ambre avec Attique",
+    en: "Ambre with Penthouse",
+    de: "Ambre mit Attika",
+    nl: "Ambre met Attiek"
+  },
+  "Boreale avec Attique": {
+    fr: "Boreale avec Attique",
+    en: "Boreale with Penthouse",
+    de: "Boreale mit Attika",
+    nl: "Boreale met Attiek"
+  },
+  "Asebra avec Attique": {
+    fr: "Asebra avec Attique",
+    en: "Asebra with Penthouse",
+    de: "Asebra mit Attika",
+    nl: "Asebra met Attiek"
+  },
+  "Diademe Toiture Terrasse": {
+    fr: "Diademe Toiture Terrasse",
+    en: "Diademe Flat Roof",
+    de: "Diademe Flachdach",
+    nl: "Diademe Plat Dak"
+  },
+  "Cotage Toiture Terrasse": {
+    fr: "Cotage Toiture Terrasse",
+    en: "Cotage Flat Roof",
+    de: "Cotage Flachdach",
+    nl: "Cotage Plat Dak"
+  },
+  "Enea avec combles aménageables": {
+    fr: "Enea avec combles aménageables",
+    en: "Enea with convertible loft",
+    de: "Enea mit ausbaubarem Dachgeschoss",
+    nl: "Enea met inrichtbare zolder"
   }
 };
 

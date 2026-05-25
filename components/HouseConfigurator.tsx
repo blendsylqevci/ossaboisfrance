@@ -111,6 +111,13 @@ export function HouseConfigurator({ config, locale, dict }: HouseConfiguratorPro
   }, [config.id, config.defaultSelection]);
 
   useEffect(() => {
+    if (typeof window !== "undefined" && config?.name) {
+      const event = new CustomEvent("house-title-loaded", { detail: config.name });
+      window.dispatchEvent(event);
+    }
+  }, [config?.name]);
+
+  useEffect(() => {
     if (layoutMode === "clean") {
       document.documentElement.classList.add("layout-clean-mode");
     } else {
@@ -893,7 +900,33 @@ L'équipe Ossa Bois France`;
                 </div>
                 <div className="tab-content">
                   <div className={`tab-pane${activeTab === "description" ? " active" : ""}`}>
-                    <div className="description-content">{config.description}</div>
+                    <div className="description-content">
+                      {(() => {
+                        const desc = config.description || "";
+                        const sub = config.subheading || "";
+                        if (!sub) return desc;
+
+                        const trimmedDesc = desc.trim();
+                        const trimmedSub = sub.trim();
+
+                        // If description starts with subheading, move subheading to the end
+                        if (trimmedDesc.startsWith(trimmedSub)) {
+                          let remaining = trimmedDesc.substring(trimmedSub.length).trim();
+                          if (remaining.startsWith('.') || remaining.startsWith(',') || remaining.startsWith('—')) {
+                            remaining = remaining.substring(1).trim();
+                          }
+                          return `${remaining} ${trimmedSub}`;
+                        }
+
+                        // If description doesn't contain subheading at all, append it to the end
+                        if (!trimmedDesc.includes(trimmedSub)) {
+                          const separator = (trimmedDesc.endsWith('.') || trimmedDesc.endsWith('!') || trimmedDesc.endsWith('?')) ? ' ' : '. ';
+                          return `${trimmedDesc}${separator}${trimmedSub}`;
+                        }
+
+                        return trimmedDesc;
+                      })()}
+                    </div>
                   </div>
                   <div className={`tab-pane${activeTab === "specification" ? " active" : ""}`}>
                     <div className="specification-content">

@@ -94,6 +94,7 @@ export function HouseConfigurator({ config, locale, dict }: HouseConfiguratorPro
     pranoje: false
   });
   const [formStatus, setFormStatus] = useState<"idle" | "success" | "error">("idle");
+  const [isStructureOpen, setIsStructureOpen] = useState(false);
 
   const scrollableRef = useRef<HTMLDivElement>(null);
 
@@ -105,6 +106,7 @@ export function HouseConfigurator({ config, locale, dict }: HouseConfiguratorPro
     setFacadeWarning("");
     setMaterialModal(null);
     setLayoutMode("split");
+    setIsStructureOpen(false);
     if (scrollableRef.current) {
       scrollableRef.current.scrollTop = 0;
     }
@@ -875,9 +877,121 @@ L'équipe Ossa Bois France`;
                   ))}
                 </div>
                 <div className="size-info-div">
-                  <span>
-                    {config.structureInfo}
-                  </span>
+                  <button
+                    type="button"
+                    className={`structure-accordion-header${isStructureOpen ? " active" : ""}`}
+                    onClick={() => setIsStructureOpen(!isStructureOpen)}
+                  >
+                    <span>
+                      {locale === "en"
+                        ? "Descriptive Price & Structure Details"
+                        : locale === "de"
+                        ? "Richtpreis & Strukturdetails"
+                        : locale === "nl"
+                        ? "Richtprijs & Structuurdetails"
+                        : "Prix descriptif & structure"}
+                    </span>
+                    <svg className="dropdown-arrow" width="20" height="10" viewBox="0 0 20 10" fill="none">
+                      <path d="M0.640137 0.768219L9.64014 8.26822L18.6401 0.768219" stroke="currentColor" strokeWidth="2" />
+                    </svg>
+                  </button>
+                  {isStructureOpen && (
+                    <div className="structure-accordion-content">
+                      {locale === "en" ? (
+                        <>
+                          <p>
+                            <strong>Descriptive price:</strong>
+                            <br />
+                            Starting from only €350 excl. VAT.
+                          </p>
+                          <p>
+                            You have the choice between two types of exterior walls with different thicknesses:{" "}
+                            <strong>160 mm wall</strong> or <strong>200 mm wall</strong>, depending on your choice.
+                          </p>
+                          <p>
+                            The structure is braced with a 12 mm OSB panel, with intermediate floor or flat roof.
+                            <br />
+                            For houses with convertible attics, this includes a traditional framework with load-bearing rafters and vapor barrier film.
+                          </p>
+                          <p>
+                            Including shear walls and separation walls are also braced with a 12 mm OSB panel.
+                          </p>
+                          <p>
+                            The price includes transport as well as the assembly of your structure under a French decennial guarantee.
+                          </p>
+                        </>
+                      ) : locale === "de" ? (
+                        <>
+                          <p>
+                            <strong>Richtpreis:</strong>
+                            <br />
+                            Ab nur 350 € zzgl. MwSt.
+                          </p>
+                          <p>
+                            Sie haben die Wahl zwischen zwei Arten von Außenwänden mit unterschiedlichen Dicken:{" "}
+                            <strong>160 mm Wand</strong> oder <strong>200 mm Wand</strong>, je nach Ihrer Wahl.
+                          </p>
+                          <p>
+                            Die Struktur ist mit einer 12 mm OSB-Platte versteift, mit Zwischendecke oder Flachdach.
+                            <br />
+                            Bei Häusern mit ausbaufähigem Dachgeschoss umfasst dies einen traditionellen Dachstuhl mit tragenden Sparren und Dampfsperrfolie.
+                          </p>
+                          <p>
+                            Auch tragende Innenwände und Trennwände sind mit einer 12 mm OSB-Platte versteift.
+                          </p>
+                          <p>
+                            Der Preis beinhaltet den Transport sowie die Montage Ihrer Struktur unter einer zehnjährigen französischen Garantie.
+                          </p>
+                        </>
+                      ) : locale === "nl" ? (
+                        <>
+                          <p>
+                            <strong>Richtprijs:</strong>
+                            <br />
+                            Vanaf slechts € 350 excl. btw.
+                          </p>
+                          <p>
+                            U heeft de keuze uit twee soorten buitenmuren met verschillende diktes:{" "}
+                            <strong>muur van 160 mm</strong> of <strong>muur van 200 mm</strong>, afhankelijk van uw keuze.
+                          </p>
+                          <p>
+                            De structuur is geschoord met een 12 mm OSB-plaat, met tussenvloer of plat dak.
+                            <br />
+                            Voor woningen met een inrichtbare zolder omvat dit een traditioneel dakspant met dragende kepers en dampschermfolie.
+                          </p>
+                          <p>
+                            Ook de binnenmuren en scheidingswanden zijn geschoord met een 12 mm OSB-plaat.
+                          </p>
+                          <p>
+                            De prijs is inclusief transport en de montage van uw structuur onder een Franse tienjarige garantie.
+                          </p>
+                        </>
+                      ) : (
+                        <>
+                          <p>
+                            <strong>Prix descriptif :</strong>
+                            <br />
+                            À partir de seulement 350 € HT.
+                          </p>
+                          <p>
+                            Vous avez le choix entre deux types de murs extérieurs avec différentes épaisseurs :{" "}
+                            <strong>mur de 160 mm</strong> ou <strong>mur de 200 mm</strong>, selon votre choix.
+                          </p>
+                          <p>
+                            La structure est contreventée avec un panneau OSB de 12 mm, avec plancher intermédiaire ou toiture terrasse.
+                            <br />
+                            Pour les maisons avec combles aménageables, cela comprend une charpente traditionnelle avec chevrons porteurs et film pare-vapeur.
+                          </p>
+                          <p>
+                            Y compris les murs de refend et de séparation sont également contreventés avec un panneau OSB de 12 mm.
+                          </p>
+                          <p>
+                            Le prix comprend le transport ainsi que le montage de votre structure sous garantie décennale française.
+                          </p>
+                        </>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
 

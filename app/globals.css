@@ -8803,7 +8803,7 @@ img {
 .cookie-reopen-trigger {
   position: fixed;
   bottom: 24px;
-  left: 24px;
+  right: 24px;
   width: 44px;
   height: 44px;
   border-radius: 50%;
@@ -9081,7 +9081,8 @@ img {
   
   .cookie-reopen-trigger {
     bottom: 16px;
-    left: 16px;
+    right: 16px;
+    left: auto;
   }
   
   .cookie-consent-card {

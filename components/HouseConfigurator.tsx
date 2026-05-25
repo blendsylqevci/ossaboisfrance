@@ -902,7 +902,7 @@ L'équipe Ossa Bois France`;
                           <p>
                             <strong>Descriptive price:</strong>
                             <br />
-                            Starting from only €350 excl. VAT.
+                            <strong style={{ color: "#000000" }}>Starting from only €350 excl. VAT.</strong>
                           </p>
                           <p>
                             You have the choice between two types of exterior walls with different thicknesses:{" "}
@@ -925,7 +925,7 @@ L'équipe Ossa Bois France`;
                           <p>
                             <strong>Richtpreis:</strong>
                             <br />
-                            Ab nur 350 € zzgl. MwSt.
+                            <strong style={{ color: "#000000" }}>Ab nur 350 € zzgl. MwSt.</strong>
                           </p>
                           <p>
                             Sie haben die Wahl zwischen zwei Arten von Außenwänden mit unterschiedlichen Dicken:{" "}
@@ -948,7 +948,7 @@ L'équipe Ossa Bois France`;
                           <p>
                             <strong>Richtprijs:</strong>
                             <br />
-                            Vanaf slechts € 350 excl. btw.
+                            <strong style={{ color: "#000000" }}>Vanaf slechts € 350 excl. btw.</strong>
                           </p>
                           <p>
                             U heeft de keuze uit twee soorten buitenmuren met verschillende diktes:{" "}
@@ -971,7 +971,7 @@ L'équipe Ossa Bois France`;
                           <p>
                             <strong>Prix descriptif :</strong>
                             <br />
-                            À partir de seulement 350 € HT.
+                            <strong style={{ color: "#000000" }}>À partir de seulement 350 € HT.</strong>
                           </p>
                           <p>
                             Vous avez le choix entre deux types de murs extérieurs avec différentes épaisseurs :{" "}

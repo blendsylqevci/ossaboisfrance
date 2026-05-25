@@ -12,7 +12,7 @@ import { translateText, translateHouseDescription } from "@/lib/translation-help
 import { HouseTitleDispatcher } from "@/components/HouseTitleDispatcher";
 
 
-export const revalidate = 3600; // Cache page for 1 hour
+export const dynamic = "force-dynamic";
 
 type HouseDetailPageProps = {
   params: Promise<{ locale: Locale; slug: string }>;

@@ -19,6 +19,7 @@ type FeaturedHouseItem = {
   price60x160: number | null;
   neto?: number | null;
   bruto?: number | null;
+  planimetry?: string | null;
 };
 
 type FeaturedProductsSectionProps = {

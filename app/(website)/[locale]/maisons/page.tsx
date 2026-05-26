@@ -125,6 +125,7 @@ export default async function HousesPage({ params }: HousesPageProps) {
   const houses: CMSHouseItem[] = housesRes.docs.map((doc) => {
     const imageUrl = typeof doc.defaultImage === 'object' ? doc.defaultImage?.url : '';
     const finalImageUrl = typeof doc.finalImage === 'object' ? doc.finalImage?.url : '';
+    const planimetryUrl = typeof doc.planimetry === 'object' ? doc.planimetry?.url : '';
     const catObj = typeof doc.category === 'object' ? doc.category : null;
     
     const neto = doc.perdhesa?.neto || 0;
@@ -151,6 +152,7 @@ export default async function HousesPage({ params }: HousesPageProps) {
       price60x160: finalPrice,
       neto: doc.perdhesa?.neto || null,
       bruto: doc.perdhesa?.bruto || null,
+      planimetry: planimetryUrl || null,
     };
   });
 

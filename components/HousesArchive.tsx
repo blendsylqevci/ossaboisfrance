@@ -24,6 +24,7 @@ export type CMSHouseItem = {
   price60x160: number | null;
   neto?: number | null;
   bruto?: number | null;
+  planimetry?: string | null;
 };
 
 type HousesArchiveProps = {
@@ -129,7 +130,7 @@ export function CompareSlider({ imageA, imageB, altA, altB }: { imageA: string; 
   );
 }
 
-function HouseCard({ house, locale, dict }: { house: CMSHouseItem; locale: Locale; dict: any }) {
+function HouseCard({ house, locale, dict, onOpenPlanimetry }: { house: CMSHouseItem; locale: Locale; dict: any; onOpenPlanimetry?: (house: CMSHouseItem) => void }) {
   const price = formatArchiveStartingPrice(house.price60x160);
   const hasBothImages = !!house.image && !!house.imageBardage && house.image !== house.imageBardage;
   const { isFavorite, handleToggle } = useFavorites();
@@ -154,6 +155,23 @@ function HouseCard({ house, locale, dict }: { house: CMSHouseItem; locale: Local
             priority={false}
           />
         ) : null}
+
+        {house.planimetry && (
+          <button
+            className="card-planimetry-btn"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              if (onOpenPlanimetry) onOpenPlanimetry(house);
+            }}
+            aria-label="View floor plan"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <path d="M9 3v18M9 13h12M15 13v8M3 9h6" />
+            </svg>
+          </button>
+        )}
 
         <button
           className="card-favorite-btn"
@@ -220,6 +238,7 @@ function HouseCard({ house, locale, dict }: { house: CMSHouseItem; locale: Local
 
 export function HousesArchive({ locale, initialHouses, initialCategories, dict }: HousesArchiveProps) {
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
+  const [activePlanimetry, setActivePlanimetry] = useState<CMSHouseItem | null>(null);
   const { isFavorite } = useFavorites();
   const totalFavoritesCount = initialHouses.filter((house) => isFavorite(house.slug)).length;
 
@@ -461,7 +480,7 @@ export function HousesArchive({ locale, initialHouses, initialCategories, dict }
                 </div>
                 <div className="house-archive-grid">
                   {houses.map((house) => (
-                    <HouseCard key={house.slug} house={house} locale={locale} dict={dict} />
+                    <HouseCard key={house.slug} house={house} locale={locale} dict={dict} onOpenPlanimetry={setActivePlanimetry} />
                   ))}
                 </div>
               </div>
@@ -469,6 +488,60 @@ export function HousesArchive({ locale, initialHouses, initialCategories, dict }
           );
         })}
       </div>
+
+      {activePlanimetry && activePlanimetry.planimetry && (
+        <div
+          className="material-modal-backdrop"
+          role="presentation"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setActivePlanimetry(null);
+          }}
+        >
+          <div className="material-modal" role="dialog" aria-modal="true" aria-labelledby="planimetry-modal-title">
+            <button
+              type="button"
+              className="material-modal-close"
+              onClick={() => setActivePlanimetry(null)}
+            >
+              ×
+            </button>
+            <div className="material-modal-media">
+              <Image
+                src={activePlanimetry.planimetry}
+                alt={`Planimetria - ${activePlanimetry.title}`}
+                width={1100}
+                height={620}
+                className="modal-image-el"
+                style={{ width: "100%", height: "100%", objectFit: "contain", background: "#f9fafb", padding: "20px" }}
+              />
+            </div>
+            <div className="material-modal-content" style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
+              <p className="material-modal-kicker">{activePlanimetry.categoryName}</p>
+              <h2 id="planimetry-modal-title" style={{ margin: "0 0 10px 0" }}>{activePlanimetry.title}</h2>
+              <p style={{ margin: "0 0 24px 0", color: "#4B5563", fontSize: "14px", lineHeight: "1.6" }}>
+                {locale === "en" ? "Planimetry / Floor plan layout details. This plan showcases the interior room distribution and usable living spaces." :
+                 locale === "de" ? "Planimetrie / Grundriss. Dieser Plan zeigt die Aufteilung der Innenräume und die nutzbaren Wohnflächen." :
+                 locale === "nl" ? "Planimetrie / Plattegrond. Dit plan toont de indeling van de binnenruimtes en de bruikbare woonoppervlaktes." :
+                 "Planimétrie / Plan de sol. Ce plan présente l'aménagement intérieur et la distribution des espaces de vie."}
+              </p>
+              <div className="material-attributes-grid" style={{ marginTop: "0" }}>
+                {activePlanimetry.neto && (
+                  <div className="material-attribute-card">
+                    <span className="material-attribute-label">Neto</span>
+                    <span className="material-attribute-value">{activePlanimetry.neto} m²</span>
+                  </div>
+                )}
+                {activePlanimetry.bruto && (
+                  <div className="material-attribute-card">
+                    <span className="material-attribute-label">Bruto</span>
+                    <span className="material-attribute-value">{activePlanimetry.bruto} m²</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

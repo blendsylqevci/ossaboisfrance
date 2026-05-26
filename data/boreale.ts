@@ -145,7 +145,7 @@ const borealeCategories: ConfigCategory[] = [
   {
     id: "etancheite",
     inputName: "house_etancheite",
-    label: "Étanchéité EPDM",
+    label: "Étanchéité",
     description: "Membrane d'étanchéité pour la toiture terrasse.",
     priceMode: "roof_m2",
     selectionMode: "radio-toggle",

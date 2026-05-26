@@ -71,9 +71,28 @@ function buildCategoryOptions(
       const defaultOpt = hardcodedDefaults.find(d => d.layerKey === cmsOpt.layer_key);
       const id = defaultOpt ? defaultOpt.id : cmsOpt.layer_key.replace(/_/g, '-');
 
+      let optionLabel = translateText(cmsOpt.option_name || defaultOpt?.label || '', locale);
+      if (cmsOpt.layer_key === 'etancheite_epdm') {
+        const categoryId = typeof houseDoc?.category === 'object' ? houseDoc?.category?.id : houseDoc?.category;
+        const categorySlug = typeof houseDoc?.category === 'object' ? houseDoc?.category?.slug : '';
+        const isTerraceOrTerraceEtage = 
+          houseDoc?.category_id === 1 ||
+          houseDoc?.category_id === 2 ||
+          categoryId === 1 ||
+          categoryId === 2 ||
+          categorySlug === 'maison-toitu-terrasse' ||
+          categorySlug === 'maison-sans-faitage';
+        
+        if (isTerraceOrTerraceEtage) {
+          optionLabel = "EPDM";
+        } else {
+          optionLabel = translateText("Film pare-pluie avec tas", locale);
+        }
+      }
+
       finalOptions.push({
         id,
-        label: translateText(cmsOpt.option_name || defaultOpt?.label || '', locale),
+        label: optionLabel,
         price160,
         price200,
         layerKey: cmsOpt.layer_key,
@@ -92,9 +111,28 @@ function buildCategoryOptions(
     const layerUrl = layers[defOpt.layerKey] || '';
     if (!layerUrl) continue;
 
+    let optionLabel = translateText(defOpt.label, locale);
+    if (defOpt.layerKey === 'etancheite_epdm') {
+      const categoryId = typeof houseDoc?.category === 'object' ? houseDoc?.category?.id : houseDoc?.category;
+      const categorySlug = typeof houseDoc?.category === 'object' ? houseDoc?.category?.slug : '';
+      const isTerraceOrTerraceEtage = 
+        houseDoc?.category_id === 1 ||
+        houseDoc?.category_id === 2 ||
+        categoryId === 1 ||
+        categoryId === 2 ||
+        categorySlug === 'maison-toitu-terrasse' ||
+        categorySlug === 'maison-sans-faitage';
+      
+      if (isTerraceOrTerraceEtage) {
+        optionLabel = "EPDM";
+      } else {
+        optionLabel = translateText("Film pare-pluie avec tas", locale);
+      }
+    }
+
     finalOptions.push({
       id: defOpt.id,
-      label: translateText(defOpt.label, locale),
+      label: optionLabel,
       price160: defOpt.price160,
       price200: defOpt.price200,
       layerKey: defOpt.layerKey,
@@ -436,7 +474,7 @@ export function mapHouseDocToConfiguratorData(
     {
       id: "etancheite",
       inputName: "house_etancheite",
-      label: translateText("Étanchéité EPDM", locale),
+      label: translateText("Étanchéité", locale),
       description: translateText("Membrane d'étanchéité pour toiture plate.", locale),
       priceMode: "roof_m2",
       selectionMode: "checkbox",

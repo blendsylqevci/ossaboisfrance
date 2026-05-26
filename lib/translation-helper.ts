@@ -29,11 +29,17 @@ const textTranslations: Record<string, Record<Locale, string>> = {
     de: "Flachdachabdichtung mit Abdeckung",
     nl: "Platdakwaterdichting met afdekkap"
   },
-  "Étanchéité EPDM": {
-    fr: "Étanchéité EPDM",
-    en: "EPDM Waterproofing",
-    de: "EPDM-Abdichtung",
-    nl: "EPDM-waterdichting"
+  "Étanchéité": {
+    fr: "Étanchéité",
+    en: "Waterproofing",
+    de: "Abdichtung",
+    nl: "Waterdichting"
+  },
+  "Film pare-pluie avec tas": {
+    fr: "Film pare-pluie avec tas",
+    en: "Rain barrier with lathing",
+    de: "Regenschutz mit Lattung",
+    nl: "Regenscherm met latwerk"
   },
   "Finition de la façade": {
     fr: "Finition de la façade",

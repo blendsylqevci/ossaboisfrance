@@ -171,7 +171,7 @@ export const HouseOptions: GlobalConfig = {
     },
     {
       name: 'global_roof_options',
-      label: 'Étanchéité EPDM',
+      label: 'Étanchéité',
       type: 'array',
       admin: {
         components: {

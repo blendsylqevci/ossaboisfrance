@@ -126,7 +126,7 @@ export default function HouseLayersScroll({ locale }: HouseLayersScrollProps) {
             <div className={`hl-layer-image from-top ${progress >= 0.72 ? "active" : ""}`}>
               <Image
                 src="/images/houses/calme-atike/10-epdm.png"
-                alt="Étanchéité EPDM"
+                alt="Étanchéité"
                 fill
                 sizes="100vw"
                 className="hl-img-el"

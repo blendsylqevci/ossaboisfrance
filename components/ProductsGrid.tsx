@@ -16,6 +16,8 @@ type House = {
   price60x160?: number | null;
   neto?: number | null;
   bruto?: number | null;
+  planimetry?: string | null;
+  categoryName?: string;
 };
 
 type ProductsGridProps = {
@@ -40,7 +42,67 @@ export function ProductsGrid({
 }: ProductsGridProps) {
   const [isMobile, setIsMobile] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [activePlanimetry, setActivePlanimetry] = useState<House | null>(null);
   const { isFavorite, handleToggle } = useFavorites();
+
+  const renderPlanimetryModal = () => {
+    if (!activePlanimetry || !activePlanimetry.planimetry) return null;
+    return (
+      <div
+        className="material-modal-backdrop"
+        role="presentation"
+        onMouseDown={(event) => {
+          if (event.target === event.currentTarget) setActivePlanimetry(null);
+        }}
+      >
+        <div className="material-modal" role="dialog" aria-modal="true" aria-labelledby="planimetry-modal-title">
+          <button
+            type="button"
+            className="material-modal-close"
+            onClick={() => setActivePlanimetry(null)}
+          >
+            ×
+          </button>
+          <div className="material-modal-media">
+            <Image
+              src={activePlanimetry.planimetry}
+              alt={`Planimetria - ${activePlanimetry.title}`}
+              width={1100}
+              height={620}
+              className="modal-image-el"
+              style={{ width: "100%", height: "100%", objectFit: "contain", background: "#f9fafb", padding: "20px" }}
+            />
+          </div>
+          <div className="material-modal-content" style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
+            {activePlanimetry.categoryName && (
+              <p className="material-modal-kicker">{activePlanimetry.categoryName}</p>
+            )}
+            <h2 id="planimetry-modal-title" style={{ margin: "0 0 10px 0" }}>{activePlanimetry.title}</h2>
+            <p style={{ margin: "0 0 24px 0", color: "#4B5563", fontSize: "14px", lineHeight: "1.6" }}>
+              {locale === "en" ? "Planimetry / Floor plan layout details. This plan showcases the interior room distribution and usable living spaces." :
+               locale === "de" ? "Planimetrie / Grundriss. Dieser Plan zeigt die Aufteilung der Innenräume und die nutzbaren Wohnflächen." :
+               locale === "nl" ? "Planimetrie / Plattegrond. Dit plan toont de indeling van de binnenruimtes en de bruikbare woonoppervlaktes." :
+               "Planimétrie / Plan de sol. Ce plan présente l'aménagement intérieur et la distribution des espaces de vie."}
+            </p>
+            <div className="material-attributes-grid" style={{ marginTop: "0" }}>
+              {activePlanimetry.neto && (
+                <div className="material-attribute-card">
+                  <span className="material-attribute-label">Neto</span>
+                  <span className="material-attribute-value">{activePlanimetry.neto} m²</span>
+                </div>
+              )}
+              {activePlanimetry.bruto && (
+                <div className="material-attribute-card">
+                  <span className="material-attribute-label">Bruto</span>
+                  <span className="material-attribute-value">{activePlanimetry.bruto} m²</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   // Mobile touch gesture tracking states
   const [touchStart, setTouchStart] = useState<number | null>(null);
@@ -118,141 +180,162 @@ export function ProductsGrid({
 
   if (isMobile) {
     return (
-      <div className="mobile-products-carousel">
-        <div 
-          className="mobile-products-viewport"
-          onTouchStart={onTouchStart}
-          onTouchMove={onTouchMove}
-          onTouchEnd={onTouchEnd}
-          style={{ touchAction: "pan-y" }}
-        >
-          <div
-            className="mobile-products-track"
-            style={{
-              transform: `translateX(-${currentIndex * 100}%)`,
-            }}
+      <>
+        <div className="mobile-products-carousel">
+          <div 
+            className="mobile-products-viewport"
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
           >
-            {houses.map((house) => (
-              <div className="mobile-product-slide" key={house.slug}>
-                <div className="prod-card">
-                  <div className="prod-card-img-container relative" style={{ height: "320px" }}>
-                    {house.image && house.imageBardage && house.image !== house.imageBardage ? (
-                      <CompareSlider
-                        imageA={house.image}
-                        imageB={house.imageBardage}
-                        altA={`${house.title} — Enduit`}
-                        altB={`${house.title} — Bardage`}
-                      />
-                    ) : house.image ? (
-                      <Image
-                        src={house.image}
-                        alt={house.title}
-                        width={380}
-                        height={320}
-                        style={{ objectFit: "cover", width: "100%", height: "320px" }}
-                        priority
-                      />
-                    ) : null}
-                    
-                    <button
-                      className="card-favorite-btn"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleToggle(house.slug);
-                      }}
-                      aria-label="Save to favorites"
-                    >
-                      <svg className={`heart-icon ${isFavorite(house.slug) ? "is-fav" : ""}`} viewBox="0 0 24 24">
-                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                      </svg>
-                    </button>
-                  </div>
-                  <div className="prod-card-content">
-                    <div>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "12px", width: "100%", marginBottom: "8px", flexWrap: "wrap" }}>
-                        <h3 className="prod-card-title" style={{ margin: 0 }}>{house.title}</h3>
-                        {house.neto && (
-                          <div style={{ display: "flex", gap: "10px", alignItems: "center", fontSize: "13px", fontWeight: "500", color: "#4B5563" }}>
-                            <span style={{ display: "flex", alignItems: "center", whiteSpace: "nowrap" }}>
-                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: "4px", opacity: 0.75 }}>
-                                <rect x="3" y="3" width="18" height="18" rx="2" />
-                                <path d="M9 3v18M9 12h12" />
-                              </svg>
-                              Neto: {house.neto} m²
-                            </span>
-                            <span style={{ color: "#E5E7EB", userSelect: "none" }}>|</span>
-                            <span style={{ display: "flex", alignItems: "center", whiteSpace: "nowrap" }}>
-                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: "4px", opacity: 0.75 }}>
-                                <rect x="5" y="5" width="14" height="14" rx="1.5" />
-                                <path d="M2 5h3M2 19h3M19 5h3M19 19h3M5 2v3M19 2v3M5 19v3M19 19v3" />
-                              </svg>
-                              Bruto: {house.bruto} m²
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                      <p className="prod-card-desc">{house.description}</p>
-                    </div>
-                    
-                    <div className="prod-card-footer">
-                      {(() => {
-                        const formattedPrice = formatArchiveStartingPrice(house.price60x160 ?? null);
-                        return formattedPrice ? (
-                          <div className="prod-card-price-row">
-                            <span className="prod-price-label">{dict.startingFrom}</span>
-                            <span className="prod-price-val">{formattedPrice} €</span>
-                          </div>
-                        ) : (
-                          <div className="prod-card-price-row" style={{ minHeight: "24px" }} />
-                        );
-                      })()}
+            <div 
+              className="mobile-products-track"
+              style={{
+                transform: `translateX(-${currentIndex * 100}%)`,
+                transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+              }}
+            >
+              {houses.map((house) => (
+                <div className="mobile-product-slide" key={house.slug}>
+                  <div className="prod-card">
+                    <div className="prod-card-img-container relative" style={{ height: "320px" }}>
+                      {house.image && house.imageBardage && house.image !== house.imageBardage ? (
+                        <CompareSlider
+                          imageA={house.image}
+                          imageB={house.imageBardage}
+                          altA={`${house.title} — Enduit`}
+                          altB={`${house.title} — Bardage`}
+                        />
+                      ) : house.image ? (
+                        <Image
+                          src={house.image}
+                          alt={house.title}
+                          width={380}
+                          height={320}
+                          style={{ objectFit: "cover", width: "100%", height: "320px" }}
+                          priority
+                        />
+                      ) : null}
                       
-                      <Link
-                        href={`/${locale}/maisons/${house.slug}`}
-                        className="prod-card-button"
+                      {house.planimetry && (
+                        <button
+                          className="card-planimetry-btn"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setActivePlanimetry(house);
+                          }}
+                          aria-label="View floor plan"
+                        >
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2" />
+                            <path d="M9 3v18M9 13h12M15 13v8M3 9h6" />
+                          </svg>
+                        </button>
+                      )}
+
+                      <button
+                        className="card-favorite-btn"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleToggle(house.slug);
+                        }}
+                        aria-label="Save to favorites"
                       >
-                        <span>{dict.configureBtn}</span>
-                        <svg className="prod-btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M7 17L17 7M17 7H9M17 7V15" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        <svg className={`heart-icon ${isFavorite(house.slug) ? "is-fav" : ""}`} viewBox="0 0 24 24">
+                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                         </svg>
-                      </Link>
+                      </button>
+                    </div>
+                    <div className="prod-card-content">
+                      <div>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "12px", width: "100%", marginBottom: "8px", flexWrap: "wrap" }}>
+                          <h3 className="prod-card-title" style={{ margin: 0 }}>{house.title}</h3>
+                          {house.neto && (
+                            <div style={{ display: "flex", gap: "10px", alignItems: "center", fontSize: "13px", fontWeight: "500", color: "#4B5563" }}>
+                              <span style={{ display: "flex", alignItems: "center", whiteSpace: "nowrap" }}>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: "4px", opacity: 0.75 }}>
+                                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                                  <path d="M9 3v18M9 12h12" />
+                                </svg>
+                                Neto: {house.neto} m²
+                              </span>
+                              <span style={{ color: "#E5E7EB", userSelect: "none" }}>|</span>
+                              <span style={{ display: "flex", alignItems: "center", whiteSpace: "nowrap" }}>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: "4px", opacity: 0.75 }}>
+                                  <rect x="5" y="5" width="14" height="14" rx="1.5" />
+                                  <path d="M2 5h3M2 19h3M19 5h3M19 19h3M5 2v3M19 2v3M5 19v3M19 19v3" />
+                                </svg>
+                                Bruto: {house.bruto} m²
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                        <p className="prod-card-desc">{house.description}</p>
+                      </div>
+                      
+                      <div className="prod-card-footer">
+                        {(() => {
+                          const formattedPrice = formatArchiveStartingPrice(house.price60x160 ?? null);
+                          return formattedPrice ? (
+                            <div className="prod-card-price-row">
+                              <span className="prod-price-label">{dict.startingFrom}</span>
+                              <span className="prod-price-val">{formattedPrice} €</span>
+                            </div>
+                          ) : (
+                            <div className="prod-card-price-row" style={{ minHeight: "24px" }} />
+                          );
+                        })()}
+                        
+                        <Link
+                          href={`/${locale}/maisons/${house.slug}`}
+                          className="prod-card-button"
+                        >
+                          <span>{dict.configureBtn}</span>
+                          <svg className="prod-btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7 17L17 7M17 7H9M17 7V15" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        </Link>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Carousel navigation controls (arrows and dots using original design classes) */}
-        {houses.length > 1 && (
-          <div className="prod-nav-controls">
-            <button className="prod-prev-btn" onClick={prevSlide} aria-label="Précédent">
-              ‹
-            </button>
-            <div className="prod-dots-indicator">
-              {houses.map((_, idx) => (
-                <button
-                  key={idx}
-                  className={`prod-dot-indicator ${idx === currentIndex ? "active" : ""}`}
-                  onClick={() => setCurrentIndex(idx)}
-                  aria-label={`Aller au slide ${idx + 1}`}
-                />
               ))}
             </div>
-            <button className="prod-next-btn" onClick={nextSlide} aria-label="Suivant">
-              ›
-            </button>
           </div>
-        )}
-      </div>
+
+          {/* Carousel navigation controls (arrows and dots using original design classes) */}
+          {houses.length > 1 && (
+            <div className="prod-nav-controls">
+              <button className="prod-prev-btn" onClick={prevSlide} aria-label="Précédent">
+                ‹
+              </button>
+              <div className="prod-dots-indicator">
+                {houses.map((_, idx) => (
+                  <button
+                    key={idx}
+                    className={`prod-dot-indicator ${idx === currentIndex ? "active" : ""}`}
+                    onClick={() => setCurrentIndex(idx)}
+                    aria-label={`Aller au slide ${idx + 1}`}
+                  />
+                ))}
+              </div>
+              <button className="prod-next-btn" onClick={nextSlide} aria-label="Suivant">
+                ›
+              </button>
+            </div>
+          )}
+        </div>
+        {renderPlanimetryModal()}
+      </>
     );
   }
 
   // Desktop layout (standard 3-column grid)
   return (
-    <div className="products-layout-wrapper">
+    <>
+      <div className="products-layout-wrapper">
       <div className="products-grid-container">
         {houses.map((house) => {
           return (
@@ -275,6 +358,23 @@ export function ProductsGrid({
                   />
                 ) : null}
                 
+                {house.planimetry && (
+                  <button
+                    className="card-planimetry-btn"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setActivePlanimetry(house);
+                    }}
+                    aria-label="View floor plan"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="3" width="18" height="18" rx="2" />
+                      <path d="M9 3v18M9 13h12M15 13v8M3 9h6" />
+                    </svg>
+                  </button>
+                )}
+
                 <button
                   className="card-favorite-btn"
                   onClick={(e) => {
@@ -346,6 +446,8 @@ export function ProductsGrid({
         })}
       </div>
     </div>
+    {renderPlanimetryModal()}
+  </>
   );
 }
 

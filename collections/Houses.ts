@@ -133,6 +133,15 @@ export const Houses: CollectionConfig = {
       required: true,
     },
     {
+      name: 'planimetry',
+      type: 'relationship',
+      relationTo: 'media',
+      required: false,
+      admin: {
+        description: 'L\'image de la planimétrie (plan de sol) de la maison.',
+      },
+    },
+    {
       name: 'price60x160',
       type: 'number',
       admin: {

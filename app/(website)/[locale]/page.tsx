@@ -238,6 +238,8 @@ export default async function HomePage({ params }: HomePageProps) {
       image: imageUrl || '',
       imageBardage: finalImageUrl || '',
       price60x160: finalPrice,
+      neto: doc.perdhesa?.neto || null,
+      bruto: doc.perdhesa?.bruto || null,
     };
   });
 

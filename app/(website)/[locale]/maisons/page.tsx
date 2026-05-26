@@ -149,6 +149,8 @@ export default async function HousesPage({ params }: HousesPageProps) {
       image: imageUrl || '',
       imageBardage: finalImageUrl || '',
       price60x160: finalPrice,
+      neto: doc.perdhesa?.neto || null,
+      bruto: doc.perdhesa?.bruto || null,
     };
   });
 

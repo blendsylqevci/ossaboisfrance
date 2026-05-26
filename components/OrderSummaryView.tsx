@@ -30,8 +30,8 @@ interface StoredSelection {
 }
 
 const PERDHESA_LABELS: Record<string, string> = {
-  bruto: "Surface Brute",
-  neto: "Surface Nette",
+  bruto: "Bruto",
+  neto: "Neto",
   mure_te_jashtme: "Murs Extérieurs",
   mure_mbajtese: "Murs Porteurs",
   mure_ndarese: "Murs Séparateurs",

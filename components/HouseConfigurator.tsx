@@ -49,8 +49,8 @@ function isOuterLayer(key: string): boolean {
 }
 
 export const PERDHESA_LABELS: Record<string, { fr: string; en: string; de: string; nl: string }> = {
-  bruto: { fr: "Surface Brute", en: "Gross Surface", de: "Bruttofläche", nl: "Bruto oppervlakte" },
-  neto: { fr: "Surface Nette", en: "Net Surface", de: "Nettofläche", nl: "Netto oppervlakte" },
+  bruto: { fr: "Bruto", en: "Bruto", de: "Bruto", nl: "Bruto" },
+  neto: { fr: "Neto", en: "Neto", de: "Neto", nl: "Neto" },
   mure_te_jashtme: { fr: "Murs Extérieurs", en: "Exterior Walls", de: "Außenwände", nl: "Buitenmuren" },
   mure_mbajtese: { fr: "Murs Porteurs", en: "Load-bearing Walls", de: "Tragende Wände", nl: "Dragende muren" },
   mure_ndarese: { fr: "Murs Séparateurs", en: "Partition Walls", de: "Trennwände", nl: "Tussenmuren" },

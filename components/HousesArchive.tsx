@@ -22,6 +22,8 @@ export type CMSHouseItem = {
   image: string;
   imageBardage: string;
   price60x160: number | null;
+  neto?: number | null;
+  bruto?: number | null;
 };
 
 type HousesArchiveProps = {
@@ -169,7 +171,28 @@ function HouseCard({ house, locale, dict }: { house: CMSHouseItem; locale: Local
       </div>
       <div className="house-archive-card-body">
         <span className="house-archive-card-category">{house.categoryName}</span>
-        <h3>{house.title}</h3>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "12px", width: "100%", marginBottom: "12px", flexWrap: "wrap" }}>
+          <h3 style={{ margin: 0 }}>{house.title}</h3>
+          {house.neto && (
+            <div style={{ display: "flex", gap: "10px", alignItems: "center", fontSize: "13px", fontWeight: "500", color: "#4B5563" }}>
+              <span style={{ display: "flex", alignItems: "center", whiteSpace: "nowrap" }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: "5px", opacity: 0.75 }}>
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <path d="M9 3v18M9 12h12" />
+                </svg>
+                Neto: {house.neto} m²
+              </span>
+              <span style={{ color: "#E5E7EB", userSelect: "none" }}>|</span>
+              <span style={{ display: "flex", alignItems: "center", whiteSpace: "nowrap" }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: "5px", opacity: 0.75 }}>
+                  <rect x="5" y="5" width="14" height="14" rx="1.5" />
+                  <path d="M2 5h3M2 19h3M19 5h3M19 19h3M5 2v3M19 2v3M5 19v3M19 19v3" />
+                </svg>
+                Bruto: {house.bruto} m²
+              </span>
+            </div>
+          )}
+        </div>
         <p className="house-archive-card-desc">{house.description}</p>
         
         <div className="house-archive-card-footer">

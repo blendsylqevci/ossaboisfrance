@@ -161,8 +161,8 @@ export const Houses: CollectionConfig = {
         {
           type: 'row',
           fields: [
-            { name: 'bruto', type: 'number', label: 'Surface Brute (m²)', admin: { width: '9%' } },
-            { name: 'neto', type: 'number', label: 'Surface Nette (m²)', admin: { width: '9%' } },
+            { name: 'bruto', type: 'number', label: 'Bruto (m²)', admin: { width: '9%' } },
+            { name: 'neto', type: 'number', label: 'Neto (m²)', admin: { width: '9%' } },
             { name: 'mure_te_jashtme', type: 'number', label: 'Murs Extérieurs (m²)', admin: { width: '9%' } },
             { name: 'mure_mbajtese', type: 'number', label: 'Murs Porteurs (m²)', admin: { width: '9%' } },
             { name: 'mure_ndarese', type: 'number', label: 'Murs Séparateurs (m²)', admin: { width: '9%' } },

@@ -916,6 +916,60 @@ L'équipe Ossa Bois France`;
                           <div className="option-details">
                             <span className="option-name">{size.label}</span>
                           </div>
+                          <button
+                            type="button"
+                            className="option-mini-trigger"
+                            aria-label={`Voir les details: ${size.label}`}
+                            onClick={(event) => {
+                              event.preventDefault();
+                              event.stopPropagation();
+                              
+                              const category: ConfigCategory = {
+                                id: "structure",
+                                label: locale === "en" ? "Timber frame structure" : locale === "de" ? "Holzrahmenstruktur" : locale === "nl" ? "Houtskeletstructuur" : "Structure en ossature bois",
+                                description: "",
+                                inputName: "house_size",
+                                priceMode: "fixed",
+                                selectionMode: "radio-toggle",
+                                options: []
+                              };
+
+                              const option: ConfigOption = {
+                                id: size.id,
+                                label: size.label,
+                                price160: size.price,
+                                price200: size.price,
+                                layerKey: "konstruksioni",
+                                layer: "",
+                                materialDescription: locale === "en"
+                                  ? "Timber frame structure built according to current standards, braced by 12 mm OSB panels ensuring rigidity and stability of the whole. Includes load-bearing walls, partition walls, and industrial truss framework. Price includes transport and on-site assembly under a decennial guarantee."
+                                  : locale === "de"
+                                  ? "Holzrahmenstruktur nach geltenden Normen gebaut, ausgesteift mit 12 mm OSB-Platten zur Gewährleistung von Stabilität. Inklusive tragender Wände, Trennwände und Dachstuhl. Preis inklusive Transport und Montage unter zehnjähriger Garantie."
+                                  : locale === "nl"
+                                  ? "Houtskeletstructuur gebouwd volgens de geldende normen, geschoord met 12 mm OSB-platen voor stabiliteit. Inclusief dragende muren, scheidingswanden en dakkap. Prijs inclusief transport en montage onder tienjarige garantie."
+                                  : "Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant la rigidité et la stabilité de l'ensemble. Comprend les murs porteurs, les murs de séparation et la charpente. Le prix inclut le transport et le montage sur site sous garantie décennale.",
+                                thumbnail: "/media/konstruksioni.webp",
+                                modalImage: "/media/konstruksioni.webp",
+                                attributes: [
+                                  { name: locale === "en" ? "Material" : locale === "de" ? "Material" : locale === "nl" ? "Materiaal" : "Matériau", value: locale === "en" ? "Timber & OSB" : "Bois & OSB" },
+                                  { name: locale === "en" ? "OSB bracing" : locale === "de" ? "OSB-Versteifung" : locale === "nl" ? "OSB-verstijving" : "Contreventement", value: "12 mm" },
+                                  { name: locale === "en" ? "Wall thickness option" : locale === "de" ? "Wandstärke" : locale === "nl" ? "Wanddikte" : "Épaisseur mur", value: size.id === "60x160" ? "160 mm" : "200 mm" },
+                                  { name: locale === "en" ? "Guarantee" : locale === "de" ? "Garantie" : locale === "nl" ? "Garantie" : "Garantie", value: locale === "en" ? "10 years (Decennial)" : "10 ans (Décennale)" }
+                                ]
+                              };
+
+                              setMaterialModal({ category, option, unitPrice: size.price });
+                            }}
+                          >
+                            <Image
+                              className="option-mini-image"
+                              src="/media/konstruksioni.webp"
+                              alt=""
+                              width={50}
+                              height={50}
+                              aria-hidden="true"
+                            />
+                          </button>
                         </div>
                       </label>
                     </div>
@@ -942,6 +996,15 @@ L'équipe Ossa Bois France`;
                   </button>
                   {isStructureOpen && (
                     <div className="structure-accordion-content">
+                      <div className="structure-image-preview" style={{ position: "relative", width: "100%", height: "160px", marginBottom: "14px", borderRadius: "6px", overflow: "hidden" }}>
+                        <Image
+                          src="/media/konstruksioni.webp"
+                          alt="Timber frame structure"
+                          fill
+                          style={{ objectFit: "cover" }}
+                          sizes="(max-width: 768px) 100vw, 400px"
+                        />
+                      </div>
                       {locale === "en" ? (
                         <>
                           <p>

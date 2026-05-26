@@ -9517,8 +9517,10 @@ img {
 @media (max-width: 991px) {
   .house-stage-controls {
     top: 16px !important;
+    left: 16px !important;
     right: 16px !important;
     gap: 8px !important;
+    justify-content: space-between !important;
   }
   .house-stage-controls .house-stage-zoom-trigger,
   .house-stage-controls .configurator-planimetry-btn {
@@ -9530,8 +9532,10 @@ img {
 @media (max-width: 640px) {
   .house-stage-controls {
     top: 8px !important;
+    left: 8px !important;
     right: 8px !important;
     gap: 6px !important;
+    justify-content: space-between !important;
   }
   .house-stage-controls .house-stage-zoom-trigger,
   .house-stage-controls .configurator-planimetry-btn {

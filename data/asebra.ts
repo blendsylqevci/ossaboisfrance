@@ -129,14 +129,14 @@ const asebraCategories: ConfigCategory[] = [
   {
     id: "terraceEtancheite",
     inputName: "house_terrace_etancheite",
-    label: "Isolation de l'attique",
-    description: "Polystyrène isolant pour l'attique de la toiture terrasse.",
+    label: "Isolation toiture terrasse",
+    description: "Isolation pour toiture terrasse.",
     priceMode: "roof_m2",
     selectionMode: "radio-toggle",
     options: [
       {
         id: "attic-polystyrene",
-        label: "Polystyrène d'attique",
+        label: "Polystyrène en pente",
         price160: 15.5,
         price200: 17.0,
         layerKey: "terrace_etancheite_epdm",

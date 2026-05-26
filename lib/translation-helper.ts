@@ -24,16 +24,28 @@ const textTranslations: Record<string, Record<Locale, string>> = {
     nl: "Buitenisolatie"
   },
   "Étanchéité toiture terrasse avec couvertine": {
-    fr: "Étanchéité toiture terrasse avec couvertine",
-    en: "Flat roof waterproofing with capping",
-    de: "Flachdachabdichtung mit Abdeckung",
-    nl: "Platdakwaterdichting met afdekkap"
+    fr: "Isolation toiture terrasse",
+    en: "Flat roof insulation",
+    de: "Flachdach-Dämmung",
+    nl: "Plat dak isolatie"
+  },
+  "Isolation toiture terrasse": {
+    fr: "Isolation toiture terrasse",
+    en: "Flat roof insulation",
+    de: "Flachdach-Dämmung",
+    nl: "Plat dak isolatie"
   },
   "Étanchéité": {
     fr: "Étanchéité",
     en: "Waterproofing",
     de: "Abdichtung",
     nl: "Waterdichting"
+  },
+  "Étanchéité toiture terrasse avec couverture": {
+    fr: "Étanchéité toiture terrasse avec couverture",
+    en: "Flat roof waterproofing with covering",
+    de: "Flachdachabdichtung mit Abdeckung",
+    nl: "Platdakwaterdichting met afdekkap"
   },
   "Film pare-pluie avec tas": {
     fr: "Film pare-pluie avec tas",
@@ -166,10 +178,16 @@ const textTranslations: Record<string, Record<Locale, string>> = {
     nl: "Houtvezel"
   },
   "Polystyrène d'attique": {
-    fr: "Polystyrène d'attique",
-    en: "Attic polystyrene",
-    de: "Attika-Polystyrol",
-    nl: "Attiek-polystyreen"
+    fr: "Polystyrène en pente",
+    en: "Sloped polystyrene",
+    de: "Gefälledämmung Polystyrol",
+    nl: "Afschotpolystyreen"
+  },
+  "Polystyrène en pente": {
+    fr: "Polystyrène en pente",
+    en: "Sloped polystyrene",
+    de: "Gefälledämmung Polystyrol",
+    nl: "Afschotpolystyreen"
   },
   "Membrane EPDM": {
     fr: "Membrane EPDM",
@@ -462,13 +480,12 @@ const textTranslations: Record<string, Record<Locale, string>> = {
 // General function to translate plain text or configuration values.
 export function translateText(text: string | null | undefined, locale: Locale): string {
   if (!text) return "";
-  if (locale === "fr") return text;
-
   const trimText = text.trim();
   const directMatch = textTranslations[trimText];
   if (directMatch && directMatch[locale]) {
     return directMatch[locale];
   }
+  if (locale === "fr") return text;
 
   return text;
 }

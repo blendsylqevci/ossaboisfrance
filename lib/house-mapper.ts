@@ -545,7 +545,7 @@ export function mapHouseDocToConfiguratorData(
     {
       id: "terraceEtancheite",
       inputName: "house_terrace_etancheite",
-      label: translateText("Étanchéité toiture terrasse avec couvertine", locale),
+      label: translateText("Isolation toiture terrasse", locale),
       description: translateText("Isolation pour toiture terrasse.", locale),
       priceMode: "roof_m2",
       selectionMode: "checkbox",
@@ -553,7 +553,7 @@ export function mapHouseDocToConfiguratorData(
         [
           {
             id: "terrace-epdm",
-            label: locale === "en" ? "Attic polystyrene" : locale === "de" ? "Attika-Polystyrol" : locale === "nl" ? "Attiek-polystyreen" : "Polystyrène d'attique",
+            label: locale === "en" ? "Sloped polystyrene" : locale === "de" ? "Gefälledämmung Polystyrol" : locale === "nl" ? "Afschotpolystyreen" : "Polystyrène en pente",
             price160: houseDoc.slug === 'escape-villa-me-atike' ? 1.0 : 14.0,
             price200: houseDoc.slug === 'escape-villa-me-atike' ? 1.0 : 14.0,
             layerKey: "terrace_etancheite_epdm",
@@ -582,7 +582,7 @@ export function mapHouseDocToConfiguratorData(
     {
       id: "etancheite",
       inputName: "house_etancheite",
-      label: translateText("Étanchéité", locale),
+      label: translateText("Étanchéité toiture terrasse avec couverture", locale),
       description: translateText("Membrane d'étanchéité pour toiture plate.", locale),
       priceMode: "roof_m2",
       selectionMode: "checkbox",

@@ -9726,6 +9726,25 @@ img {
   box-shadow: inset 0 0 0 1px rgba(239, 68, 68, 0.15);
 }
 
+@media (max-width: 991px) {
+  .header-action-icon-btn {
+    width: 32px !important;
+    height: 32px !important;
+  }
+  .header-action-icon-btn svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+  .header-action-badge {
+    min-width: 14px !important;
+    height: 14px !important;
+    font-size: 8px !important;
+    padding: 0 2px !important;
+    top: -3px !important;
+    right: -3px !important;
+  }
+}
+
 
 
 

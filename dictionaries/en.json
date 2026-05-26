@@ -144,7 +144,15 @@
     "favoritesEmptyTitle": "No favorites yet",
     "favoritesEmptyText": "Click on the heart icon on any house model to save it here.",
     "favoritesEmptyBtn": "Browse all models",
-    "favoritesInfoTextShort": "Your favorites are saved on this device."
+    "favoritesInfoTextShort": "Your favorites are saved on this device.",
+    "savedConfigsLabel": "Saved Selections",
+    "savedConfigsExplanationTitle": "How do saved selections work?",
+    "savedConfigsExplanationStorage": "Your material selections are saved locally in your browser (localStorage) for 30 days. Each modification extends this duration for an additional 30 days.",
+    "savedConfigsExplanationAccount": "Your custom configurations remain available during your next visits on this device, without the need to create an account.",
+    "savedConfigsExplanationCache": "If you clear your browser history or cache on this device, your saved configurations will be reset.",
+    "savedConfigsEmptyTitle": "No saved selections yet",
+    "savedConfigsEmptyText": "Configure a house model and click \"Save selections\" to save your material choices here.",
+    "savedConfigsEmptyBtn": "Browse all models"
   },
   "configurator": {
     "startingPrice": "starting from",

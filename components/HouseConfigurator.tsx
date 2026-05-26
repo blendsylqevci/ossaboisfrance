@@ -66,7 +66,12 @@ export function HouseConfigurator({ config, locale, dict }: HouseConfiguratorPro
   const router = useRouter();
   const pathname = usePathname();
   const isEn = locale === "en";
-  const [selection, setSelection] = useState(config.defaultSelection);
+  const [selection, setSelection] = useState<Record<string, string>>(() => ({
+    ...config.defaultSelection,
+    houseId: config.id
+  }));
+  const [hasRestoredSave, setHasRestoredSave] = useState(false);
+  const [showSaveToast, setShowSaveToast] = useState(false);
   const [breakdownOpen, setBreakdownOpen] = useState(false);
   const [sliderPos, setSliderPos] = useState(50);
   const [activeTab, setActiveTab] = useState<"description" | "specification">("description");
@@ -99,8 +104,47 @@ export function HouseConfigurator({ config, locale, dict }: HouseConfiguratorPro
 
   const scrollableRef = useRef<HTMLDivElement>(null);
 
+  const [hasSavedConfig, setHasSavedConfig] = useState(false);
+  const [savedSelection, setSavedSelection] = useState<Record<string, string> | null>(null);
+  const [toastMessage, setToastMessage] = useState("");
+  const [isHovered, setIsHovered] = useState(false);
+
+  const triggerToast = (msg: string) => {
+    setToastMessage(msg);
+    setShowSaveToast(true);
+    setTimeout(() => {
+      setShowSaveToast(false);
+    }, 3000);
+  };
+
+  // Restore configuration on mount or config.id change
   useEffect(() => {
-    setSelection(config.defaultSelection);
+    let savedSel = null;
+    let hasConfig = false;
+    if (typeof window !== "undefined") {
+      try {
+        const key = `ossa_house_config_${config.id}`;
+        const stored = localStorage.getItem(key);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed && parsed.selection && parsed.expiresAt > Date.now()) {
+            savedSel = parsed.selection;
+            hasConfig = true;
+
+            // Extend lifetime to 30 days
+            const expiresAt = Date.now() + 30 * 24 * 60 * 60 * 1000;
+            localStorage.setItem(key, JSON.stringify({ selection: parsed.selection, expiresAt }));
+          }
+        }
+      } catch (err) {
+        console.error("Failed to restore saved configuration:", err);
+      }
+    }
+
+    setSelection(savedSel ? { ...savedSel, houseId: config.id } : { ...config.defaultSelection, houseId: config.id });
+    setSavedSelection(savedSel);
+    setHasSavedConfig(hasConfig);
+    setHasRestoredSave(true);
     setBreakdownOpen(false);
     setSliderPos(50);
     setActiveTab("description");
@@ -113,6 +157,122 @@ export function HouseConfigurator({ config, locale, dict }: HouseConfiguratorPro
       scrollableRef.current.scrollTop = 0;
     }
   }, [config.id, config.defaultSelection]);
+
+  // Check if current configuration matches saved configuration
+  const isSaved = useMemo(() => {
+    if (!savedSelection) return false;
+    const currentKeys = Object.keys(selection).filter(k => k !== "houseId");
+    const savedKeys = Object.keys(savedSelection).filter(k => k !== "houseId");
+    if (currentKeys.length !== savedKeys.length) return false;
+
+    return currentKeys.every((key) => selection[key] === savedSelection[key]);
+  }, [selection, savedSelection]);
+
+  const handleSaveConfiguration = () => {
+    if (typeof window === "undefined") return;
+    try {
+      const key = `ossa_house_config_${config.id}`;
+      const expiresAt = Date.now() + 30 * 24 * 60 * 60 * 1000; // 30 days
+      localStorage.setItem(key, JSON.stringify({ selection, expiresAt }));
+      
+      const isUpdating = hasSavedConfig;
+      setHasSavedConfig(true);
+      setSavedSelection(selection); // Instantly trigger isSaved recomputation
+      
+      // Dispatch custom event to notify other components in real time
+      window.dispatchEvent(new CustomEvent("ossa_house_configs_changed"));
+      
+      triggerToast(isUpdating ? trans.toastChanges : trans.toastSave);
+    } catch (err) {
+      console.error("Failed to save configuration:", err);
+    }
+  };
+
+  const handleUnsaveConfiguration = () => {
+    if (typeof window === "undefined") return;
+
+    const confirmTranslations = {
+      en: "Are you sure you want to remove these saved choices?",
+      fr: "Êtes-vous sûr de vouloir retirer vos choix enregistrés ?",
+      de: "Sind Sie sicher, dass Sie Ihre gespeicherten Einstellungen entfernen möchten?",
+      nl: "Weet u zeker dat u uw opgeslagen keuzes wilt verwijderen?"
+    };
+    const confirmText = confirmTranslations[locale] || confirmTranslations.fr;
+    if (!window.confirm(confirmText)) return;
+
+    try {
+      const key = `ossa_house_config_${config.id}`;
+      localStorage.removeItem(key);
+      setHasSavedConfig(false);
+      setSavedSelection(null); // Instantly trigger isSaved recomputation
+      
+      // Dispatch custom event to notify other components in real time
+      window.dispatchEvent(new CustomEvent("ossa_house_configs_changed"));
+      
+      triggerToast(trans.toastUnsave);
+    } catch (err) {
+      console.error("Failed to remove saved configuration:", err);
+    }
+  };
+
+  const handleButtonClick = () => {
+    if (isSaved) {
+      handleUnsaveConfiguration();
+    } else {
+      handleSaveConfiguration();
+    }
+  };
+
+  const saveTranslations = {
+    en: {
+      save: "Save selections",
+      saved: "Selections saved",
+      unsave: "Unsave",
+      saveChanges: "Save changes",
+      toastSave: "Configuration saved on this device for 30 days!",
+      toastChanges: "Changes saved! Expiration extended for 30 days.",
+      toastUnsave: "Configuration removed from this device."
+    },
+    fr: {
+      save: "Enregistrer mes choix",
+      saved: "Choix enregistrés",
+      unsave: "Retirer",
+      saveChanges: "Enregistrer les modifications",
+      toastSave: "Configuration enregistrée sur cet appareil pour 30 jours !",
+      toastChanges: "Modifications enregistrées ! Prolonger de 30 jours.",
+      toastUnsave: "Configuration retirée de cet appareil."
+    },
+    de: {
+      save: "Auswahl speichern",
+      saved: "Auswahl gespeichert",
+      unsave: "Entfernen",
+      saveChanges: "Änderungen speichern",
+      toastSave: "Konfiguration für 30 Tage auf diesem Gerät gespeichert!",
+      toastChanges: "Änderungen gespeichert! Gültigkeit um 30 Tage verlängert.",
+      toastUnsave: "Konfiguration von diesem Gerät entfernt."
+    },
+    nl: {
+      save: "Keuzes opslaan",
+      saved: "Keuzes opgeslagen",
+      unsave: "Verwijderen",
+      saveChanges: "Wijzigingen opslaan",
+      toastSave: "Configuratie voor 30 dagen op dit apparaat opgeslagen!",
+      toastChanges: "Wijzigingen opgeslagen! Geldigheid met 30 dagen verlengd.",
+      toastUnsave: "Configuratie van dit apparaat verwijderd."
+    }
+  };
+  const trans = saveTranslations[locale] || saveTranslations.fr;
+
+  const buttonText = useMemo(() => {
+    if (isSaved) {
+      return isHovered ? trans.unsave : trans.saved;
+    }
+    if (hasSavedConfig) {
+      return trans.saveChanges;
+    }
+    return trans.save;
+  }, [isSaved, hasSavedConfig, isHovered, trans]);
+
 
   useEffect(() => {
     if (typeof window !== "undefined" && config?.name) {
@@ -893,7 +1053,35 @@ L'équipe Ossa Bois France`;
             </div>
             <div ref={scrollableRef} className="details-scrollable-content">
               <div className="house-header-left">
-                <h1 className="house-title">{config.name}</h1>
+                <div className="house-title-container">
+                  <h1 className="house-title">{config.name}</h1>
+                  <button
+                    type="button"
+                    className={`save-config-inline-btn${isSaved ? " saved" : ""}${isSaved && isHovered ? " unsave-hover" : ""}`}
+                    onClick={handleButtonClick}
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                    title={buttonText}
+                  >
+                    {isSaved && isHovered ? (
+                      <svg className="save-icon unsave-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: "#ef4444" }}>
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                    ) : isSaved ? (
+                      <svg className="save-icon check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: "#10b981" }}>
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    ) : (
+                      <svg className="save-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+                      </svg>
+                    )}
+                    <span className="save-text">
+                      {buttonText}
+                    </span>
+                  </button>
+                </div>
                 <div className="house-description">{config.subheading}</div>
               </div>
               <div className="house-option-group">
@@ -1507,6 +1695,21 @@ L'équipe Ossa Bois France`;
           </div>
         </div>
       ) : null}
+      {showSaveToast && (
+        <div className="save-toast">
+          {toastMessage.includes("retiré") || toastMessage.includes("removed") || toastMessage.includes("entfernt") || toastMessage.includes("verwijderd") ? (
+            <svg className="toast-icon toast-unsave-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ color: "#ef4444" }}>
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          ) : (
+            <svg className="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          )}
+          <span>{toastMessage}</span>
+        </div>
+      )}
     </div>
   );
 }

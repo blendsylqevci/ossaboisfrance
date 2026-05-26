@@ -144,7 +144,15 @@
     "favoritesEmptyTitle": "Aucun favori pour le moment",
     "favoritesEmptyText": "Cliquez sur l'icône de cœur sur n'importe quel modèle de maison pour l'enregistrer ici.",
     "favoritesEmptyBtn": "Voir tous les modèles",
-    "favoritesInfoTextShort": "Vos favoris sont enregistrés sur cet appareil."
+    "favoritesInfoTextShort": "Vos favoris sont enregistrés sur cet appareil.",
+    "savedConfigsLabel": "Choix enregistrés",
+    "savedConfigsExplanationTitle": "Comment fonctionnent vos choix enregistrés ?",
+    "savedConfigsExplanationStorage": "Vos choix de matériaux sont enregistrés localement dans votre navigateur (localStorage) pour une durée de 30 jours. Chaque modification prolonge cette durée de 30 jours supplémentaires.",
+    "savedConfigsExplanationAccount": "Vos configurations personnalisées restent disponibles lors de vos prochaines visites sur cet appareil, sans avoir besoin de créer un compte.",
+    "savedConfigsExplanationCache": "Si vous videz le cache ou l'historique de votre navigateur sur cet appareil, vos configurations enregistrées seront réinitialisées.",
+    "savedConfigsEmptyTitle": "Aucun choix enregistré",
+    "savedConfigsEmptyText": "Configurez un modèle de maison et cliquez sur « Enregistrer mes choix » pour sauvegarder vos sélections de matériaux ici.",
+    "savedConfigsEmptyBtn": "Voir tous les modèles"
   },
   "configurator": {
     "startingPrice": "à partir de",

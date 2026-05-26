@@ -6,6 +6,8 @@ import Link from "next/link";
 import { formatArchiveStartingPrice } from "@/data/houses-archive";
 import { Locale } from "@/lib/i18n";
 import { useFavorites } from "@/lib/favorites";
+import { useSavedConfigurations } from "@/lib/saved-configs";
+import { useSearchParams } from "next/navigation";
 
 export type CMSCategoryItem = {
   id: string;
@@ -236,21 +238,39 @@ function HouseCard({ house, locale, dict, onOpenPlanimetry }: { house: CMSHouseI
 
 export function HousesArchive({ locale, initialHouses, initialCategories, dict }: HousesArchiveProps) {
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
+  const [showSavedConfigurations, setShowSavedConfigurations] = useState(false);
   const [activePlanimetry, setActivePlanimetry] = useState<CMSHouseItem | null>(null);
   const { isFavorite } = useFavorites();
+  const { hasSavedConfig } = useSavedConfigurations();
   const totalFavoritesCount = initialHouses.filter((house) => isFavorite(house.slug)).length;
+  const totalSavedConfigsCount = initialHouses.filter((house) => hasSavedConfig(house.slug)).length;
 
-  // Reset showOnlyFavorites when a hash is present or changes (e.g. from header nav links)
+  const searchParams = useSearchParams();
+  const view = searchParams ? searchParams.get("view") : null;
+
+  useEffect(() => {
+    if (view === "saves") {
+      setShowSavedConfigurations(true);
+      setShowOnlyFavorites(false);
+    } else if (view === "favorites") {
+      setShowOnlyFavorites(true);
+      setShowSavedConfigurations(false);
+    }
+  }, [view]);
+
+  // Reset showOnlyFavorites and showSavedConfigurations when a hash is present or changes (e.g. from header nav links)
   useEffect(() => {
     const handleHashChange = () => {
       if (window.location.hash) {
         setShowOnlyFavorites(false);
+        setShowSavedConfigurations(false);
       }
     };
     window.addEventListener("hashchange", handleHashChange);
     // Also run on mount to handle direct page loads with hash
     if (window.location.hash) {
       setShowOnlyFavorites(false);
+      setShowSavedConfigurations(false);
     }
     return () => {
       window.removeEventListener("hashchange", handleHashChange);
@@ -294,7 +314,7 @@ export function HousesArchive({ locale, initialHouses, initialCategories, dict }
         });
       }
     };
-  }, [showOnlyFavorites]);
+  }, [showOnlyFavorites, showSavedConfigurations]);
 
   const pageTitle = dict.pageTitle;
   const pageSubtitle = dict.pageSubtitle;
@@ -323,7 +343,10 @@ export function HousesArchive({ locale, initialHouses, initialCategories, dict }
                     href={`#${category.id}`} 
                     className="category-nav-badge" 
                     key={category.id}
-                    onClick={() => setShowOnlyFavorites(false)}
+                    onClick={() => {
+                      setShowOnlyFavorites(false);
+                      setShowSavedConfigurations(false);
+                    }}
                   >
                     <span>{category.title}</span>
                     <span className="badge-count notranslate" translate="no">{count}</span>
@@ -333,11 +356,37 @@ export function HousesArchive({ locale, initialHouses, initialCategories, dict }
               
               <button 
                 className={`category-nav-badge favorites-toggle-badge ${showOnlyFavorites ? "active" : ""}`}
-                onClick={() => setShowOnlyFavorites(!showOnlyFavorites)}
+                onClick={() => {
+                  setShowOnlyFavorites(!showOnlyFavorites);
+                  setShowSavedConfigurations(false);
+                }}
               >
-                <span>{dict.favoritesLabel} ❤️</span>
+                <span style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                  </svg>
+                  {dict.favoritesLabel}
+                </span>
                 <span className="badge-count notranslate" translate="no">
                   {totalFavoritesCount}
+                </span>
+              </button>
+
+              <button 
+                className={`category-nav-badge saved-configs-toggle-badge ${showSavedConfigurations ? "active" : ""}`}
+                onClick={() => {
+                  setShowSavedConfigurations(!showSavedConfigurations);
+                  setShowOnlyFavorites(false);
+                }}
+              >
+                <span style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+                  </svg>
+                  {dict.savedConfigsLabel}
+                </span>
+                <span className="badge-count notranslate" translate="no">
+                  {totalSavedConfigsCount}
                 </span>
               </button>
             </div>
@@ -355,7 +404,10 @@ export function HousesArchive({ locale, initialHouses, initialCategories, dict }
                 <a 
                   href={`#${category.id}`} 
                   key={category.id}
-                  onClick={() => setShowOnlyFavorites(false)}
+                  onClick={() => {
+                    setShowOnlyFavorites(false);
+                    setShowSavedConfigurations(false);
+                  }}
                 >
                   <span>{category.title}</span>
                   <span className="sticky-nav-count notranslate" translate="no">{count || 0}</span>
@@ -363,13 +415,40 @@ export function HousesArchive({ locale, initialHouses, initialCategories, dict }
               );
             })}
             
-            <button 
+             <button 
               className={`favorites-sticky-toggle ${showOnlyFavorites ? "active" : ""}`}
-              onClick={() => setShowOnlyFavorites(!showOnlyFavorites)}
+              onClick={() => {
+                setShowOnlyFavorites(!showOnlyFavorites);
+                setShowSavedConfigurations(false);
+              }}
             >
-              <span>{dict.favoritesLabel} ❤️</span>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: "5px" }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                </svg>
+                {dict.favoritesLabel}
+              </span>
               <span className="sticky-nav-count notranslate" translate="no">
                 {totalFavoritesCount}
+              </span>
+            </button>
+
+            <button 
+              className={`favorites-sticky-toggle saved-configs-sticky-toggle ${showSavedConfigurations ? "active" : ""}`}
+              style={{ marginLeft: "8px" }}
+              onClick={() => {
+                setShowSavedConfigurations(!showSavedConfigurations);
+                setShowOnlyFavorites(false);
+              }}
+            >
+              <span style={{ display: "inline-flex", alignItems: "center", gap: "5px" }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+                </svg>
+                {dict.savedConfigsLabel}
+              </span>
+              <span className="sticky-nav-count notranslate" translate="no">
+                {totalSavedConfigsCount}
               </span>
             </button>
           </div>
@@ -377,7 +456,7 @@ export function HousesArchive({ locale, initialHouses, initialCategories, dict }
       </div>
  
       {/* Commitments & Guarantees section */}
-      {!showOnlyFavorites && (
+      {!showOnlyFavorites && !showSavedConfigurations && (
         <div className="archive-commitments-section">
           <div className="container">
             <div className="commitments-header reveal-on-scroll">
@@ -443,11 +522,39 @@ export function HousesArchive({ locale, initialHouses, initialCategories, dict }
             </div>
           </div>
         )}
+
+        {showSavedConfigurations && (
+          <div className="favorites-info-wrapper container">
+            <div className="favorites-explanation-box reveal-on-scroll is-visible direct-show">
+              <div className="explanation-content">
+                <h4>
+                  <span className="info-icon" style={{ marginRight: "8px" }}>💡</span>
+                  {dict.savedConfigsExplanationTitle}
+                </h4>
+                <ul>
+                  <li>
+                    {dict.savedConfigsExplanationStorage}
+                  </li>
+                  <li>
+                    {dict.savedConfigsExplanationAccount}
+                  </li>
+                  <li>
+                    {dict.savedConfigsExplanationCache}
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
  
         {showOnlyFavorites && totalFavoritesCount === 0 && (
           <div className="favorites-empty-state container reveal-on-scroll is-visible">
             <div className="empty-state-content">
-              <div className="empty-state-icon">❤️</div>
+              <div className="empty-state-icon" style={{ display: "flex", justifyContent: "center", alignItems: "center", background: "#fef2f2", border: "1px solid #fca5a5" }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                </svg>
+              </div>
               <h3>{dict.favoritesEmptyTitle}</h3>
               <p>
                 {dict.favoritesEmptyText}
@@ -458,12 +565,32 @@ export function HousesArchive({ locale, initialHouses, initialCategories, dict }
             </div>
           </div>
         )}
+
+        {showSavedConfigurations && totalSavedConfigsCount === 0 && (
+          <div className="favorites-empty-state container reveal-on-scroll is-visible">
+            <div className="empty-state-content">
+              <div className="empty-state-icon" style={{ display: "flex", justifyContent: "center", alignItems: "center", background: "#f0fdf4", border: "1px solid #bbf7d0" }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5E6F4F" strokeWidth="2">
+                  <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+                </svg>
+              </div>
+              <h3>{dict.savedConfigsEmptyTitle}</h3>
+              <p>
+                {dict.savedConfigsEmptyText}
+              </p>
+              <button className="primary-btn" onClick={() => setShowSavedConfigurations(false)}>
+                {dict.savedConfigsEmptyBtn}
+              </button>
+            </div>
+          </div>
+        )}
  
         {initialCategories.map((category) => {
           const houses = initialHouses.filter((house) => {
             const matchesCategory = house.categorySlug === category.slug;
             if (!matchesCategory) return false;
             if (showOnlyFavorites) return isFavorite(house.slug);
+            if (showSavedConfigurations) return hasSavedConfig(house.slug);
             return true;
           });
           if (houses.length === 0) return null;

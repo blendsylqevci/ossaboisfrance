@@ -144,7 +144,15 @@
     "favoritesEmptyTitle": "Nog geen favorieten",
     "favoritesEmptyText": "Klik op het hartpictogram op een willekeurig huismodel om het hier op te slaan.",
     "favoritesEmptyBtn": "Blader door alle modellen",
-    "favoritesInfoTextShort": "Uw favorieten worden op dit apparaat opgeslagen."
+    "favoritesInfoTextShort": "Uw favorieten worden op dit apparaat opgeslagen.",
+    "savedConfigsLabel": "Opgeslagen keuzes",
+    "savedConfigsExplanationTitle": "Hoe werken opgeslagen keuzes?",
+    "savedConfigsExplanationStorage": "Uw materiaalkeuzes worden lokaal in uw browser (localStorage) opgeslagen voor 30 dagen. Elke wijziging verlengt deze duur met nog eens 30 dagen.",
+    "savedConfigsExplanationAccount": "Uw aangepaste configuraties blijven beschikbaar tijdens uw volgende bezoeken op dit apparaat, zonder dat u een account hoeft aan te maken.",
+    "savedConfigsExplanationCache": "Als u uw browsergeschiedenis of cache op dit apparaat wist, worden uw opgeslagen configuraties gereset.",
+    "savedConfigsEmptyTitle": "Geen opgeslagen keuzes",
+    "savedConfigsEmptyText": "Configureer een huismodel en klik op \"Keuzes opslaan\" om uw materiaalkeuzes hier op te slaan.",
+    "savedConfigsEmptyBtn": "Bekijk alle modellen"
   },
   "configurator": {
     "startingPrice": "vanaf",

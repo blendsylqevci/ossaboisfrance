@@ -144,7 +144,15 @@
     "favoritesEmptyTitle": "Noch keine Favoriten",
     "favoritesEmptyText": "Klicken Sie bei einem beliebigen Hausmodell auf das Herzsymbol, um es hier zu speichern.",
     "favoritesEmptyBtn": "Alle Modelle durchsuchen",
-    "favoritesInfoTextShort": "Ihre Favoriten werden auf diesem Gerät gespeichert."
+    "favoritesInfoTextShort": "Ihre Favoriten werden auf diesem Gerät gespeichert.",
+    "savedConfigsLabel": "Gespeicherte Auswahl",
+    "savedConfigsExplanationTitle": "Wie funktioniert die gespeicherte Auswahl?",
+    "savedConfigsExplanationStorage": "Ihre Materialauswahl wird für 30 Tage lokal in Ihrem Browser (localStorage) gespeichert. Jede Änderung verlängert diese Dauer um weitere 30 Tage.",
+    "savedConfigsExplanationAccount": "Ihre individuellen Konfigurationen bleiben bei Ihren nächsten Besuchen auf diesem Gerät verfügbar, ohne dass Sie ein Konto erstellen müssen.",
+    "savedConfigsExplanationCache": "Wenn Sie Ihren Browserverlauf oder Cache auf diesem Gerät löschen, werden Ihre gespeicherten Konfigurationen zurückgesetzt.",
+    "savedConfigsEmptyTitle": "Keine gespeicherte Auswahl",
+    "savedConfigsEmptyText": "Konfigurieren Sie ein Hausmodell und klicken Sie auf „Auswahl speichern“, um Ihre Materialauswahl hier zu sichern.",
+    "savedConfigsEmptyBtn": "Alle Modelle ansehen"
   },
   "configurator": {
     "startingPrice": "ab",

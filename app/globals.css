@@ -7020,9 +7020,27 @@ img {
     z-index: 1 !important;
   }
 
-  .house-title,
-  .house-header-left {
+  .house-title {
     display: none !important;
+  }
+
+  .house-header-left {
+    display: block !important;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 16px;
+  }
+
+  .house-title-container {
+    justify-content: flex-start !important;
+    margin-bottom: 0 !important;
+  }
+
+  .save-config-inline-btn {
+    width: 100% !important;
+    padding: 10px 16px !important;
+    font-size: 14px !important;
+    border-radius: 24px !important;
   }
 
   .header-actions {
@@ -8672,6 +8690,55 @@ img {
   color: #ffffff !important;
 }
 
+/* Saved Configurations quick nav toggle buttons */
+.saved-configs-toggle-badge {
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.saved-configs-toggle-badge.active {
+  background: #5E6F4F !important;
+  color: #ffffff !important;
+  border-color: #5E6F4F !important;
+}
+
+.saved-configs-toggle-badge.active .badge-count {
+  background: #ffffff !important;
+  color: #5E6F4F !important;
+}
+
+.saved-configs-sticky-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14.5px;
+  font-weight: 500;
+  color: #4b5563;
+  padding: 6px 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  transition: all 0.2s ease;
+  position: relative;
+  white-space: nowrap;
+}
+
+.saved-configs-sticky-toggle:hover {
+  color: #5E6F4F;
+}
+
+.saved-configs-sticky-toggle.active {
+  color: #5E6F4F !important;
+  font-weight: 600;
+}
+
+.saved-configs-sticky-toggle.active .sticky-nav-count {
+  background: #5E6F4F !important;
+  color: #ffffff !important;
+}
+
 /* Favorites Info & Explanation Box */
 .favorites-info-wrapper {
   margin-top: 40px;
@@ -9475,6 +9542,191 @@ img {
     height: 18px !important;
   }
 }
+
+/* Configuration Save Button & Toast Styles */
+.house-title-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+
+.house-title-container .house-title {
+  margin: 0;
+}
+
+.save-config-inline-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: #f7fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  color: #4a5568;
+  font-size: 13px;
+  font-weight: 550;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.save-config-inline-btn:hover {
+  background: #edf2f7;
+  color: #1f4b43;
+  border-color: #cbd5e0;
+}
+
+.save-config-inline-btn .save-icon {
+  width: 14px;
+  height: 14px;
+  fill: transparent;
+  stroke: currentColor;
+  transition: fill 0.2s ease;
+}
+
+.save-config-inline-btn.saved {
+  background: #e6f4f0;
+  border-color: #a3e2d3;
+  color: #1f4b43;
+}
+
+.save-config-inline-btn.saved .save-icon {
+  fill: #4e9280;
+  stroke: #1f4b43;
+}
+
+.save-config-inline-btn.saved.unsave-hover {
+  background: #fef2f2 !important;
+  border-color: #fca5a5 !important;
+  color: #991b1b !important;
+}
+
+/* Success Toast Notification */
+.save-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #1f4b43;
+  color: #ffffff;
+  padding: 14px 22px;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid rgba(78, 146, 128, 0.2);
+  animation: slideInUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.toast-icon {
+  width: 20px;
+  height: 20px;
+  color: #55ffd3;
+  flex-shrink: 0;
+}
+
+/* Responsive Mobile Rules for Save Config Button & Toast */
+@media (max-width: 768px) {
+  .save-toast {
+    bottom: 96px;
+    left: 20px;
+    right: 20px;
+    justify-content: center;
+    font-size: 13px;
+    padding: 12px 16px;
+  }
+}
+
+/* Header Action Icon Buttons (Favorites & Saves) */
+.header-action-icon-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: #12161d;
+  background: rgba(24, 26, 32, 0.05);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.header-action-icon-btn:hover {
+  background: rgba(24, 26, 32, 0.1);
+  color: #5E6F4F;
+  transform: translateY(-1px);
+}
+
+.header-action-icon-btn.active {
+  background: rgba(94, 111, 79, 0.1);
+  color: #5E6F4F;
+  box-shadow: inset 0 0 0 1px rgba(94, 111, 79, 0.2);
+}
+
+.header-action-icon-btn svg {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.2s ease;
+}
+
+.header-action-icon-btn:hover svg {
+  transform: scale(1.05);
+}
+
+.header-action-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 9px;
+  background: #5E6F4F;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  border: 2px solid var(--white, #ffffff);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Make favorite badge red for a premium feel */
+.header-action-icon-btn.fav-btn .header-action-badge {
+  background: #ef4444;
+}
+
+.header-action-icon-btn.fav-btn:hover {
+  color: #ef4444;
+}
+
+.header-action-icon-btn.fav-btn.active {
+  background: rgba(239, 68, 68, 0.08);
+  color: #ef4444;
+  box-shadow: inset 0 0 0 1px rgba(239, 68, 68, 0.15);
+}
+
+
 
 
 

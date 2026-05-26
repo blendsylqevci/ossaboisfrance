@@ -6,6 +6,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Locale, localeLabels, locales } from "@/lib/i18n";
 import { translateText } from "@/lib/translation-helper";
+import { useFavorites } from "@/lib/favorites";
+import { useSavedConfigurations } from "@/lib/saved-configs";
 
 type SiteHeaderProps = {
   locale: Locale;
@@ -63,8 +65,13 @@ const getCleanHouseName = (slug: string, locale: Locale) => {
 };
 
 export function SiteHeader({ locale, dict }: SiteHeaderProps) {
-  const pathname = usePathname();
+  const pathname = usePathname() || "";
   const mobileMenuRef = useRef<HTMLDetailsElement>(null);
+  
+  const { favorites } = useFavorites();
+  const { savedConfigs } = useSavedConfigurations();
+  const totalFavoritesCount = favorites.length;
+  const totalSavedConfigsCount = savedConfigs.length;
 
   const segments = pathname ? pathname.split("/") : [];
   const isHouseDetailPage = segments[2] === "maisons" && segments[3] && segments[3] !== "";
@@ -221,6 +228,35 @@ export function SiteHeader({ locale, dict }: SiteHeaderProps) {
               ))}
             </div>
           </div>
+
+          <Link 
+            href={`/${locale}/maisons?view=saves`} 
+            className={`header-action-icon-btn saves-btn ${pathname.includes("view=saves") ? "active" : ""}`}
+            title={locale === "en" ? "Your Saves" : locale === "de" ? "Gespeichert" : locale === "nl" ? "Je keuzes" : "Vos choix"}
+            aria-label={locale === "en" ? "Your Saves" : locale === "de" ? "Gespeichert" : locale === "nl" ? "Je keuzes" : "Vos choix"}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+            </svg>
+            {totalSavedConfigsCount > 0 && (
+              <span className="header-action-badge">{totalSavedConfigsCount}</span>
+            )}
+          </Link>
+
+          <Link 
+            href={`/${locale}/maisons?view=favorites`} 
+            className={`header-action-icon-btn fav-btn ${pathname.includes("view=favorites") ? "active" : ""}`}
+            title={locale === "en" ? "Your Favorites" : locale === "de" ? "Favoriten" : locale === "nl" ? "Je favorieten" : "Vos favoris"}
+            aria-label={locale === "en" ? "Your Favorites" : locale === "de" ? "Favoriten" : locale === "nl" ? "Je favorieten" : "Vos favoris"}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+            </svg>
+            {totalFavoritesCount > 0 && (
+              <span className="header-action-badge">{totalFavoritesCount}</span>
+            )}
+          </Link>
+
           <Link className="button secondary header-contact-btn" href={`/${locale}/contact`}>
             {dict?.contactUs || "Contactez-Nous"}
           </Link>
@@ -260,6 +296,30 @@ export function SiteHeader({ locale, dict }: SiteHeaderProps) {
               <Link href={`/${locale}/qui-sommes-nous`} onClick={closeMobileMenu}>{dict?.about || "Qui Sommes-Nous"}</Link>
               <Link href={`/${locale}/b2b`} onClick={closeMobileMenu}>{dict?.b2b || "B2B"}</Link>
               <Link href={`/${locale}/realisations`} onClick={closeMobileMenu}>{dict?.realisations || "Réalisations"}</Link>
+              {totalSavedConfigsCount > 0 && (
+                <Link 
+                  href={`/${locale}/maisons?view=saves`} 
+                  onClick={closeMobileMenu}
+                  style={{ display: "flex", alignItems: "center", gap: "8px" }}
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" style={{ display: "inline-block", verticalAlign: "middle" }}>
+                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+                  </svg>
+                  {locale === "en" ? "Your Saves" : locale === "de" ? "Gespeichert" : locale === "nl" ? "Je keuzes" : "Vos choix"} ({totalSavedConfigsCount})
+                </Link>
+              )}
+              {totalFavoritesCount > 0 && (
+                <Link 
+                  href={`/${locale}/maisons?view=favorites`} 
+                  onClick={closeMobileMenu}
+                  style={{ display: "flex", alignItems: "center", gap: "8px" }}
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" style={{ display: "inline-block", verticalAlign: "middle" }}>
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                  </svg>
+                  {locale === "en" ? "Your Favorites" : locale === "de" ? "Favoriten" : locale === "nl" ? "Favorieten" : "Vos favoris"} ({totalFavoritesCount})
+                </Link>
+              )}
               <Link className="mobile-menu-contact" href={`/${locale}/contact`} onClick={closeMobileMenu}>
                 {dict?.contactUs || "Contactez-Nous"}
               </Link>

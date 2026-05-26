@@ -52,6 +52,52 @@ const optionFields: Field[] = [
 export const HouseOptions: GlobalConfig = {
   slug: 'house-options',
   lockDocuments: false,
+  hooks: {
+    afterChange: [
+      async ({ doc, req }) => {
+        try {
+          const rate160 = doc.priceRate60x160 || 350;
+          const rate200 = doc.priceRate60x200 || 370;
+
+          req.payload.logger.info(
+            `[HouseOptions Global Hook] Re-calculating all house prices based on new rates: 60x160=${rate160}€, 60x200=${rate200}€...`
+          );
+
+          const houses = await req.payload.find({
+            collection: 'houses',
+            limit: 1000,
+            depth: 0,
+            req
+          });
+
+          for (const house of houses.docs) {
+            const neto = house.perdhesa?.neto || 0;
+            if (neto > 0) {
+              const newPrice160 = neto >= 131 ? (neto * rate160) + 3500 : neto * rate160;
+              const newPrice200 = neto >= 131 ? (neto * rate200) + 3500 : neto * rate200;
+
+              if (house.price60x160 !== newPrice160 || house.price60x200 !== newPrice200) {
+                req.payload.logger.info(
+                  `[HouseOptions Global Hook] Updating prices for ${house.slug}: 60x160=${newPrice160}€, 60x200=${newPrice200}€`
+                );
+                await req.payload.update({
+                  collection: 'houses',
+                  id: house.id,
+                  data: {
+                    price60x160: newPrice160,
+                    price60x200: newPrice200
+                  },
+                  req
+                });
+              }
+            }
+          }
+        } catch (err) {
+          req.payload.logger.error(`[HouseOptions Global Hook] Failed to propagate pricing updates: ${err}`);
+        }
+      }
+    ]
+  },
   access: {
     read: () => true,
   },
@@ -68,6 +114,26 @@ export const HouseOptions: GlobalConfig = {
       required: true,
       admin: {
         description: 'Marge globale appliquée au prix de toutes les maisons (si non surchargée individuellement).',
+      },
+    },
+    {
+      name: 'priceRate60x160',
+      type: 'number',
+      label: 'Prix par m² pour 60x160 (€) / Rate per m² for 60x160 (€)',
+      defaultValue: 350,
+      required: true,
+      admin: {
+        description: 'Tarif par m² utilisé pour le calcul de la taille 60x160.',
+      },
+    },
+    {
+      name: 'priceRate60x200',
+      type: 'number',
+      label: 'Prix par m² pour 60x200 (€) / Rate per m² for 60x200 (€)',
+      defaultValue: 370,
+      required: true,
+      admin: {
+        description: 'Tarif par m² utilisé pour le calcul de la taille 60x200.',
       },
     },
     {

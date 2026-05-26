@@ -5,6 +5,8 @@ import { Locale } from "@/lib/i18n";
 import { getDictionary } from "@/lib/dictionary";
 import { translateText, translateHouseDescription } from "@/lib/translation-helper";
 import { Metadata } from "next";
+import { calculateStructureSizePrice } from "@/lib/house-mapper";
+
 
 export const dynamic = "force-dynamic";
 
@@ -125,7 +127,16 @@ export default async function HousesPage({ params }: HousesPageProps) {
     const finalImageUrl = typeof doc.finalImage === 'object' ? doc.finalImage?.url : '';
     const catObj = typeof doc.category === 'object' ? doc.category : null;
     
-    const rawPrice = doc.price60x160 || null;
+    const neto = doc.perdhesa?.neto || 0;
+    const rawPrice = doc.price60x160
+      ? calculateStructureSizePrice(
+          "60x160",
+          neto,
+          doc.price60x160,
+          globalOptions?.priceRate60x160,
+          globalOptions?.priceRate60x200
+        )
+      : null;
     const marginMultiplier = 1 + (doc.marginPercent ?? globalMargin) / 100;
     const finalPrice = rawPrice ? rawPrice * marginMultiplier : null;
     

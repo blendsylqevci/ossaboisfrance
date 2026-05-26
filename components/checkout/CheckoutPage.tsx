@@ -213,7 +213,21 @@ export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
   }, []);
 
   const basePrice = selection?.totalPrice ?? 0;
-  const total = useMemo(() => basePrice + TRANSPORTATION_COST, [basePrice]);
+  const transportCost = useMemo(() => {
+    const size = selection?.size?.value;
+    if (size === "60x160" || size === "60x200") {
+      return 0;
+    }
+    return TRANSPORTATION_COST;
+  }, [selection?.size?.value]);
+
+  const total = useMemo(() => basePrice + transportCost, [basePrice, transportCost]);
+
+  const formatTransportCost = (value: number) => {
+    if (value === 0) return "0.00 €";
+    return euroFormatter.format(value);
+  };
+
 
   const hasCustomizations = useMemo(() => {
     if (!selection) return false;
@@ -268,6 +282,12 @@ export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
       : locale === "de" ? "Lieferung per Kranwagen direkt auf Ihr Grundstück unter sicheren Bedingungen innerhalb von 3 bis 4 Wochen"
       : locale === "nl" ? "Levering met kraanwagen direct op uw grond onder veilige omstandigheden binnen 3 tot 4 weken"
       : "Livraison par camion grue directement sur votre terrain sous 3 à 4 semaines avec encadrement de sécurité",
+    assemblyTitle: locale === "en" ? "Professional Assembly & Installation" : locale === "de" ? "Professionelle Montage & Installation" : locale === "nl" ? "Professionele Montage & Installatie" : "Montage & Installation professionnelle",
+    assemblyDesc: locale === "en"
+      ? "Complete assembly of the timber frame structure on your foundations by our expert crew"
+      : locale === "de" ? "Vollständiger Aufbau der Holzrahmenstruktur auf Ihrem Fundament durch unser Expertenteam"
+      : locale === "nl" ? "Volledige montage van de houtskeletstructuur op uw fundering door ons expertteam"
+      : "Montage complet de la structure en ossature bois sur vos fondations par nos équipes spécialisées",
     agreeShippingText: locale === "en"
       ? "I accept the delivery conditions by special convoy. I certify that my plot is accessible for heavy crane trucks."
       : locale === "de" ? "Ich akzeptiere die Lieferbedingungen per Spezialtransport. Ich bestätige, dass mein Grundstück für schwere Kranwagen zugänglich ist."
@@ -297,6 +317,7 @@ export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
     selectedModel: locale === "en" ? "Selected Model" : locale === "de" ? "Ausgewähltes Modell" : locale === "nl" ? "Geselecteerd model" : "Modèle choisi",
     basePriceLabel: locale === "en" ? "Base Price" : locale === "de" ? "Basispreis" : locale === "nl" ? "Basisprijs" : "Prix de base",
     shippingCost: locale === "en" ? "Transport Estimate" : locale === "de" ? "Transportkosten-Schätzung" : locale === "nl" ? "Geschatte transportkosten" : "Estimation transport",
+    assemblyCostLabel: locale === "en" ? "Assembly & Installation" : locale === "de" ? "Montage & Installation" : locale === "nl" ? "Montage & Installatie" : "Montage & Installation",
     totalEst: locale === "en" ? "Total Estimate" : locale === "de" ? "Gesamtschätzung" : locale === "nl" ? "Totale schatting" : "Estimation totale",
     vatIncl: locale === "en" ? "incl. VAT" : locale === "de" ? "inkl. MwSt." : locale === "nl" ? "incl. btw" : "TTC",
     submitButton: locale === "en" ? "Submit Project Request" : locale === "de" ? "Projektanfrage senden" : locale === "nl" ? "Projectaanvraag indienen" : "Envoyer ma demande de projet",
@@ -385,7 +406,7 @@ export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
         deliveryInfo,
         orderRef: ref,
         total,
-        transportCost: TRANSPORTATION_COST,
+        transportCost: transportCost,
         locale
       })
     })
@@ -656,7 +677,7 @@ export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
                         <h2 className="form-title">{t.shippingTitle}</h2>
                       </div>
                       
-                      <div className="transportation-options-wrapper">
+                      <div className="transportation-options-wrapper" style={{ display: "grid", gap: "12px" }}>
                         {/* Static locked checked shipping option card */}
                         <div className="transportation-card checked static-card">
                           <input
@@ -671,7 +692,25 @@ export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
                               <span className="transportation-name">{t.shippingMethod}</span>
                               <span className="transportation-description">{t.shippingDesc}</span>
                             </div>
-                            <span className="transportation-price">{euroFormatter.format(TRANSPORTATION_COST)}</span>
+                            <span className="transportation-price">{formatTransportCost(transportCost)}</span>
+                          </div>
+                        </div>
+
+                        {/* Static locked checked assembly option card */}
+                        <div className="transportation-card checked static-card">
+                          <input
+                            className="transportation-checkbox"
+                            type="checkbox"
+                            checked={true}
+                            readOnly
+                          />
+                          <span className="transportation-custom-checkbox" />
+                          <div className="transportation-content">
+                            <div className="transportation-info">
+                              <span className="transportation-name">{t.assemblyTitle}</span>
+                              <span className="transportation-description">{t.assemblyDesc}</span>
+                            </div>
+                            <span className="transportation-price">{formatTransportCost(0)}</span>
                           </div>
                         </div>
                       </div>
@@ -844,7 +883,11 @@ export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
                     </div>
                     <div className="order-price-row">
                       <span className="order-price-label">{t.shippingCost}</span>
-                      <span className="order-price-value">{euroFormatter.format(TRANSPORTATION_COST)}</span>
+                      <span className="order-price-value">{formatTransportCost(transportCost)}</span>
+                    </div>
+                    <div className="order-price-row">
+                      <span className="order-price-label">{t.assemblyCostLabel}</span>
+                      <span className="order-price-value">{formatTransportCost(0)}</span>
                     </div>
                     
                     <div className="order-divider" />

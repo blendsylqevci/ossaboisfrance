@@ -14,6 +14,8 @@ import { FeaturedProductsSection } from "@/components/FeaturedProductsSection";
 import { AboutStats } from "@/components/AboutStats";
 import { getDictionary } from "@/lib/dictionary";
 import { translateText, translateHouseDescription } from "@/lib/translation-helper";
+import { calculateStructureSizePrice } from "@/lib/house-mapper";
+
 
 type HomePageProps = {
   params: Promise<{ locale: Locale }>;
@@ -214,7 +216,16 @@ export default async function HomePage({ params }: HomePageProps) {
     const finalImageUrl = typeof doc.finalImage === 'object' ? doc.finalImage?.url : '';
     const catObj = typeof doc.category === 'object' ? doc.category : null;
     
-    const rawPrice = doc.price60x160 || null;
+    const neto = doc.perdhesa?.neto || 0;
+    const rawPrice = doc.price60x160
+      ? calculateStructureSizePrice(
+          "60x160",
+          neto,
+          doc.price60x160,
+          globalOptions?.priceRate60x160,
+          globalOptions?.priceRate60x200
+        )
+      : null;
     const marginMultiplier = 1 + (doc.marginPercent ?? globalMargin) / 100;
     const finalPrice = rawPrice ? rawPrice * marginMultiplier : null;
 

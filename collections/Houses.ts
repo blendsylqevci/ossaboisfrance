@@ -4,6 +4,40 @@ export const Houses: CollectionConfig = {
   slug: 'houses',
   lockDocuments: false,
   hooks: {
+    beforeChange: [
+      async ({ data, req }) => {
+        const neto = data.perdhesa?.neto || 0;
+        if (neto > 0) {
+          let rate160 = 350;
+          let rate200 = 370;
+
+          try {
+            const globalOptions = await req.payload.findGlobal({
+              slug: 'house-options',
+              depth: 0,
+              req
+            });
+            if (globalOptions?.priceRate60x160) {
+              rate160 = globalOptions.priceRate60x160;
+            }
+            if (globalOptions?.priceRate60x200) {
+              rate200 = globalOptions.priceRate60x200;
+            }
+          } catch (globalErr) {
+            req.payload.logger.error(`[Houses Hook] Failed to load global options rates: ${globalErr}`);
+          }
+
+          if (neto >= 131) {
+            data.price60x160 = (neto * rate160) + 3500;
+            data.price60x200 = (neto * rate200) + 3500;
+          } else {
+            data.price60x160 = neto * rate160;
+            data.price60x200 = neto * rate200;
+          }
+        }
+        return data;
+      }
+    ],
     afterDelete: [
       async ({ req, id }) => {
         try {

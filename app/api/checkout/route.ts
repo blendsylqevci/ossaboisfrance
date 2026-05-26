@@ -118,7 +118,8 @@ export async function POST(req: NextRequest) {
       serverOptionsTotal += rawPrice * multiplier;
     }
 
-    const calculatedGrandTotal = Math.round(serverBasePrice + serverOptionsTotal) + 3000;
+    const serverTransportCost = (selectedSizeId === "60x160" || selectedSizeId === "60x200") ? 0 : 3000;
+    const calculatedGrandTotal = Math.round(serverBasePrice + serverOptionsTotal) + serverTransportCost;
 
     // Validate against client-sent total price (allow small tolerance of 5 EUR)
     if (Math.abs(calculatedGrandTotal - total) > 5) {
@@ -139,7 +140,7 @@ export async function POST(req: NextRequest) {
         customerEmail: clientEmail,
         customerPhone: clientPhone || "",
         totalPrice: total,
-        transportCost: transportCost || 0,
+        transportCost: serverTransportCost,
         streetAddress: deliveryInfo?.streetAddress || "",
         city: deliveryInfo?.city || "",
         zipCode: deliveryInfo?.zipCode || "",

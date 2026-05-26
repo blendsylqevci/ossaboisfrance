@@ -4,7 +4,7 @@ import Image from "next/image";
 import { getPayload } from "payload";
 import config from "@/payload.config";
 import { HouseConfigurator } from "@/components/HouseConfigurator";
-import { mapHouseDocToConfiguratorData } from "@/lib/house-mapper";
+import { mapHouseDocToConfiguratorData, calculateStructureSizePrice } from "@/lib/house-mapper";
 import { formatArchiveStartingPrice } from "@/data/houses-archive";
 import { Locale } from "@/lib/i18n";
 import { getDictionary } from "@/lib/dictionary";
@@ -203,7 +203,16 @@ export default async function HouseDetailPage({ params }: HouseDetailPageProps) 
   // Otherwise, render the standard house detail page
   const globalMargin = globalOptions?.marginPercent ?? 40;
   const marginMultiplier = 1 + (houseDoc.marginPercent ?? globalMargin) / 100;
-  const rawPrice = houseDoc.price60x160 || null;
+  const neto = houseDoc.perdhesa?.neto || 0;
+  const rawPrice = houseDoc.price60x160
+    ? calculateStructureSizePrice(
+        "60x160",
+        neto,
+        houseDoc.price60x160,
+        globalOptions?.priceRate60x160,
+        globalOptions?.priceRate60x200
+      )
+    : null;
   const finalPrice = rawPrice ? rawPrice * marginMultiplier : null;
   const price = formatArchiveStartingPrice(finalPrice);
   const defaultImageUrl = typeof houseDoc.defaultImage === 'object' ? houseDoc.defaultImage?.url : '';

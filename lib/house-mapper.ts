@@ -2,6 +2,36 @@ import { HouseConfiguratorData, ConfigCategory, SizeOption } from "@/data/house-
 import { Locale } from "@/lib/i18n";
 import { translateText, translateHouseDescription } from "./translation-helper";
 
+export function calculateStructureSizePrice(
+  sizeId: string,
+  neto: number,
+  fallbackPrice: number,
+  rate60x160?: number,
+  rate60x200?: number
+): number {
+  const r160 = typeof rate60x160 === 'number' ? rate60x160 : 350;
+  const r200 = typeof rate60x200 === 'number' ? rate60x200 : 370;
+  if (sizeId === "60x160") {
+    if (neto > 0) {
+      if (neto >= 131) {
+        return (neto * r160) + 3500;
+      } else {
+        return neto * r160;
+      }
+    }
+  } else if (sizeId === "60x200") {
+    if (neto > 0) {
+      if (neto >= 131) {
+        return (neto * r200) + 3500;
+      } else {
+        return neto * r200;
+      }
+    }
+  }
+  return fallbackPrice;
+}
+
+
 function buildCategoryOptions(
   hardcodedDefaults: Array<{
     id: string;
@@ -108,19 +138,35 @@ export function mapHouseDocToConfiguratorData(
 
   // Build sizes
   const sizes: SizeOption[] = [];
+  const netoSurface = houseDoc.perdhesa?.neto || 0;
+
   if (houseDoc.price60x160) {
+    const calculatedPrice = calculateStructureSizePrice(
+      "60x160",
+      netoSurface,
+      houseDoc.price60x160,
+      globalOptions?.priceRate60x160,
+      globalOptions?.priceRate60x200
+    );
     sizes.push({
       id: "60x160",
       label: "60x160",
-      price: houseDoc.price60x160,
+      price: calculatedPrice,
       image: defaultImage
     });
   }
   if (houseDoc.price60x200) {
+    const calculatedPrice = calculateStructureSizePrice(
+      "60x200",
+      netoSurface,
+      houseDoc.price60x200,
+      globalOptions?.priceRate60x160,
+      globalOptions?.priceRate60x200
+    );
     sizes.push({
       id: "60x200",
       label: "60x200",
-      price: houseDoc.price60x200,
+      price: calculatedPrice,
       image: finalImage || defaultImage
     });
   }

@@ -72,6 +72,7 @@ export function HouseConfigurator({ config, locale, dict }: HouseConfiguratorPro
   const [activeTab, setActiveTab] = useState<"description" | "specification">("description");
   const [layoutMode, setLayoutMode] = useState<"split" | "narrow" | "clean">("split");
   const [isZoomed, setIsZoomed] = useState(false);
+  const [planimetryOpen, setPlanimetryOpen] = useState(false);
   const [facadeWarning, setFacadeWarning] = useState("");
   const [isMobileDrawerExpanded, setIsMobileDrawerExpanded] = useState(false);
   const [materialModal, setMaterialModal] = useState<{
@@ -105,6 +106,7 @@ export function HouseConfigurator({ config, locale, dict }: HouseConfiguratorPro
     setActiveTab("description");
     setFacadeWarning("");
     setMaterialModal(null);
+    setPlanimetryOpen(false);
     setLayoutMode("split");
     setIsStructureOpen(false);
     if (scrollableRef.current) {
@@ -816,16 +818,29 @@ L'équipe Ossa Bois France`;
             <div className="house-main-image">
               {renderLayerStage()}
             </div>
-            <button
-              type="button"
-              className="house-stage-zoom-trigger"
-              onClick={() => setIsZoomed(true)}
-              aria-label="Agrandir l'image"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M15 3h6v6 M21 3l-6 6 M9 3H3v6 M3 3l6 6 M9 21H3v-6 M3 21l6-6 M15 21h6v-6 M21 21l-6-6" />
-              </svg>
-            </button>
+            <div className="house-stage-controls">
+              <button
+                type="button"
+                className="configurator-planimetry-btn"
+                onClick={() => setPlanimetryOpen(true)}
+                aria-label="View floor plan"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <path d="M9 3v18M9 13h12M15 13v8M3 9h6" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                className="house-stage-zoom-trigger"
+                onClick={() => setIsZoomed(true)}
+                aria-label="Agrandir l'image"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M15 3h6v6 M21 3l-6 6 M9 3H3v6 M3 3l6 6 M9 21H3v-6 M3 21l6-6 M15 21h6v-6 M21 21l-6-6" />
+                </svg>
+              </button>
+            </div>
           </div>
 
           <div className="house-details-section">
@@ -1335,12 +1350,67 @@ L'équipe Ossa Bois France`;
             <button
               type="button"
               className="image-zoom-close"
-              aria-label={dict.labels.close}
+              aria-label={dict.labels?.close || "Close"}
               onClick={() => setIsZoomed(false)}
             >
               ×
             </button>
             {renderLayerStage("image-zoom-stage")}
+          </div>
+        </div>
+      ) : null}
+      {planimetryOpen ? (
+        <div
+          className="material-modal-backdrop"
+          role="presentation"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setPlanimetryOpen(false);
+          }}
+        >
+          <div className="material-modal" role="dialog" aria-modal="true" aria-labelledby="planimetry-modal-title">
+            <button
+              type="button"
+              className="material-modal-close"
+              onClick={() => setPlanimetryOpen(false)}
+            >
+              ×
+            </button>
+            <div className="material-modal-media">
+              <Image
+                src={config.planimetry || '/api/media/file/asebra-me-atike_default.jpg'}
+                alt={`Planimetria - ${config.name}`}
+                width={1100}
+                height={620}
+                className="modal-image-el"
+                style={{ width: "100%", height: "100%", objectFit: "contain", background: "#f9fafb", padding: "20px" }}
+              />
+            </div>
+            <div className="material-modal-content" style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
+              {config.category && (
+                <p className="material-modal-kicker">{config.category}</p>
+              )}
+              <h2 id="planimetry-modal-title" style={{ margin: "0 0 10px 0" }}>{config.name}</h2>
+              <p style={{ margin: "0 0 24px 0", color: "#4B5563", fontSize: "14px", lineHeight: "1.6" }}>
+                {locale === "en" ? "Planimetry / Floor plan layout details. This plan showcases the interior room distribution and usable living spaces." :
+                 locale === "de" ? "Planimetrie / Grundriss. Dieser Plan zeigt die Aufteilung der Innenräume und die nutzbaren Wohnflächen." :
+                 locale === "nl" ? "Planimetrie / Plattegrond. Dit plan toont de indeling van de binnenruimtes en de bruikbare woonoppervlaktes." :
+                 "Planimétrie / Plan de sol. Ce plan présente l'aménagement intérieur et la distribution des espaces de vie."}
+              </p>
+              <div className="material-attributes-grid" style={{ marginTop: "0" }}>
+                {config.perdhesa?.neto && (
+                  <div className="material-attribute-card">
+                    <span className="material-attribute-label">Neto</span>
+                    <span className="material-attribute-value">{config.perdhesa.neto} m²</span>
+                  </div>
+                )}
+                {config.perdhesa?.bruto && (
+                  <div className="material-attribute-card">
+                    <span className="material-attribute-label">Bruto</span>
+                    <span className="material-attribute-value">{config.perdhesa.bruto} m²</span>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       ) : null}

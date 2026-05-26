@@ -96,5 +96,6 @@ export type HouseConfiguratorData = {
   customFields?: Record<string, any>;
   /** Position and dimensions config for the image comparison slider */
   sliderConfig?: HouseSliderConfig;
+  planimetry?: string | null;
 };
 

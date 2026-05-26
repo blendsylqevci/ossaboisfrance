@@ -9376,6 +9376,95 @@ img {
   font-weight: 400;
 }
 
+/* --- House Stage Control Triggers (Zoom & Planimetry) --- */
+.house-stage-controls {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 50;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.house-stage-controls .house-stage-zoom-trigger,
+.house-stage-controls .configurator-planimetry-btn {
+  position: static !important;
+  display: flex !important;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  color: #374151 !important;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 0;
+}
+
+.house-stage-controls .house-stage-zoom-trigger svg,
+.house-stage-controls .configurator-planimetry-btn svg {
+  stroke: #374151 !important;
+  width: 20px;
+  height: 20px;
+  filter: none !important;
+}
+
+.house-stage-controls .house-stage-zoom-trigger:hover,
+.house-stage-controls .configurator-planimetry-btn:hover {
+  transform: translateY(-2px) scale(1.05);
+  background: #ffffff !important;
+  color: #2563EB !important;
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.15);
+}
+
+.house-stage-controls .house-stage-zoom-trigger:hover svg,
+.house-stage-controls .configurator-planimetry-btn:hover svg {
+  stroke: #2563EB !important;
+}
+
+.house-stage-controls .house-stage-zoom-trigger:active,
+.house-stage-controls .configurator-planimetry-btn:active {
+  transform: translateY(0) scale(0.95);
+}
+
+@media (max-width: 991px) {
+  .house-stage-controls {
+    top: 16px !important;
+    right: 16px !important;
+    gap: 8px !important;
+  }
+  .house-stage-controls .house-stage-zoom-trigger,
+  .house-stage-controls .configurator-planimetry-btn {
+    width: 38px !important;
+    height: 38px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .house-stage-controls {
+    top: 8px !important;
+    right: 8px !important;
+    gap: 6px !important;
+  }
+  .house-stage-controls .house-stage-zoom-trigger,
+  .house-stage-controls .configurator-planimetry-btn {
+    width: 36px !important;
+    height: 36px !important;
+  }
+  .house-stage-controls .house-stage-zoom-trigger svg,
+  .house-stage-controls .configurator-planimetry-btn svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+}
+
+
 
 
 

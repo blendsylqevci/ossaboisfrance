@@ -735,6 +735,11 @@ export function mapHouseDocToConfiguratorData(
     finalImage: finalImage || defaultImage,
     backgroundLayer,
     constructionLayer,
+    planimetry: typeof houseDoc.planimetry === 'object' && houseDoc.planimetry !== null
+      ? houseDoc.planimetry.url || null
+      : typeof houseDoc.planimetry === 'string'
+        ? houseDoc.planimetry
+        : null,
     marginPercent: houseDoc.marginPercent ?? globalOptions?.marginPercent ?? 40,
     perdhesa: {
       bruto: houseDoc.perdhesa?.bruto || 0,

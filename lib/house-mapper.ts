@@ -40,6 +40,8 @@ function buildCategoryOptions(
     price200: number;
     layerKey: string;
     materialDescription?: string;
+    modalImage?: string;
+    thumbnail?: string;
   }>,
   cmsOptions: any[] | undefined,
   layers: Record<string, string>,
@@ -98,8 +100,8 @@ function buildCategoryOptions(
         layerKey: cmsOpt.layer_key,
         layer: layerUrl,
         materialDescription: translateText(cmsOpt.option_description || defaultOpt?.materialDescription || '', locale),
-        thumbnail: cmsOpt.option_mini_image?.url || undefined,
-        modalImage: cmsOpt.option_image?.url || undefined,
+        thumbnail: (defaultOpt as any)?.thumbnail || cmsOpt.option_mini_image?.url || undefined,
+        modalImage: (defaultOpt as any)?.modalImage || cmsOpt.option_image?.url || undefined,
       });
       processedLayerKeys.add(cmsOpt.layer_key);
     }
@@ -138,6 +140,8 @@ function buildCategoryOptions(
       layerKey: defOpt.layerKey,
       layer: layerUrl,
       materialDescription: translateText(defOpt.materialDescription || '', locale),
+      modalImage: (defOpt as any).modalImage || undefined,
+      thumbnail: (defOpt as any).thumbnail || undefined,
     });
   }
 
@@ -382,7 +386,9 @@ export function mapHouseDocToConfiguratorData(
             price160: 11.15,
             price200: houseDoc.slug === 'escape-villa-me-atike' ? 12.5 : 12.25,
             layerKey: "iso_inter_verre",
-            materialDescription: "Solution d'isolation légère et efficace pour les parois de la structure."
+            materialDescription: "La laine de verre est un excellent isolant thermique et acoustique, incombustible et respectueux de l'environnement. Elle épouse parfaitement la structure en bois pour éliminer les ponts thermiques, garantissant une température intérieure douce en hiver et agréable en été.",
+            modalImage: "/api/media/file/laine-de-verre.webp",
+            thumbnail: "/api/media/file/laine-de-verre.webp",
           },
           {
             id: "laine-roche",
@@ -390,7 +396,9 @@ export function mapHouseDocToConfiguratorData(
             price160: 12.5,
             price200: houseDoc.slug === 'escape-villa-me-atike' ? 13.8 : 14.0,
             layerKey: "iso_inter_roche",
-            materialDescription: "Isolation minérale avec une bonne tenue thermique et acoustique."
+            materialDescription: "Fabriquée à partir de roche volcanique naturelle, la laine de roche offre une isolation thermique supérieure et une excellente absorption acoustique contre les bruits aériens et d'impact. Elle possède une résistance exceptionnelle au feu et reste stable dans le temps sans tassement.",
+            modalImage: "/api/media/file/laine-de-roche.webp",
+            thumbnail: "/api/media/file/laine-de-roche.webp",
           },
           {
             id: "laine-bois",
@@ -398,7 +406,9 @@ export function mapHouseDocToConfiguratorData(
             price160: 16.5,
             price200: houseDoc.slug === 'escape-villa-me-atike' ? 18.2 : 18.0,
             layerKey: "iso_inter_bois",
-            materialDescription: "Isolation biosourcée, choisie pour le confort thermique et l'inertie naturelle."
+            materialDescription: "Isolant biosourcé et écologique par excellence, la laine de bois offre une forte inertie thermique (déphasage important). Elle protège remarquablement de la chaleur en été et conserve la chaleur en hiver tout en régulant naturellement l'humidité ambiante.",
+            modalImage: "/api/media/file/laine-de-bois.webp",
+            thumbnail: "/api/media/file/laine-de-bois.webp",
           }
         ],
         globalOptions?.global_isolation_options,
@@ -422,7 +432,9 @@ export function mapHouseDocToConfiguratorData(
             price160: 15.9,
             price200: 17.4,
             layerKey: "iso_ext_roche_comprimee",
-            materialDescription: "Isolation extérieure dense en laine de roche comprimée, robuste et stable."
+            materialDescription: "Isolation extérieure haute densité qui enveloppe la maison pour supprimer tous les ponts thermiques structurels. Offre une robustesse mécanique exceptionnelle, une barrière acoustique contre les bruits extérieurs et une sécurité incendie maximale.",
+            modalImage: "/api/media/file/laine-de-roche.webp",
+            thumbnail: "/api/media/file/laine-de-roche.webp",
           },
           {
             id: "polystyrene-ext",
@@ -430,7 +442,9 @@ export function mapHouseDocToConfiguratorData(
             price160: 10.15,
             price200: 11.4,
             layerKey: "iso_ext_polystyrene",
-            materialDescription: "Isolation extérieure en polystyrène pour une enveloppe continue et un coût maîtrisé."
+            materialDescription: "Le polystyrène expansé (PSE) assure une isolation par l'extérieur continue et performante à un rapport qualité-prix optimal. Il crée un bouclier thermique étanche, léger et imperméable, idéal pour réduire efficacement les factures énergétiques.",
+            modalImage: "/api/media/file/polystyrene.webp",
+            thumbnail: "/api/media/file/polystyrene.webp",
           },
           {
             id: "fibre",
@@ -438,7 +452,9 @@ export function mapHouseDocToConfiguratorData(
             price160: 14.2,
             price200: 15.6,
             layerKey: "iso_ext_fibre",
-            materialDescription: "Isolation extérieure biosourcée haute densité en fibre de bois."
+            materialDescription: "La fibre de bois rigide pour ITE est un matériau biosourcé 100% naturel. Elle assure une excellente respirabilité des murs tout en offrant un déphasage thermique exceptionnel, idéal pour préserver la fraîcheur intérieure en période estivale.",
+            modalImage: "/api/media/file/fibre-de-bois.webp",
+            thumbnail: "/api/media/file/fibre-de-bois.webp",
           }
         ],
         globalOptions?.global_outer_isolation_options,
@@ -462,7 +478,9 @@ export function mapHouseDocToConfiguratorData(
             price160: houseDoc.slug === 'escape-villa-me-atike' ? 1.0 : 14.0,
             price200: houseDoc.slug === 'escape-villa-me-atike' ? 1.0 : 14.0,
             layerKey: "terrace_etancheite_epdm",
-            materialDescription: "Plaques de polystyrène expansé spécifiques pour l'étanchéité d'attique."
+            materialDescription: "Plaques isolantes en polystyrène expansé haute densité spécialement formulées pour supporter l'étanchéité des toitures terrasses. Elles offrent une haute résistance à la compression et garantissent une isolation continue sous la membrane EPDM.",
+            modalImage: "/api/media/file/polystyrene.webp",
+            thumbnail: "/api/media/file/polystyrene.webp",
           }
         ],
         globalOptions?.global_terrace_etancheite_options,
@@ -486,7 +504,9 @@ export function mapHouseDocToConfiguratorData(
             price160: houseDoc.slug === 'escape-villa-me-atike' ? 1.0 : 14.0,
             price200: houseDoc.slug === 'escape-villa-me-atike' ? 1.0 : 14.0,
             layerKey: "etancheite_epdm",
-            materialDescription: "Membrane synthétique monocouche offrant une étanchéité totale et durable."
+            materialDescription: "La membrane élastomère EPDM est la référence absolue pour l'étanchéité des toits plats. Offrant une longévité de plus de 50 ans, elle est extrêmement résistant aux UV, aux températures extrêmes et reste parfaitement élastique sans aucun entretien.",
+            modalImage: "/api/media/file/membrane-epdm.webp",
+            thumbnail: "/api/media/file/membrane-epdm.webp",
           }
         ],
         globalOptions?.global_roof_options,
@@ -510,7 +530,9 @@ export function mapHouseDocToConfiguratorData(
             price160: houseDoc.slug === 'escape-villa-me-atike' ? 1.0 : 25.5,
             price200: houseDoc.slug === 'escape-villa-me-atike' ? 1.0 : 25.5,
             layerKey: "facade_blanche",
-            materialDescription: "Finition par enduit blanc offrant un aspect propre, moderne et lumineux."
+            materialDescription: "L'enduit minéral blanc apporte une finition épurée, lumineuse et moderne. Il protège durablement la structure en bois contre les intempéries tout en laissant respirer les parois de votre maison.",
+            modalImage: "/api/media/file/facade-blanche-enduit.webp",
+            thumbnail: "/api/media/file/facade-blanche-enduit.webp",
           },
           {
             id: "bardage",
@@ -518,7 +540,9 @@ export function mapHouseDocToConfiguratorData(
             price160: houseDoc.slug === 'escape-villa-me-atike' ? 1.0 : 38.5,
             price200: houseDoc.slug === 'escape-villa-me-atike' ? 1.0 : 38.5,
             layerKey: "facade_bardage",
-            materialDescription: "Finition par clin de bois en Mélèze naturel pour un look chaleureux et authentique."
+            materialDescription: "Finition haut de gamme en clin de bois de Mélèze naturel. Ce bois robuste et naturellement imputrescible (sans traitement chimique) apporte un aspect chaleureux et développe avec le temps une élégante patine grise argentée très esthétique.",
+            modalImage: "/api/media/file/bardage-meleze.webp",
+            thumbnail: "/api/media/file/bardage-meleze.webp",
           }
         ],
         globalOptions?.global_facade_options,
@@ -542,7 +566,9 @@ export function mapHouseDocToConfiguratorData(
             price160: 11.67,
             price200: 11.67,
             layerKey: "roof_verre",
-            materialDescription: "Laine de verre soufflée offrant une excellente barrière thermique homogène."
+            materialDescription: "Épaisse couche d'isolation en laine de verre pour toiture assurant une barrière thermique continue. Elle réduit fortement les pertes de chaleur par le toit, assurant de grandes économies de chauffage et un excellent confort.",
+            modalImage: "/api/media/file/laine-de-verre.webp",
+            thumbnail: "/api/media/file/laine-de-verre.webp",
           },
           {
             id: "roche",
@@ -550,7 +576,9 @@ export function mapHouseDocToConfiguratorData(
             price160: 14.06,
             price200: 14.06,
             layerKey: "roof_roche",
-            materialDescription: "Isolation par soufflage de laine de roche stable, dense et résistante au feu."
+            materialDescription: "Isolation de toiture en laine de roche soufflée offrant une excellente densité. Elle assure un grand confort thermique et acoustique (bruits de pluie, de vent) tout en apportant une protection incendie passive renforcée.",
+            modalImage: "/api/media/file/laine-de-roche.webp",
+            thumbnail: "/api/media/file/laine-de-roche.webp",
           },
           {
             id: "bois",
@@ -558,7 +586,9 @@ export function mapHouseDocToConfiguratorData(
             price160: 30.0,
             price200: 30.0,
             layerKey: "roof_bois",
-            materialDescription: "Isolation rigide haute performance par plaques de fibre de bois."
+            materialDescription: "Isolant de toiture biosourcé en fibre de bois de 220mm. Sa forte densité offre la meilleure protection contre la chaleur estivale sous les combles grâce à un temps de déphasage thermique exceptionnel d'environ 12 heures.",
+            modalImage: "/api/media/file/laine-de-bois.webp",
+            thumbnail: "/api/media/file/laine-de-bois.webp",
           }
         ],
         globalOptions?.global_roof_isolation_options,
@@ -582,7 +612,7 @@ export function mapHouseDocToConfiguratorData(
             price160: 0,
             price200: 0,
             layerKey: "couverture_pare_pluie_lattage",
-            materialDescription: "Écran sous toiture HPV et contre-lattage assurant la ventilation."
+            materialDescription: "Écran de sous-toiture hautement perméable à la vapeur (HPV) avec contre-lattage. Il protège la charpente des infiltrations accidentelles d'eau et de poussière tout en assurant une ventilation continue et saine de la toiture."
           },
           {
             id: "tuiles",
@@ -590,7 +620,9 @@ export function mapHouseDocToConfiguratorData(
             price160: 70.0,
             price200: 70.0,
             layerKey: "couverture_tuiles_gouttieres",
-            materialDescription: "Tuiles béton ou terre cuite avec gouttières de récupération d'eau pluviale."
+            materialDescription: "Couverture traditionnelle en tuiles de béton ou terre cuite haute résistance incluant gouttières et descentes de récupération d'eau. Assure une protection robuste face aux pires intempéries avec une esthétique intemporelle.",
+            modalImage: "/api/media/file/tuiles.webp",
+            thumbnail: "/api/media/file/tuiles.webp",
           },
           {
             id: "bac-acier",
@@ -598,7 +630,9 @@ export function mapHouseDocToConfiguratorData(
             price160: 80.0,
             price200: 80.0,
             layerKey: "couverture_bac_acier_gouttieres",
-            materialDescription: "Couverture sèche en tôle d'acier profilée très résistante aux intempéries."
+            materialDescription: "Couverture moderne en plaques d'acier nervurées (bac acier) avec traitement anti-condensation. Très résistant, léger et étanche face aux tempêtes et à la grêle, il apporte une allure contemporaine et épurée à votre maison.",
+            modalImage: "/api/media/file/bac-acier.webp",
+            thumbnail: "/api/media/file/bac-acier.webp",
           }
         ],
         globalOptions?.global_couverture_options,
@@ -622,7 +656,9 @@ export function mapHouseDocToConfiguratorData(
             price160: 8.9,
             price200: 11.15,
             layerKey: "faux_plafond_verre",
-            materialDescription: "Isolation soufflée légère et thermiquement performante."
+            materialDescription: "Isolation thermique et acoustique légère insérée dans le plénum du faux plafond. Limite les pertes de chaleur vers les combles et atténue les bruits intérieurs entre les pièces.",
+            modalImage: "/api/media/file/laine-de-verre.webp",
+            thumbnail: "/api/media/file/laine-de-verre.webp",
           },
           {
             id: "roche",
@@ -630,7 +666,9 @@ export function mapHouseDocToConfiguratorData(
             price160: 10.8,
             price200: 13.45,
             layerKey: "faux_plafond_roche",
-            materialDescription: "Soufflage dense offrant d'excellentes qualités d'absorption acoustique."
+            materialDescription: "Isolant thermique et acoustique dense inséré en faux plafond. Ses propriétés fibreuses permettent d'absorber efficacement les bruits aériens (voix, musique) pour une tranquillité totale d'une pièce à l'autre.",
+            modalImage: "/api/media/file/laine-de-roche.webp",
+            thumbnail: "/api/media/file/laine-de-roche.webp",
           },
           {
             id: "bois",
@@ -638,7 +676,9 @@ export function mapHouseDocToConfiguratorData(
             price160: 22.55,
             price200: 25.7,
             layerKey: "faux_plafond_bois",
-            materialDescription: "Fibre de bois soufflée naturelle, écologique et à fort pouvoir isolant."
+            materialDescription: "Isolation en fibre de bois naturelle pour faux plafond. Écologique et saine, elle contribue à la régulation de l'humidité intérieure tout en apportant un excellent confort thermo-acoustique.",
+            modalImage: "/api/media/file/laine-de-bois.webp",
+            thumbnail: "/api/media/file/laine-de-bois.webp",
           }
         ],
         globalOptions?.global_faux_plafond_options,
@@ -662,7 +702,9 @@ export function mapHouseDocToConfiguratorData(
             price160: houseDoc.windows?.aluminiumPrice || 7564,
             price200: houseDoc.windows?.aluminiumPrice || 7564,
             layerKey: "windows_aluminium",
-            materialDescription: "Menuiseries en aluminium thermolaqué de couleur anthracite avec double vitrage performant."
+            materialDescription: "Châssis haut de gamme en aluminium gris anthracite (RAL 7016) avec double vitrage thermique renforcé à gaz Argon. Leurs profilés ultra-fins maximisent la luminosité intérieure pour un design moderne et d'excellents apports solaires.",
+            modalImage: "/api/media/file/menuiseries-aluminium.webp",
+            thumbnail: "/api/media/file/menuiseries-aluminium.webp",
           },
           {
             id: "pvc",
@@ -670,7 +712,9 @@ export function mapHouseDocToConfiguratorData(
             price160: houseDoc.windows?.pvcPrice || 6176,
             price200: houseDoc.windows?.pvcPrice || 6176,
             layerKey: "windows_pvc",
-            materialDescription: "Menuiseries PVC haute isolation offrant le meilleur rapport performance/prix."
+            materialDescription: "Menuiseries en PVC blanc haute isolation avec double vitrage thermique renforcé. Offrant le meilleur rapport performance/prix, elles garantissent une excellente isolation thermique naturelle et ne nécessitent aucun entretien.",
+            modalImage: "/api/media/file/menuiseries-pvc.webp",
+            thumbnail: "/api/media/file/menuiseries-pvc.webp",
           }
         ],
         globalOptions?.global_menuiseries_options,

@@ -1,0 +1,2 @@
+Upload your raw material texture/photo files here.
+We will then optimize them and automatically register/link them to the CMS.

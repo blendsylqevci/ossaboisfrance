@@ -251,7 +251,7 @@ export function ProductsGrid({
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "12px", width: "100%", marginBottom: "8px", flexWrap: "wrap" }}>
                           <h3 className="prod-card-title" style={{ margin: 0 }}>{house.title}</h3>
                           {house.neto && (
-                            <div style={{ display: "flex", gap: "10px", alignItems: "center", fontSize: "13px", fontWeight: "500", color: "#4B5563" }}>
+                            <div style={{ display: "flex", gap: "10px", alignItems: "center", fontSize: "13px", fontWeight: "600", color: "#374151" }}>
                               <span style={{ display: "flex", alignItems: "center", whiteSpace: "nowrap" }}>
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: "4px", opacity: 0.75 }}>
                                   <rect x="3" y="3" width="18" height="18" rx="2" />
@@ -390,7 +390,7 @@ export function ProductsGrid({
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "12px", width: "100%", marginBottom: "8px", flexWrap: "wrap" }}>
                     <h3 className="prod-card-title" style={{ margin: 0 }}>{house.title}</h3>
                     {house.neto && (
-                      <div style={{ display: "flex", gap: "10px", alignItems: "center", fontSize: "13px", fontWeight: "500", color: "#4B5563" }}>
+                      <div style={{ display: "flex", gap: "10px", alignItems: "center", fontSize: "13px", fontWeight: "600", color: "#374151" }}>
                         <span style={{ display: "flex", alignItems: "center", whiteSpace: "nowrap" }}>
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: "4px", opacity: 0.75 }}>
                             <rect x="3" y="3" width="18" height="18" rx="2" />

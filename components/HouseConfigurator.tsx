@@ -487,6 +487,36 @@ L'équipe Ossa Bois France`;
       };
     };
 
+    let screenshotImage = config.finalImage;
+    try {
+      const container = document.getElementById("house-layer-stage");
+      if (container) {
+        const imgElements = Array.from(container.getElementsByTagName("img"));
+        const visibleImgs = imgElements.filter(img => 
+          img.classList.contains("is-on") || 
+          window.getComputedStyle(img).opacity !== "0"
+        );
+
+        if (visibleImgs.length > 0) {
+          const bgImg = visibleImgs.find(img => img.getAttribute("data-layer") === "bg") || visibleImgs[0];
+          const canvas = document.createElement("canvas");
+          canvas.width = bgImg.naturalWidth || 1920;
+          canvas.height = bgImg.naturalHeight || 1080;
+          const ctx = canvas.getContext("2d");
+          if (ctx) {
+            for (const img of visibleImgs) {
+              if (img.complete && img.naturalWidth > 0) {
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+              }
+            }
+            screenshotImage = canvas.toDataURL("image/jpeg", 0.85);
+          }
+        }
+      }
+    } catch (err) {
+      console.error("Failed to generate configurator screenshot:", err);
+    }
+
     const payload = {
       house: {
         name: config.name,
@@ -498,7 +528,7 @@ L'équipe Ossa Bois France`;
         price: String(selectedSize.price),
         image: selectedSize.image
       },
-      currentImage: config.finalImage,
+      currentImage: screenshotImage,
       isolation: getOptionPayload("isolation"),
       outerIsolation: getOptionPayload("outerIsolation"),
       facade: getOptionPayload("facade"),

@@ -7058,6 +7058,7 @@ img {
     align-items: center !important;
     justify-content: flex-end !important;
     margin-left: auto !important;
+    gap: 10px !important;
   }
 
   /* Professional Hamburger Burger Menu styling and transitions */

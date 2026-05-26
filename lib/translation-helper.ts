@@ -109,6 +109,12 @@ const textTranslations: Record<string, Record<Locale, string>> = {
     de: "Abdichtungsbahn für Flachdächer.",
     nl: "Waterdicht membraan voor platte daken."
   },
+  "Étanchéité charpente": {
+    fr: "Étanchéité charpente",
+    en: "Timber frame waterproofing",
+    de: "Abdichtung Dachstuhl",
+    nl: "Waterdichting dakconstructie"
+  },
   "Choisissez le revêtement extérieur de votre maison.": {
     fr: "Choisissez le revêtement extérieur de votre maison.",
     en: "Choose the exterior cladding for your house.",

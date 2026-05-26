@@ -583,7 +583,7 @@ export function mapHouseDocToConfiguratorData(
       id: "etancheite",
       inputName: "house_etancheite",
       label: translateText("Étanchéité toiture terrasse avec couverture", locale),
-      description: translateText("Membrane d'étanchéité pour toiture plate.", locale),
+      description: translateText("Étanchéité charpente", locale),
       priceMode: "roof_m2",
       selectionMode: "checkbox",
       options: buildCategoryOptions(

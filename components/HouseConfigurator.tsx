@@ -1294,6 +1294,42 @@ L'équipe Ossa Bois France`;
               {primaryCategories.map((category) => renderOptionCategory(category))}
               {optionalCategories.map((category) => renderOptionCategory(category, "optional-option-group"))}
 
+              {/* Mobile-Only Save Selections Button */}
+              <div className="mobile-save-button-wrapper">
+                <button
+                  type="button"
+                  className={`mobile-save-config-btn${isSaved ? " saved" : ""}${isSaved && isHovered ? " unsave-hover" : ""}`}
+                  onClick={handleButtonClick}
+                  onMouseEnter={() => setIsHovered(true)}
+                  onMouseLeave={() => setIsHovered(false)}
+                  title={buttonText}
+                >
+                  {isSaved && isHovered ? (
+                    <svg className="save-icon unsave-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: "#ef4444" }}>
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  ) : isSaved ? (
+                    <svg className="save-icon check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: "#10b981" }}>
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  ) : (
+                    <svg className="save-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+                    </svg>
+                  )}
+                  <span className="save-text">
+                    {buttonText}
+                  </span>
+                </button>
+                <p className="mobile-save-help-text">
+                  {locale === "en" ? "Saves your customized materials on this device for 30 days." :
+                   locale === "de" ? "Speichert Ihre angepassten Materialien für 30 Tage auf diesem Gerät." :
+                   locale === "nl" ? "Slaat uw aangepaste materialen gedurende 30 dagen op dit apparaat op." :
+                   "Enregistre vos choix sur cet appareil pour une durée de 30 jours."}
+                </p>
+              </div>
+
               <div className="house-details-tabs">
                 <div className="tab-buttons">
                   <button

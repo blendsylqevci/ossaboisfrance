@@ -7024,11 +7024,21 @@ img {
     display: none !important;
   }
 
+  .house-description {
+    display: none !important;
+  }
+
   .house-header-left {
     display: block !important;
+    position: sticky !important;
+    top: 0 !important;
+    background: var(--paper, #ffffff) !important;
+    z-index: 10 !important;
     margin-bottom: 20px;
     border-bottom: 1px solid #f0f0f0;
     padding-bottom: 16px;
+    margin-top: -12px !important;
+    padding-top: 12px !important;
   }
 
   .house-title-container {

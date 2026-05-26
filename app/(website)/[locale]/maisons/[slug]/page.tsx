@@ -10,13 +10,64 @@ import { Locale } from "@/lib/i18n";
 import { getDictionary } from "@/lib/dictionary";
 import { translateText, translateHouseDescription } from "@/lib/translation-helper";
 import { HouseTitleDispatcher } from "@/components/HouseTitleDispatcher";
-
+import { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
 
 type HouseDetailPageProps = {
   params: Promise<{ locale: Locale; slug: string }>;
 };
+
+export async function generateMetadata({ params }: HouseDetailPageProps): Promise<Metadata> {
+  const { locale, slug } = await params;
+  try {
+    const payload = await getPayload({ config });
+    const result = await payload.find({
+      collection: 'houses',
+      where: { slug: { equals: slug } },
+      locale: locale,
+    });
+
+    if (result.totalDocs === 0) return {};
+
+    const houseDoc = result.docs[0];
+    const rawTitle = typeof houseDoc.title === 'string' ? houseDoc.title : 'Maison';
+    const translatedTitle = translateText(rawTitle, locale);
+    
+    const pageTitle = `${translatedTitle} | Ossa Bois France`;
+    const descriptionText = translateHouseDescription(
+      houseDoc.description || houseDoc.subheading || '',
+      slug,
+      locale
+    );
+
+    const imageUrl = typeof houseDoc.defaultImage === 'object' ? houseDoc.defaultImage?.url : '';
+
+    return {
+      title: pageTitle,
+      description: descriptionText,
+      alternates: {
+        canonical: `https://ossaboisfrance.com/${locale}/maisons/${slug}`,
+        languages: {
+          fr: `https://ossaboisfrance.com/fr/maisons/${slug}`,
+          en: `https://ossaboisfrance.com/en/maisons/${slug}`,
+          de: `https://ossaboisfrance.com/de/maisons/${slug}`,
+          nl: `https://ossaboisfrance.com/nl/maisons/${slug}`,
+        }
+      },
+      openGraph: {
+        title: pageTitle,
+        description: descriptionText,
+        url: `https://ossaboisfrance.com/${locale}/maisons/${slug}`,
+        images: imageUrl ? [{ url: imageUrl }] : [],
+        type: "website",
+      }
+    };
+  } catch (e) {
+    console.error('Failed to generate metadata:', e);
+    return {};
+  }
+}
 
 export async function generateStaticParams() {
   try {

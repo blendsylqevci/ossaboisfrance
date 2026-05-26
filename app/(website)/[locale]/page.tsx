@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { Metadata } from "next";
 import { getPayload } from "payload";
 import config from "@/payload.config";
 import { Locale } from "@/lib/i18n";
@@ -17,6 +18,47 @@ import { translateText, translateHouseDescription } from "@/lib/translation-help
 type HomePageProps = {
   params: Promise<{ locale: Locale }>;
 };
+
+export async function generateMetadata({ params }: HomePageProps): Promise<Metadata> {
+  const { locale } = await params;
+  
+  const titles = {
+    fr: "Ossa Bois France | Constructeur de Maisons Ossature Bois",
+    en: "Ossa Bois France | Timber Frame House Builder",
+    de: "Ossa Bois France | Holzrahmenhaus-Hersteller",
+    nl: "Ossa Bois France | Houtskelet Bouwer",
+  };
+
+  const descriptions = {
+    fr: "Ossa Bois France propose des maisons modulaires contemporaines de haute qualité à ossature bois. Configurez et estimez le prix de votre maison en ligne.",
+    en: "Ossa Bois France offers high-quality contemporary modular timber frame homes. Configure and estimate the price of your house online.",
+    de: "Ossa Bois France bietet hochwertige moderne modulare Holzrahmenhäuser. Konfigurieren und berechnen Sie den Preis Ihres Hauses online.",
+    nl: "Ossa Bois France biedt modulaire houtskeletwoningen van hoge kwaliteit. Configureer en schat de prijs van uw huis online.",
+  };
+
+  const title = titles[locale] || titles.fr;
+  const description = descriptions[locale] || descriptions.fr;
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: `https://ossaboisfrance.com/${locale}`,
+      languages: {
+        fr: `https://ossaboisfrance.com/fr`,
+        en: `https://ossaboisfrance.com/en`,
+        de: `https://ossaboisfrance.com/de`,
+        nl: `https://ossaboisfrance.com/nl`,
+      }
+    },
+    openGraph: {
+      title,
+      description,
+      url: `https://ossaboisfrance.com/${locale}`,
+      type: "website",
+    }
+  };
+}
 
 const heroImages = [
   "/images/hero/step1.jpg",

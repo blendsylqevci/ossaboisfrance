@@ -4,12 +4,54 @@ import { HousesArchive, CMSHouseItem, CMSCategoryItem } from "@/components/House
 import { Locale } from "@/lib/i18n";
 import { getDictionary } from "@/lib/dictionary";
 import { translateText, translateHouseDescription } from "@/lib/translation-helper";
+import { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
 
 type HousesPageProps = {
   params: Promise<{ locale: Locale }>;
 };
+
+export async function generateMetadata({ params }: HousesPageProps): Promise<Metadata> {
+  const { locale } = await params;
+  
+  const titles = {
+    fr: "Modèles de Maisons Ossature Bois | Ossa Bois France",
+    en: "Timber Frame House Models | Ossa Bois France",
+    de: "Holzrahmenhaus-Modelle | Ossa Bois France",
+    nl: "Houtskelet Huismodellen | Ossa Bois France",
+  };
+
+  const descriptions = {
+    fr: "Découvrez nos modèles de maisons modulaires contemporaines à ossature bois de haute performance thermique conformes à la RE2020.",
+    en: "Discover our high thermal performance modular timber frame contemporary house models conforming to RE2020.",
+    de: "Entdecken Sie unsere energieeffizienten modularen Holzrahmenhäuser nach dem aktuellen Energiestandard RE2020.",
+    nl: "Ontdek onze hoogwaardige modulaire houtskeletwoningmodellen conform de RE2020-normen.",
+  };
+
+  const title = titles[locale] || titles.fr;
+  const description = descriptions[locale] || descriptions.fr;
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: `https://ossaboisfrance.com/${locale}/maisons`,
+      languages: {
+        fr: `https://ossaboisfrance.com/fr/maisons`,
+        en: `https://ossaboisfrance.com/en/maisons`,
+        de: `https://ossaboisfrance.com/de/maisons`,
+        nl: `https://ossaboisfrance.com/nl/maisons`,
+      }
+    },
+    openGraph: {
+      title,
+      description,
+      url: `https://ossaboisfrance.com/${locale}/maisons`,
+      type: "website",
+    }
+  };
+}
 
 export default async function HousesPage({ params }: HousesPageProps) {
   const { locale } = await params;

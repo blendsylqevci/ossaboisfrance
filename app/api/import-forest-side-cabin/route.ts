@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
     // 2. Check if Forest side cabin me atike already exists. If yes, delete it and its media
     const existing = await payload.find({
       collection: "houses",
-      where: { slug: { equals: "forest-side-cabin-me-atike" } },
+      where: { slug: { equals: "forest-side-cabin-avec-attique" } },
       limit: 1,
     });
 
@@ -133,8 +133,8 @@ export async function GET(req: NextRequest) {
       collection: "houses",
       locale: "fr",
       data: {
-        title: "Forest side cabin me atike",
-        slug: "forest-side-cabin-me-atike",
+        title: "Forest Side Cabin avec Attique",
+        slug: "forest-side-cabin-avec-attique",
         category: categoryId, // Maisons à toiture terrasse avec étage
         subheading: "Le modèle Forest Side Cabin avec Attique allie architecture contemporaine et performance énergétique.",
         description: "Le modèle Forest Side Cabin avec Attique séduit par son design contemporain, ses volumes harmonieux et sa structure robuste en ossature bois à haute performance thermique. Cette maison modulaire contemporaine propose une toiture terrasse plate avec attique, créant des lignes géométriques épurées qui s'intègrent parfaitement dans les environnements urbains et résidentiels modernes.",
@@ -185,26 +185,14 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    // 7. Update other locales (en, de, nl) for title/slug consistency
-    const otherLocales = ["en", "de", "nl"];
-    for (const loc of otherLocales) {
-      await payload.update({
-        collection: "houses",
-        id: houseId,
-        locale: loc as any,
-        data: {
-          title: "Forest side cabin me atike",
-          slug: "forest-side-cabin-me-atike",
-        },
-      });
-    }
+
 
     console.log(`[Import Forest Side Cabin] Done!`);
     return NextResponse.json({
       success: true,
       message: "Forest side cabin me atike created and updated successfully.",
       houseId: houseId,
-      slug: "forest-side-cabin-me-atike",
+      slug: "forest-side-cabin-avec-attique",
       uploadedLayersCount: Object.keys(mediaIds).length,
     });
   } catch (error: any) {

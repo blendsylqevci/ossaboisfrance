@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
     // 2. Check if Flora avec Attique already exists. If yes, delete it and its media
     const existing = await payload.find({
       collection: "houses",
-      where: { slug: { equals: "flora-me-atike" } },
+      where: { slug: { equals: "flora-avec-attique" } },
       limit: 1,
     });
 
@@ -135,7 +135,7 @@ export async function GET(req: NextRequest) {
       locale: "fr",
       data: {
         title: "Flora avec Attique",
-        slug: "flora-me-atike",
+        slug: "flora-avec-attique",
         category: categoryId, // Maisons à toiture terrasse avec étage
         subheading: "Le modèle Flora avec Attique allie architecture contemporaine et performance énergétique.",
         description: "Le modèle Flora avec Attique séduit par son design contemporain, ses volumes harmonieux et sa structure robuste en ossature bois à haute performance thermique. Cette maison modulaire contemporaine propose une toiture terrasse plate avec attique, créant des lignes géométriques épurées qui s'intègrent parfaitement dans les environnements urbains et résidentiels modernes.",
@@ -186,26 +186,14 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    // 7. Update other locales (en, de, nl) for title/slug consistency
-    const otherLocales = ["en", "de", "nl"];
-    for (const loc of otherLocales) {
-      await payload.update({
-        collection: "houses",
-        id: houseId,
-        locale: loc as any,
-        data: {
-          title: "Flora avec Attique",
-          slug: "flora-me-atike",
-        },
-      });
-    }
+
 
     console.log(`[Import Flora] Done!`);
     return NextResponse.json({
       success: true,
       message: "Flora avec Attique created and updated successfully.",
       houseId: houseId,
-      slug: "flora-me-atike",
+      slug: "flora-avec-attique",
       uploadedLayersCount: Object.keys(mediaIds).length,
     });
   } catch (error: any) {

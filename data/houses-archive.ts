@@ -61,7 +61,7 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     price60x160: 20716
   },
   {
-    slug: "ambre-me-atike",
+    slug: "ambre-avec-attique",
     title: "Ambre avec Attique",
     category: "Maison toiture terrasse avec étage",
     description:
@@ -70,7 +70,7 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     price60x160: 25985
   },
   {
-    slug: "boreale-me-atike",
+    slug: "boreale-avec-attique",
     title: "Boreale avec Attique",
     category: "Maison toiture terrasse avec étage",
     description:
@@ -88,7 +88,7 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     price60x160: 31292
   },
   {
-    slug: "asebra-me-atike",
+    slug: "asebra-avec-attique",
     title: "Asebra avec Attique",
     category: "Maison toiture terrasse avec étage",
     description:
@@ -115,7 +115,7 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     price60x160: 26100
   },
   {
-    slug: "emeraude-me-atike",
+    slug: "emeraude-avec-attique",
     title: "Emeraude avec Attique",
     category: "Maison toiture terrasse avec étage",
     description:
@@ -133,7 +133,7 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     price60x160: 37157
   },
   {
-    slug: "enea-me-atike",
+    slug: "enea-avec-attique",
     title: "Enea avec Attique",
     category: "Maison toiture terrasse avec étage",
     description:
@@ -151,7 +151,7 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     price60x160: 27462
   },
   {
-    slug: "asebra-me-kulm",
+    slug: "asebra-avec-toit",
     title: "Asebra avec Toit",
     category: "Maison plein pied",
     description:
@@ -160,7 +160,7 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     price60x160: 28693
   },
   {
-    slug: "maison-enea-me-kulm",
+    slug: "enea-avec-toit",
     title: "Enea avec Toit",
     category: "Maison plein pied",
     description:
@@ -241,7 +241,7 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     price60x160: 32550
   },
   {
-    slug: "escape-villa-me-atike",
+    slug: "escape-villa-avec-attique",
     title: "Escape Villa avec Attique",
     category: "Maison toiture terrasse avec étage",
     description:
@@ -277,7 +277,7 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     price60x160: 30000
   },
   {
-    slug: "flora-me-atike",
+    slug: "flora-avec-attique",
     title: "Flora avec Attique",
     category: "Maison toiture terrasse avec étage",
     description:
@@ -286,8 +286,8 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     price60x160: 27800
   },
   {
-    slug: "forest-side-cabin-me-atike",
-    title: "Forest side cabin me atike",
+    slug: "forest-side-cabin-avec-attique",
+    title: "Forest Side Cabin avec Attique",
     category: "Maison toiture terrasse avec étage",
     description:
       "Le modèle Forest Side Cabin avec Attique allie architecture contemporaine, compacité and isolation de haute performance énergétique dans un style forestier unique.",
@@ -295,8 +295,8 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     price60x160: 26500
   },
   {
-    slug: "france-etage-me-atike",
-    title: "France etage me atike",
+    slug: "france-etage-avec-attique",
+    title: "France etage avec Attique",
     category: "Maison toiture terrasse avec étage",
     description:
       "Le modèle France etage avec Attique séduit par son design contemporain, son architecture sur deux étages and sa terrasse moderne avec vue panoramique.",
@@ -313,8 +313,8 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     price60x160: 34000
   },
   {
-    slug: "liberte-etage-me-atike",
-    title: "Liberte etage me atike",
+    slug: "liberte-etage-avec-attique",
+    title: "Liberte etage avec Attique",
     category: "Maison toiture terrasse avec étage",
     description:
       "Le modèle Liberte etage avec Attique séduit par son design contemporain, son architecture sur deux étages and sa terrasse moderne avec vue panoramique.",
@@ -322,8 +322,8 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     price60x160: 31000
   },
   {
-    slug: "maison-2-etage-me-atike",
-    title: "Maison 2 etage me atike",
+    slug: "maison-2-etages-avec-attique",
+    title: "Maison 2 etages avec Attique",
     category: "Maison toiture terrasse avec étage",
     description:
       "Le modèle Maison 2 etage avec Attique séduit par son design contemporain, son architecture sur deux étages and sa terrasse moderne avec vue panoramique.",

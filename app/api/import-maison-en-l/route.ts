@@ -186,19 +186,7 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    // 7. Update other locales (en, de, nl) for title/slug consistency
-    const otherLocales = ["en", "de", "nl"];
-    for (const loc of otherLocales) {
-      await payload.update({
-        collection: "houses",
-        id: houseId,
-        locale: loc as any,
-        data: {
-          title: "Maison en L avec Attique",
-          slug: "maison-en-l-avec-attique",
-        },
-      });
-    }
+
 
     console.log(`[Import Maison en L] Done!`);
     return NextResponse.json({

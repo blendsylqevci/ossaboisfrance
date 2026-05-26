@@ -54,7 +54,7 @@ export const Houses: CollectionConfig = {
       name: 'title',
       type: 'text',
       required: true,
-      localized: true,
+      localized: false,
     },
     {
       name: 'slug',

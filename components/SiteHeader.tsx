@@ -15,31 +15,33 @@ type SiteHeaderProps = {
 const getCleanHouseName = (slug: string, locale: Locale) => {
   if (!slug) return "";
   const mapping: Record<string, string> = {
-    "monna-me-atike": "Monna",
+    "monna-avec-attique": "Monna",
     "diademe-toiture-terrasse": "Diadème",
     "cotage-toiture-terrasse": "Cotage",
-    "asebra-me-atike": "Asebra",
-    "ambre-me-atike": "Ambre",
-    "boreale-me-atike": "Boréale",
-    "enea-me-atike": "Enea",
-    "maison-enea-me-kulm": "Enea",
-    "flora-me-atike": "Flora",
+    "asebra-avec-attique": "Asebra",
+    "ambre-avec-attique": "Ambre",
+    "boreale-avec-attique": "Boréale",
+    "enea-avec-attique": "Enea",
+    "enea-avec-toit": "Enea",
+    "flora-avec-attique": "Flora",
     "azura-comble": "Azura",
     "nina-house": "Nina",
     "dianne": "Dianne",
-    "forest-side-cabin-me-atike": "Forest Side",
-    "marinela-me-atike": "Marinela",
+    "forest-side-cabin-avec-attique": "Forest Side",
+    "marinela-avec-attique": "Marinela",
     "maison-e": "Maison E",
     "maison-loren": "Maison Loren",
     "a-frame-house": "A-Frame",
-    "sira-me-atike": "Sira",
+    "sira-avec-attique": "Sira",
     "emmy-house-etage-toiture-terrasse": "Emmy",
     "emeraude-toiture-terrasse": "Émeraude",
-    "emeraude-me-atike": "Émeraude",
-    "symphonie-me-atike": "Symphonie",
+    "emeraude-avec-attique": "Émeraude",
+    "symphonie-avec-attique": "Symphonie",
     "australe": "Australe",
     "enea-toiture-terrasse": "Enea",
-    "maison-2-etage-me-atike": "Maison 2 Étages",
+    "maison-2-etages-avec-attique": "Maison 2 Étages",
+    "france-etage-avec-attique": "France",
+    "liberte-etage-avec-attique": "Liberté",
     "flora-house": "Flora",
     "forest-side-cabin": "Forest Side",
     "france-etage": "France",
@@ -49,6 +51,8 @@ const getCleanHouseName = (slug: string, locale: Locale) => {
 
   const baseName = mapping[slug] || slug
     .replace("-me-atike", "")
+    .replace("-avec-attique", "")
+    .replace("-avec-toit", "")
     .replace("-toiture-terrasse", "")
     .replace("-house", "")
     .split("-")

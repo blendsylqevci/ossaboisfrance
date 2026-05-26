@@ -160,20 +160,6 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    // Update for all other locales (en, de, nl) to keep title/slug consistent
-    const otherLocales = ["en", "de", "nl"];
-    for (const loc of otherLocales) {
-      await payload.update({
-        collection: "houses",
-        id: houseDoc.id,
-        locale: loc as any,
-        data: {
-          title: "Emmy avec Attique",
-          slug: "maison-emmy",
-        },
-      });
-    }
-
     return NextResponse.json({
       success: true,
       message: "Emmy avec Attique imported and updated successfully.",

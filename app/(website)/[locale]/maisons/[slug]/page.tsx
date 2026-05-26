@@ -1,4 +1,4 @@
-import { notFound, redirect } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { getPayload } from "payload";
@@ -12,6 +12,31 @@ import { translateText, translateHouseDescription } from "@/lib/translation-help
 import { HouseTitleDispatcher } from "@/components/HouseTitleDispatcher";
 import { Metadata } from "next";
 
+const slugRedirects: Record<string, string> = {
+  "emeraude-toiture-terrasse": "emeraude-avec-attique",
+  "emeraude-me-atike": "emeraude-avec-attique",
+  "flora-me-atike": "flora-avec-attique",
+  "france-etage-me-atike": "france-etage-avec-attique",
+  "liberte-etage-me-atike": "liberte-etage-avec-attique",
+  "enea-me-atike": "enea-avec-attique",
+  "forest-side-cabin-me-atike": "forest-side-cabin-avec-attique",
+  "monna-me-atike": "monna-avec-attique",
+  "ambre-me-atike": "ambre-avec-attique",
+  "boreale-me-atike": "boreale-avec-attique",
+  "asebra-me-atike": "asebra-avec-attique",
+  "maison-enea-me-kulm": "enea-avec-toit",
+  "asebra-me-kulm": "asebra-avec-toit",
+  "calme-me-atike": "calme-avec-attique",
+  "escape-villa-me-atike": "escape-villa-avec-attique",
+  "melodie-me-atike": "melodie-avec-attique",
+  "palma-etage-me-atike": "palma-etage-avec-attique",
+  "regence-me-atike": "regence-avec-attique",
+  "sira-me-atike": "sira-avec-attique",
+  "symphonie-me-atike": "symphonie-avec-attique",
+  "marinela-me-atike": "marinela-avec-attique",
+  "maison-2-etage-me-atike": "maison-2-etages-avec-attique",
+};
+
 export const dynamic = "force-dynamic";
 
 type HouseDetailPageProps = {
@@ -20,11 +45,15 @@ type HouseDetailPageProps = {
 
 export async function generateMetadata({ params }: HouseDetailPageProps): Promise<Metadata> {
   const { locale, slug } = await params;
+  
+  // Resolve redirected slugs for metadata to prevent indexing duplicate pages
+  const resolvedSlug = slugRedirects[slug] || slug;
+
   try {
     const payload = await getPayload({ config });
     const result = await payload.find({
       collection: 'houses',
-      where: { slug: { equals: slug } },
+      where: { slug: { equals: resolvedSlug } },
       locale: locale,
     });
 
@@ -37,7 +66,7 @@ export async function generateMetadata({ params }: HouseDetailPageProps): Promis
     const pageTitle = `${translatedTitle} | Ossa Bois France`;
     const descriptionText = translateHouseDescription(
       houseDoc.description || houseDoc.subheading || '',
-      slug,
+      resolvedSlug,
       locale
     );
 
@@ -47,18 +76,18 @@ export async function generateMetadata({ params }: HouseDetailPageProps): Promis
       title: pageTitle,
       description: descriptionText,
       alternates: {
-        canonical: `https://ossaboisfrance.com/${locale}/maisons/${slug}`,
+        canonical: `https://ossaboisfrance.com/${locale}/maisons/${resolvedSlug}`,
         languages: {
-          fr: `https://ossaboisfrance.com/fr/maisons/${slug}`,
-          en: `https://ossaboisfrance.com/en/maisons/${slug}`,
-          de: `https://ossaboisfrance.com/de/maisons/${slug}`,
-          nl: `https://ossaboisfrance.com/nl/maisons/${slug}`,
+          fr: `https://ossaboisfrance.com/fr/maisons/${resolvedSlug}`,
+          en: `https://ossaboisfrance.com/en/maisons/${resolvedSlug}`,
+          de: `https://ossaboisfrance.com/de/maisons/${resolvedSlug}`,
+          nl: `https://ossaboisfrance.com/nl/maisons/${resolvedSlug}`,
         }
       },
       openGraph: {
         title: pageTitle,
         description: descriptionText,
-        url: `https://ossaboisfrance.com/${locale}/maisons/${slug}`,
+        url: `https://ossaboisfrance.com/${locale}/maisons/${resolvedSlug}`,
         images: imageUrl ? [{ url: imageUrl }] : [],
         type: "website",
       }
@@ -90,8 +119,10 @@ export default async function HouseDetailPage({ params }: HouseDetailPageProps) 
   const { locale, slug } = await params;
   const dict = await getDictionary(locale);
 
-  if (slug === "emeraude-toiture-terrasse") {
-    redirect(`/${locale}/maisons/emeraude-me-atike`);
+  // Perform permanent 308 redirect if the requested slug is an old one
+  const targetNewSlug = slugRedirects[slug];
+  if (targetNewSlug) {
+    permanentRedirect(`/${locale}/maisons/${targetNewSlug}`);
   }
   
   const payload = await getPayload({ config });

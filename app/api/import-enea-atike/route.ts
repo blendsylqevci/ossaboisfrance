@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
     // 2. Check if Enea avec Attique already exists. If yes, delete it and its media
     const existing = await payload.find({
       collection: "houses",
-      where: { slug: { equals: "enea-me-atike" } },
+      where: { slug: { equals: "enea-avec-attique" } },
       limit: 1,
     });
 
@@ -121,7 +121,7 @@ export async function GET(req: NextRequest) {
       locale: "fr",
       data: {
         title: "Enea avec Attique",
-        slug: "enea-me-atike",
+        slug: "enea-avec-attique",
         category: 2, // Maisons à toiture terrasse avec étage (ID 2, slug: maison-sans-faitage)
         subheading: "Le modèle Enea avec Attique réunit l'élégance d'une toiture terrasse plate à la fonctionnalité d'un attique moderne.",
         description: "Le modèle Enea avec Attique réunit l'élégance d'une toiture terrasse plate à la fonctionnalité d'un attique moderne. Bâtie sur une structure robuste en ossature bois à haute performance énergétique (conforme RE2020), cette maison modulaire contemporaine offre des volumes intérieurs baignés de lumière grâce à ses larges ouvertures.",
@@ -172,26 +172,14 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    // 7. Update other locales (en, de, nl) for title/slug consistency
-    const otherLocales = ["en", "de", "nl"];
-    for (const loc of otherLocales) {
-      await payload.update({
-        collection: "houses",
-        id: houseId,
-        locale: loc as any,
-        data: {
-          title: "Enea avec Attique",
-          slug: "enea-me-atike",
-        },
-      });
-    }
+
 
     console.log(`[Import Enea Atike] Done!`);
     return NextResponse.json({
       success: true,
       message: "Enea avec Attique created and updated successfully.",
       houseId: houseId,
-      slug: "enea-me-atike",
+      slug: "enea-avec-attique",
       uploadedLayersCount: Object.keys(mediaIds).length,
     });
   } catch (error: any) {

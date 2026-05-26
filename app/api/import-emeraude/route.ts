@@ -126,7 +126,7 @@ export async function GET(req: NextRequest) {
       locale: "fr",
       data: {
         title: "Emeraude avec Attique",
-        slug: "emeraude-me-atike",
+        slug: "emeraude-avec-attique",
         category: 2, // Maison toiture terrasse avec étage (slug: maison-sans-faitage)
         price60x160: 28800,
         price60x200: 30300,
@@ -160,25 +160,11 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    // Update for all other locales (en, de, nl) to keep title/slug consistent
-    const otherLocales = ["en", "de", "nl"];
-    for (const loc of otherLocales) {
-      await payload.update({
-        collection: "houses",
-        id: houseDoc.id,
-        locale: loc as any,
-        data: {
-          title: "Emeraude avec Attique",
-          slug: "emeraude-me-atike",
-        },
-      });
-    }
-
     return NextResponse.json({
       success: true,
       message: "Emeraude avec Attique imported and updated successfully.",
       houseId: houseDoc.id,
-      slug: "emeraude-me-atike",
+      slug: "emeraude-avec-attique",
       uploadedFiles: Object.keys(mediaIds),
     });
   } catch (error: any) {

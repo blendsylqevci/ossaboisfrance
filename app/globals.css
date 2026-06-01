@@ -2258,6 +2258,57 @@ img {
   margin-top: 12px;
 }
 
+.structure-info-preview {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fafaf9;
+  padding: 12px 14px;
+  font-family: "PP Neue Montreal", sans-serif;
+  font-size: 13.5px;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+.structure-info-preview p {
+  margin: 0;
+}
+
+.structure-info-preview p + p {
+  margin-top: 8px;
+}
+
+.structure-info-preview p strong[style*="font-size"] {
+  font-size: 17px !important;
+}
+
+.structure-more-toggle {
+  display: inline;
+  margin: 0;
+  padding: 0 0 0 4px;
+  border: none;
+  background: none;
+  font: inherit;
+  color: #5e6f4f;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.structure-more-toggle:hover {
+  color: #4a583f;
+}
+
+.structure-less-toggle {
+  margin-top: 12px;
+}
+
+.structure-info-expanded {
+  margin-top: 10px;
+  border-radius: 8px;
+  border-top: 1px solid #e5e7eb;
+}
+
 .structure-accordion-header {
   display: flex;
   justify-content: space-between;

@@ -100,9 +100,13 @@ export function HouseConfigurator({ config, locale, dict }: HouseConfiguratorPro
     pranoje: false
   });
   const [formStatus, setFormStatus] = useState<"idle" | "success" | "error">("idle");
-  const [isStructureOpen, setIsStructureOpen] = useState(false);
+  const [isStructureTextExpanded, setIsStructureTextExpanded] = useState(false);
 
   const scrollableRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setIsStructureTextExpanded(false);
+  }, [config.id]);
 
   const [hasSavedConfig, setHasSavedConfig] = useState(false);
   const [savedSelection, setSavedSelection] = useState<Record<string, string> | null>(null);
@@ -152,7 +156,7 @@ export function HouseConfigurator({ config, locale, dict }: HouseConfiguratorPro
     setMaterialModal(null);
     setPlanimetryOpen(false);
     setLayoutMode("split");
-    setIsStructureOpen(false);
+    setIsStructureTextExpanded(false);
     if (scrollableRef.current) {
       scrollableRef.current.scrollTop = 0;
     }
@@ -1164,26 +1168,88 @@ L'équipe Ossa Bois France`;
                   ))}
                 </div>
                 <div className="size-info-div">
-                  <button
-                    type="button"
-                    className={`structure-accordion-header${isStructureOpen ? " active" : ""}`}
-                    onClick={() => setIsStructureOpen(!isStructureOpen)}
-                  >
-                    <span>
-                      {locale === "en"
-                        ? "Descriptive Price & Structure Details"
-                        : locale === "de"
-                        ? "Richtpreis & Strukturdetails"
-                        : locale === "nl"
-                        ? "Richtprijs & Structuurdetails"
-                        : "Prix descriptif & structure"}
-                    </span>
-                    <svg className="dropdown-arrow" width="20" height="10" viewBox="0 0 20 10" fill="none">
-                      <path d="M0.640137 0.768219L9.64014 8.26822L18.6401 0.768219" stroke="currentColor" strokeWidth="2" />
-                    </svg>
-                  </button>
-                  {isStructureOpen && (
-                    <div className="structure-accordion-content">
+                  {!isStructureTextExpanded ? (
+                    <div className="structure-info-preview">
+                      {locale === "en" ? (
+                        <>
+                          <p>
+                            <strong>Descriptive price:</strong>
+                            <br />
+                            <strong style={{ color: "rgb(255, 0, 0)", fontSize: "22px" }}>Starting from only €350 excl. VAT.</strong>
+                          </p>
+                          <p>
+                            You have the choice between two types of exterior walls with different thicknesses:{" "}
+                            <strong>160 mm wall</strong> or <strong>200 mm wall</strong>, depending on your choice.
+                            <button
+                              type="button"
+                              className="structure-more-toggle"
+                              onClick={() => setIsStructureTextExpanded(true)}
+                            >
+                              ...more
+                            </button>
+                          </p>
+                        </>
+                      ) : locale === "de" ? (
+                        <>
+                          <p>
+                            <strong>Richtpreis:</strong>
+                            <br />
+                            <strong style={{ color: "rgb(255, 0, 0)", fontSize: "22px" }}>Ab nur 350 € zzgl. MwSt.</strong>
+                          </p>
+                          <p>
+                            Sie haben die Wahl zwischen zwei Arten von Außenwänden mit unterschiedlichen Dicken:{" "}
+                            <strong>160 mm Wand</strong> oder <strong>200 mm Wand</strong>, je nach Ihrer Wahl.
+                            <button
+                              type="button"
+                              className="structure-more-toggle"
+                              onClick={() => setIsStructureTextExpanded(true)}
+                            >
+                              ...mehr
+                            </button>
+                          </p>
+                        </>
+                      ) : locale === "nl" ? (
+                        <>
+                          <p>
+                            <strong>Richtprijs:</strong>
+                            <br />
+                            <strong style={{ color: "rgb(255, 0, 0)", fontSize: "22px" }}>Vanaf slechts € 350 excl. btw.</strong>
+                          </p>
+                          <p>
+                            U heeft de keuze uit twee soorten buitenmuren met verschillende diktes:{" "}
+                            <strong>muur van 160 mm</strong> of <strong>muur van 200 mm</strong>, afhankelijk van uw keuze.
+                            <button
+                              type="button"
+                              className="structure-more-toggle"
+                              onClick={() => setIsStructureTextExpanded(true)}
+                            >
+                              ...meer
+                            </button>
+                          </p>
+                        </>
+                      ) : (
+                        <>
+                          <p>
+                            <strong>Prix descriptif :</strong>
+                            <br />
+                            <strong style={{ color: "rgb(255, 0, 0)", fontSize: "22px" }}>À partir de seulement 350 € HT.</strong>
+                          </p>
+                          <p>
+                            Vous avez le choix entre deux types de murs extérieurs avec différentes épaisseurs :{" "}
+                            <strong>mur de 160 mm</strong> ou <strong>mur de 200 mm</strong>, selon votre choix.
+                            <button
+                              type="button"
+                              className="structure-more-toggle"
+                              onClick={() => setIsStructureTextExpanded(true)}
+                            >
+                              ...plus
+                            </button>
+                          </p>
+                        </>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="structure-accordion-content structure-info-expanded">
                       <div className="structure-image-preview" style={{ position: "relative", width: "100%", height: "160px", marginBottom: "14px", borderRadius: "6px", overflow: "hidden" }}>
                         <Image
                           src="/media/konstruksioni.webp"
@@ -1286,6 +1352,19 @@ L'équipe Ossa Bois France`;
                           </p>
                         </>
                       )}
+                      <button
+                        type="button"
+                        className="structure-more-toggle structure-less-toggle"
+                        onClick={() => setIsStructureTextExpanded(false)}
+                      >
+                        {locale === "en"
+                          ? "...less"
+                          : locale === "de"
+                          ? "...weniger"
+                          : locale === "nl"
+                          ? "...minder"
+                          : "...moins"}
+                      </button>
                     </div>
                   )}
                 </div>

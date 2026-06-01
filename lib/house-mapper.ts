@@ -631,64 +631,6 @@ export function mapHouseDocToConfiguratorData(
       )
     },
     {
-      id: "facade",
-      inputName: "house_facade",
-      label: translateText("Finition de la façade", locale),
-      description: translateText("Choisissez le revêtement extérieur de votre maison.", locale),
-      priceMode: "wall_m2",
-      selectionMode: "radio-toggle",
-      options: buildCategoryOptions(
-        [
-          {
-            id: "enduit",
-            label: locale === "en" ? "White facade (Render)" : locale === "de" ? "Weiße Fassade (Putz)" : locale === "nl" ? "Witte gevel (Pleisterwerk)" : "Façade blanche (Enduit)",
-            price160: houseDoc.slug === 'escape-villa-me-atike' ? 1.0 : 25.5,
-            price200: houseDoc.slug === 'escape-villa-me-atike' ? 1.0 : 25.5,
-            layerKey: "facade_blanche",
-            materialDescription: 
-              locale === "en" ? "White sprayed mineral render provides a clean, bright, and modern look for your timber home. Applied in multiple layers with fiberglass mesh reinforcement, it forms a protective skin that is completely rainproof yet highly vapor-permeable (low Sd-value). It ensures long-term weather protection while keeping the walls fully breathable." :
-              locale === "de" ? "Weißer Spritz-Mineralputz verleiht Ihrem Haus eine moderne und helle Ästhetik. In mehreren Schichten mit Glasfasergewebe-Armierung aufgetragen, bildet er eine schützende Haut, die absolut regendicht und gleichzeitig hochdampfdurchlässig ist (niedriger Sd-Wert). So schützt er das Tragwerk dauerhaft vor Witterungseinflüssen." :
-              locale === "nl" ? "Witte minerale spuitpleister geeft uw woning een moderne en lichte uitstraling. In meerdere lagen aangebracht met glasvezelwapening vormt het een beschermende huid die volledig regenbestendig en tegelijkertijd zeer dampopen is (lage Sd-waarde). Dit zorgt voor langdurige bescherming en ademende muren." :
-              "L'enduit minéral projeté blanc apporte une esthétique moderne et lumineuse à votre maison individuelle. Appliqué en plusieurs passes avec armature en fibre de verre, il forme une peau protectrice imperméable à l'eau de pluie mais hautement perméable à la vapeur d'eau (Sd faible). Il protège ainsi durablement le support contre les intempéries tout en laissant respirer les murs.",
-            modalImage: "/api/media/file/facade-blanche-enduit.webp",
-            thumbnail: "/api/media/file/facade-blanche-enduit.webp",
-            attributes: [
-              { name: locale === "en" ? "Finish texture" : locale === "de" ? "Oberfläche" : locale === "nl" ? "Afwerkingstextuur" : "Finition", value: locale === "en" ? "Scraped fine grain" : locale === "de" ? "Kratzputz feine Körnung" : locale === "nl" ? "Fijn geschraapt" : "Gratté grain fin" },
-              { name: locale === "en" ? "Vapor permeability" : locale === "de" ? "Dampfdurchlässigkeit" : locale === "nl" ? "Dampopenheid" : "Perméabilité à la vapeur", value: locale === "en" ? "High (breathable)" : locale === "de" ? "Hoch (atmungsaktiv)" : locale === "nl" ? "Hoog (dampopen)" : "Élevée (respirant)" },
-              { name: locale === "en" ? "Maintenance" : locale === "de" ? "Wartung" : locale === "nl" ? "Onderhoud" : "Entretien requis", value: locale === "en" ? "Very low" : locale === "de" ? "Sehr gering" : locale === "nl" ? "Zeer laag" : "Très faible" },
-              { name: locale === "en" ? "Weather resistance" : locale === "de" ? "Witterungsbeständigkeit" : locale === "nl" ? "Weerbestendigheid" : "Résistance UV & Intempéries", value: locale === "en" ? "Class A (Excellent)" : locale === "de" ? "Klasse A (Hervorragend)" : locale === "nl" ? "Klasse A (Uitstekend)" : "Classe A (Excellente)" },
-              { name: locale === "en" ? "Render thickness" : locale === "de" ? "Putzstärke" : locale === "nl" ? "Dikte pleister" : "Épaisseur de l'enduit", value: "12 - 15 mm" }
-            ]
-          },
-          {
-            id: "bardage",
-            label: locale === "en" ? "Larch cladding" : locale === "de" ? "Lärchenschalung" : locale === "nl" ? "Larix bekleding" : "Bardage Mélèze",
-            price160: houseDoc.slug === 'escape-villa-me-atike' ? 1.0 : 38.5,
-            price200: houseDoc.slug === 'escape-villa-me-atike' ? 1.0 : 38.5,
-            layerKey: "facade_bardage",
-            materialDescription: 
-              locale === "en" ? "Premium exterior siding made of natural Larch wood. Larch is a dense softwood, naturally rated Class 3 (rot-proof without any chemical treatment). Installed on a ventilated batten system with rodent guards, it provides excellent thermal and mechanical protection. Over time, it develops a beautiful silver-grey patina that blends into the landscape." :
-              locale === "de" ? "Premium-Außenverkleidung aus natürlichem Lärchenholz. Lärche ist ein dichtes Nadelholz, das von Natur aus der Dauerhaftigkeitsklasse 3 entspricht (verrottungsbeständig ohne chemische Behandlung). Auf einer hinterlüfteten Lattung mit Insektenschutz montiert, bietet es besten Schutz und bildet im Lauf der Zeit eine edle silbergraue Patina." :
-              locale === "nl" ? "Premium buitenbekleding van natuurlijk larix. Larix is een dicht naaldhout, van nature geclassificeerd in duurzaamheidsklasse 3 (rotbestendig zonder chemische behandeling). Gemonteerd op geventileerd latwerk met knaagdierroosters biedt het uitstekende bescherming en ontwikkelt het na verloop van tijd een zilvergrijze patina." :
-              "Revêtement extérieur haut de gamme en clin de Mélèze naturel. Le Mélèze est un bois résineux dense, naturellement de classe 3 (imputrescible sans aucun traitement chimique). Posé sur tasseaux ventilés avec grille anti-rongeurs, il assure une excellente protection thermique et mécanique. Avec le temps, il développe une superbe patine gris argenté qui s'intègre harmonieusement dans le paysage.",
-            modalImage: "/api/media/file/bardage-meleze.webp",
-            thumbnail: "/api/media/file/bardage-meleze.webp",
-            attributes: [
-              { name: locale === "en" ? "Wood species" : locale === "de" ? "Holzart" : locale === "nl" ? "Houtsoort" : "Essence de bois", value: locale === "en" ? "European Larch" : locale === "de" ? "Europäische Lärche" : locale === "nl" ? "Europees larix" : "Mélèze d'Europe" },
-              { name: locale === "en" ? "Durability class" : locale === "de" ? "Dauerhaftigkeitsklasse" : locale === "nl" ? "Duurzaamheidsklasse" : "Classe d'emploi", value: locale === "en" ? "Class 3 (Naturally durable)" : locale === "de" ? "Klasse 3 (Natürlich dauerhaft)" : locale === "nl" ? "Klasse 3 (Van nature duurzaam)" : "Classe 3 (Naturellement imputrescible)" },
-              { name: locale === "en" ? "Treatment" : locale === "de" ? "Behandlung" : locale === "nl" ? "Behandeling" : "Traitement", value: locale === "en" ? "None (Eco-friendly)" : locale === "de" ? "Keine" : locale === "nl" ? "Geen" : "Aucun (Écologique sans chimie)" },
-              { name: locale === "en" ? "Installation" : locale === "de" ? "Montage" : locale === "nl" ? "Installatie" : "Pose & Fixation", value: locale === "en" ? "Horizontal, stainless steel nails" : locale === "de" ? "Horizontal, Edelstahlnägel" : locale === "nl" ? "Horizontaal, rvs-nagels" : "Horizontale, clous inox" },
-              { name: locale === "en" ? "Siding thickness" : locale === "de" ? "Brettstärke" : locale === "nl" ? "Plaatdikte" : "Épaisseur des clins", value: "21 mm" }
-            ]
-          }
-        ],
-        globalOptions?.global_facade_options,
-        layers,
-        houseDoc,
-        locale
-      )
-    },
-    {
       id: "roof",
       inputName: "house_roof_isolation",
       label: translateText("Isolation de la toiture par l'extérieur", locale),
@@ -838,6 +780,64 @@ export function mapHouseDocToConfiguratorData(
           }
         ],
         globalOptions?.global_couverture_options,
+        layers,
+        houseDoc,
+        locale
+      )
+    },
+    {
+      id: "facade",
+      inputName: "house_facade",
+      label: translateText("Finition de la façade", locale),
+      description: translateText("Choisissez le revêtement extérieur de votre maison.", locale),
+      priceMode: "wall_m2",
+      selectionMode: "radio-toggle",
+      options: buildCategoryOptions(
+        [
+          {
+            id: "enduit",
+            label: locale === "en" ? "White facade (Render)" : locale === "de" ? "Weiße Fassade (Putz)" : locale === "nl" ? "Witte gevel (Pleisterwerk)" : "Façade blanche (Enduit)",
+            price160: houseDoc.slug === 'escape-villa-me-atike' ? 1.0 : 25.5,
+            price200: houseDoc.slug === 'escape-villa-me-atike' ? 1.0 : 25.5,
+            layerKey: "facade_blanche",
+            materialDescription: 
+              locale === "en" ? "White sprayed mineral render provides a clean, bright, and modern look for your timber home. Applied in multiple layers with fiberglass mesh reinforcement, it forms a protective skin that is completely rainproof yet highly vapor-permeable (low Sd-value). It ensures long-term weather protection while keeping the walls fully breathable." :
+              locale === "de" ? "Weißer Spritz-Mineralputz verleiht Ihrem Haus eine moderne und helle Ästhetik. In mehreren Schichten mit Glasfasergewebe-Armierung aufgetragen, bildet er eine schützende Haut, die absolut regendicht und gleichzeitig hochdampfdurchlässig ist (niedriger Sd-Wert). So schützt er das Tragwerk dauerhaft vor Witterungseinflüssen." :
+              locale === "nl" ? "Witte minerale spuitpleister geeft uw woning een moderne en lichte uitstraling. In meerdere lagen aangebracht met glasvezelwapening vormt het een beschermende huid die volledig regenbestendig en tegelijkertijd zeer dampopen is (lage Sd-waarde). Dit zorgt voor langdurige bescherming en ademende muren." :
+              "L'enduit minéral projeté blanc apporte une esthétique moderne et lumineuse à votre maison individuelle. Appliqué en plusieurs passes avec armature en fibre de verre, il forme une peau protectrice imperméable à l'eau de pluie mais hautement perméable à la vapeur d'eau (Sd faible). Il protège ainsi durablement le support contre les intempéries tout en laissant respirer les murs.",
+            modalImage: "/api/media/file/facade-blanche-enduit.webp",
+            thumbnail: "/api/media/file/facade-blanche-enduit.webp",
+            attributes: [
+              { name: locale === "en" ? "Finish texture" : locale === "de" ? "Oberfläche" : locale === "nl" ? "Afwerkingstextuur" : "Finition", value: locale === "en" ? "Scraped fine grain" : locale === "de" ? "Kratzputz feine Körnung" : locale === "nl" ? "Fijn geschraapt" : "Gratté grain fin" },
+              { name: locale === "en" ? "Vapor permeability" : locale === "de" ? "Dampfdurchlässigkeit" : locale === "nl" ? "Dampopenheid" : "Perméabilité à la vapeur", value: locale === "en" ? "High (breathable)" : locale === "de" ? "Hoch (atmungsaktiv)" : locale === "nl" ? "Hoog (dampopen)" : "Élevée (respirant)" },
+              { name: locale === "en" ? "Maintenance" : locale === "de" ? "Wartung" : locale === "nl" ? "Onderhoud" : "Entretien requis", value: locale === "en" ? "Very low" : locale === "de" ? "Sehr gering" : locale === "nl" ? "Zeer laag" : "Très faible" },
+              { name: locale === "en" ? "Weather resistance" : locale === "de" ? "Witterungsbeständigkeit" : locale === "nl" ? "Weerbestendigheid" : "Résistance UV & Intempéries", value: locale === "en" ? "Class A (Excellent)" : locale === "de" ? "Klasse A (Hervorragend)" : locale === "nl" ? "Klasse A (Uitstekend)" : "Classe A (Excellente)" },
+              { name: locale === "en" ? "Render thickness" : locale === "de" ? "Putzstärke" : locale === "nl" ? "Dikte pleister" : "Épaisseur de l'enduit", value: "12 - 15 mm" }
+            ]
+          },
+          {
+            id: "bardage",
+            label: locale === "en" ? "Larch cladding" : locale === "de" ? "Lärchenschalung" : locale === "nl" ? "Larix bekleding" : "Bardage Mélèze",
+            price160: houseDoc.slug === 'escape-villa-me-atike' ? 1.0 : 38.5,
+            price200: houseDoc.slug === 'escape-villa-me-atike' ? 1.0 : 38.5,
+            layerKey: "facade_bardage",
+            materialDescription: 
+              locale === "en" ? "Premium exterior siding made of natural Larch wood. Larch is a dense softwood, naturally rated Class 3 (rot-proof without any chemical treatment). Installed on a ventilated batten system with rodent guards, it provides excellent thermal and mechanical protection. Over time, it develops a beautiful silver-grey patina that blends into the landscape." :
+              locale === "de" ? "Premium-Außenverkleidung aus natürlichem Lärchenholz. Lärche ist ein dichtes Nadelholz, das von Natur aus der Dauerhaftigkeitsklasse 3 entspricht (verrottungsbeständig ohne chemische Behandlung). Auf einer hinterlüfteten Lattung mit Insektenschutz montiert, bietet es besten Schutz und bildet im Lauf der Zeit eine edle silbergraue Patina." :
+              locale === "nl" ? "Premium buitenbekleding van natuurlijk larix. Larix is een dicht naaldhout, van nature geclassificeerd in duurzaamheidsklasse 3 (rotbestendig zonder chemische behandeling). Gemonteerd op geventileerd latwerk met knaagdierroosters biedt het uitstekende bescherming en ontwikkelt het na verloop van tijd een zilvergrijze patina." :
+              "Revêtement extérieur haut de gamme en clin de Mélèze naturel. Le Mélèze est un bois résineux dense, naturellement de classe 3 (imputrescible sans aucun traitement chimique). Posé sur tasseaux ventilés avec grille anti-rongeurs, il assure une excellente protection thermique et mécanique. Avec le temps, il développe une superbe patine gris argenté qui s'intègre harmonieusement dans le paysage.",
+            modalImage: "/api/media/file/bardage-meleze.webp",
+            thumbnail: "/api/media/file/bardage-meleze.webp",
+            attributes: [
+              { name: locale === "en" ? "Wood species" : locale === "de" ? "Holzart" : locale === "nl" ? "Houtsoort" : "Essence de bois", value: locale === "en" ? "European Larch" : locale === "de" ? "Europäische Lärche" : locale === "nl" ? "Europees larix" : "Mélèze d'Europe" },
+              { name: locale === "en" ? "Durability class" : locale === "de" ? "Dauerhaftigkeitsklasse" : locale === "nl" ? "Duurzaamheidsklasse" : "Classe d'emploi", value: locale === "en" ? "Class 3 (Naturally durable)" : locale === "de" ? "Klasse 3 (Natürlich dauerhaft)" : locale === "nl" ? "Klasse 3 (Van nature duurzaam)" : "Classe 3 (Naturellement imputrescible)" },
+              { name: locale === "en" ? "Treatment" : locale === "de" ? "Behandlung" : locale === "nl" ? "Behandeling" : "Traitement", value: locale === "en" ? "None (Eco-friendly)" : locale === "de" ? "Keine" : locale === "nl" ? "Geen" : "Aucun (Écologique sans chimie)" },
+              { name: locale === "en" ? "Installation" : locale === "de" ? "Montage" : locale === "nl" ? "Installatie" : "Pose & Fixation", value: locale === "en" ? "Horizontal, stainless steel nails" : locale === "de" ? "Horizontal, Edelstahlnägel" : locale === "nl" ? "Horizontaal, rvs-nagels" : "Horizontale, clous inox" },
+              { name: locale === "en" ? "Siding thickness" : locale === "de" ? "Brettstärke" : locale === "nl" ? "Plaatdikte" : "Épaisseur des clins", value: "21 mm" }
+            ]
+          }
+        ],
+        globalOptions?.global_facade_options,
         layers,
         houseDoc,
         locale
@@ -995,11 +995,11 @@ export function mapHouseDocToConfiguratorData(
     "roof_bois",
     "roof_roche",
     "roof_verre",
+    "terrace_etancheite_epdm",
+    "etancheite_epdm",
     "couverture_pare_pluie_lattage",
     "couverture_tuiles_gouttieres",
     "couverture_bac_acier_gouttieres",
-    "terrace_etancheite_epdm",
-    "etancheite_epdm",
     "facade_blanche",
     "facade_bardage",
     "windows_aluminium",

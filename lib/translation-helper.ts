@@ -551,6 +551,18 @@ export function translateHouseDescription(description: string | null | undefined
       de: "A Frame House mit Dach ist ein modernes Modulhaus, gebaut auf einem robusten, kompakten und funktionalen Holzrahmen.",
       nl: "A Frame House met dak is een eigentijds modulair huis gebouwd op een robuust, compact en functioneel houtskelet."
     },
+    "a-frame-house-me-kulm": {
+      fr: "A Frame House avec toit est une maison modulaire moderne construite sur une ossature bois robuste, compacte et fonctionnelle.",
+      en: "A Frame House with roof is a modern modular home built on a robust, compact, and functional timber frame.",
+      de: "A Frame House mit Dach ist ein modernes Modulhaus, gebaut auf einem robusten, kompakten und funktionalen Holzrahmen.",
+      nl: "A Frame House met dak is een eigentijds modulair huis gebouwd op een robuust, compact en functioneel houtskelet."
+    },
+    "ambre-me-kulm": {
+      fr: "AMBRE avec toiture est une maison modulaire contemporaine de plain-pied, construite sur une ossature bois robuste.",
+      en: "AMBRE with roof is a contemporary single-story modular home built on a robust timber frame.",
+      de: "AMBRE mit Dach ist ein zeitgenössisches einstöckiges Modulhaus, gebaut auf einem robusten Holzrahmen.",
+      nl: "AMBRE met dak is een eigentijdse gelijkvloerse modulaire woning, gebouwd op een robuust houtskelet."
+    },
     "mairie": {
       fr: "MAIRIE est une maison modulaire contemporaine de plain-pied, construite sur une ossature bois robuste et pensée pour le quotidien.",
       en: "MAIRIE is a contemporary single-story modular home, built on a robust timber frame and designed for daily life.",

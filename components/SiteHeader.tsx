@@ -133,7 +133,13 @@ export function SiteHeader({ locale, dict }: SiteHeaderProps) {
       e.preventDefault();
       const hash = href.split("#")[1];
       if (hash) {
-        window.location.hash = hash;
+        const target = document.getElementById(hash);
+        if (target) {
+          target.scrollIntoView({ behavior: "smooth" });
+        }
+        const nextUrl = `${window.location.pathname}${window.location.search}#${hash}`;
+        window.history.pushState(null, "", nextUrl);
+        window.dispatchEvent(new HashChangeEvent("hashchange"));
       }
     }
   };

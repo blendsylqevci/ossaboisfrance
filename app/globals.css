@@ -1851,8 +1851,18 @@ img {
 }
 
 @media (min-width: 992px) {
+  .house-main-section {
+    overflow: visible;
+  }
+
+  .house-image-section {
+    z-index: 1;
+  }
+
   .house-details-section {
     position: relative;
+    z-index: 25;
+    overflow: visible;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
@@ -1873,7 +1883,8 @@ img {
     border: 1px solid #e5e6e5;
     border-radius: 20px;
     cursor: pointer;
-    z-index: 100;
+    z-index: 120;
+    pointer-events: auto;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     padding: 0;
@@ -2016,7 +2027,7 @@ img {
     display: flex;
     flex-direction: column;
     border-right: 1px solid #e5e6e5;
-    overflow: hidden;
+    overflow: visible;
   }
 }
 
@@ -2404,6 +2415,10 @@ img {
   color: #1a202c;
   font-size: 26px;
   font-weight: 700;
+}
+
+.price-value {
+  white-space: nowrap;
 }
 
 .price-dropdown {

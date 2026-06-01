@@ -87,6 +87,23 @@ const translations: Record<Locale, TranslationSet> = {
   }
 };
 
+function applyConsentMode(analyticsGranted: boolean) {
+  if (typeof window === "undefined") return;
+
+  // Set a global variable for custom scripts
+  (window as any).cookieConsentState = analyticsGranted ? "all" : "essential";
+
+  // Google Consent Mode v2 update call if gtag is loaded
+  if ((window as any).gtag) {
+    (window as any).gtag("consent", "update", {
+      analytics_storage: analyticsGranted ? "granted" : "denied",
+      ad_storage: "denied", // We don't use advertisement cookies
+      ad_user_data: "denied",
+      ad_personalization: "denied",
+    });
+  }
+}
+
 export function CookieConsent({ locale }: CookieConsentProps) {
   const [mounted, setMounted] = useState(false);
   const [showBanner, setShowBanner] = useState(false);
@@ -105,23 +122,6 @@ export function CookieConsent({ locale }: CookieConsentProps) {
       applyConsentMode(consent === "all");
     }
   }, []);
-
-  const applyConsentMode = (analyticsGranted: boolean) => {
-    if (typeof window === "undefined") return;
-
-    // Set a global variable for custom scripts
-    (window as any).cookieConsentState = analyticsGranted ? "all" : "essential";
-
-    // Google Consent Mode v2 update call if gtag is loaded
-    if ((window as any).gtag) {
-      (window as any).gtag("consent", "update", {
-        analytics_storage: analyticsGranted ? "granted" : "denied",
-        ad_storage: "denied", // We don't use advertisement cookies
-        ad_user_data: "denied",
-        ad_personalization: "denied"
-      });
-    }
-  };
 
   const handleAcceptAll = () => {
     localStorage.setItem("cookie_consent", "all");

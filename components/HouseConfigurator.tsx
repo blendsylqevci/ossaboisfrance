@@ -14,6 +14,12 @@ function formatPrice(value: number) {
   return `${groupedInteger},${decimalPart}`;
 }
 
+const HOUSE_CONFIG_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+
+function getHouseConfigExpiresAt(now?: number) {
+  return (now ?? Date.now()) + HOUSE_CONFIG_TTL_MS;
+}
+
 function checkIcon() {
   return (
     <svg width="16" height="13" viewBox="0 0 16 13" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -131,12 +137,13 @@ export function HouseConfigurator({ config, locale, dict }: HouseConfiguratorPro
         const stored = localStorage.getItem(key);
         if (stored) {
           const parsed = JSON.parse(stored);
-          if (parsed && parsed.selection && parsed.expiresAt > Date.now()) {
+          const now = Date.now();
+          if (parsed && parsed.selection && parsed.expiresAt > now) {
             savedSel = parsed.selection;
             hasConfig = true;
 
             // Extend lifetime to 30 days
-            const expiresAt = Date.now() + 30 * 24 * 60 * 60 * 1000;
+            const expiresAt = getHouseConfigExpiresAt(now);
             localStorage.setItem(key, JSON.stringify({ selection: parsed.selection, expiresAt }));
           }
         }
@@ -176,7 +183,7 @@ export function HouseConfigurator({ config, locale, dict }: HouseConfiguratorPro
     if (typeof window === "undefined") return;
     try {
       const key = `ossa_house_config_${config.id}`;
-      const expiresAt = Date.now() + 30 * 24 * 60 * 60 * 1000; // 30 days
+      const expiresAt = getHouseConfigExpiresAt();
       localStorage.setItem(key, JSON.stringify({ selection, expiresAt }));
       
       const isUpdating = hasSavedConfig;

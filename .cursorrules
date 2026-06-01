@@ -20,3 +20,12 @@ When the user uploads a house photo and provides the house name:
      - Leave the prices and dimensions blank or set to `1` (the user will manually enter them later).
 
 3. **Layer Image Consistency**: No layer photos should be missing or extra. Every layer image must map to its named material (e.g., background, construction/ossature, laine de roche, laine de verre, laine de bois, EPDM, white facade, cladding, aluminium windows, PVC windows, etc.).
+
+## General development rules
+
+4. **Scope**: Only change what the user explicitly asks for. Do not add extra CSS, refactors, or unrelated fixes unless requested.
+
+5. **Verification after every code change**: Run all project check scripts and fix any failures before finishing:
+   - `npm run typecheck`
+   - `npm run lint`
+   - `npm run build` (when the change can affect the build)

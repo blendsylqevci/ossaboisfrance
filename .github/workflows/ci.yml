@@ -14,10 +14,15 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          # Align with local dev (npm 11+). Node 20 + npm ci often fails when
+          # package-lock.json was generated on macOS (sharp / @emnapi optional deps).
+          node-version: "22"
           cache: npm
 
-      - run: npm ci
+      # npm install (not npm ci): lockfile from Mac may omit Linux-only optional
+      # packages that sharp needs on ubuntu-latest. Other agents often use
+      # `npm install` locally without committing an updated lock — CI then breaks.
+      - run: npm install --no-audit --no-fund
 
       - run: npm run typecheck
 

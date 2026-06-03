@@ -76,7 +76,7 @@ export async function uploadPlanimetryFromRaw(
 
   const primarySlug = houseSlugs[0];
   const visualBuffer = primarySlug
-    ? await buildPlanimetryVisualBuffer(rawBuffer, primarySlug)
+    ? await buildPlanimetryVisualBuffer(buffer, primarySlug)
     : null;
 
   if (visualBuffer) {
@@ -159,9 +159,14 @@ export async function regeneratePlanimetryVisualFromRaw(
   }
 
   const rawBuffer = fs.readFileSync(filePath);
+  const { buffer: optimizedBuffer } = await optimizeHouseUploadImage(
+    rawBuffer,
+    filename
+  );
+
   const primarySlug = houseSlugs[0];
   const visualBuffer = primarySlug
-    ? await buildPlanimetryVisualBuffer(rawBuffer, primarySlug)
+    ? await buildPlanimetryVisualBuffer(optimizedBuffer, primarySlug)
     : null;
 
   if (!visualBuffer) {

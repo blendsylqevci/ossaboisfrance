@@ -5,7 +5,7 @@ import fs from "fs";
 import path from "path";
 import { optimizeHouseUploadImage } from "@/lib/optimize-house-upload-image";
 
-const HOUSE_SLUG = "a-frame-house-me-kulm";
+const HOUSE_SLUG = "emeraude-me-kulm";
 
 export async function GET(_req: NextRequest) {
   try {
@@ -13,7 +13,7 @@ export async function GET(_req: NextRequest) {
 
     const layersDir = path.join(
       process.cwd(),
-      "public/images/houses/a frame house me kulm"
+      "public/images/houses/emeraude me kulm"
     );
     if (!fs.existsSync(layersDir)) {
       return NextResponse.json(
@@ -22,41 +22,24 @@ export async function GET(_req: NextRequest) {
       );
     }
 
-    console.log(`[Import A Frame me Kulm] Reading files from: ${layersDir}`);
+    console.log(`[Import Emeraude me Kulm] Reading files from: ${layersDir}`);
     const files = fs.readdirSync(layersDir);
 
     const existing = await payload.find({
       collection: "houses",
       where: { slug: { equals: HOUSE_SLUG } },
       limit: 1,
-      depth: 1,
     });
-
-    let existingHouseId: number | undefined;
-    const oldMediaIds = new Set<number>();
 
     if (existing.totalDocs > 0) {
       const oldDoc = existing.docs[0];
-      existingHouseId = Number(oldDoc.id);
-
-      const collectMediaId = (value: unknown) => {
-        if (typeof value === "number") oldMediaIds.add(value);
-        else if (typeof value === "object" && value !== null && "id" in value) {
-          oldMediaIds.add(Number((value as { id: number }).id));
-        }
-      };
-
-      collectMediaId(oldDoc.defaultImage);
-      collectMediaId(oldDoc.finalImage);
-      if (oldDoc.layers && typeof oldDoc.layers === "object") {
-        for (const layerValue of Object.values(oldDoc.layers)) {
-          collectMediaId(layerValue);
-        }
-      }
-
       console.log(
-        `[Import A Frame me Kulm] Updating existing house ID ${existingHouseId} (${oldMediaIds.size} old media refs)...`
+        `[Import Emeraude me Kulm] Deleting existing house ID ${oldDoc.id} (media via afterDelete hook)...`
       );
+      await payload.delete({
+        collection: "houses",
+        id: oldDoc.id,
+      });
     }
 
     const categorySearch = await payload.find({
@@ -70,13 +53,13 @@ export async function GET(_req: NextRequest) {
     }
 
     const categoryId = categorySearch.docs[0].id;
-    const altPrefix = "A Frame House me Kulm";
+    const altPrefix = "Emeraude me Kulm";
 
     const mapping: Record<
       string,
       { field: string; mediaType: string; alt: string }
     > = {
-      "1. Prapavija.png": {
+      "1. prapavija.png": {
         field: "backgroundLayer",
         mediaType: "hero",
         alt: `Arrière-plan ${altPrefix}`,
@@ -86,7 +69,7 @@ export async function GET(_req: NextRequest) {
         mediaType: "construction_layer",
         alt: `Structure bois ${altPrefix}`,
       },
-      "3. leshguri.png": {
+      "3. lesh guri.png": {
         field: "iso_inter_roche",
         mediaType: "material_layer",
         alt: `Isolation laine de roche ${altPrefix}`,
@@ -96,10 +79,15 @@ export async function GET(_req: NextRequest) {
         mediaType: "material_layer",
         alt: `Isolation laine de bois ${altPrefix}`,
       },
-      "5. lsh xhami.png": {
+      "5. lesh xhami.png": {
         field: "iso_inter_verre",
         mediaType: "material_layer",
         alt: `Isolation laine de verre ${altPrefix}`,
+      },
+      "6. STIROPORI.png": {
+        field: "iso_ext_polystyrene",
+        mediaType: "material_layer",
+        alt: `Isolation extérieure polystyrène ${altPrefix}`,
       },
       "6. stiropori.png": {
         field: "iso_ext_polystyrene",
@@ -116,37 +104,22 @@ export async function GET(_req: NextRequest) {
         mediaType: "material_layer",
         alt: `Isolation extérieure fibre de bois ${altPrefix}`,
       },
-      "9. folia dhe listelat.png": {
-        field: "couverture_pare_pluie_lattage",
-        mediaType: "material_layer",
-        alt: `Pare-pluie et lattage ${altPrefix}`,
-      },
       "9. listelat dhe folia.png": {
         field: "couverture_pare_pluie_lattage",
         mediaType: "material_layer",
         alt: `Pare-pluie et lattage ${altPrefix}`,
       },
-      "14. qeramika.png": {
-        field: "couverture_tuiles_gouttieres",
+      "9. folia dhe listelat.png": {
+        field: "couverture_pare_pluie_lattage",
         mediaType: "material_layer",
-        alt: `Couverture tuiles ${altPrefix}`,
-      },
-      "14. qeremidet.png": {
-        field: "couverture_tuiles_gouttieres",
-        mediaType: "material_layer",
-        alt: `Couverture tuiles ${altPrefix}`,
-      },
-      "15.a llamarina.png": {
-        field: "couverture_bac_acier_gouttieres",
-        mediaType: "material_layer",
-        alt: `Couverture bac acier ${altPrefix}`,
-      },
-      "15. llamarina.png": {
-        field: "couverture_bac_acier_gouttieres",
-        mediaType: "material_layer",
-        alt: `Couverture bac acier ${altPrefix}`,
+        alt: `Pare-pluie et lattage ${altPrefix}`,
       },
       "10. fasada e bardhe.png": {
+        field: "facade_blanche",
+        mediaType: "material_layer",
+        alt: `Façade blanche enduit ${altPrefix}`,
+      },
+      "10. mfasada e bardhe.png": {
         field: "facade_blanche",
         mediaType: "material_layer",
         alt: `Façade blanche enduit ${altPrefix}`,
@@ -166,12 +139,32 @@ export async function GET(_req: NextRequest) {
         mediaType: "material_layer",
         alt: `Menuiseries PVC ${altPrefix}`,
       },
-      "a frame house me kulm 7.jpg": {
+      "14. qeremidet.png": {
+        field: "couverture_tuiles_gouttieres",
+        mediaType: "material_layer",
+        alt: `Couverture tuiles ${altPrefix}`,
+      },
+      "15. llamarina.png": {
+        field: "couverture_bac_acier_gouttieres",
+        mediaType: "material_layer",
+        alt: `Couverture bac acier ${altPrefix}`,
+      },
+      "15a. llamarina.png": {
+        field: "couverture_bac_acier_gouttieres",
+        mediaType: "material_layer",
+        alt: `Couverture bac acier ${altPrefix}`,
+      },
+      "15.a llamarina.png": {
+        field: "couverture_bac_acier_gouttieres",
+        mediaType: "material_layer",
+        alt: `Couverture bac acier ${altPrefix}`,
+      },
+      "Emeraude me kulm 7.jpg": {
         field: "defaultImage",
         mediaType: "hero",
         alt: `${altPrefix} — 60×160`,
       },
-      "a frame house me kulm 10.jpg": {
+      "Emeraude me kulm 10.jpg": {
         field: "finalImage",
         mediaType: "final_render",
         alt: `${altPrefix} — 60×200`,
@@ -185,14 +178,13 @@ export async function GET(_req: NextRequest) {
     const optimizationStats: { file: string; before: number; after: number }[] =
       [];
     const skippedFiles: string[] = [];
-    const uploadBatch = Date.now();
 
     for (const filename of files) {
       const mapInfo = mapping[filename];
       if (!mapInfo) {
         skippedFiles.push(filename);
         console.log(
-          `[Import A Frame me Kulm] Skipping file: ${filename} (no schema mapping)`
+          `[Import Emeraude me Kulm] Skipping file: ${filename} (no schema mapping)`
         );
         continue;
       }
@@ -213,7 +205,7 @@ export async function GET(_req: NextRequest) {
       });
 
       console.log(
-        `[Import A Frame me Kulm] Uploading ${filename} (${(beforeSize / 1024 / 1024).toFixed(2)} MB → ${(size / 1024 / 1024).toFixed(2)} MB)...`
+        `[Import Emeraude me Kulm] Uploading ${filename} (${(beforeSize / 1024 / 1024).toFixed(2)} MB → ${(size / 1024 / 1024).toFixed(2)} MB)...`
       );
 
       const mediaDoc = await payload.create({
@@ -224,7 +216,7 @@ export async function GET(_req: NextRequest) {
         },
         file: {
           data: buffer,
-          name: `${uploadBatch}-${filename.replace(/\s+/g, "-")}`,
+          name: filename,
           mimetype,
           size,
         },
@@ -233,9 +225,9 @@ export async function GET(_req: NextRequest) {
       const mediaId = Number(mediaDoc.id);
       allUploadedMediaIds.push(mediaId);
 
-      if (filename === "a frame house me kulm 7.jpg") {
+      if (filename === "Emeraude me kulm 7.jpg") {
         defaultImageId = mediaId;
-      } else if (filename === "a frame house me kulm 10.jpg") {
+      } else if (filename === "Emeraude me kulm 10.jpg") {
         finalImageId = mediaId;
       } else {
         mediaIds[mapInfo.field] = mediaId;
@@ -251,74 +243,60 @@ export async function GET(_req: NextRequest) {
       );
     }
     if (!mediaIds.couverture_pare_pluie_lattage) {
-      throw new Error("Failed to upload pare-pluie layer (9. folia dhe listelat.png).");
+      throw new Error("Failed to upload pare-pluie layer (9. listelat dhe folia.png).");
     }
     if (!mediaIds.couverture_tuiles_gouttieres) {
-      throw new Error(
-        "Failed to upload tuiles layer (14. qeremidet.png or 14. qeramika.png)."
-      );
+      throw new Error("Failed to upload tuiles layer (14. qeremidet.png).");
     }
     if (!mediaIds.couverture_bac_acier_gouttieres) {
-      throw new Error(
-        "Failed to upload bac acier layer (15. llamarina.png or 15.a llamarina.png)."
-      );
+      throw new Error("Failed to upload bac acier layer (15a. llamarina.png).");
     }
 
-    const houseData = {
-      title: "A Frame House me Kulm",
-      slug: HOUSE_SLUG,
-      category: categoryId,
-      subheading:
-        "A Frame House avec toit est une maison modulaire élégante à ossature bois, offrant un design chaleureux et une performance thermique optimale.",
-      description:
-        "A Frame House avec toit est une maison modulaire moderne construite sur une ossature bois robuste, conçue pour offrir un confort exceptionnel en toutes saisons. Son toit incliné améliore l'évacuation des eaux pluviales, optimise l'isolation naturelle et donne à la maison une esthétique chaleureuse et intemporelle. Grâce à une préfabrication de haute précision, l'installation est rapide, durable et adaptable à différents types de finitions extérieures (bois naturel, panneaux composites, enduit moderne). Ce modèle combine élégance, efficacité énergétique et fonctionnalité, parfaitement adapté aux familles, résidences secondaires ou projets touristiques.",
-      specification:
-        "Maison à ossature bois de plain-pied avec toiture en A. Couverture en tuiles ou bac acier sur pare-pluie et lattage inclus dans le prix de la structure.",
-      price60x160: 1,
-      price60x200: 1,
-      enableFlags: {
-        enableRoofOption: true,
-        enableEtancheiteOption: false,
-        enableEtancheiteTerrasse: false,
-        enableCouvertureOption: true,
-        enableFauxPlafondOption: false,
+    const newHouse = await payload.create({
+      collection: "houses",
+      locale: "fr",
+      data: {
+        title: "Emeraude me Kulm",
+        slug: HOUSE_SLUG,
+        category: categoryId,
+        subheading:
+          "ÉMERAUDE avec toiture est une maison modulaire de plain-pied à ossature bois, au plan en L, dotée d'une toiture inclinée élégante et performante.",
+        description:
+          "ÉMERAUDE avec toiture est une maison modulaire contemporaine de plain-pied, au plan en L, construite sur une ossature bois robuste garantissant durabilité, stabilité et excellente performance thermique. Sa toiture inclinée assure une protection efficace contre les intempéries et confère à la maison une esthétique harmonieuse et intemporelle. Les volumes généreux et la distribution fonctionnelle en L offrent des espaces de vie lumineux, adaptés à une résidence principale ou à un projet familial. Grâce à une préfabrication soignée en atelier, ÉMERAUDE permet une installation rapide sur site, une qualité constante et des finitions extérieures personnalisables telles que le bardage bois naturel, l'enduit moderne ou les panneaux composites. Élégante, confortable et performante, cette maison constitue un choix durable pour un habitat contemporain.",
+        specification: "Fiche technique disponible sur demande.",
+        price60x160: 1,
+        price60x200: 1,
+        enableFlags: {
+          enableRoofOption: true,
+          enableEtancheiteOption: false,
+          enableEtancheiteTerrasse: false,
+          enableCouvertureOption: true,
+          enableFauxPlafondOption: false,
+        },
+        defaultImage: defaultImageId,
+        finalImage: finalImageId,
+        layers: mediaIds,
+        perdhesa: {
+          bruto: 1,
+          neto: 0,
+          mure_te_jashtme: 1,
+          mure_mbajtese: 1,
+          mure_ndarese: 1,
+          pllaka_e_kulmit: 1,
+          pllaka_e_katit_0: 1,
+          pllaka_e_katit_1: 1,
+          pllaka_e_katit_2: 1,
+          pllaka_e_katit: 1,
+          kulmi: 1,
+        },
+        windows: {
+          aluminiumPrice: 1,
+          pvcPrice: 1,
+        },
+        structureInfo:
+          "Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant rigidité et stabilité de l'ensemble. Comprend les murs porteurs, murs de séparation et charpente industrielle type fermette. Le prix inclut le transport et le montage sur site sous garantie décennale.",
       },
-      defaultImage: defaultImageId,
-      finalImage: finalImageId,
-      layers: mediaIds,
-      perdhesa: {
-        bruto: 1,
-        neto: 0,
-        mure_te_jashtme: 1,
-        mure_mbajtese: 1,
-        mure_ndarese: 1,
-        pllaka_e_kulmit: 1,
-        pllaka_e_katit_0: 1,
-        pllaka_e_katit_1: 1,
-        pllaka_e_katit_2: 1,
-        pllaka_e_katit: 1,
-        kulmi: 1,
-      },
-      windows: {
-        aluminiumPrice: 1,
-        pvcPrice: 1,
-      },
-      structureInfo:
-        "Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant rigidité et stabilité de l'ensemble. Comprend les murs porteurs, murs de séparation et charpente industrielle type fermette. Le prix inclut le transport et le montage sur site sous garantie décennale.",
-    };
-
-    const newHouse = existingHouseId
-      ? await payload.update({
-          collection: "houses",
-          id: existingHouseId,
-          locale: "fr",
-          data: houseData,
-        })
-      : await payload.create({
-          collection: "houses",
-          locale: "fr",
-          data: houseData,
-        });
+    });
 
     const houseId = newHouse.id;
 
@@ -330,44 +308,21 @@ export async function GET(_req: NextRequest) {
       });
     }
 
-    const newMediaIdSet = new Set(allUploadedMediaIds);
-    for (const oldMediaId of Array.from(oldMediaIds)) {
-      if (newMediaIdSet.has(oldMediaId)) continue;
-      try {
-        await payload.delete({
-          collection: "media",
-          id: oldMediaId,
-        });
-      } catch (deleteErr) {
-        console.warn(
-          `[Import A Frame me Kulm] Could not delete old media ID ${oldMediaId}:`,
-          deleteErr
-        );
-      }
-    }
-
     return NextResponse.json({
       success: true,
-      message: existingHouseId
-        ? "A Frame House me Kulm updated successfully."
-        : "A Frame House me Kulm created successfully.",
+      message: "Emeraude me Kulm created successfully.",
       houseId,
       slug: HOUSE_SLUG,
       category: "maison-plein-pied",
       uploadedLayersCount: Object.keys(mediaIds).length,
       layerFields: Object.keys(mediaIds),
-      couvertureLayers: {
-        tuiles: mediaIds.couverture_tuiles_gouttieres,
-        bac_acier: mediaIds.couverture_bac_acier_gouttieres,
-        pare_pluie: mediaIds.couverture_pare_pluie_lattage,
-      },
       skippedFiles,
       optimizationStats,
     });
   } catch (error: unknown) {
     const message =
       error instanceof Error ? error.message : "Failed to process import";
-    console.error(`[Import A Frame me Kulm Error]:`, error);
+    console.error(`[Import Emeraude me Kulm Error]:`, error);
     return NextResponse.json({ success: false, error: message }, { status: 500 });
   }
 }

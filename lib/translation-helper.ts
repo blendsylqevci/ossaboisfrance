@@ -563,6 +563,30 @@ export function translateHouseDescription(description: string | null | undefined
       de: "AMBRE mit Dach ist ein zeitgenössisches einstöckiges Modulhaus, gebaut auf einem robusten Holzrahmen.",
       nl: "AMBRE met dak is een eigentijdse gelijkvloerse modulaire woning, gebouwd op een robuust houtskelet."
     },
+    "enea-avec-toit": {
+      fr: "Le modèle Enea avec Toit réinterprète le charme intemporel de la maison individuelle de plain-pied.",
+      en: "The Enea with Roof model reinterprets the timeless charm of the single-story family home.",
+      de: "Das Modell Enea mit Dach interpretiert den zeitlosen Charme des einstöckigen Einfamilienhauses neu.",
+      nl: "Het model Enea met Dak herinterpreteert de tijdloze charme van de gelijkvloerse gezinswoning."
+    },
+    "asebra-avec-toit": {
+      fr: "Le modèle Asebra avec Toit allie les espaces de vie spacieux de plain-pied au charme d'une toiture à double pente.",
+      en: "The Asebra with Roof model combines spacious single-story living with the charm of a pitched roof.",
+      de: "Das Modell Asebra mit Dach verbindet großzügiges einstöckiges Wohnen mit dem Charme eines Satteldachs.",
+      nl: "Het model Asebra met Dak combineert ruim gelijkvloers wonen met de charme van een zadeldak."
+    },
+    "emeraude-me-kulm": {
+      fr: "ÉMERAUDE avec toiture est une maison modulaire contemporaine de plain-pied, au plan en L, construite sur une ossature bois robuste.",
+      en: "ÉMERAUDE with roof is a contemporary single-story L-shaped modular home built on a robust timber frame.",
+      de: "ÉMERAUDE mit Dach ist ein zeitgenössisches einstöckiges L-förmiges Modulhaus, gebaut auf einem robusten Holzrahmen.",
+      nl: "ÉMERAUDE met dak is een eigentijdse gelijkvloerse L-vormige modulaire woning, gebouwd op een robuust houtskelet."
+    },
+    "amethyste-me-kulm": {
+      fr: "AMÉTHYSTE avec toiture est une maison modulaire contemporaine à deux étages, construite sur une ossature bois robuste.",
+      en: "AMÉTHYSTE with roof is a contemporary two-story modular home built on a robust timber frame.",
+      de: "AMÉTHYSTE mit Dach ist ein zeitgenössisches zweistöckiges Modulhaus, gebaut auf einem robusten Holzrahmen.",
+      nl: "AMÉTHYSTE met dak is een eigentijdse modulaire woning met twee verdiepingen, gebouwd op een robuust houtskelet."
+    },
     "mairie": {
       fr: "MAIRIE est une maison modulaire contemporaine de plain-pied, construite sur une ossature bois robuste et pensée pour le quotidien.",
       en: "MAIRIE is a contemporary single-story modular home, built on a robust timber frame and designed for daily life.",

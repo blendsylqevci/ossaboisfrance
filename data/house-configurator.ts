@@ -96,6 +96,8 @@ export type HouseConfiguratorData = {
   customFields?: Record<string, any>;
   /** Position and dimensions config for the image comparison slider */
   sliderConfig?: HouseSliderConfig;
+  /** Pare-pluie layer always visible when any couverture option is selected (France pattern). */
+  includedCouvertureLayerKey?: string;
   planimetry?: string | null;
 };
 

@@ -5,15 +5,15 @@ import fs from "fs";
 import path from "path";
 import { optimizeHouseUploadImage } from "@/lib/optimize-house-upload-image";
 
-const HOUSE_SLUG = "ambre-me-kulm";
+const HOUSE_SLUG = "amethyste-me-kulm";
 
-export async function GET(req: NextRequest) {
+export async function GET(_req: NextRequest) {
   try {
     const payload = await getPayload({ config });
 
     const layersDir = path.join(
       process.cwd(),
-      "public/images/houses/ambre me kulm"
+      "public/images/houses/Amethyste me kulm"
     );
     if (!fs.existsSync(layersDir)) {
       return NextResponse.json(
@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    console.log(`[Import Ambre me Kulm] Reading files from: ${layersDir}`);
+    console.log(`[Import Amethyste me Kulm] Reading files from: ${layersDir}`);
     const files = fs.readdirSync(layersDir);
 
     const existing = await payload.find({
@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
     if (existing.totalDocs > 0) {
       const oldDoc = existing.docs[0];
       console.log(
-        `[Import Ambre me Kulm] Deleting existing house ID ${oldDoc.id} (media via afterDelete hook)...`
+        `[Import Amethyste me Kulm] Deleting existing house ID ${oldDoc.id} (media via afterDelete hook)...`
       );
       await payload.delete({
         collection: "houses",
@@ -44,16 +44,16 @@ export async function GET(req: NextRequest) {
 
     const categorySearch = await payload.find({
       collection: "house-categories",
-      where: { slug: { equals: "maison-plein-pied" } },
+      where: { slug: { equals: "maison-avec-etage" } },
       limit: 1,
     });
 
     if (categorySearch.totalDocs === 0) {
-      throw new Error("Category 'maison-plein-pied' not found in database.");
+      throw new Error("Category 'maison-avec-etage' not found in database.");
     }
 
     const categoryId = categorySearch.docs[0].id;
-    const altPrefix = "Ambre me Kulm";
+    const altPrefix = "Amethyste me Kulm";
 
     const mapping: Record<
       string,
@@ -64,7 +64,7 @@ export async function GET(req: NextRequest) {
         mediaType: "hero",
         alt: `Arrière-plan ${altPrefix}`,
       },
-      "1. Prapavija.png": {
+      "1.prapavija.png": {
         field: "backgroundLayer",
         mediaType: "hero",
         alt: `Arrière-plan ${altPrefix}`,
@@ -79,11 +79,6 @@ export async function GET(req: NextRequest) {
         mediaType: "material_layer",
         alt: `Isolation laine de roche ${altPrefix}`,
       },
-      "3. leshguri.png": {
-        field: "iso_inter_roche",
-        mediaType: "material_layer",
-        alt: `Isolation laine de roche ${altPrefix}`,
-      },
       "4. lesh druri.png": {
         field: "iso_inter_bois",
         mediaType: "material_layer",
@@ -94,10 +89,10 @@ export async function GET(req: NextRequest) {
         mediaType: "material_layer",
         alt: `Isolation laine de verre ${altPrefix}`,
       },
-      "5. lsh xhami.png": {
-        field: "iso_inter_verre",
+      "6. STIROPORI.png": {
+        field: "iso_ext_polystyrene",
         mediaType: "material_layer",
-        alt: `Isolation laine de verre ${altPrefix}`,
+        alt: `Isolation extérieure polystyrène ${altPrefix}`,
       },
       "6. stiropori.png": {
         field: "iso_ext_polystyrene",
@@ -109,32 +104,42 @@ export async function GET(req: NextRequest) {
         mediaType: "material_layer",
         alt: `Isolation extérieure laine de roche ${altPrefix}`,
       },
+      "7.lesh guri jashte.png": {
+        field: "iso_ext_roche_comprimee",
+        mediaType: "material_layer",
+        alt: `Isolation extérieure laine de roche ${altPrefix}`,
+      },
       "8. fibra.png": {
         field: "iso_ext_fibre",
         mediaType: "material_layer",
         alt: `Isolation extérieure fibre de bois ${altPrefix}`,
       },
       "9. listelat dhe folia.png": {
-        field: "couverture_pare_pluie_lattage",
+        field: "etancheite_epdm",
         mediaType: "material_layer",
         alt: `Pare-pluie et lattage ${altPrefix}`,
       },
       "9. folia dhe listelat.png": {
-        field: "couverture_pare_pluie_lattage",
+        field: "etancheite_epdm",
         mediaType: "material_layer",
         alt: `Pare-pluie et lattage ${altPrefix}`,
-      },
-      "10. fasada e abrdhe.png": {
-        field: "facade_blanche",
-        mediaType: "material_layer",
-        alt: `Façade blanche enduit ${altPrefix}`,
       },
       "10. fasada e bardhe.png": {
         field: "facade_blanche",
         mediaType: "material_layer",
         alt: `Façade blanche enduit ${altPrefix}`,
       },
+      "10. faada e bardhe.png": {
+        field: "facade_blanche",
+        mediaType: "material_layer",
+        alt: `Façade blanche enduit ${altPrefix}`,
+      },
       "11. fasada arish.png": {
+        field: "facade_bardage",
+        mediaType: "material_layer",
+        alt: `Façade bardage mélèze ${altPrefix}`,
+      },
+      "11. fasada aridh.png": {
         field: "facade_bardage",
         mediaType: "material_layer",
         alt: `Façade bardage mélèze ${altPrefix}`,
@@ -154,27 +159,17 @@ export async function GET(req: NextRequest) {
         mediaType: "material_layer",
         alt: `Couverture tuiles ${altPrefix}`,
       },
-      "14. qeramika.png": {
-        field: "couverture_tuiles_gouttieres",
-        mediaType: "material_layer",
-        alt: `Couverture tuiles ${altPrefix}`,
-      },
       "15. llamarina.png": {
         field: "couverture_bac_acier_gouttieres",
         mediaType: "material_layer",
         alt: `Couverture bac acier ${altPrefix}`,
       },
-      "15.a llamarina.png": {
-        field: "couverture_bac_acier_gouttieres",
-        mediaType: "material_layer",
-        alt: `Couverture bac acier ${altPrefix}`,
-      },
-      "ambre me kulm 7.jpg": {
+      "amethyste me kulm 7.jpg": {
         field: "defaultImage",
         mediaType: "hero",
         alt: `${altPrefix} — 60×160`,
       },
-      "ambre me kulm 10.jpg": {
+      "amethyste me kulm 10.jpg": {
         field: "finalImage",
         mediaType: "final_render",
         alt: `${altPrefix} — 60×200`,
@@ -194,7 +189,7 @@ export async function GET(req: NextRequest) {
       if (!mapInfo) {
         skippedFiles.push(filename);
         console.log(
-          `[Import Ambre me Kulm] Skipping file: ${filename} (no schema mapping)`
+          `[Import Amethyste me Kulm] Skipping file: ${filename} (no schema mapping)`
         );
         continue;
       }
@@ -215,7 +210,7 @@ export async function GET(req: NextRequest) {
       });
 
       console.log(
-        `[Import Ambre me Kulm] Uploading ${filename} (${(beforeSize / 1024 / 1024).toFixed(2)} MB → ${(size / 1024 / 1024).toFixed(2)} MB)...`
+        `[Import Amethyste me Kulm] Uploading ${filename} (${(beforeSize / 1024 / 1024).toFixed(2)} MB → ${(size / 1024 / 1024).toFixed(2)} MB)...`
       );
 
       const mediaDoc = await payload.create({
@@ -235,9 +230,9 @@ export async function GET(req: NextRequest) {
       const mediaId = Number(mediaDoc.id);
       allUploadedMediaIds.push(mediaId);
 
-      if (filename === "ambre me kulm 7.jpg") {
+      if (filename === "amethyste me kulm 7.jpg") {
         defaultImageId = mediaId;
-      } else if (filename === "ambre me kulm 10.jpg") {
+      } else if (filename === "amethyste me kulm 10.jpg") {
         finalImageId = mediaId;
       } else {
         mediaIds[mapInfo.field] = mediaId;
@@ -252,8 +247,8 @@ export async function GET(req: NextRequest) {
         "Failed to upload required layers (backgroundLayer, constructionLayer)."
       );
     }
-    if (!mediaIds.couverture_pare_pluie_lattage) {
-      throw new Error("Failed to upload pare-pluie layer (9. listelat dhe folia.png).");
+    if (!mediaIds.etancheite_epdm) {
+      throw new Error("Failed to upload pare-pluie layer (9. folia dhe listelat.png).");
     }
     if (!mediaIds.couverture_tuiles_gouttieres) {
       throw new Error("Failed to upload tuiles layer (14. qeremidet.png).");
@@ -266,19 +261,19 @@ export async function GET(req: NextRequest) {
       collection: "houses",
       locale: "fr",
       data: {
-        title: "Ambre me Kulm",
+        title: "Amethyste me Kulm",
         slug: HOUSE_SLUG,
         category: categoryId,
         subheading:
-          "AMBRE avec toiture est une maison modulaire de plain-pied à ossature bois, dotée d'une toiture inclinée, offrant un style chaleureux, équilibré et performant.",
+          "AMÉTHYSTE avec toiture est une maison modulaire à deux étages à ossature bois, dotée d'une toiture inclinée, alliant volumes généreux, confort et performance.",
         description:
-          "AMBRE avec toiture est une maison modulaire contemporaine de plain-pied, construite sur une ossature bois robuste garantissant durabilité, stabilité et excellente performance thermique. Sa toiture inclinée assure une protection efficace contre les intempéries et confère à la maison une esthétique harmonieuse et intemporelle. Grâce à une préfabrication soignée en atelier, AMBRE avec toiture permet une installation rapide sur site, une qualité constante et des finitions extérieures personnalisables telles que le bardage bois naturel, l'enduit moderne ou les panneaux composites. Fonctionnelle, lumineuse et élégante, cette maison est idéale pour une résidence principale, une maison secondaire ou un projet résidentiel durable.",
+          "AMÉTHYSTE avec toiture est une maison modulaire contemporaine à deux étages, construite sur une ossature bois robuste garantissant durabilité, stabilité et excellente performance thermique. Sa toiture inclinée assure une protection efficace contre les intempéries et confère à la maison une esthétique harmonieuse et intemporelle. Répartie sur deux niveaux, elle offre des espaces de vie lumineux et fonctionnels, adaptés à une famille ou à une résidence principale. Grâce à une préfabrication soignée en atelier, AMÉTHYSTE permet une installation rapide sur site, une qualité constante et des finitions extérieures personnalisables telles que le bardage bois naturel, l'enduit moderne ou les panneaux composites. Élégante et performante, cette maison constitue un choix durable pour un projet résidentiel exigeant.",
         specification: "Fiche technique disponible sur demande.",
         price60x160: 1,
         price60x200: 1,
         enableFlags: {
           enableRoofOption: true,
-          enableEtancheiteOption: false,
+          enableEtancheiteOption: true,
           enableEtancheiteTerrasse: false,
           enableCouvertureOption: true,
           enableFauxPlafondOption: false,
@@ -304,7 +299,7 @@ export async function GET(req: NextRequest) {
           pvcPrice: 1,
         },
         structureInfo:
-          "Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant rigidité et stabilité de l'ensemble. Comprend les murs porteurs, murs de séparation et charpente industrielle type fermette. Le prix inclut le transport et le montage sur site sous garantie décennale.",
+          "Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant rigidité et stabilité de l'ensemble. Comprend les murs porteurs, murs de séparation et charpente industrielle type fermette sur deux niveaux. Le prix inclut le transport et le montage sur site sous garantie décennale.",
       },
     });
 
@@ -320,10 +315,10 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: "Ambre me Kulm created successfully.",
+      message: "Amethyste me Kulm created successfully.",
       houseId,
       slug: HOUSE_SLUG,
-      category: "maison-plein-pied",
+      category: "maison-avec-etage",
       uploadedLayersCount: Object.keys(mediaIds).length,
       layerFields: Object.keys(mediaIds),
       skippedFiles,
@@ -332,7 +327,7 @@ export async function GET(req: NextRequest) {
   } catch (error: unknown) {
     const message =
       error instanceof Error ? error.message : "Failed to process import";
-    console.error(`[Import Ambre me Kulm Error]:`, error);
+    console.error(`[Import Amethyste me Kulm Error]:`, error);
     return NextResponse.json({ success: false, error: message }, { status: 500 });
   }
 }

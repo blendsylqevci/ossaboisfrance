@@ -424,11 +424,11 @@ export function HouseConfigurator({ config, locale, dict }: HouseConfiguratorPro
     selectedOptions.forEach((item) => {
       if (item?.option.layerKey) keys.add(item.option.layerKey);
     });
-    if (selection.couverture) {
-      keys.add("couverture_pare_pluie_lattage");
+    if (selection.couverture && config.includedCouvertureLayerKey) {
+      keys.add(config.includedCouvertureLayerKey);
     }
     return keys;
-  }, [selectedOptions, selection.couverture]);
+  }, [selectedOptions, selection.couverture, config.includedCouvertureLayerKey]);
 
   const layers = useMemo(() => {
     const byKey = new Map<string, string>([

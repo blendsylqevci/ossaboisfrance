@@ -3,12 +3,16 @@ import { getPayload } from "payload";
 import config from "@/payload.config";
 import { mapHouseDocToConfiguratorData } from "@/lib/house-mapper";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const slug =
+      new URL(request.url).searchParams.get("slug") ?? "monna-me-atike";
     const payload = await getPayload({ config });
     const result = await payload.find({
       collection: 'houses',
-      where: { slug: { equals: 'monna-me-atike' } },
+      where: { slug: { equals: slug } },
+      depth: 1,
+      limit: 1,
     });
 
     if (result.totalDocs === 0) {

@@ -5,7 +5,7 @@ import fs from "fs";
 import path from "path";
 import { optimizeHouseUploadImage } from "@/lib/optimize-house-upload-image";
 
-const HOUSE_SLUG = "a-frame-house-me-kulm";
+const HOUSE_SLUG = "asebra-avec-toit";
 
 export async function GET(_req: NextRequest) {
   try {
@@ -13,7 +13,7 @@ export async function GET(_req: NextRequest) {
 
     const layersDir = path.join(
       process.cwd(),
-      "public/images/houses/a frame house me kulm"
+      "public/images/houses/asebra me kulm"
     );
     if (!fs.existsSync(layersDir)) {
       return NextResponse.json(
@@ -22,7 +22,7 @@ export async function GET(_req: NextRequest) {
       );
     }
 
-    console.log(`[Import A Frame me Kulm] Reading files from: ${layersDir}`);
+    console.log(`[Import Asebra me Kulm] Reading files from: ${layersDir}`);
     const files = fs.readdirSync(layersDir);
 
     const existing = await payload.find({
@@ -55,7 +55,7 @@ export async function GET(_req: NextRequest) {
       }
 
       console.log(
-        `[Import A Frame me Kulm] Updating existing house ID ${existingHouseId} (${oldMediaIds.size} old media refs)...`
+        `[Import Asebra me Kulm] Updating existing house ID ${existingHouseId} (${oldMediaIds.size} old media refs)...`
       );
     }
 
@@ -70,13 +70,13 @@ export async function GET(_req: NextRequest) {
     }
 
     const categoryId = categorySearch.docs[0].id;
-    const altPrefix = "A Frame House me Kulm";
+    const altPrefix = "Asebra avec Toit";
 
     const mapping: Record<
       string,
       { field: string; mediaType: string; alt: string }
     > = {
-      "1. Prapavija.png": {
+      "1. prapavija.png": {
         field: "backgroundLayer",
         mediaType: "hero",
         alt: `Arrière-plan ${altPrefix}`,
@@ -86,7 +86,12 @@ export async function GET(_req: NextRequest) {
         mediaType: "construction_layer",
         alt: `Structure bois ${altPrefix}`,
       },
-      "3. leshguri.png": {
+      "3. lesh guri.png": {
+        field: "iso_inter_roche",
+        mediaType: "material_layer",
+        alt: `Isolation laine de roche ${altPrefix}`,
+      },
+      "3. LESHGURI.png": {
         field: "iso_inter_roche",
         mediaType: "material_layer",
         alt: `Isolation laine de roche ${altPrefix}`,
@@ -96,7 +101,7 @@ export async function GET(_req: NextRequest) {
         mediaType: "material_layer",
         alt: `Isolation laine de bois ${altPrefix}`,
       },
-      "5. lsh xhami.png": {
+      "5. lesh xhami.png": {
         field: "iso_inter_verre",
         mediaType: "material_layer",
         alt: `Isolation laine de verre ${altPrefix}`,
@@ -126,26 +131,6 @@ export async function GET(_req: NextRequest) {
         mediaType: "material_layer",
         alt: `Pare-pluie et lattage ${altPrefix}`,
       },
-      "14. qeramika.png": {
-        field: "couverture_tuiles_gouttieres",
-        mediaType: "material_layer",
-        alt: `Couverture tuiles ${altPrefix}`,
-      },
-      "14. qeremidet.png": {
-        field: "couverture_tuiles_gouttieres",
-        mediaType: "material_layer",
-        alt: `Couverture tuiles ${altPrefix}`,
-      },
-      "15.a llamarina.png": {
-        field: "couverture_bac_acier_gouttieres",
-        mediaType: "material_layer",
-        alt: `Couverture bac acier ${altPrefix}`,
-      },
-      "15. llamarina.png": {
-        field: "couverture_bac_acier_gouttieres",
-        mediaType: "material_layer",
-        alt: `Couverture bac acier ${altPrefix}`,
-      },
       "10. fasada e bardhe.png": {
         field: "facade_blanche",
         mediaType: "material_layer",
@@ -166,12 +151,37 @@ export async function GET(_req: NextRequest) {
         mediaType: "material_layer",
         alt: `Menuiseries PVC ${altPrefix}`,
       },
-      "a frame house me kulm 7.jpg": {
+      "14. qeremidet.png": {
+        field: "couverture_tuiles_gouttieres",
+        mediaType: "material_layer",
+        alt: `Couverture tuiles ${altPrefix}`,
+      },
+      "14. qeramika.png": {
+        field: "couverture_tuiles_gouttieres",
+        mediaType: "material_layer",
+        alt: `Couverture tuiles ${altPrefix}`,
+      },
+      "15. llamarina.png": {
+        field: "couverture_bac_acier_gouttieres",
+        mediaType: "material_layer",
+        alt: `Couverture bac acier ${altPrefix}`,
+      },
+      "15a. llamarina.png": {
+        field: "couverture_bac_acier_gouttieres",
+        mediaType: "material_layer",
+        alt: `Couverture bac acier ${altPrefix}`,
+      },
+      "15.a llamarina.png": {
+        field: "couverture_bac_acier_gouttieres",
+        mediaType: "material_layer",
+        alt: `Couverture bac acier ${altPrefix}`,
+      },
+      "asebra me kulm 7.jpg": {
         field: "defaultImage",
         mediaType: "hero",
         alt: `${altPrefix} — 60×160`,
       },
-      "a frame house me kulm 10.jpg": {
+      "asebra me kulm 10.jpg": {
         field: "finalImage",
         mediaType: "final_render",
         alt: `${altPrefix} — 60×200`,
@@ -192,7 +202,7 @@ export async function GET(_req: NextRequest) {
       if (!mapInfo) {
         skippedFiles.push(filename);
         console.log(
-          `[Import A Frame me Kulm] Skipping file: ${filename} (no schema mapping)`
+          `[Import Asebra me Kulm] Skipping file: ${filename} (no schema mapping)`
         );
         continue;
       }
@@ -213,7 +223,7 @@ export async function GET(_req: NextRequest) {
       });
 
       console.log(
-        `[Import A Frame me Kulm] Uploading ${filename} (${(beforeSize / 1024 / 1024).toFixed(2)} MB → ${(size / 1024 / 1024).toFixed(2)} MB)...`
+        `[Import Asebra me Kulm] Uploading ${filename} (${(beforeSize / 1024 / 1024).toFixed(2)} MB → ${(size / 1024 / 1024).toFixed(2)} MB)...`
       );
 
       const mediaDoc = await payload.create({
@@ -233,9 +243,9 @@ export async function GET(_req: NextRequest) {
       const mediaId = Number(mediaDoc.id);
       allUploadedMediaIds.push(mediaId);
 
-      if (filename === "a frame house me kulm 7.jpg") {
+      if (filename === "asebra me kulm 7.jpg") {
         defaultImageId = mediaId;
-      } else if (filename === "a frame house me kulm 10.jpg") {
+      } else if (filename === "asebra me kulm 10.jpg") {
         finalImageId = mediaId;
       } else {
         mediaIds[mapInfo.field] = mediaId;
@@ -254,26 +264,22 @@ export async function GET(_req: NextRequest) {
       throw new Error("Failed to upload pare-pluie layer (9. folia dhe listelat.png).");
     }
     if (!mediaIds.couverture_tuiles_gouttieres) {
-      throw new Error(
-        "Failed to upload tuiles layer (14. qeremidet.png or 14. qeramika.png)."
-      );
+      throw new Error("Failed to upload tuiles layer (14. qeramika.png).");
     }
     if (!mediaIds.couverture_bac_acier_gouttieres) {
-      throw new Error(
-        "Failed to upload bac acier layer (15. llamarina.png or 15.a llamarina.png)."
-      );
+      throw new Error("Failed to upload bac acier layer (15.a llamarina.png).");
     }
 
     const houseData = {
-      title: "A Frame House me Kulm",
+      title: "Asebra avec Toit",
       slug: HOUSE_SLUG,
       category: categoryId,
       subheading:
-        "A Frame House avec toit est une maison modulaire élégante à ossature bois, offrant un design chaleureux et une performance thermique optimale.",
+        "ASEBRA avec toiture est une maison modulaire de plain-pied à ossature bois, dotée d'une toiture inclinée, offrant un style chaleureux, équilibré et performant.",
       description:
-        "A Frame House avec toit est une maison modulaire moderne construite sur une ossature bois robuste, conçue pour offrir un confort exceptionnel en toutes saisons. Son toit incliné améliore l'évacuation des eaux pluviales, optimise l'isolation naturelle et donne à la maison une esthétique chaleureuse et intemporelle. Grâce à une préfabrication de haute précision, l'installation est rapide, durable et adaptable à différents types de finitions extérieures (bois naturel, panneaux composites, enduit moderne). Ce modèle combine élégance, efficacité énergétique et fonctionnalité, parfaitement adapté aux familles, résidences secondaires ou projets touristiques.",
+        "Le modèle Asebra avec Toit allie les espaces de vie spacieux et ouverts de plain-pied de la gamme Asebra au charme intemporel d'une toiture à double pente. Construite sur une ossature bois robuste garantissant durabilité, stabilité et excellente performance thermique, cette maison modulaire contemporaine permet une installation rapide sur site et des finitions extérieures personnalisables. Fonctionnelle, lumineuse et élégante, elle est idéale pour une résidence principale ou un projet résidentiel durable.",
       specification:
-        "Maison à ossature bois de plain-pied avec toiture en A. Couverture en tuiles ou bac acier sur pare-pluie et lattage inclus dans le prix de la structure.",
+        "Maison à ossature bois de plain-pied avec toiture à pans inclinés. Couverture en tuiles ou bac acier sur pare-pluie et lattage inclus dans le prix de la structure.",
       price60x160: 1,
       price60x200: 1,
       enableFlags: {
@@ -340,7 +346,7 @@ export async function GET(_req: NextRequest) {
         });
       } catch (deleteErr) {
         console.warn(
-          `[Import A Frame me Kulm] Could not delete old media ID ${oldMediaId}:`,
+          `[Import Asebra me Kulm] Could not delete old media ID ${oldMediaId}:`,
           deleteErr
         );
       }
@@ -349,25 +355,20 @@ export async function GET(_req: NextRequest) {
     return NextResponse.json({
       success: true,
       message: existingHouseId
-        ? "A Frame House me Kulm updated successfully."
-        : "A Frame House me Kulm created successfully.",
+        ? "Asebra avec Toit updated successfully."
+        : "Asebra avec Toit created successfully.",
       houseId,
       slug: HOUSE_SLUG,
       category: "maison-plein-pied",
       uploadedLayersCount: Object.keys(mediaIds).length,
       layerFields: Object.keys(mediaIds),
-      couvertureLayers: {
-        tuiles: mediaIds.couverture_tuiles_gouttieres,
-        bac_acier: mediaIds.couverture_bac_acier_gouttieres,
-        pare_pluie: mediaIds.couverture_pare_pluie_lattage,
-      },
       skippedFiles,
       optimizationStats,
     });
   } catch (error: unknown) {
     const message =
       error instanceof Error ? error.message : "Failed to process import";
-    console.error(`[Import A Frame me Kulm Error]:`, error);
+    console.error(`[Import Asebra me Kulm Error]:`, error);
     return NextResponse.json({ success: false, error: message }, { status: 500 });
   }
 }

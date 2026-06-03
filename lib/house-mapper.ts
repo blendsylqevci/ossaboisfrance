@@ -1012,6 +1012,13 @@ export function mapHouseDocToConfiguratorData(
     houseDoc.category === 4 ||
     (typeof houseDoc.category === 'object' && (houseDoc.category?.id === 4 || houseDoc.category?.slug === 'maison-combles-ammenageable'));
 
+  const hasCouvertureParePluieLayer = Boolean(layers.couverture_pare_pluie_lattage);
+  const enableCouverture = houseDoc.enableFlags?.enableCouvertureOption ?? false;
+  const enableEtancheite = houseDoc.enableFlags?.enableEtancheiteOption ?? true;
+  const usesFranceCouverturePattern =
+    isComble ||
+    (hasCouvertureParePluieLayer && enableCouverture && !enableEtancheite);
+
   const mappedCategories = [...categories, ...dynamicCategories].filter(c => c.options.length > 0);
   if (isComble) {
     const fauxPlafondIdx = mappedCategories.findIndex(c => c.id === 'fauxPlafond');
@@ -1060,9 +1067,12 @@ export function mapHouseDocToConfiguratorData(
     ])),
     defaultSelection: {
       size: "60x160",
-      ...(isComble ? { couverture: "pare-pluie" } : {}),
+      ...(usesFranceCouverturePattern ? { couverture: "pare-pluie" } : {}),
       ...dynamicDefaultSelections
     },
+    includedCouvertureLayerKey: usesFranceCouverturePattern
+      ? "couverture_pare_pluie_lattage"
+      : undefined,
     optionalCategoryIds: ["dritaret"],
     enableFlags: {
       enableRoofOption: houseDoc.enableFlags?.enableRoofOption ?? false,
@@ -1073,7 +1083,7 @@ export function mapHouseDocToConfiguratorData(
     },
     structureInfo: translateText(houseDoc.structureInfo || 'Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant rigidité et stabilité de l’ensemble. Comprend les murs porteurs, murs de séparation et charpente industrielle type fermette. Le prix inclut le transport et le montage sur site sous garantie décennale.', locale),
     customFields,
-    sliderConfig: houseDoc.sliderConfig || (isComble ? {
+    sliderConfig: houseDoc.sliderConfig || (usesFranceCouverturePattern ? {
       top: "10%",
       height: "55%",
       left: "15%",

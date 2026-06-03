@@ -10,6 +10,7 @@ import {
   saveCheckoutSelection,
   safeLocalStorageSet,
 } from "@/lib/checkout-selection-storage";
+import { PlanimetryModal } from "@/components/PlanimetryModal";
 import { publicMediaUrl } from "@/lib/media-url";
 
 function formatPrice(value: number) {
@@ -1771,61 +1772,14 @@ L'équipe Ossa Bois France`;
           </div>
         </div>
       ) : null}
-      {planimetryOpen ? (
-        <div
-          className="material-modal-backdrop"
-          role="presentation"
-          onMouseDown={(event) => {
-            if (event.target === event.currentTarget) setPlanimetryOpen(false);
-          }}
-        >
-          <div className="material-modal" role="dialog" aria-modal="true" aria-labelledby="planimetry-modal-title">
-            <button
-              type="button"
-              className="material-modal-close"
-              onClick={() => setPlanimetryOpen(false)}
-            >
-              ×
-            </button>
-            <div className="material-modal-media">
-              <Image
-                src={config.planimetry || publicMediaUrl('asebra-me-atike_default.jpg')}
-                alt={`Planimetria - ${config.name}`}
-                width={1100}
-                height={620}
-                className="modal-image-el"
-                style={{ width: "100%", height: "100%", objectFit: "contain", background: "#f9fafb", padding: "20px" }}
-              />
-            </div>
-            <div className="material-modal-content" style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
-              {config.category && (
-                <p className="material-modal-kicker">{config.category}</p>
-              )}
-              <h2 id="planimetry-modal-title" style={{ margin: "0 0 10px 0" }}>{config.name}</h2>
-              <p style={{ margin: "0 0 24px 0", color: "#4B5563", fontSize: "14px", lineHeight: "1.6" }}>
-                {locale === "en" ? "Planimetry / Floor plan layout details. This plan showcases the interior room distribution and usable living spaces." :
-                 locale === "de" ? "Planimetrie / Grundriss. Dieser Plan zeigt die Aufteilung der Innenräume und die nutzbaren Wohnflächen." :
-                 locale === "nl" ? "Planimetrie / Plattegrond. Dit plan toont de indeling van de binnenruimtes en de bruikbare woonoppervlaktes." :
-                 "Planimétrie / Plan de sol. Ce plan présente l'aménagement intérieur et la distribution des espaces de vie."}
-              </p>
-              <div className="material-attributes-grid" style={{ marginTop: "0" }}>
-                {config.perdhesa?.neto && (
-                  <div className="material-attribute-card">
-                    <span className="material-attribute-label">Neto</span>
-                    <span className="material-attribute-value">{config.perdhesa.neto} m²</span>
-                  </div>
-                )}
-                {config.perdhesa?.bruto && (
-                  <div className="material-attribute-card">
-                    <span className="material-attribute-label">Bruto</span>
-                    <span className="material-attribute-value">{config.perdhesa.bruto} m²</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : null}
+      <PlanimetryModal
+        open={planimetryOpen}
+        onClose={() => setPlanimetryOpen(false)}
+        locale={locale}
+        title={config.name}
+        imageSrc={config.planimetry || publicMediaUrl("asebra-me-atike_default.jpg")}
+        imageAlt={`Planimétrie - ${config.name}`}
+      />
       {showSaveToast && (
         <div className="save-toast">
           {toastMessage.includes("retiré") || toastMessage.includes("removed") || toastMessage.includes("entfernt") || toastMessage.includes("verwijderd") ? (

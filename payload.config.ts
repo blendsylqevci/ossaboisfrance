@@ -14,6 +14,7 @@ import { Houses } from './collections/Houses'
 import { Orders } from './collections/Orders'
 import { FieldDefinitions } from './collections/FieldDefinitions'
 import { HouseOptions } from './globals/HouseOptions'
+import { migrations } from './migrations'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -57,6 +58,7 @@ export default buildConfig({
       ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
     },
     push: false,
+    prodMigrations: migrations,
   }),
   localization: {
     locales: [

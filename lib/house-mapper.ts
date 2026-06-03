@@ -3,6 +3,8 @@ import { Locale } from "@/lib/i18n";
 import { translateText, translateHouseDescription } from "./translation-helper";
 import { isMeKulmHouseSlug } from "./house-import-shared";
 import { publicMediaUrl } from "./media-url";
+import { getPlanimetryRooms, resolvePlanimetryDisplayUrl } from "./planimetry-rooms";
+import { getPlanimetryImageCropRight } from "./planimetry-visual-crop";
 
 export function calculateStructureSizePrice(
   sizeId: string,
@@ -1071,6 +1073,30 @@ export function mapHouseDocToConfiguratorData(
       : typeof houseDoc.planimetry === 'string'
         ? houseDoc.planimetry
         : null,
+    planimetryVisual:
+      typeof houseDoc.planimetryVisual === 'object' && houseDoc.planimetryVisual !== null
+        ? houseDoc.planimetryVisual.url || null
+        : typeof houseDoc.planimetryVisual === 'string'
+          ? houseDoc.planimetryVisual
+          : null,
+    planimetryDisplay: resolvePlanimetryDisplayUrl(
+      typeof houseDoc.planimetry === 'object' && houseDoc.planimetry !== null
+        ? houseDoc.planimetry.url || null
+        : typeof houseDoc.planimetry === 'string'
+          ? houseDoc.planimetry
+          : null,
+      typeof houseDoc.planimetryVisual === 'object' && houseDoc.planimetryVisual !== null
+        ? houseDoc.planimetryVisual.url || null
+        : typeof houseDoc.planimetryVisual === 'string'
+          ? houseDoc.planimetryVisual
+          : null
+    ),
+    planimetryImageCropRight: getPlanimetryImageCropRight(houseDoc.slug),
+    planimetryRooms: getPlanimetryRooms(
+      houseDoc.slug,
+      houseDoc.planimetryDetails,
+      locale
+    ),
     marginPercent: houseDoc.marginPercent ?? globalOptions?.marginPercent ?? 40,
     perdhesa: {
       bruto: houseDoc.perdhesa?.bruto || 0,

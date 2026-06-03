@@ -7,6 +7,8 @@ import { formatArchiveStartingPrice } from "@/data/houses-archive";
 import { CompareSlider } from "@/components/HousesArchive";
 import { useFavorites } from "@/lib/favorites";
 import { publicMediaUrl } from "@/lib/media-url";
+import { PlanimetryModal } from "@/components/PlanimetryModal";
+import type { PlanimetryRoom } from "@/lib/planimetry-rooms";
 
 type House = {
   slug: string;
@@ -18,6 +20,9 @@ type House = {
   neto?: number | null;
   bruto?: number | null;
   planimetry?: string | null;
+  planimetryVisual?: string | null;
+  planimetryImageCropRight?: number | null;
+  planimetryRooms?: PlanimetryRoom[];
   categoryName?: string;
 };
 
@@ -46,64 +51,19 @@ export function ProductsGrid({
   const [activePlanimetry, setActivePlanimetry] = useState<House | null>(null);
   const { isFavorite, handleToggle } = useFavorites();
 
-  const renderPlanimetryModal = () => {
-    if (!activePlanimetry) return null;
-    return (
-      <div
-        className="material-modal-backdrop"
-        role="presentation"
-        onMouseDown={(event) => {
-          if (event.target === event.currentTarget) setActivePlanimetry(null);
-        }}
-      >
-        <div className="material-modal" role="dialog" aria-modal="true" aria-labelledby="planimetry-modal-title">
-          <button
-            type="button"
-            className="material-modal-close"
-            onClick={() => setActivePlanimetry(null)}
-          >
-            ×
-          </button>
-          <div className="material-modal-media">
-            <Image
-              src={activePlanimetry.planimetry || publicMediaUrl('asebra-me-atike_default.jpg')}
-              alt={`Planimetria - ${activePlanimetry.title}`}
-              width={1100}
-              height={620}
-              className="modal-image-el"
-              style={{ width: "100%", height: "100%", objectFit: "contain", background: "#f9fafb", padding: "20px" }}
-            />
-          </div>
-          <div className="material-modal-content" style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
-            {activePlanimetry.categoryName && (
-              <p className="material-modal-kicker">{activePlanimetry.categoryName}</p>
-            )}
-            <h2 id="planimetry-modal-title" style={{ margin: "0 0 10px 0" }}>{activePlanimetry.title}</h2>
-            <p style={{ margin: "0 0 24px 0", color: "#4B5563", fontSize: "14px", lineHeight: "1.6" }}>
-              {locale === "en" ? "Planimetry / Floor plan layout details. This plan showcases the interior room distribution and usable living spaces." :
-               locale === "de" ? "Planimetrie / Grundriss. Dieser Plan zeigt die Aufteilung der Innenräume und die nutzbaren Wohnflächen." :
-               locale === "nl" ? "Planimetrie / Plattegrond. Dit plan toont de indeling van de binnenruimtes en de bruikbare woonoppervlaktes." :
-               "Planimétrie / Plan de sol. Ce plan présente l'aménagement intérieur et la distribution des espaces de vie."}
-            </p>
-            <div className="material-attributes-grid" style={{ marginTop: "0" }}>
-              {activePlanimetry.neto && (
-                <div className="material-attribute-card">
-                  <span className="material-attribute-label">Neto</span>
-                  <span className="material-attribute-value">{activePlanimetry.neto} m²</span>
-                </div>
-              )}
-              {activePlanimetry.bruto && (
-                <div className="material-attribute-card">
-                  <span className="material-attribute-label">Bruto</span>
-                  <span className="material-attribute-value">{activePlanimetry.bruto} m²</span>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
+  const renderPlanimetryModal = () => (
+    <PlanimetryModal
+      open={Boolean(activePlanimetry)}
+      onClose={() => setActivePlanimetry(null)}
+      locale={locale as "fr" | "en" | "de" | "nl"}
+      title={activePlanimetry?.title ?? ""}
+      imageSrc={
+        activePlanimetry?.planimetry ||
+        publicMediaUrl("asebra-me-atike_default.jpg")
+      }
+      imageAlt={`Planimétrie - ${activePlanimetry?.title ?? ""}`}
+    />
+  );
 
   // Mobile touch gesture tracking states
   const [touchStart, setTouchStart] = useState<number | null>(null);

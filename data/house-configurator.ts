@@ -99,5 +99,9 @@ export type HouseConfiguratorData = {
   /** Pare-pluie layer always visible when any couverture option is selected (France pattern). */
   includedCouvertureLayerKey?: string;
   planimetry?: string | null;
+  planimetryVisual?: string | null;
+  planimetryDisplay?: string | null;
+  planimetryImageCropRight?: number | null;
+  planimetryRooms?: { label: string; area: number }[];
 };
 

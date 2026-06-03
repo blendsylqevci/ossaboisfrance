@@ -12,7 +12,8 @@ export function middleware(request: NextRequest) {
     pathname.startsWith('/api/seed-') ||
     pathname.startsWith('/api/migrate') ||
     pathname.startsWith('/api/cleanup-') ||
-    pathname.startsWith('/api/test-')
+    pathname.startsWith('/api/test-') ||
+    pathname.startsWith('/api/upload-planimetry')
 
   if (isDevOnlyEndpoint && process.env.NODE_ENV === 'production') {
     return new NextResponse(

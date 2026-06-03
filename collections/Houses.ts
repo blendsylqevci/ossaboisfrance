@@ -145,7 +145,26 @@ export const Houses: CollectionConfig = {
       relationTo: 'media',
       required: false,
       admin: {
-        description: 'L\'image de la planimétrie (plan de sol) de la maison.',
+        description: 'Plan complet (archive / admin). Peut inclure cotes et tableau.',
+      },
+    },
+    {
+      name: 'planimetryVisual',
+      type: 'relationship',
+      relationTo: 'media',
+      required: false,
+      admin: {
+        description:
+          'Plan visuel pour le popup (sans cotes ni tableau). Si vide, recadrage automatique pour certains modèles.',
+      },
+    },
+    {
+      name: 'planimetryDetails',
+      type: 'json',
+      label: 'Planimetry room labels',
+      admin: {
+        description:
+          'Liste JSON des pièces visibles sur le plan: [{ "label": "Salon", "area": 19.97 }, ...]. Affichée dans le popup planimétrie.',
       },
     },
     {

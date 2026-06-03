@@ -6,6 +6,8 @@ import { getDictionary } from "@/lib/dictionary";
 import { translateText, translateHouseDescription } from "@/lib/translation-helper";
 import { Metadata } from "next";
 import { calculateStructureSizePrice } from "@/lib/house-mapper";
+import { getPlanimetryRooms } from "@/lib/planimetry-rooms";
+import { getPlanimetryImageCropRight } from "@/lib/planimetry-visual-crop";
 
 
 // ISR: cached and revalidated on a 600s safety window; Payload house/option
@@ -129,6 +131,8 @@ export default async function HousesPage({ params }: HousesPageProps) {
     const imageUrl = typeof doc.defaultImage === 'object' ? doc.defaultImage?.url : '';
     const finalImageUrl = typeof doc.finalImage === 'object' ? doc.finalImage?.url : '';
     const planimetryUrl = typeof doc.planimetry === 'object' ? doc.planimetry?.url : '';
+    const planimetryVisualUrl =
+      typeof doc.planimetryVisual === 'object' ? doc.planimetryVisual?.url : '';
     const catObj = typeof doc.category === 'object' ? doc.category : null;
     
     const neto = doc.perdhesa?.neto || 0;
@@ -156,6 +160,9 @@ export default async function HousesPage({ params }: HousesPageProps) {
       neto: doc.perdhesa?.neto || null,
       bruto: doc.perdhesa?.bruto || null,
       planimetry: planimetryUrl || null,
+      planimetryVisual: planimetryVisualUrl || null,
+      planimetryImageCropRight: getPlanimetryImageCropRight(doc.slug),
+      planimetryRooms: getPlanimetryRooms(doc.slug, doc.planimetryDetails, locale),
     };
   });
 

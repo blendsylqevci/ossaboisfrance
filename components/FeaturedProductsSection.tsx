@@ -20,6 +20,9 @@ type FeaturedHouseItem = {
   neto?: number | null;
   bruto?: number | null;
   planimetry?: string | null;
+  planimetryVisual?: string | null;
+  planimetryImageCropRight?: number | null;
+  planimetryRooms?: { label: string; area: number }[];
 };
 
 type FeaturedProductsSectionProps = {

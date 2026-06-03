@@ -12,6 +12,8 @@ const nextConfig = {
     "*": ["public/images/houses/**"],
   },
   images: {
+    loader: "custom",
+    loaderFile: "./lib/image-loader.ts",
     formats: ["image/avif", "image/webp"],
     remotePatterns: [
       {

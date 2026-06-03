@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev --webpack",
-    "build": "next build --webpack",
+    "migrate": "node scripts/payload-pre-migrate.mjs && payload migrate",
+    "build": "node scripts/payload-pre-migrate.mjs && payload migrate && next build --webpack",
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",

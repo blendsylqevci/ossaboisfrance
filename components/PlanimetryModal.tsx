@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import type { Locale } from "@/lib/i18n";
 
 export type PlanimetryModalProps = {
@@ -40,13 +39,12 @@ export function PlanimetryModal({
         </button>
 
         <div className="planimetry-modal-media material-modal-media">
-          <Image
+          {/* Native img: full CDN PNG, modal height follows image aspect ratio */}
+          <img
             src={imageSrc}
             alt={imageAlt}
-            width={1400}
-            height={1000}
             className="planimetry-modal-image modal-image-el"
-            priority
+            decoding="async"
           />
         </div>
       </div>

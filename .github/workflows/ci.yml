@@ -6,6 +6,7 @@ on:
   pull_request:
     branches: [main, master]
 
+# Dependabot PRs: validate on GitHub Actions only (no Vercel preview — see vercel.json).
 jobs:
   quality:
     runs-on: ubuntu-latest

@@ -46,7 +46,46 @@ const nextConfig = {
       },
       { key: "X-DNS-Prefetch-Control", value: "on" },
     ];
-    return [{ source: "/:path*", headers: securityHeaders }];
+
+    const isDev = process.env.NODE_ENV !== "production";
+    // CSP rollout: Report-Only reports violations without blocking. Flip by
+    // unsetting CSP_REPORT_ONLY (or setting it to anything other than "true").
+    const cspReportOnly = process.env.CSP_REPORT_ONLY === "true";
+
+    const csp = [
+      "default-src 'self'",
+      // No nonce: pages are ISR-cached, so a per-request nonce isn't possible.
+      // 'unsafe-eval' is dev-only (HMR); production never needs it.
+      `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
+      "style-src 'self' 'unsafe-inline'",
+      "img-src 'self' data: blob: https://ossaboisfrance.com https://*.supabase.co",
+      "font-src 'self' data:",
+      `connect-src 'self' https://api-adresse.data.gouv.fr https://nominatim.openstreetmap.org https://*.supabase.co${
+        isDev ? " ws: http://localhost:*" : ""
+      }`,
+      "frame-src 'self'",
+      "worker-src 'self' blob:",
+      "manifest-src 'self'",
+      "object-src 'none'",
+      "base-uri 'self'",
+      "form-action 'self'",
+      "frame-ancestors 'self'",
+      "upgrade-insecure-requests",
+    ].join("; ");
+
+    const cspHeaderKey = cspReportOnly
+      ? "Content-Security-Policy-Report-Only"
+      : "Content-Security-Policy";
+
+    return [
+      { source: "/:path*", headers: securityHeaders },
+      {
+        // Apply CSP to everything except the Payload admin and API routes,
+        // which manage their own script/connect needs.
+        source: "/((?!api|admin).*)",
+        headers: [{ key: cspHeaderKey, value: csp }],
+      },
+    ];
   },
 };
 

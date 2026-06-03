@@ -7,7 +7,8 @@
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:import": "node --experimental-strip-types --test lib/house-import-shared.test.ts"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "^3.84.1",

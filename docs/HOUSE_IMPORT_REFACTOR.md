@@ -28,6 +28,13 @@ git revert HEAD
 
 - `asebra-avec-toit`, `a-frame-house-me-kulm`, `enea-avec-toit`
 - `emeraude-me-kulm`, `ambre-me-kulm`
+- `amethyste-me-kulm` (étage: `etancheite_epdm` + couverture, **not** France plain-pied)
+
+## Tests
+
+```bash
+npm run test:import
+```
 
 **Enea fix:** no longer deletes the whole house row (was the main risk).
 

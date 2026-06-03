@@ -7,6 +7,15 @@ export const FRANCE_KULM_ENABLE_FLAGS = {
   enableFauxPlafondOption: false,
 } as const;
 
+/** Two-story me kulm: étanchéité section + couverture (not France plain-pied pattern). */
+export const ETAGE_KULM_ENABLE_FLAGS = {
+  enableRoofOption: true,
+  enableEtancheiteOption: true,
+  enableEtancheiteTerrasse: false,
+  enableCouvertureOption: true,
+  enableFauxPlafondOption: false,
+} as const;
+
 /** Placeholder until real dimensions/prices are entered in CMS. */
 export const PLACEHOLDER_PERDHESA = {
   bruto: 1,

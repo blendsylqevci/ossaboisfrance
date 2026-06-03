@@ -5,6 +5,11 @@ import { useRouter, usePathname } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { ConfigCategory, ConfigOption, HouseConfiguratorData, SizeOption } from "@/data/house-configurator";
 import { Locale } from "@/lib/i18n";
+import {
+  captureConfiguratorScreenshot,
+  saveCheckoutSelection,
+  safeLocalStorageSet,
+} from "@/lib/checkout-selection-storage";
 import { publicMediaUrl } from "@/lib/media-url";
 
 function formatPrice(value: number) {
@@ -160,7 +165,7 @@ export function HouseConfigurator({ config, locale, dict }: HouseConfiguratorPro
 
             // Extend lifetime to 30 days
             const expiresAt = getHouseConfigExpiresAt(now);
-            localStorage.setItem(key, JSON.stringify({ selection: parsed.selection, expiresAt }));
+            safeLocalStorageSet(key, JSON.stringify({ selection: parsed.selection, expiresAt }));
           }
         }
       } catch (err) {
@@ -200,7 +205,7 @@ export function HouseConfigurator({ config, locale, dict }: HouseConfiguratorPro
     try {
       const key = `ossa_house_config_${config.id}`;
       const expiresAt = getHouseConfigExpiresAt();
-      localStorage.setItem(key, JSON.stringify({ selection, expiresAt }));
+      safeLocalStorageSet(key, JSON.stringify({ selection, expiresAt }));
       
       const isUpdating = hasSavedConfig;
       setHasSavedConfig(true);
@@ -674,35 +679,10 @@ L'équipe Ossa Bois France`;
       };
     };
 
-    let screenshotImage = config.finalImage;
-    try {
-      const container = document.getElementById("house-layer-stage");
-      if (container) {
-        const imgElements = Array.from(container.getElementsByTagName("img"));
-        const visibleImgs = imgElements.filter(img => 
-          img.classList.contains("is-on") || 
-          window.getComputedStyle(img).opacity !== "0"
-        );
-
-        if (visibleImgs.length > 0) {
-          const bgImg = visibleImgs.find(img => img.getAttribute("data-layer") === "bg") || visibleImgs[0];
-          const canvas = document.createElement("canvas");
-          canvas.width = bgImg.naturalWidth || 1920;
-          canvas.height = bgImg.naturalHeight || 1080;
-          const ctx = canvas.getContext("2d");
-          if (ctx) {
-            for (const img of visibleImgs) {
-              if (img.complete && img.naturalWidth > 0) {
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-              }
-            }
-            screenshotImage = canvas.toDataURL("image/jpeg", 0.85);
-          }
-        }
-      }
-    } catch (err) {
-      console.error("Failed to generate configurator screenshot:", err);
-    }
+    const screenshotImage = captureConfiguratorScreenshot(
+      "house-layer-stage",
+      config.finalImage
+    );
 
     const payload = {
       house: {
@@ -730,7 +710,18 @@ L'équipe Ossa Bois France`;
       totalPrice: total,
       perdhesa: config.perdhesa
     };
-    sessionStorage.setItem("house_selections", JSON.stringify(payload));
+
+    if (!saveCheckoutSelection(payload)) {
+      const quotaMsg: Record<Locale, string> = {
+        fr: "Impossible d'enregistrer la configuration (stockage navigateur plein). Videz le cache du site ou utilisez un autre navigateur, puis réessayez.",
+        en: "Could not save your configuration (browser storage full). Clear site data or try another browser, then retry.",
+        de: "Konfiguration konnte nicht gespeichert werden (Browserspeicher voll). Löschen Sie Website-Daten oder nutzen Sie einen anderen Browser.",
+        nl: "Configuratie kon niet worden opgeslagen (browseropslag vol). Wis sitegegevens of gebruik een andere browser.",
+      };
+      triggerToast(quotaMsg[locale] || quotaMsg.fr);
+      return;
+    }
+
     router.push(`/${locale}/checkout`);
   }
 

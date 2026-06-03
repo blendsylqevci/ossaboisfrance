@@ -3,8 +3,19 @@ import { getPayload } from "payload";
 import config from "@/payload.config";
 import { mapHouseDocToConfiguratorData } from "@/lib/house-mapper";
 import { Locale } from "@/lib/i18n";
-import fs from "fs";
-import path from "path";
+import {
+  calculateCheckoutGrandTotal,
+  CHECKOUT_CATEGORY_PAYLOAD_KEYS,
+  getRoofAreaM2,
+  isCheckoutTotalValid,
+} from "@/lib/checkout-pricing";
+import {
+  checkRateLimit,
+  getClientIp,
+  rateLimitResponse,
+} from "@/lib/rate-limit";
+import { getResendAdminEmail, sendResendMail } from "@/lib/resend-mail";
+import { uploadOrderScreenshotToMedia } from "@/lib/upload-order-screenshot";
 
 const euroFormatter = new Intl.NumberFormat("fr-FR", {
   style: "currency",
@@ -14,6 +25,12 @@ const euroFormatter = new Intl.NumberFormat("fr-FR", {
 });
 
 export async function POST(req: NextRequest) {
+  const ip = getClientIp(req);
+  const limited = checkRateLimit(`checkout:${ip}`, 6, 15 * 60 * 1000);
+  if (!limited.allowed) {
+    return rateLimitResponse(limited.retryAfterSec);
+  }
+
   try {
     const body = await req.json();
     const { selection, personalInfo, deliveryInfo, orderRef, total, transportCost, locale = "fr" } = body;
@@ -67,64 +84,27 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Recalculate price server-side to prevent client manipulation
-    const selectedSizeId = selection?.size?.value;
-    const selectedSize = configData.sizes.find(s => s.id === selectedSizeId || s.label === selectedSizeId);
-    if (!selectedSize) {
+    const marginPercent = houseDoc.marginPercent ?? globalOptions?.marginPercent ?? 40;
+    const pricing = calculateCheckoutGrandTotal(configData, selection, marginPercent);
+    if ("error" in pricing) {
       return NextResponse.json(
-        { success: false, error: "Taille de shtëpi invalide." },
+        { success: false, error: "Taille de maison invalide." },
         { status: 400 }
       );
     }
 
-    // Base price with margin applied
-    const marginPercent = houseDoc.marginPercent ?? globalOptions?.marginPercent ?? 40;
+    const { grandTotal: calculatedGrandTotal, selectedSizeId } = pricing;
+    const selectedSize = configData.sizes.find(
+      (s) => s.id === selectedSizeId || s.label === selectedSizeId
+    )!;
     const marginMultiplier = 1 + marginPercent / 100;
     const serverBasePrice = selectedSize.price * marginMultiplier;
+    const roofArea = getRoofAreaM2(configData.perdhesa);
+    const categoryIdToPayloadKey = CHECKOUT_CATEGORY_PAYLOAD_KEYS;
+    const serverTransportCost =
+      selectedSizeId === "60x160" || selectedSizeId === "60x200" ? 0 : 3000;
 
-    const roofArea = configData.perdhesa.pllaka_e_kulmit || configData.perdhesa.kulmi || 0;
-    let serverOptionsTotal = 0;
-
-    const categoryIdToPayloadKey: Record<string, string> = {
-      isolation: "isolation",
-      outerIsolation: "outerIsolation",
-      facade: "facade",
-      etancheite: "etancheite",
-      couverture: "toiture",
-      terraceEtancheite: "etancheiteTerrasse",
-      roof: "strukturaPlloqes",
-      fauxPlafond: "izolimiPlloqes",
-      dritaret: "dritaret"
-    };
-
-    for (const category of configData.categories) {
-      const payloadKey = categoryIdToPayloadKey[category.id] || category.id;
-      const selectedOptionPayload = selection?.[payloadKey];
-      if (!selectedOptionPayload || !selectedOptionPayload.value) continue;
-
-      // Find option by name/label
-      const option = category.options.find(
-        (o: any) => o.label === selectedOptionPayload.value || o.id === selectedOptionPayload.value
-      );
-      if (!option) continue;
-
-      const rawPrice = selectedSizeId === "60x200" ? (option.price200 ?? option.price160) : option.price160;
-      
-      let multiplier = 1;
-      if (category.priceMode === "wall_m2") {
-        multiplier = configData.perdhesa.mure_te_jashtme || 0;
-      } else if (category.priceMode === "roof_m2") {
-        multiplier = roofArea;
-      }
-
-      serverOptionsTotal += rawPrice * multiplier;
-    }
-
-    const serverTransportCost = (selectedSizeId === "60x160" || selectedSizeId === "60x200") ? 0 : 3000;
-    const calculatedGrandTotal = Math.round(serverBasePrice + serverOptionsTotal) + serverTransportCost;
-
-    // Validate against client-sent total price (allow small tolerance of 5 EUR)
-    if (Math.abs(calculatedGrandTotal - total) > 5) {
+    if (!isCheckoutTotalValid(total, calculatedGrandTotal)) {
       console.warn(`[API Checkout] Price mismatch! Client: ${total}, Server calculated: ${calculatedGrandTotal}`);
       return NextResponse.json(
         { success: false, error: "Prix de commande non valide (incohérence de calcul)." },
@@ -156,36 +136,32 @@ export async function POST(req: NextRequest) {
 
     console.log(`[API Checkout] Order persisted in database with ID: ${orderDoc.id}`);
 
-    let houseImageUrl = "";
     const origin = req.headers.get("origin") || "https://ossaboisfrance.com";
+    let houseImageUrl = "";
 
     const base64Image = selection?.currentImage;
-    if (base64Image && base64Image.startsWith("data:image/")) {
+    if (base64Image && typeof base64Image === "string") {
       try {
-        const matches = base64Image.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
-        if (matches && matches.length === 3) {
-          const buffer = Buffer.from(matches[2], 'base64');
-          const filename = `order-${orderRef.toLowerCase()}-${Date.now()}.jpg`;
-          
-          const dirPath = path.join(process.cwd(), 'public', 'configured-orders');
-          if (!fs.existsSync(dirPath)) {
-            fs.mkdirSync(dirPath, { recursive: true });
-          }
-          
-          const filePath = path.join(dirPath, filename);
-          fs.writeFileSync(filePath, buffer);
-          
-          houseImageUrl = `${origin}/configured-orders/${filename}`;
-          console.log(`[API Checkout] Configured screenshot saved to: ${filePath}`);
+        const uploaded = await uploadOrderScreenshotToMedia(
+          payload,
+          base64Image,
+          orderRef
+        );
+        if (uploaded) {
+          houseImageUrl = uploaded;
+          console.log(`[API Checkout] Screenshot stored in media: ${uploaded}`);
         }
       } catch (saveErr) {
-        console.error("[API Checkout] Failed to save base64 selection image:", saveErr);
+        console.error("[API Checkout] Failed to upload selection image to media:", saveErr);
       }
     }
 
     if (!houseImageUrl) {
-      houseImageUrl = selection?.currentImage || selection?.house?.image
-        ? `${origin}${selection.currentImage || selection.house.image}`
+      const fallbackPath = selection?.currentImage || selection?.house?.image;
+      houseImageUrl = fallbackPath
+        ? fallbackPath.startsWith("http")
+          ? fallbackPath
+          : `${origin}${fallbackPath.startsWith("/") ? fallbackPath : `/${fallbackPath}`}`
         : `${origin}/images/houses/ambre/10 ambre.jpg`;
     }
 
@@ -982,66 +958,41 @@ export async function POST(req: NextRequest) {
 </html>
     `;
 
-    // 3. Send Email using Resend REST API (avoids CommonJS requirement issues in Turbopack)
-    const apiKey = process.env.RESEND_API_KEY;
-    const fromEmail = process.env.RESEND_FROM_EMAIL || "Ossa Bois <info@ossaboisfrance.com>";
-    const toAdminEmail = process.env.RESEND_ADMIN_EMAIL || "sylqevciblendi@gmail.com";
+    const toAdminEmail = getResendAdminEmail();
 
-    if (apiKey) {
-      // Send to Admin
-      const adminRes = await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${apiKey}`
-        },
-        body: JSON.stringify({
-          from: fromEmail,
-          to: toAdminEmail,
-          subject: `[Nouveau Projet] Configuration de Maison ${selection?.house?.name || ""} - Ref ${orderRef}`,
-          html: adminEmailHtml
-        })
+    if (toAdminEmail) {
+      await sendResendMail({
+        to: toAdminEmail,
+        subject: `[Nouveau Projet] Configuration de Maison ${selection?.house?.name || ""} - Ref ${orderRef}`,
+        html: adminEmailHtml,
+        idempotencyKey: `checkout-admin/${orderRef}`,
       });
+    } else if (process.env.NODE_ENV === "production") {
+      console.error("[API Checkout] RESEND_ADMIN_EMAIL missing in production.");
+    }
 
-      if (!adminRes.ok) {
-        const errorText = await adminRes.text();
-        console.error("[Resend Admin Email Error]:", errorText);
-      }
+    if (clientEmail) {
+      await sendResendMail({
+        to: clientEmail,
+        subject: clientEmailSubject,
+        html: clientEmailHtml,
+        idempotencyKey: `checkout-client/${orderRef}`,
+      });
+    }
 
-      // Send to Client (in their chosen language)
-      if (clientEmail) {
-        const clientRes = await fetch("https://api.resend.com/emails", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${apiKey}`
-          },
-          body: JSON.stringify({
-            from: fromEmail,
-            to: clientEmail,
-            subject: clientEmailSubject,
-            html: clientEmailHtml
-          })
-        });
-
-        if (!clientRes.ok) {
-          const errorText = await clientRes.text();
-          console.error("[Resend Client Email Error]:", errorText);
-        }
-      }
-
-      console.log(`[API Checkout] Emails sent successfully via Resend API endpoint for order ${orderRef}.`);
-    } else {
-      // Fallback: log to console if RESEND_API_KEY is not configured.
-      // This is crucial for local testing.
+    if (!process.env.RESEND_API_KEY) {
       console.log("=========================================================================");
-      console.warn("[WARNING] RESEND_API_KEY environment variable is missing! Logging emails to console:");
+      console.warn("[WARNING] RESEND_API_KEY missing — order saved, emails logged:");
       console.log(`Order Reference: ${orderRef}`);
       console.log(`Total: ${euroFormatter.format(total)}`);
       console.log(`Client: ${clientName} (${clientEmail}), Phone: ${clientPhone}`);
-      console.log(`To Admin (${toAdminEmail}):\n${adminEmailHtml}`);
-      console.log(`To Client (${clientEmail}):\n${clientEmailHtml}`);
+      if (toAdminEmail) {
+        console.log(`To Admin (${toAdminEmail}): [html ${adminEmailHtml.length} chars]`);
+      }
+      console.log(`To Client (${clientEmail}): [html ${clientEmailHtml.length} chars]`);
       console.log("=========================================================================");
+    } else {
+      console.log(`[API Checkout] Emails processed for order ${orderRef}.`);
     }
 
     return NextResponse.json({

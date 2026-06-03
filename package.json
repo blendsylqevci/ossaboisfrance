@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
+    "test": "node --experimental-strip-types --test lib/house-import-shared.test.ts lib/checkout-pricing.test.ts",
     "test:import": "node --experimental-strip-types --test lib/house-import-shared.test.ts"
   },
   "dependencies": {

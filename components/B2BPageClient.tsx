@@ -112,11 +112,25 @@ export function B2BPageClient({ locale, dict }: B2BPageClientProps) {
     setIsSubmitting(true);
     setSubmitStatus("idle");
 
+    const form = e.currentTarget;
+    const data = new FormData(form);
+    data.set("locale", locale);
+
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const res = await fetch("/api/b2b", {
+        method: "POST",
+        body: data,
+      });
+
+      const json = (await res.json()) as { success?: boolean; error?: string };
+
+      if (!res.ok || !json.success) {
+        throw new Error(json.error || "Request failed");
+      }
+
       setSubmitStatus("success");
       setFileName(null);
-      (e.target as HTMLFormElement).reset();
+      form.reset();
     } catch {
       setSubmitStatus("error");
     } finally {
@@ -312,6 +326,14 @@ export function B2BPageClient({ locale, dict }: B2BPageClientProps) {
               )}
 
               <form className="contact-form b2b-form" id="b2b-forma" onSubmit={handleSubmit}>
+                <input
+                  type="text"
+                  name="website"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                  style={{ position: "absolute", left: "-9999px", opacity: 0, height: 0, width: 0 }}
+                />
                 <div className="form-group">
                   <label htmlFor="b2b-inquiry">{trans.formInquiryType}</label>
                   <select id="b2b-inquiry" name="inquiryType" required>

@@ -18,16 +18,41 @@ export function ContactPageClient({ locale, dict }: ContactPageClientProps) {
     setLoading(true);
     setError("");
 
+    const form = e.currentTarget;
+    const data = new FormData(form);
+
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstname: data.get("firstname"),
+          lastname: data.get("lastname"),
+          email: data.get("email"),
+          phone: data.get("phone"),
+          subject: data.get("subject"),
+          message: data.get("message"),
+          locale,
+          website: data.get("website"),
+        }),
+      });
+
+      const json = (await res.json()) as { success?: boolean; error?: string };
+
+      if (!res.ok || !json.success) {
+        throw new Error(json.error || "Request failed");
+      }
+
       setSubmitted(true);
     } catch (err) {
       setError(
-        locale === "en" 
+        locale === "en"
           ? "An error occurred while sending your message. Please try again."
-          : locale === "de" ? "Beim Senden Ihrer Nachricht ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
-          : locale === "nl" ? "Er is een fout opgetreden bij het verzenden van uw bericht. Probeer het opnieuw."
-          : "Une erreur est survenue lors de l'envoi de votre message. Veuillez réessayer."
+          : locale === "de"
+            ? "Beim Senden Ihrer Nachricht ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
+            : locale === "nl"
+              ? "Er is een fout opgetreden bij het verzenden van uw bericht. Probeer het opnieuw."
+              : "Une erreur est survenue lors de l'envoi de votre message. Veuillez réessayer."
       );
       void err;
     } finally {
@@ -178,6 +203,14 @@ export function ContactPageClient({ locale, dict }: ContactPageClientProps) {
             </div>
           ) : (
             <form className="contact-form-enterprise" onSubmit={handleSubmit}>
+              <input
+                type="text"
+                name="website"
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+                style={{ position: "absolute", left: "-9999px", opacity: 0, height: 0, width: 0 }}
+              />
               {error && (
                 <div className="contact-feedback error">
                   <p>{error}</p>

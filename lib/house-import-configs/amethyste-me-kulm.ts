@@ -1,6 +1,6 @@
 import type { HouseImportConfig } from "@/lib/house-import";
 import {
-  ETAGE_KULM_ENABLE_FLAGS,
+  FRANCE_KULM_ENABLE_FLAGS,
   PLACEHOLDER_PERDHESA,
   PLACEHOLDER_WINDOWS,
 } from "@/lib/house-import-shared";
@@ -20,7 +20,7 @@ export const amethysteMeKulmImportConfig: HouseImportConfig = {
   requiredLayerFields: [
     "backgroundLayer",
     "constructionLayer",
-    "etancheite_epdm",
+    "couverture_pare_pluie_lattage",
     "couverture_tuiles_gouttieres",
     "couverture_bac_acier_gouttieres",
   ],
@@ -81,12 +81,12 @@ export const amethysteMeKulmImportConfig: HouseImportConfig = {
       alt: `Isolation extérieure fibre de bois ${ALT}`,
     },
     "9. listelat dhe folia.png": {
-      field: "etancheite_epdm",
+      field: "couverture_pare_pluie_lattage",
       mediaType: "material_layer",
       alt: `Pare-pluie et lattage ${ALT}`,
     },
     "9. folia dhe listelat.png": {
-      field: "etancheite_epdm",
+      field: "couverture_pare_pluie_lattage",
       mediaType: "material_layer",
       alt: `Pare-pluie et lattage ${ALT}`,
     },
@@ -151,7 +151,7 @@ export const amethysteMeKulmImportConfig: HouseImportConfig = {
     specification: "Fiche technique disponible sur demande.",
     price60x160: 1,
     price60x200: 1,
-    enableFlags: { ...ETAGE_KULM_ENABLE_FLAGS },
+    enableFlags: { ...FRANCE_KULM_ENABLE_FLAGS },
     perdhesa: { ...PLACEHOLDER_PERDHESA },
     windows: { ...PLACEHOLDER_WINDOWS },
     structureInfo: STRUCTURE_INFO_ETAGE_FR,

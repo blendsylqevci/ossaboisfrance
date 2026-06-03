@@ -1,3 +1,17 @@
+/** All houses configured via `*me kulm*` import routes (plain-pied + étage). */
+export const ME_KULM_HOUSE_SLUGS = [
+  "asebra-avec-toit",
+  "enea-avec-toit",
+  "emeraude-me-kulm",
+  "ambre-me-kulm",
+  "a-frame-house-me-kulm",
+  "amethyste-me-kulm",
+] as const;
+
+export function isMeKulmHouseSlug(slug: string): boolean {
+  return (ME_KULM_HOUSE_SLUGS as readonly string[]).includes(slug);
+}
+
 /** France plain-pied me kulm: pare-pluie in Couverture, not Étanchéité EPDM. */
 export const FRANCE_KULM_ENABLE_FLAGS = {
   enableRoofOption: true,

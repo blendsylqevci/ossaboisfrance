@@ -5,6 +5,8 @@ import {
   collectHouseMediaIds,
   FRANCE_KULM_ENABLE_FLAGS,
   ETAGE_KULM_ENABLE_FLAGS,
+  isMeKulmHouseSlug,
+  ME_KULM_HOUSE_SLUGS,
 } from "./house-import-shared.ts";
 
 describe("house-import-shared", () => {
@@ -35,6 +37,12 @@ describe("house-import-shared", () => {
   it("France kulm disables étanchéité, enables couverture", () => {
     assert.equal(FRANCE_KULM_ENABLE_FLAGS.enableEtancheiteOption, false);
     assert.equal(FRANCE_KULM_ENABLE_FLAGS.enableCouvertureOption, true);
+  });
+
+  it("lists all me kulm house slugs", () => {
+    assert.equal(ME_KULM_HOUSE_SLUGS.length, 6);
+    assert.equal(isMeKulmHouseSlug("enea-avec-toit"), true);
+    assert.equal(isMeKulmHouseSlug("france-comble"), false);
   });
 
   it("Etage kulm keeps étanchéité and couverture", () => {

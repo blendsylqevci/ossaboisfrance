@@ -114,6 +114,21 @@ export function HouseConfigurator({ config, locale, dict }: HouseConfiguratorPro
     setIsStructureTextExpanded(false);
   }, [config.id]);
 
+  // Me kulm / France couverture: pare-pluie included in structure price — always default
+  useEffect(() => {
+    if (!config.includedCouvertureLayerKey) return;
+    setSelection((current) => {
+      if (
+        current.couverture === "pare-pluie" ||
+        current.couverture === "tuiles" ||
+        current.couverture === "bac-acier"
+      ) {
+        return current;
+      }
+      return { ...current, couverture: "pare-pluie" };
+    });
+  }, [config.id, config.includedCouvertureLayerKey]);
+
   const [hasSavedConfig, setHasSavedConfig] = useState(false);
   const [savedSelection, setSavedSelection] = useState<Record<string, string> | null>(null);
   const [toastMessage, setToastMessage] = useState("");
@@ -972,7 +987,9 @@ L'équipe Ossa Bois France`;
                   <div className="option-check">{checkIcon()}</div>
                   <div className="option-details">
                     <span className="option-name">{option.label}</span>
-                    {category.id === "couverture" && option.id === "pare-pluie" && (
+                    {category.id === "couverture" &&
+                      option.id === "pare-pluie" &&
+                      config.includedCouvertureLayerKey && (
                       <span className="option-included-note">
                         {locale === "en" ? "Included in the structure price" :
                          locale === "de" ? "Im Preis der Struktur enthalten" :

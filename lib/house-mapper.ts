@@ -1,6 +1,7 @@
 import { HouseConfiguratorData, ConfigCategory, SizeOption } from "@/data/house-configurator";
 import { Locale } from "@/lib/i18n";
 import { translateText, translateHouseDescription } from "./translation-helper";
+import { isMeKulmHouseSlug } from "./house-import-shared";
 
 export function calculateStructureSizePrice(
   sizeId: string,
@@ -69,6 +70,12 @@ function buildCategoryOptions(
       } else if (cmsOpt.layer_key === 'windows_pvc') {
         price160 = houseDoc.windows?.pvcPrice || 6176;
         price200 = houseDoc.windows?.pvcPrice || 6176;
+      } else if (
+        cmsOpt.layer_key === "couverture_pare_pluie_lattage" &&
+        isMeKulmHouseSlug(houseDoc.slug)
+      ) {
+        price160 = 0;
+        price200 = 0;
       }
 
       const defaultOpt = hardcodedDefaults.find(d => d.layerKey === cmsOpt.layer_key);
@@ -91,6 +98,12 @@ function buildCategoryOptions(
         } else {
           optionLabel = translateText("Film pare-pluie avec tas", locale);
         }
+      }
+      if (
+        cmsOpt.layer_key === "couverture_pare_pluie_lattage" &&
+        isMeKulmHouseSlug(houseDoc.slug)
+      ) {
+        optionLabel = translateText("Film pare-pluie avec tas", locale);
       }
 
       finalOptions.push({
@@ -116,6 +129,16 @@ function buildCategoryOptions(
     if (!layerUrl) continue;
 
     let optionLabel = translateText(defOpt.label, locale);
+    let price160 = defOpt.price160;
+    let price200 = defOpt.price200;
+    if (
+      defOpt.layerKey === "couverture_pare_pluie_lattage" &&
+      isMeKulmHouseSlug(houseDoc.slug)
+    ) {
+      optionLabel = translateText("Film pare-pluie avec tas", locale);
+      price160 = 0;
+      price200 = 0;
+    }
     if (defOpt.layerKey === 'etancheite_epdm') {
       const categoryId = typeof houseDoc?.category === 'object' ? houseDoc?.category?.id : houseDoc?.category;
       const categorySlug = typeof houseDoc?.category === 'object' ? houseDoc?.category?.slug : '';
@@ -137,8 +160,8 @@ function buildCategoryOptions(
     finalOptions.push({
       id: defOpt.id,
       label: optionLabel,
-      price160: defOpt.price160,
-      price200: defOpt.price200,
+      price160,
+      price200,
       layerKey: defOpt.layerKey,
       layer: layerUrl,
       materialDescription: translateText(defOpt.materialDescription || '', locale),
@@ -720,7 +743,7 @@ export function mapHouseDocToConfiguratorData(
         [
           {
             id: "pare-pluie",
-            label: locale === "en" ? "Rain barrier & Lathing" : locale === "de" ? "Regenschutz & Lattung" : locale === "nl" ? "Regenscherm & Latwerk" : "Pare Pluie et Lattage",
+            label: translateText("Film pare-pluie avec tas", locale),
             price160: 0,
             price200: 0,
             layerKey: "couverture_pare_pluie_lattage",
@@ -1012,11 +1035,13 @@ export function mapHouseDocToConfiguratorData(
     houseDoc.category === 4 ||
     (typeof houseDoc.category === 'object' && (houseDoc.category?.id === 4 || houseDoc.category?.slug === 'maison-combles-ammenageable'));
 
+  const isMeKulm = isMeKulmHouseSlug(houseDoc.slug);
   const hasCouvertureParePluieLayer = Boolean(layers.couverture_pare_pluie_lattage);
   const enableCouverture = houseDoc.enableFlags?.enableCouvertureOption ?? false;
   const enableEtancheite = houseDoc.enableFlags?.enableEtancheiteOption ?? true;
   const usesFranceCouverturePattern =
     isComble ||
+    (isMeKulm && hasCouvertureParePluieLayer && enableCouverture) ||
     (hasCouvertureParePluieLayer && enableCouverture && !enableEtancheite);
 
   const mappedCategories = [...categories, ...dynamicCategories].filter(c => c.options.length > 0);
@@ -1067,8 +1092,8 @@ export function mapHouseDocToConfiguratorData(
     ])),
     defaultSelection: {
       size: "60x160",
+      ...dynamicDefaultSelections,
       ...(usesFranceCouverturePattern ? { couverture: "pare-pluie" } : {}),
-      ...dynamicDefaultSelections
     },
     includedCouvertureLayerKey: usesFranceCouverturePattern
       ? "couverture_pare_pluie_lattage"

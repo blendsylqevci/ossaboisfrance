@@ -42,6 +42,8 @@ const slugRedirects: Record<string, string> = {
 
 export const dynamic = "force-dynamic";
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://ossaboisfrance.com";
+
 type HouseDetailPageProps = {
   params: Promise<{ locale: Locale; slug: string }>;
 };
@@ -198,9 +200,54 @@ export default async function HouseDetailPage({ params }: HouseDetailPageProps) 
 
   const configuratorConfig = mapHouseDocToConfiguratorData(houseDoc, globalOptions, mediaMap, locale);
 
+  const seoTitle = translateText(houseDoc.title, locale);
+  const seoImageUrl =
+    typeof houseDoc.defaultImage === "object" ? houseDoc.defaultImage?.url : "";
+  const canonicalUrl = `${SITE_URL}/${locale}/maisons/${slug}`;
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: seoTitle,
+    image: seoImageUrl ? [seoImageUrl] : undefined,
+    description: translateHouseDescription(
+      houseDoc.description || houseDoc.subheading || "",
+      houseDoc.slug,
+      locale
+    ),
+    brand: { "@type": "Brand", name: "Ossa Bois France" },
+    category: "Maison à ossature bois",
+    url: canonicalUrl,
+  };
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Accueil", item: `${SITE_URL}/${locale}` },
+      { "@type": "ListItem", position: 2, name: "Maisons", item: `${SITE_URL}/${locale}/maisons` },
+      { "@type": "ListItem", position: 3, name: seoTitle, item: canonicalUrl },
+    ],
+  };
+  const JsonLd = (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+    </>
+  );
+
   // If it's a configurator house, render the visual configurator component
   if (configuratorConfig) {
-    return <HouseConfigurator config={configuratorConfig} locale={locale} dict={dict.configurator} />;
+    return (
+      <>
+        {JsonLd}
+        <HouseConfigurator config={configuratorConfig} locale={locale} dict={dict.configurator} />
+      </>
+    );
   }
 
   // Otherwise, render the standard house detail page
@@ -227,6 +274,7 @@ export default async function HouseDetailPage({ params }: HouseDetailPageProps) 
 
   return (
     <section className="house-detail-shell">
+      {JsonLd}
       <HouseTitleDispatcher title={translatedTitle} />
       <div className="container house-detail-back">
         <Link href={`/${locale}/maisons`}>← {dict.configurator.labels.backToModels}</Link>

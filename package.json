@@ -8,14 +8,16 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "node --experimental-strip-types --test lib/house-import-shared.test.ts lib/checkout-pricing.test.ts",
-    "test:import": "node --experimental-strip-types --test lib/house-import-shared.test.ts"
+    "test": "node --experimental-strip-types --test lib/house-import-shared.test.ts lib/checkout-pricing.test.ts lib/form-utils.test.ts lib/rate-limit.test.ts",
+    "test:import": "node --experimental-strip-types --test lib/house-import-shared.test.ts",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "^3.84.1",
     "@payloadcms/next": "^3.84.1",
     "@payloadcms/richtext-lexical": "^3.84.1",
     "@payloadcms/storage-s3": "^3.84.1",
+    "@sentry/nextjs": "^10.56.0",
     "@types/node": "20.12.12",
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",
@@ -32,6 +34,7 @@
     "typescript": "5.4.5"
   },
   "devDependencies": {
+    "@playwright/test": "^1.60.0",
     "@types/nodemailer": "^8.0.0",
     "eslint": "9.39.2",
     "eslint-config-next": "16.2.6"

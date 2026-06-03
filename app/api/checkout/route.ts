@@ -10,7 +10,7 @@ import {
   isCheckoutTotalValid,
 } from "@/lib/checkout-pricing";
 import {
-  checkRateLimit,
+  checkRateLimitAsync,
   getClientIp,
   rateLimitResponse,
 } from "@/lib/rate-limit";
@@ -26,7 +26,7 @@ const euroFormatter = new Intl.NumberFormat("fr-FR", {
 
 export async function POST(req: NextRequest) {
   const ip = getClientIp(req);
-  const limited = checkRateLimit(`checkout:${ip}`, 6, 15 * 60 * 1000);
+  const limited = await checkRateLimitAsync(`checkout:${ip}`, 6, 15 * 60 * 1000);
   if (!limited.allowed) {
     return rateLimitResponse(limited.retryAfterSec);
   }

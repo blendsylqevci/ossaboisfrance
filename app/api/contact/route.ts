@@ -6,7 +6,7 @@ import {
   sanitizeText,
 } from "@/lib/form-utils";
 import {
-  checkRateLimit,
+  checkRateLimitAsync,
   getClientIp,
   rateLimitResponse,
 } from "@/lib/rate-limit";
@@ -26,7 +26,7 @@ const SUBJECT_LABELS: Record<string, string> = {
 
 export async function POST(req: NextRequest) {
   const ip = getClientIp(req);
-  const limited = checkRateLimit(`contact:${ip}`, 8, 15 * 60 * 1000);
+  const limited = await checkRateLimitAsync(`contact:${ip}`, 8, 15 * 60 * 1000);
   if (!limited.allowed) {
     return rateLimitResponse(limited.retryAfterSec);
   }

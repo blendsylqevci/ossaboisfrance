@@ -24,7 +24,10 @@ git revert HEAD
 | `lib/run-house-import-route.ts` | Thin API handler |
 | `app/api/import-{asebra,a-frame,enea}-*/route.ts` | 3-line routes |
 
-**Pilot houses:** `asebra-avec-toit`, `a-frame-house-me-kulm`, `enea-avec-toit`
+**Pilot houses (shared engine):**
+
+- `asebra-avec-toit`, `a-frame-house-me-kulm`, `enea-avec-toit`
+- `emeraude-me-kulm`, `ambre-me-kulm`
 
 **Enea fix:** no longer deletes the whole house row (was the main risk).
 
@@ -36,6 +39,8 @@ For each slug:
 curl -s "http://localhost:3000/api/test-map?slug=asebra-avec-toit" | jq '.configuratorConfig.enableFlags, .configuratorConfig.defaultSelection'
 curl -s "http://localhost:3000/api/test-map?slug=a-frame-house-me-kulm" | jq '.configuratorConfig.categories[] | select(.id=="couverture") | .options[].id'
 curl -s "http://localhost:3000/api/test-map?slug=enea-avec-toit" | jq '.configuratorConfig.enableFlags'
+curl -s "http://localhost:3000/api/test-map?slug=emeraude-me-kulm" | jq '.configuratorConfig.enableFlags'
+curl -s "http://localhost:3000/api/test-map?slug=ambre-me-kulm" | jq '.configuratorConfig.enableFlags'
 ```
 
 Browser: open `/fr/maisons/<slug>` — Couverture shows pare-pluie (0€), tuiles, bac-acier; layers render.

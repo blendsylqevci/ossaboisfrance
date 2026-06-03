@@ -37,7 +37,6 @@ const getCleanHouseName = (slug: string, locale: Locale) => {
     "maison-loren": "Maison Loren",
     "a-frame-house": "A-Frame",
     "sira-avec-attique": "Sira",
-    "emmy-house-etage-toiture-terrasse": "Emmy",
     "emeraude-toiture-terrasse": "Émeraude",
     "emeraude-avec-attique": "Émeraude",
     "emeraude-me-kulm": "Émeraude",

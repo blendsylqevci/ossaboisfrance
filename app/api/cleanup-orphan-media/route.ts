@@ -22,13 +22,16 @@ function collectMediaId(value: unknown, active: Set<number>) {
   }
 }
 
-/** Orphan kulm imports — never delete asebra-me-atike_* (used by asebra-avec-attique). */
+/** Orphan import leftovers — never delete asebra-me-atike_* (used by asebra-avec-attique). */
 function isSafeOrphanFilename(filename: string): boolean {
-  if (filename === "enea me kulm 7.jpg" || filename === "enea me kulm 10.jpg") {
+  const lower = filename.toLowerCase();
+  if (lower === "enea me kulm 7.jpg" || lower === "enea me kulm 10.jpg") {
     return true;
   }
-  if (filename === "asebra me kulm 10-1.jpg") return true;
-  if (filename.includes("maison-enea-me-kulm")) return true;
+  if (lower === "asebra me kulm 10-1.jpg") return true;
+  if (lower.includes("maison-enea-me-kulm")) return true;
+  // Timestamp-prefixed re-import uploads (engine uses batch prefix)
+  if (/^\d{10,}-/.test(filename)) return true;
   return false;
 }
 
@@ -70,6 +73,9 @@ export async function GET(req: NextRequest) {
           { filename: { equals: "enea me kulm 10.jpg" } },
           { filename: { equals: "asebra me kulm 10-1.jpg" } },
           { filename: { contains: "maison-enea-me-kulm" } },
+          { filename: { contains: "-enea-me-kulm-" } },
+          { filename: { contains: "-asebra-me-kulm-" } },
+          { filename: { contains: "-a-frame-house-me-kulm-" } },
         ],
       },
     });

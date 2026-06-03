@@ -84,7 +84,7 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     category: "Maison Toiture Terrasse",
     description:
       "MAISON CALME est une maison modulaire contemporaine de plain-pied, construite sur une ossature bois robuste et pensée pour le confort.",
-    image: "https://ossaboisfrance.com/wp-content/uploads/2025/12/7-CALME-scaled.jpg",
+    image: "/images/houses/calme-atike/7 CALME.jpg",
     price60x160: 31292
   },
   {
@@ -142,15 +142,6 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     price60x160: 27850
   },
   {
-    slug: "emmy-house-etage-toiture-terrasse",
-    title: "Emmy House Étage Toiture Terrasse",
-    category: "Maison toiture terrasse avec étage",
-    description:
-      "Le modèle Emmy House Étage Toiture Terrasse incarne une vision architecturale moderne, élégante et ambitieuse, conçue pour offrir un confort de vie exceptionnel dans un environnement raffiné et lumineux. Avec son architecture à étage, ses lignes minimalistes et sa toiture terrasse contemporaine, cette maison affirme un style haut de gamme inspiré des résidences modernes européennes. Son design équilibré met en valeur des volumes généreux.",
-    image: "https://ossaboisfrance.com/wp-content/uploads/2026/05/EMMY-7-scaled.jpg",
-    price60x160: 27462
-  },
-  {
     slug: "asebra-avec-toit",
     title: "Asebra avec Toit",
     category: "Maison plein pied",
@@ -192,7 +183,7 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     category: "Maison combles amenageable",
     description:
       "CRISTAL est une maison modulaire contemporaine à ossature bois, conçue avec des combles aménageables.",
-    image: "https://ossaboisfrance.com/wp-content/uploads/2025/12/cristal-comble-7-scaled.jpg",
+    image: "/images/houses/cristal comble/cristal comble 7.jpg",
     price60x160: 37443
   },
   {
@@ -201,7 +192,7 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     category: "Maison combles amenageable",
     description:
       "Le modèle Dianne Comble allie charme traditionnel et performance énergétique. Avec sa toiture à forte pente abritant des combles aménageables, il offre une flexibilité d'aménagement optimale.",
-    image: "https://ossaboisfrance.com/wp-content/uploads/2025/12/dianne-comble-7-scaled.jpg",
+    image: "/images/houses/Dianne Comble/dianne comble 7.jpg",
     price60x160: 26675
   },
   {
@@ -212,15 +203,6 @@ export const houseArchiveItems: HouseArchiveItem[] = [
       "Le modèle Elegance Comble allie charme traditionnel et performance énergétique. Avec sa toiture à forte pente abritant des combles aménageables, il offre une flexibilité d'aménagement optimale pour s'adapter à l'évolution de votre famille. Sa structure robuste en ossature bois à haute efficacité thermique garantit un confort de vie inégalé en toutes saisons.",
     image: "/images/houses/Elegance Comble/elegance comble 7.jpg",
     price60x160: 28500
-  },
-  {
-    slug: "mountain-valley-villa",
-    title: "Mountain Valley Villa",
-    category: "Maison avec étage",
-    description:
-      "MOUNTAIN VALLEY VILLA est une maison modulaire contemporaine à deux étages, construite sur une ossature bois.",
-    image: "https://ossaboisfrance.com/wp-content/uploads/2025/12/Mountain-Valley-Villa-7-scaled.jpg",
-    price60x160: 20630
   },
   {
     slug: "nina-house",

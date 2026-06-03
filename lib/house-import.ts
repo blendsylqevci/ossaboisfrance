@@ -30,6 +30,15 @@ export interface HouseImportConfig {
   ) => Record<string, unknown>;
   /** When true (default), prefixes uploads with a batch timestamp to avoid S3 collisions. */
   useUniqueUploadFilenames?: boolean;
+  /** If set, find house by this slug when primary slug is missing (one-time migration). */
+  legacySlug?: string;
+  /** On update, do not overwrite prices / perdhesa / windows from CMS. */
+  preservePricingOnUpdate?: boolean;
+  /**
+   * When hero JPGs are missing from disk, keep existing default/final on update.
+   * First-time create still requires hero files unless the house already exists.
+   */
+  allowMissingHeroOnUpdate?: boolean;
 }
 
 export interface HouseImportSuccess {
@@ -69,6 +78,9 @@ export async function importHouseFromFolder(
     requiredLayerFields,
     buildHousePayload,
     useUniqueUploadFilenames = true,
+    legacySlug,
+    preservePricingOnUpdate = false,
+    allowMissingHeroOnUpdate = false,
   } = config;
 
   const layersDir = path.join(
@@ -84,18 +96,29 @@ export async function importHouseFromFolder(
   console.log(`[${logLabel}] Reading files from: ${layersDir}`);
   const files = fs.readdirSync(layersDir);
 
-  const existing = await payload.find({
+  let existing = await payload.find({
     collection: "houses",
     where: { slug: { equals: slug } },
     limit: 1,
     depth: 1,
   });
 
+  if (existing.totalDocs === 0 && legacySlug) {
+    existing = await payload.find({
+      collection: "houses",
+      where: { slug: { equals: legacySlug } },
+      limit: 1,
+      depth: 1,
+    });
+  }
+
   let existingHouseId: number | undefined;
+  let existingDocForPreserve: Record<string, unknown> | undefined;
   const oldMediaIds = new Set<number>();
 
   if (existing.totalDocs > 0) {
     const oldDoc = existing.docs[0];
+    existingDocForPreserve = oldDoc as Record<string, unknown>;
     existingHouseId = Number(oldDoc.id);
     const collected = collectHouseMediaIds(
       oldDoc as {
@@ -189,14 +212,33 @@ export async function importHouseFromFolder(
   }
 
   if (!defaultImageId || !finalImageId) {
-    throw new Error(
-      `[${logLabel}] Failed to upload default or final images (${defaultImageFile}, ${finalImageFile}).`
-    );
+    if (
+      allowMissingHeroOnUpdate &&
+      existingHouseId &&
+      existingDocForPreserve
+    ) {
+      const oldDefault = existingDocForPreserve.defaultImage;
+      const oldFinal = existingDocForPreserve.finalImage;
+      const resolveId = (v: unknown): number | undefined => {
+        if (typeof v === "number") return v;
+        if (v && typeof v === "object" && "id" in v) {
+          return Number((v as { id: number }).id);
+        }
+        return undefined;
+      };
+      defaultImageId = defaultImageId ?? resolveId(oldDefault);
+      finalImageId = finalImageId ?? resolveId(oldFinal);
+    }
+    if (!defaultImageId || !finalImageId) {
+      throw new Error(
+        `[${logLabel}] Failed to upload default or final images (${defaultImageFile}, ${finalImageFile}).`
+      );
+    }
   }
 
   assertRequiredLayers(mediaIds, requiredLayerFields, logLabel);
 
-  const housePayload = {
+  const housePayload: Record<string, unknown> = {
     ...buildHousePayload(categoryId),
     slug,
     category: categoryId,
@@ -204,6 +246,14 @@ export async function importHouseFromFolder(
     finalImage: finalImageId,
     layers: mediaIds,
   };
+
+  if (existingHouseId && preservePricingOnUpdate && existingDocForPreserve) {
+    for (const key of ["price60x160", "price60x200", "perdhesa", "windows"] as const) {
+      if (existingDocForPreserve[key] != null) {
+        housePayload[key] = existingDocForPreserve[key];
+      }
+    }
+  }
 
   const savedHouse = existingHouseId
     ? await payload.update({

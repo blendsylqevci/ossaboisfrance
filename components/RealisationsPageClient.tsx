@@ -26,13 +26,9 @@ const projectsData: Project[] = [
     location: "Savoie, France",
     area: "145 m²",
     images: [
-      "https://ossaboisfrance.com/wp-content/uploads/2025/12/australe-7-scaled.jpg",
-      "https://ossaboisfrance.com/wp-content/uploads/2025/12/australe-1-scaled.jpg",
-      "https://ossaboisfrance.com/wp-content/uploads/2025/12/australe-2-scaled.jpg",
-      "https://ossaboisfrance.com/wp-content/uploads/2025/12/australe-3-scaled.jpg",
-      "https://ossaboisfrance.com/wp-content/uploads/2025/12/australe-4-1-scaled.jpg",
-      "https://ossaboisfrance.com/wp-content/uploads/2025/12/australe-5-scaled.jpg"
-    ]
+      "/images/houses/Australe/australe 7.jpg",
+      "/images/houses/Australe/australe 10.jpg",
+    ],
   },
   {
     id: "boreale-me-atike",
@@ -42,9 +38,8 @@ const projectsData: Project[] = [
     area: "120 m²",
     images: [
       "/images/houses/Boreale me atike/7 boreale.jpg",
-      "https://ossaboisfrance.com/wp-content/uploads/2025/12/australe-1-scaled.jpg",
-      "https://ossaboisfrance.com/wp-content/uploads/2025/12/australe-2-scaled.jpg"
-    ]
+      "/images/houses/Boreale me atike/10 boreale.jpg",
+    ],
   },
   {
     id: "calme",
@@ -53,10 +48,9 @@ const projectsData: Project[] = [
     location: "Gironde, France",
     area: "110 m²",
     images: [
-      "https://ossaboisfrance.com/wp-content/uploads/2025/12/7-CALME-scaled.jpg",
-      "https://ossaboisfrance.com/wp-content/uploads/2025/12/australe-3-scaled.jpg",
-      "https://ossaboisfrance.com/wp-content/uploads/2025/12/australe-4-1-scaled.jpg"
-    ]
+      "/images/houses/calme-atike/7 CALME.jpg",
+      "/images/houses/calme-atike/10 CALME.jpg",
+    ],
   },
   {
     id: "ambre-me-atike",
@@ -65,10 +59,9 @@ const projectsData: Project[] = [
     location: "Haute-Savoie, France",
     area: "135 m²",
     images: [
-      "https://ossaboisfrance.com/wp-content/uploads/2025/12/7-ambre-scaled.jpg",
-      "https://ossaboisfrance.com/wp-content/uploads/2025/12/australe-5-scaled.jpg",
-      "https://ossaboisfrance.com/wp-content/uploads/2025/12/australe-7-scaled.jpg"
-    ]
+      "/images/houses/ambre me atike/7 ambre.jpg",
+      "/images/houses/ambre me atike/10 ambre.jpg",
+    ],
   },
   {
     id: "loren",
@@ -77,9 +70,9 @@ const projectsData: Project[] = [
     location: "Landes, France",
     area: "98 m²",
     images: [
-      "https://ossaboisfrance.com/wp-content/uploads/2025/12/LOREN-7-scaled.jpg",
-      "https://ossaboisfrance.com/wp-content/uploads/2025/12/australe-1-scaled.jpg"
-    ]
+      "/images/houses/Maison Loren me atike/LOREN 7.jpg",
+      "/images/houses/Maison Loren me atike/LOREN 10.jpg",
+    ],
   },
   {
     id: "emmy",
@@ -88,9 +81,9 @@ const projectsData: Project[] = [
     location: "Yvelines, France",
     area: "165 m²",
     images: [
-      "https://ossaboisfrance.com/wp-content/uploads/2025/12/EMMY-7-scaled.jpg",
-      "https://ossaboisfrance.com/wp-content/uploads/2025/12/australe-2-scaled.jpg"
-    ]
+      "/images/houses/emmy house etage me atike/EMMY 7.jpg",
+      "/images/houses/emmy house etage me atike/EMMY 10.jpg",
+    ],
   },
   {
     id: "cristal",
@@ -99,10 +92,10 @@ const projectsData: Project[] = [
     location: "Essonne, France",
     area: "150 m²",
     images: [
-      "https://ossaboisfrance.com/wp-content/uploads/2025/12/cristal-comble-7-scaled.jpg",
-      "https://ossaboisfrance.com/wp-content/uploads/2025/12/australe-3-scaled.jpg"
-    ]
-  }
+      "/images/houses/cristal comble/cristal comble 7.jpg",
+      "/images/houses/cristal comble/cristal comble 10.jpg",
+    ],
+  },
 ];
 
 export function RealisationsPageClient({ locale, dict }: RealisationsPageClientProps) {

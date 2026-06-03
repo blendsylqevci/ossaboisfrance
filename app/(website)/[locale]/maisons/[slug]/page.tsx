@@ -27,6 +27,7 @@ const slugRedirects: Record<string, string> = {
   "maison-enea-me-kulm": "enea-avec-toit",
   "asebra-me-kulm": "asebra-avec-toit",
   "calme-me-atike": "calme-avec-attique",
+  "maison-calme": "calme-avec-attique",
   "escape-villa-me-atike": "escape-villa-avec-attique",
   "melodie-me-atike": "melodie-avec-attique",
   "palma-etage-me-atike": "palma-etage-avec-attique",
@@ -35,6 +36,8 @@ const slugRedirects: Record<string, string> = {
   "symphonie-me-atike": "symphonie-avec-attique",
   "marinela-me-atike": "marinela-avec-attique",
   "maison-2-etage-me-atike": "maison-2-etages-avec-attique",
+  "emmy-house-etage-toiture-terrasse": "maison-emmy",
+  "mountain-valley-villa": "mountain-valley-villa-comble",
 };
 
 export const dynamic = "force-dynamic";

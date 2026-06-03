@@ -24,11 +24,14 @@ git revert HEAD
 | `lib/run-house-import-route.ts` | Thin API handler |
 | `app/api/import-{asebra,a-frame,enea}-*/route.ts` | 3-line routes |
 
-**Pilot houses (shared engine):**
+**All houses with layer folders** are importable via the shared engine:
 
-- `asebra-avec-toit`, `a-frame-house-me-kulm`, `enea-avec-toit`
-- `emeraude-me-kulm`, `ambre-me-kulm`
-- `amethyste-me-kulm` (étage: `etancheite_epdm` + couverture, **not** France plain-pied)
+- Legacy routes: `/api/import-asebra-me-kulm`, `/api/import-flora`, … (14 routes)
+- **Unified route:** `GET /api/import-house/{slug}` — list slugs: `GET /api/import-house`
+
+Configs live in `lib/house-import-configs/*.ts` (14 hand-tuned) + `lib/house-import-definitions.ts` (generated via `lib/build-house-import-config.ts`).
+
+Re-import **never deletes the house row**. `preservePricingOnUpdate` on houses with real CMS prices.
 
 ## Tests
 
@@ -58,8 +61,16 @@ Re-run import only when disk files changed:
 curl "http://localhost:3000/api/import-enea-me-kulm"
 ```
 
-## Next phases (not done yet)
+## Orphan media cleanup
 
-- Migrate `emeraude`, `ambre`, … to configs + engine
+```bash
+curl -s "http://localhost:3000/api/cleanup-orphan-media?dryRun=true"
+curl -s "http://localhost:3000/api/cleanup-orphan-media?dryRun=false"
+```
+
+Never deletes `asebra-me-atike_*` (used by `asebra-avec-attique`).
+
+## Next phases (optional)
+
 - Refactor `house-mapper.ts` (higher risk — separate PR)
-- Automated tests
+- Broader orphan patterns after auditing Payload media table

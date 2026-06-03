@@ -71,12 +71,12 @@ const heroImages = [
 ];
 
 const featuredSlugs = [
-  "emmy-house-etage-toiture-terrasse",
-  "emeraude-toiture-terrasse",
+  "maison-emmy",
+  "emeraude-avec-attique",
   "diademe-toiture-terrasse",
-  "boreale-me-atike",
+  "boreale-avec-attique",
   "australe",
-  "ambre-me-atike"
+  "ambre-avec-attique",
 ];
 
 const whyCards = [

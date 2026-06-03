@@ -53,6 +53,29 @@ export const PLACEHOLDER_WINDOWS = {
 export const DEFAULT_STRUCTURE_INFO_FR =
   "Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant rigidité et stabilité de l'ensemble. Comprend les murs porteurs, murs de séparation et charpente industrielle type fermette. Le prix inclut le transport et le montage sur site sous garantie décennale.";
 
+/** Toiture terrasse avec attique — EPDM + polystyrène d'attique (not me kulm). */
+export const ATTIQUE_TERRASSE_ENABLE_FLAGS = {
+  enableRoofOption: false,
+  enableEtancheiteOption: true,
+  enableEtancheiteTerrasse: true,
+  enableCouvertureOption: false,
+  enableFauxPlafondOption: false,
+} as const;
+
+export const ATTIQUE_TERRASSE_REQUIRED_LAYERS = [
+  "backgroundLayer",
+  "constructionLayer",
+  "etancheite_epdm",
+] as const;
+
+/** Fields kept from CMS on re-import when `preservePricingOnUpdate` is true. */
+export const PRESERVE_ON_UPDATE_FIELDS = [
+  "price60x160",
+  "price60x200",
+  "perdhesa",
+  "windows",
+] as const;
+
 export function collectMediaIdFromValue(
   value: unknown,
   target: Set<number>

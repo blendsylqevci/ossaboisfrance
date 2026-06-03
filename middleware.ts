@@ -7,6 +7,7 @@ export function middleware(request: NextRequest) {
   // List of administrative and import endpoints that are destructive or dev-only
   const isDevOnlyEndpoint =
     pathname.startsWith('/api/import-') ||
+    pathname.startsWith('/api/import-house/') ||
     pathname.startsWith('/api/reseed') ||
     pathname.startsWith('/api/seed-') ||
     pathname.startsWith('/api/migrate') ||

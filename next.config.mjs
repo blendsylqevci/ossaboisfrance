@@ -60,7 +60,7 @@ const nextConfig = {
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob: https://ossaboisfrance.com https://*.supabase.co",
       "font-src 'self' data:",
-      `connect-src 'self' https://api-adresse.data.gouv.fr https://nominatim.openstreetmap.org https://*.supabase.co${
+      `connect-src 'self' https://api-adresse.data.gouv.fr https://nominatim.openstreetmap.org https://*.supabase.co https://*.sentry.io${
         isDev ? " ws: http://localhost:*" : ""
       }`,
       "frame-src 'self'",

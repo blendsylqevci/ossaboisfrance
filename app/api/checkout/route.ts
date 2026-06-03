@@ -14,7 +14,8 @@ import {
   getClientIp,
   rateLimitResponse,
 } from "@/lib/rate-limit";
-import { getResendAdminEmail, getResendOrderFromEmail, sendResendMail } from "@/lib/resend-mail";
+import { escapeHtml, getResendAdminEmail, getResendOrderFromEmail, sendResendMail } from "@/lib/resend-mail";
+import { isValidEmail, sanitizeText } from "@/lib/form-utils";
 import { uploadOrderScreenshotToMedia } from "@/lib/upload-order-screenshot";
 
 const euroFormatter = new Intl.NumberFormat("fr-FR", {
@@ -33,11 +34,37 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { selection, personalInfo, deliveryInfo, orderRef, total, transportCost, locale = "fr" } = body;
+    const { selection, personalInfo, deliveryInfo, total, transportCost, locale = "fr" } = body;
 
-    const clientName = personalInfo?.fullName || "Client";
-    const clientEmail = personalInfo?.email;
-    const clientPhone = personalInfo?.phone;
+    // Sanitize + validate every client-provided value before it is persisted or
+    // interpolated into transactional emails (prevents HTML/attribute injection).
+    const orderRef = sanitizeText(body.orderRef, 64).replace(/[^A-Za-z0-9_-]/g, "");
+    if (!orderRef) {
+      return NextResponse.json(
+        { success: false, error: "Référence de commande invalide." },
+        { status: 400 }
+      );
+    }
+
+    const clientName = sanitizeText(personalInfo?.fullName, 120) || "Client";
+    const clientEmail = sanitizeText(personalInfo?.email, 254);
+    const clientPhone = sanitizeText(personalInfo?.phone, 40);
+
+    if (!clientEmail || !isValidEmail(clientEmail)) {
+      return NextResponse.json(
+        { success: false, error: "Adresse e-mail invalide." },
+        { status: 400 }
+      );
+    }
+
+    const delivery = {
+      streetAddress: sanitizeText(deliveryInfo?.streetAddress, 200),
+      city: sanitizeText(deliveryInfo?.city, 100),
+      zipCode: sanitizeText(deliveryInfo?.zipCode, 20),
+      stateRegion: sanitizeText(deliveryInfo?.stateRegion, 100),
+      country: sanitizeText(deliveryInfo?.country, 80) || "France",
+      notes: sanitizeText(deliveryInfo?.notes, 4000),
+    };
 
     // Validate selection and resolve House Document ID
     const houseSlug = selection?.house?.id;
@@ -123,12 +150,12 @@ export async function POST(req: NextRequest) {
         customerPhone: clientPhone || "",
         totalPrice: total,
         transportCost: serverTransportCost,
-        streetAddress: deliveryInfo?.streetAddress || "",
-        city: deliveryInfo?.city || "",
-        zipCode: deliveryInfo?.zipCode || "",
-        stateRegion: deliveryInfo?.stateRegion || "",
-        country: deliveryInfo?.country || "France",
-        clientNotes: deliveryInfo?.notes || "",
+        streetAddress: delivery.streetAddress,
+        city: delivery.city,
+        zipCode: delivery.zipCode,
+        stateRegion: delivery.stateRegion,
+        country: delivery.country,
+        clientNotes: delivery.notes,
         selections: selection,
         status: 'pending',
       }
@@ -406,11 +433,11 @@ export async function POST(req: NextRequest) {
       return list.map(opt => `
         <tr style="border-bottom: 1px solid #F1F5F9;">
           <td style="padding: 14px 16px; font-size: 13.5px; font-weight: 600; color: #1E293B; vertical-align: top;">
-            ${opt.categoryLabel}
+            ${escapeHtml(opt.categoryLabel)}
           </td>
           <td style="padding: 14px 16px; font-size: 13px; color: #475569; vertical-align: top;">
-            <div style="font-weight: 700; color: #1E293B; margin-bottom: 2px;">${opt.optionLabel}</div>
-            <div style="font-size: 12px; color: #64748B;">${opt.formattedCalculation}</div>
+            <div style="font-weight: 700; color: #1E293B; margin-bottom: 2px;">${escapeHtml(opt.optionLabel)}</div>
+            <div style="font-size: 12px; color: #64748B;">${escapeHtml(opt.formattedCalculation)}</div>
           </td>
           <td align="right" style="padding: 14px 16px; font-size: 13.5px; font-weight: 700; color: #1E293B; vertical-align: top; width: 110px;">
             ${euroFormatter.format(opt.totalPrice)}
@@ -428,6 +455,27 @@ export async function POST(req: NextRequest) {
 
     const formattedClientName = clientName.trim();
     const formattedClientPhone = clientPhone ? clientPhone.trim() : "";
+
+    // HTML-escaped values for safe interpolation into email markup/attributes.
+    const safeClientName = escapeHtml(formattedClientName);
+    const safeClientEmail = escapeHtml(clientEmail);
+    const safeClientPhone = escapeHtml(formattedClientPhone);
+    const phoneHref = formattedClientPhone
+      ? `tel:${encodeURIComponent(formattedClientPhone)}`
+      : "#";
+    const houseNameClean = sanitizeText(selection?.house?.name, 120);
+    const sizeValueClean = sanitizeText(selection?.size?.value, 40);
+    const safeHouseName = escapeHtml(houseNameClean);
+    const safeSizeValue = escapeHtml(sizeValueClean);
+    const safeHouseImageUrl = escapeHtml(houseImageUrl);
+    const safeDelivery = {
+      streetAddress: escapeHtml(delivery.streetAddress),
+      city: escapeHtml(delivery.city),
+      zipCode: escapeHtml(delivery.zipCode),
+      stateRegion: escapeHtml(delivery.stateRegion),
+      country: escapeHtml(delivery.country),
+      notes: escapeHtml(delivery.notes),
+    };
 
     // 1. Compile Admin Notification Email (info@ossaboisfrance.com) - STRICTLY IN FRENCH
     const adminEmailHtml = `
@@ -493,13 +541,13 @@ export async function POST(req: NextRequest) {
                     <table border="0" cellpadding="0" cellspacing="0" width="100%">
                       <tr>
                         <td width="48%" align="center" style="background-color: #5E6F4F; border-radius: 6px;">
-                          <a href="mailto:${clientEmail}?subject=Votre projet de construction Ossa Bois - Référence ${orderRef}" style="display: block; padding: 10px 4px; color: #FFFFFF; font-weight: 700; font-size: 12.5px; text-decoration: none; letter-spacing: 0.5px; text-align: center;">
+                          <a href="mailto:${safeClientEmail}?subject=Votre projet de construction Ossa Bois - Référence ${orderRef}" style="display: block; padding: 10px 4px; color: #FFFFFF; font-weight: 700; font-size: 12.5px; text-decoration: none; letter-spacing: 0.5px; text-align: center;">
                             📧 RÉPONDRE PAR EMAIL
                           </a>
                         </td>
                         <td width="4%"></td>
                         <td width="48%" align="center" style="background-color: #1E293B; border-radius: 6px;">
-                          <a href="${formattedClientPhone ? `tel:${formattedClientPhone}` : '#'}" style="display: block; padding: 10px 4px; color: #FFFFFF; font-weight: 700; font-size: 12.5px; text-decoration: none; letter-spacing: 0.5px; text-align: center;">
+                          <a href="${phoneHref}" style="display: block; padding: 10px 4px; color: #FFFFFF; font-weight: 700; font-size: 12.5px; text-decoration: none; letter-spacing: 0.5px; text-align: center;">
                             📞 APPELER LE CLIENT
                           </a>
                         </td>
@@ -525,29 +573,29 @@ export async function POST(req: NextRequest) {
                     <table border="0" cellpadding="0" cellspacing="0" width="100%" style="font-size: 13.5px; line-height: 1.6;">
                       <tr>
                         <td style="font-weight: 600; color: #64748B; width: 130px; vertical-align: top; padding-bottom: 6px;">Nom complet :</td>
-                        <td style="font-weight: 700; color: #1E293B; vertical-align: top; padding-bottom: 6px;">${formattedClientName}</td>
+                        <td style="font-weight: 700; color: #1E293B; vertical-align: top; padding-bottom: 6px;">${safeClientName}</td>
                       </tr>
                       <tr>
                         <td style="font-weight: 600; color: #64748B; vertical-align: top; padding-bottom: 6px;">Adresse e-mail :</td>
-                        <td style="font-weight: 700; color: #1E293B; vertical-align: top; padding-bottom: 6px;"><a href="mailto:${clientEmail}" style="color: #2563EB; text-decoration: none;">${clientEmail}</a></td>
+                        <td style="font-weight: 700; color: #1E293B; vertical-align: top; padding-bottom: 6px;"><a href="mailto:${safeClientEmail}" style="color: #2563EB; text-decoration: none;">${safeClientEmail}</a></td>
                       </tr>
                       <tr>
                         <td style="font-weight: 600; color: #64748B; vertical-align: top; padding-bottom: 6px;">Téléphone :</td>
-                        <td style="font-weight: 700; color: #1E293B; vertical-align: top; padding-bottom: 6px;">${formattedClientPhone || "Non communiqué"}</td>
+                        <td style="font-weight: 700; color: #1E293B; vertical-align: top; padding-bottom: 6px;">${safeClientPhone || "Non communiqué"}</td>
                       </tr>
                       <tr>
                         <td style="font-weight: 600; color: #64748B; vertical-align: top; padding-bottom: 6px;">Adresse chantier :</td>
                         <td style="font-weight: 700; color: #1E293B; vertical-align: top; padding-bottom: 6px;">
-                          ${deliveryInfo?.streetAddress || "-"}<br/>
-                          ${deliveryInfo?.zipCode || ""} ${deliveryInfo?.city || ""}<br/>
-                          ${deliveryInfo?.stateRegion || "-"}, ${deliveryInfo?.country || "France"}
+                          ${safeDelivery.streetAddress || "-"}<br/>
+                          ${safeDelivery.zipCode || ""} ${safeDelivery.city || ""}<br/>
+                          ${safeDelivery.stateRegion || "-"}, ${safeDelivery.country || "France"}
                         </td>
                       </tr>
-                      ${deliveryInfo?.notes ? `
+                      ${delivery.notes ? `
                       <tr>
                         <td colspan="2" style="padding-top: 12px;">
                           <div style="background-color: #F8FAFC; border-radius: 6px; padding: 12px; border: 1px dashed #CBD5E1; font-style: italic; color: #475569; font-size: 13px;">
-                            <strong>Notes du client :</strong> "${deliveryInfo.notes}"
+                            <strong>Notes du client :</strong> "${safeDelivery.notes}"
                           </div>
                         </td>
                       </tr>` : ""}
@@ -604,8 +652,8 @@ export async function POST(req: NextRequest) {
                   <tr style="border-bottom: 1px solid #E2E8F0;">
                     <td style="padding: 12px 14px; font-size: 13px; font-weight: 600; color: #1E293B; vertical-align: top;">Base Structure</td>
                     <td style="padding: 12px 14px; font-size: 12.5px; color: #475569; vertical-align: top;">
-                      <div style="font-weight: 700; color: #1E293B;">Modèle ${selection?.house?.name}</div>
-                      <div style="font-size: 11.5px; color: #64748B;">Dimensions au sol : ${selection?.size?.value}</div>
+                      <div style="font-weight: 700; color: #1E293B;">Modèle ${safeHouseName}</div>
+                      <div style="font-size: 11.5px; color: #64748B;">Dimensions au sol : ${safeSizeValue}</div>
                     </td>
                     <td align="right" style="padding: 12px 14px; font-size: 13px; font-weight: 700; color: #1E293B; vertical-align: top;">
                       ${euroFormatter.format(serverBasePrice)}
@@ -675,10 +723,10 @@ export async function POST(req: NextRequest) {
 
     // 2. Compile Client Confirmation Email - TRANSLATED DYNAMICALLY
     const clientEmailSubject = l.subject.replace("{ref}", orderRef);
-    const formattedGreeting = l.greeting.replace("{name}", formattedClientName);
+    const formattedGreeting = l.greeting.replace("{name}", safeClientName);
     const formattedIntro = l.intro.replace("{ref}", orderRef);
-    const formattedBaseStructureDesc = l.baseStructureDesc.replace("{model}", selection?.house?.name || "").replace("{size}", selection?.size?.value || "");
-    const formattedStep2Desc = l.step2Desc.replace("{phone}", formattedClientPhone || "...");
+    const formattedBaseStructureDesc = l.baseStructureDesc.replace("{model}", safeHouseName).replace("{size}", safeSizeValue);
+    const formattedStep2Desc = l.step2Desc.replace("{phone}", safeClientPhone || "...");
 
     const clientEmailHtml = `
       <!DOCTYPE html>
@@ -742,7 +790,7 @@ export async function POST(req: NextRequest) {
               <table border="0" cellpadding="0" cellspacing="0" width="100%">
                 <tr>
                   <td style="border-radius: 8px; overflow: hidden; border: 1px solid #EBE9E2;">
-                    <img src="${houseImageUrl}" alt="${selection?.house?.name || "Modèle"}" width="100%" style="width: 100%; height: auto; display: block; object-fit: cover;" />
+                    <img src="${safeHouseImageUrl}" alt="${safeHouseName || "Modèle"}" width="100%" style="width: 100%; height: auto; display: block; object-fit: cover;" />
                   </td>
                 </tr>
                 <tr>
@@ -966,7 +1014,7 @@ export async function POST(req: NextRequest) {
         to: toAdminEmail,
         from: orderFromEmail,
         replyTo: clientEmail || undefined,
-        subject: `[Nouveau Projet] Configuration de Maison ${selection?.house?.name || ""} - Ref ${orderRef}`,
+        subject: `[Nouveau Projet] Configuration de Maison ${houseNameClean} - Ref ${orderRef}`,
         html: adminEmailHtml,
         idempotencyKey: `checkout-admin/${orderRef}`,
       });

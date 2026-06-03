@@ -151,6 +151,9 @@ export const Houses: CollectionConfig = {
     {
       name: 'price60x160',
       type: 'number',
+      // Cost data: never expose via the public REST/GraphQL API. Server-side
+      // rendering uses the Local API (overrideAccess) so the site is unaffected.
+      access: { read: ({ req }) => Boolean(req.user) },
       admin: {
         description: 'Base structure price for 60x160 size (before 40% margin).',
       },
@@ -158,6 +161,7 @@ export const Houses: CollectionConfig = {
     {
       name: 'price60x200',
       type: 'number',
+      access: { read: ({ req }) => Boolean(req.user) },
       admin: {
         description: 'Base structure price for 60x200 size (before 40% margin).',
       },
@@ -165,6 +169,7 @@ export const Houses: CollectionConfig = {
     {
       name: 'marginPercent',
       type: 'number',
+      access: { read: ({ req }) => Boolean(req.user) },
       admin: {
         description: 'Surcharge optionnelle de la marge commerciale (%) (laisse vide pour utiliser la marge globale dans House Options).',
       },
@@ -201,12 +206,14 @@ export const Houses: CollectionConfig = {
           name: 'aluminiumPrice',
           type: 'number',
           label: 'Aluminium Price (€)',
+          access: { read: ({ req }) => Boolean(req.user) },
           admin: { description: 'Base price for Aluminium windows.' },
         },
         {
           name: 'pvcPrice',
           type: 'number',
           label: 'PVC Price (€)',
+          access: { read: ({ req }) => Boolean(req.user) },
           admin: { description: 'Base price for PVC windows.' },
         },
       ],

@@ -9,10 +9,17 @@ export type ResendMailParams = {
   html: string;
   attachments?: ResendAttachment[];
   idempotencyKey?: string;
+  from?: string;
+  replyTo?: string | string[];
 };
 
 export function getResendFromEmail(): string {
   return process.env.RESEND_FROM_EMAIL || "Ossa Bois <info@ossaboisfrance.com>";
+}
+
+/** Sender used specifically for order/checkout emails. */
+export function getResendOrderFromEmail(): string {
+  return process.env.RESEND_ORDER_FROM_EMAIL || "Ossa Bois <order@ossaboisfrance.com>";
 }
 
 /** Admin inbox for inbound leads. Required in production. */
@@ -41,8 +48,9 @@ export async function sendResendMail(
     method: "POST",
     headers,
     body: JSON.stringify({
-      from: getResendFromEmail(),
+      from: params.from || getResendFromEmail(),
       to: params.to,
+      reply_to: params.replyTo,
       subject: params.subject,
       html: params.html,
       attachments: params.attachments,

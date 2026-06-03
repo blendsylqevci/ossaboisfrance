@@ -14,7 +14,7 @@ import {
   getClientIp,
   rateLimitResponse,
 } from "@/lib/rate-limit";
-import { getResendAdminEmail, sendResendMail } from "@/lib/resend-mail";
+import { getResendAdminEmail, getResendOrderFromEmail, sendResendMail } from "@/lib/resend-mail";
 import { uploadOrderScreenshotToMedia } from "@/lib/upload-order-screenshot";
 
 const euroFormatter = new Intl.NumberFormat("fr-FR", {
@@ -959,10 +959,13 @@ export async function POST(req: NextRequest) {
     `;
 
     const toAdminEmail = getResendAdminEmail();
+    const orderFromEmail = getResendOrderFromEmail();
 
     if (toAdminEmail) {
       await sendResendMail({
         to: toAdminEmail,
+        from: orderFromEmail,
+        replyTo: clientEmail || undefined,
         subject: `[Nouveau Projet] Configuration de Maison ${selection?.house?.name || ""} - Ref ${orderRef}`,
         html: adminEmailHtml,
         idempotencyKey: `checkout-admin/${orderRef}`,
@@ -974,6 +977,8 @@ export async function POST(req: NextRequest) {
     if (clientEmail) {
       await sendResendMail({
         to: clientEmail,
+        from: orderFromEmail,
+        replyTo: toAdminEmail || undefined,
         subject: clientEmailSubject,
         html: clientEmailHtml,
         idempotencyKey: `checkout-client/${orderRef}`,

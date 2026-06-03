@@ -52,6 +52,61 @@ Set in `next.config.mjs` → `headers()`:
 
 Checkout uploads the client canvas to **Payload `media`** (S3), not the local filesystem — safe on Vercel.
 
+## Media serving (Supabase CDN)
+
+House configurator **layers**, renders, planimetries, and option swatches are served
+**directly from Supabase Storage’s public CDN**, not through the Payload proxy route
+`/api/media/file/...`.
+
+**Why.** The old proxy streamed every asset through a Vercel serverless function with
+`Cache-Control: max-age=0` (`x-vercel-cache: MISS` on every request). With ~14
+multi‑MB layer PNGs per house, that meant ~1.4–1.7s TTFB per layer on every toggle.
+Serving from Supabase’s CDN keeps the **same original 4K files** but warm loads are
+~0.08s TTFB (browser → Cloudflare → bucket).
+
+**Configuration** (`payload.config.ts`):
+
+- `s3Storage` → `media` collection:
+  - `disablePayloadAccessControl: true` — removes the `/api/media/file` handler.
+  - `generateFileURL` → `publicMediaUrl(filename, prefix)` from `lib/media-url.ts`.
+
+**URL shape:**
+
+```
+{NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/{S3_BUCKET}/{filename}
+```
+
+Example: `https://spyhpakoxxzceltbdehn.supabase.co/storage/v1/object/public/media/1.%20prapavija-15.png`
+
+**Required env (already in `.env` / Vercel):**
+
+| Variable | Role |
+|----------|------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Base for public object URLs |
+| `S3_BUCKET` | Bucket name (default `media`) |
+
+**Next.js / CSP** (no change needed when adding CDN):
+
+- `next.config.mjs` → `images.remotePatterns` includes `spyhpakoxxzceltbdehn.supabase.co`.
+- CSP `img-src` allows `https://*.supabase.co`.
+
+**Hardcoded asset paths.** Do **not** use `/api/media/file/...` in app code; that route
+is no longer registered. Use `publicMediaUrl('filename.webp')` from `lib/media-url.ts`
+for static fallbacks (option swatches in `lib/house-mapper.ts`, planimetry defaults in
+`HouseConfigurator`, `HousesArchive`, `ProductsGrid`). CMS-backed URLs come from Payload
+`afterRead` via `generateFileURL` automatically.
+
+**Uploads / admin.** Upload and delete still go through Payload + S3 adapter; only
+**public read** bypasses the app. The storage bucket must stay **public** for these URLs.
+
+**Troubleshooting:**
+
+- Broken layer images → check object exists:
+  `curl -I "{SUPABASE_URL}/storage/v1/object/public/media/{filename}"` (expect `200`).
+- `403` on CDN URL → bucket or object not public; fix in Supabase Storage settings.
+- New third-party image host → update `images.remotePatterns` and CSP `img-src` in
+  `next.config.mjs`, then run `npx playwright test csp-audit`.
+
 ## Database SSL
 
 `payload.config.ts` uses `rejectUnauthorized: false` for Supabase Postgres — common for managed providers; document in infra runbook.

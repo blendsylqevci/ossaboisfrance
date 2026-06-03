@@ -7,6 +7,7 @@ import { formatArchiveStartingPrice } from "@/data/houses-archive";
 import { Locale } from "@/lib/i18n";
 import { useFavorites } from "@/lib/favorites";
 import { useSavedConfigurations } from "@/lib/saved-configs";
+import { publicMediaUrl } from "@/lib/media-url";
 import { useSearchParams } from "next/navigation";
 
 export type CMSCategoryItem = {
@@ -632,7 +633,7 @@ export function HousesArchive({ locale, initialHouses, initialCategories, dict }
             </button>
             <div className="material-modal-media">
               <Image
-                src={activePlanimetry.planimetry || '/api/media/file/asebra-me-atike_default.jpg'}
+                src={activePlanimetry.planimetry || publicMediaUrl('asebra-me-atike_default.jpg')}
                 alt={`Planimetria - ${activePlanimetry.title}`}
                 width={1100}
                 height={620}

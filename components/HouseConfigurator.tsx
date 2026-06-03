@@ -5,6 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { ConfigCategory, ConfigOption, HouseConfiguratorData, SizeOption } from "@/data/house-configurator";
 import { Locale } from "@/lib/i18n";
+import { publicMediaUrl } from "@/lib/media-url";
 
 function formatPrice(value: number) {
   // Format exactly with space as thousands separator and comma for decimals
@@ -1797,7 +1798,7 @@ L'équipe Ossa Bois France`;
             </button>
             <div className="material-modal-media">
               <Image
-                src={config.planimetry || '/api/media/file/asebra-me-atike_default.jpg'}
+                src={config.planimetry || publicMediaUrl('asebra-me-atike_default.jpg')}
                 alt={`Planimetria - ${config.name}`}
                 width={1100}
                 height={620}

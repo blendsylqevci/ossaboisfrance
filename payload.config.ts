@@ -5,6 +5,7 @@ import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import { s3Storage } from '@payloadcms/storage-s3'
 import sharp from 'sharp'
+import { publicMediaUrl } from './lib/media-url'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
@@ -73,7 +74,14 @@ export default buildConfig({
   plugins: [
     s3Storage({
       collections: {
-        media: true,
+        media: {
+          // Serve media straight from Supabase's CDN (browser → CDN) instead of
+          // proxying every asset through the Payload `/api/media/file` function,
+          // which was uncacheable (Cache-Control: max-age=0). No quality change.
+          disablePayloadAccessControl: true,
+          generateFileURL: ({ filename, prefix }) =>
+            publicMediaUrl(filename, prefix || undefined),
+        },
       },
       bucket: process.env.S3_BUCKET || 'media',
       config: {

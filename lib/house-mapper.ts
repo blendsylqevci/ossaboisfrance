@@ -2,6 +2,7 @@ import { HouseConfiguratorData, ConfigCategory, SizeOption } from "@/data/house-
 import { Locale } from "@/lib/i18n";
 import { translateText, translateHouseDescription } from "./translation-helper";
 import { isMeKulmHouseSlug } from "./house-import-shared";
+import { publicMediaUrl } from "./media-url";
 
 export function calculateStructureSizePrice(
   sizeId: string,
@@ -427,8 +428,8 @@ export function mapHouseDocToConfiguratorData(
               locale === "de" ? "Glaswolle ist ein ACERMI-zertifizierter Hochleistungsdämmstoff aus Recyclingglas. Ihre faserige Struktur schließt ruhende Luft ein und bietet so einen hervorragenden Wärmewiderstand sowie eine optimale Schalldämmung gegen Außenlärm. Nicht brennbar (Klasse A1), wohngesund und dauerhaft formstabil, fügt sie sich perfekt und setzungssicher in das Holzständerwerk ein." :
               locale === "nl" ? "Glaswol is een ACERMI-gecertificeerd hoogwaardig isolatiemateriaal gemaakt van gerecycled glas. De vezelstructuur sluit stilstaande lucht in voor een uitstekende thermische weerstand en optimale geluidsisolatie tegen omgevingslawaai. Onbrandbaar (klasse A1), gezond en vormvast, sluit het perfect aan op het houtskelet zonder te verzakken." :
               "La laine de verre est un isolant haute performance certifié ACERMI, composé de verre recyclé. Sa structure fibreuse emprisonne l'air immobile pour offrir une excellente résistance thermique et une isolation acoustique optimale contre les bruits extérieurs. Incombustible (classée A1), saine et stable dans le temps, elle s'insère parfaitement dans l'ossature bois sans tassement, régulant efficacement les échanges thermiques en hiver comme en été.",
-            modalImage: "/api/media/file/laine-de-verre.webp",
-            thumbnail: "/api/media/file/laine-de-verre.webp",
+            modalImage: publicMediaUrl("laine-de-verre.webp"),
+            thumbnail: publicMediaUrl("laine-de-verre.webp"),
             attributes: [
               { name: locale === "en" ? "Thermal conductivity" : locale === "de" ? "Wärmeleitfähigkeit" : locale === "nl" ? "Thermische geleidbaarheid" : "Conductivité thermique", value: "0.035 W/m.K" },
               { name: locale === "en" ? "Fire rating" : locale === "de" ? "Brandschutzklasse" : locale === "nl" ? "Brandklasse" : "Classement feu", value: "A1 (Incombustible)" },
@@ -448,8 +449,8 @@ export function mapHouseDocToConfiguratorData(
               locale === "de" ? "Steinwolle wird durch Schmelzen von vulkanischem Gestein (Basalt) hergestellt. Sie ist bekannt für ihre hohe Dichte und extreme Hitzebeständigkeit und bietet hervorragenden passiven Brandschutz (Schmelzpunkt > 1000°C). Sie ist ein erstklassiger Wärmedämmstoff und exzellenter Schallabsorber. Hydrophob und verrottungsbeständig sichert sie die Langlebigkeit der Bauteile." :
               locale === "nl" ? "Steenwol wordt geproduceerd door het smelten van vulkanisch gesteente (bazalt). Bekend om zijn hoge dichtheid en extreme hittebestendigheid, biedt het een uitstekende passieve brandbeveiliging (smeltpunt > 1000°C). Het is een premium thermische isolator en een uitstekende geluidsabsorbeerder. Hydrofoob en rotvrij garandeert het de duurzaamheid van de wanden." :
               "La laine de roche est fabriquée par fusion de roche volcanique (basalte). Reconnue pour sa densité supérieure et sa résistance extrême à la chaleur, elle offre une protection passive contre le feu remarquable (point de fusion > 1000°C). C'est un isolant thermique haut de gamme et un excellent absorbant phonique contre les bruits aériens et d'impact. Hydrophobe et imputrescible, elle garantit la durabilité structurelle des parois.",
-            modalImage: "/api/media/file/laine-de-roche.webp",
-            thumbnail: "/api/media/file/laine-de-roche.webp",
+            modalImage: publicMediaUrl("laine-de-roche.webp"),
+            thumbnail: publicMediaUrl("laine-de-roche.webp"),
             attributes: [
               { name: locale === "en" ? "Thermal conductivity" : locale === "de" ? "Wärmeleitfähigkeit" : locale === "nl" ? "Thermische geleidbaarheid" : "Conductivité thermique", value: "0.036 W/m.K" },
               { name: locale === "en" ? "Fire rating" : locale === "de" ? "Brandschutzklasse" : locale === "nl" ? "Brandklasse" : "Classement feu", value: "A1 (Incombustible - 1000°C)" },
@@ -469,8 +470,8 @@ export function mapHouseDocToConfiguratorData(
               locale === "de" ? "Holzwolle ist ein ökologischer, biobasierter Dämmstoff aus nachhaltig bewirtschafteten Wäldern. Dank ihrer hohen Dichte verfügt sie über eine hervorragende Wärmespeicherkapazität mit einer Phasenverschiebung von über 10 Stunden. Sie hält im Winter warm und blockiert Sommerhitze für optimalen Wohnkomfort. Sie ist atmungsaktiv, reguliert die Feuchtigkeit und speichert CO2." :
               locale === "nl" ? "Houtwol is een ecologisch bio-based isolatiemateriaal afkomstig uit duurzaam beheerde bossen. Dankzij de hoge dichtheid heeft het een uitzonderlijke warmteopslagcapaciteit met een faseverschuiving van meer dan 10 uur. Het houdt de warmte vast in de winter en weert de hitte in de zomer. Het is ademend, reguleert de vochtigheid en slaat CO2 op." :
               "La laine de bois est un isolant biosourcé écologique issu de forêts gérées durablement. Grâce à sa forte densité, elle possède une capacité de stockage thermique exceptionnelle, offrant un déphasage thermique de plus de 10 heures. Elle retient la chaleur en hiver et bloque les vagues de chaleur en été pour un confort estival inégalé. Naturellement perspirante, elle régule l'humidité ambiante et stocke durablement le CO2.",
-            modalImage: "/api/media/file/laine-de-bois.webp",
-            thumbnail: "/api/media/file/laine-de-bois.webp",
+            modalImage: publicMediaUrl("laine-de-bois.webp"),
+            thumbnail: publicMediaUrl("laine-de-bois.webp"),
             attributes: [
               { name: locale === "en" ? "Thermal conductivity" : locale === "de" ? "Wärmeleitfähigkeit" : locale === "nl" ? "Thermische geleidbaarheid" : "Conductivité thermique", value: "0.038 W/m.K" },
               { name: locale === "en" ? "Thermal lag" : locale === "de" ? "Phasenverschiebung" : locale === "nl" ? "Faseverschieving" : "Déphasage thermique", value: "10 - 12 heures" },
@@ -506,8 +507,8 @@ export function mapHouseDocToConfiguratorData(
               locale === "de" ? "Formstabile Steinwolle-Dämmplatten mit doppelter Dichte für die Außendämmung (WDVS). Sie wurden speziell for die direkte Putzbeschichtung entwickelt und umhüllen das Holzhaus mit einem lückenlosen Dämmmantel, der Kältebrücken eliminiert. Sie bieten hervorragende Dimensionsstabilität, hohe mechanische Festigkeit und besten Brandschutz (A1)." :
               locale === "nl" ? "Harde steenwolplaten met dubbele dichtheid voor buitenmuurisolatie (buitengevelisolatie). Speciaal ontworpen voor directe pleisterafwerking, omhullen ze het houtskelet met een doorlopende isolatiemantel om koudebruggen te elimineren. Ze bieden uitstekende dimensionale stabiliteit, mechanische sterkte en een onbrandbare (A1) barrière." :
               "Panneaux rigides de laine de roche double densité pour isolation thermique par l'extérieur (ITE). Conçus spécifiquement pour servir de support direct d'enduit, ils enveloppent la structure en bois d'un manteau isolant continu, éliminant efficacement tous les ponts thermiques. Ils offrent une excellente stabilité dimensionnelle, une haute résistance mécanique et une barrière acoustique et feu ininflammable (A1).",
-            modalImage: "/api/media/file/laine-de-roche.webp",
-            thumbnail: "/api/media/file/laine-de-roche.webp",
+            modalImage: publicMediaUrl("laine-de-roche.webp"),
+            thumbnail: publicMediaUrl("laine-de-roche.webp"),
             attributes: [
               { name: locale === "en" ? "Density" : locale === "de" ? "Dichte" : locale === "nl" ? "Dichtheid" : "Densité", value: "150 kg/m³" },
               { name: locale === "en" ? "Thermal conductivity" : locale === "de" ? "Wärmeleitfähigkeit" : locale === "nl" ? "Thermische geleidbaarheid" : "Conductivité thermique", value: "0.039 W/m.K" },
@@ -527,8 +528,8 @@ export function mapHouseDocToConfiguratorData(
               locale === "de" ? "Graues expandiertes Polystyrol (EPS) mit Graphit bietet eine hervorragende Wärmeleitfähigkeit bei minimaler Dicke für die Außendämmung. Leicht, wasserabweisend und luftdicht bildet es einen leistungsstarken und wirtschaftlichen Thermoschutz. Es schützt die Tragkonstruktion vor Temperaturschwankungen und sichert die Fassade ab." :
               locale === "nl" ? "Geëxpandeerd polystyreen (EPS) met grafiet biedt een uitstekende thermische geleidbaarheid met minimale dikte voor buitenisolatie. Lichtgewicht, waterafstotend en luchtdicht vormt het een efficiënt en voordelig termisch schild. Het beschermt de houten structuur tegen temperatuurschommelingen en zorgt voor een waterdichte gevel." :
               "Le polystyrène expansé (PSE) graphité offre une excellente conductivité thermique pour un encombrement minimal en isolation extérieure. Léger, hydrofuge et parfaitement étanche à l'air, il constitue un bouclier thermique performant et économique. Il protège durablement la structure des chocs thermiques extérieurs et garantit une étanchéité parfaite de la façade sous l'enduit de finition.",
-            modalImage: "/api/media/file/polystyrene.webp",
-            thumbnail: "/api/media/file/polystyrene.webp",
+            modalImage: publicMediaUrl("polystyrene.webp"),
+            thumbnail: publicMediaUrl("polystyrene.webp"),
             attributes: [
               { name: locale === "en" ? "Thermal conductivity" : locale === "de" ? "Wärmeleitfähigkeit" : locale === "nl" ? "Thermische geleidbaarheid" : "Conductivité thermique", value: "0.032 W/m.K" },
               { name: locale === "en" ? "Density" : locale === "de" ? "Dichte" : locale === "nl" ? "Dichtheid" : "Densité", value: "15 - 20 kg/m³" },
@@ -548,8 +549,8 @@ export function mapHouseDocToConfiguratorData(
               locale === "de" ? "Putzträgerplatten aus hochdichter Holzfaser für die ökologische Außendämmung. Dieses biobasiertes Material sichert eine hervorragende Dampfdurchlässigkeit, sodass Wände natürlich atmen können und Kondensation vermieden wird. Seine hohe Speicherkapazität bietet optimale Phasenverschiebung für Kühle im Sommer und Wärme im Winter." :
               locale === "nl" ? "Harde houtvezelplaten met hoge dichtheid voor pleisterbare buitenisolatie. Dit ecologische, bio-based materiaal biedt een uitstekende dampopenheid, waardoor muren natuurlijk ademen en condensatie wordt voorkomen. De hoge warmtecapaciteit zorgt voor een optimale faseverschuiving om koelte in de zomer en warmte in de winter te behouden." :
               "La fibre de bois rigide pour ITE est un matériau biosourcé 100% naturel. Elle assure une excellente respirabilité des murs tout en offrant un déphasage thermique exceptionnel, idéal pour préserver la fraîcheur intérieure en période estivale.",
-            modalImage: "/api/media/file/fibre-de-bois.webp",
-            thumbnail: "/api/media/file/fibre-de-bois.webp",
+            modalImage: publicMediaUrl("fibre-de-bois.webp"),
+            thumbnail: publicMediaUrl("fibre-de-bois.webp"),
             attributes: [
               { name: locale === "en" ? "Thermal lag" : locale === "de" ? "Phasenverschiebung" : locale === "nl" ? "Faseverschuiving" : "Déphasage thermique", value: "12 heures" },
               { name: locale === "en" ? "Thermal conductivity" : locale === "de" ? "Wärmeleitfähigkeit" : locale === "nl" ? "Thermische geleidbaarheid" : "Conductivité thermique", value: "0.040 W/m.K" },
@@ -585,8 +586,8 @@ export function mapHouseDocToConfiguratorData(
               locale === "de" ? "Hochdruckfeste Dämmplatten aus expandiertem Polystyrol, speziell für die Flachdachdämmung unter Abdichtungen entwickelt. Sie halten Witterungs- und Wartungslasten verformungsfrei stand. Durchgehend verlegt eliminieren sie Kältebrücken auf Flachdächern und bieten einen stabilen Untergrund für die EPDM-Bahn." :
               locale === "nl" ? "Drukvaste geëxpandeerde polystyreen isolatieplaten, speciaal ontworpen voor platte daken onder de dakafdichting. Ze zijn bestand tegen wind- en onderhoudsbelastingen zonder te vervormen. Doorlopend gelegd elimineren ze koudebruggen op platte daken en vormen ze een stabiele basis voor het EPDM-membraan." :
               "Plaques isolantes de polystyrène expansé à haute résistance à la compression, spécialement adaptées à l'isolation des toits plats sous étanchéité. Elles supportent les charges climatiques et d'entretien sans déformation. Posées de manière continue, elles éliminent les ponts thermiques en toiture terrasse et offrent un support stable et durable pour la membrane EPDM.",
-            modalImage: "/api/media/file/polystyrene.webp",
-            thumbnail: "/api/media/file/polystyrene.webp",
+            modalImage: publicMediaUrl("polystyrene.webp"),
+            thumbnail: publicMediaUrl("polystyrene.webp"),
             attributes: [
               { name: locale === "en" ? "Compressive strength" : locale === "de" ? "Druckfestigkeit" : locale === "nl" ? "Druksterkte" : "Résistance à la compression", value: "≥ 150 kPa" },
               { name: locale === "en" ? "Thermal conductivity" : locale === "de" ? "Wärmeleitfähigkeit" : locale === "nl" ? "Thermische geleidbaarheid" : "Conductivité thermique", value: "0.034 W/m.K" },
@@ -628,8 +629,8 @@ export function mapHouseDocToConfiguratorData(
                  locale === "de" ? "Hochdampfdurchlässige (HPV) Unterspannbahn. Unter den Dachlatten verlegt schützt sie den Dachstuhl und die Dämmung aktiv vor dem Eindringen von Regen, Flugschnee und Staub, während Feuchtigkeit aus dem Innenraum ungehindert nach außen entweichen kann, um Kondensatbildung zu verhindern." :
                  locale === "nl" ? "Zeer dampopen (HPV) onderdakfolie. Geïnstalleerd onder de panlatten beschermt het de dakconstructie en isolatie actief tegen infiltratie van regen, stuifsneeuw en stof, terwijl vocht van binnenuit vrij kan ontsnappen om condensatie in het dak te voorkomen." :
                  "Écran de sous-toiture pare-pluie hautement perméable à la vapeur d'eau (HPV) posé sous les liteaux. Il protège durablement la charpente et l'isolation contre les infiltrations accidentelles d'eau, de neige et de vent, tout en évacuant la vapeur intérieure."),
-            modalImage: isTerraceOrTerraceEtage ? "/api/media/file/membrane-epdm.webp" : "/media/folia-dhe-listelat.webp",
-            thumbnail: isTerraceOrTerraceEtage ? "/api/media/file/membrane-epdm.webp" : "/media/folia-dhe-listelat.webp",
+            modalImage: isTerraceOrTerraceEtage ? publicMediaUrl("membrane-epdm.webp") : "/media/folia-dhe-listelat.webp",
+            thumbnail: isTerraceOrTerraceEtage ? publicMediaUrl("membrane-epdm.webp") : "/media/folia-dhe-listelat.webp",
             attributes: isTerraceOrTerraceEtage
               ? [
                   { name: locale === "en" ? "Lifespan" : locale === "de" ? "Lebensdauer" : locale === "nl" ? "Levensduur" : "Durabilité estimée", value: locale === "en" ? "Over 50 years" : locale === "de" ? "Über 50 Jahre" : locale === "nl" ? "Meer dan 50 jaar" : "Plus de 50 ans" },
@@ -673,8 +674,8 @@ export function mapHouseDocToConfiguratorData(
               locale === "de" ? "Lückenlose Wärme- und Schalldämmung für geneigte Dächer. Bestehend aus 220 mm dicker Glaswolle mit hervorragendem Wärmeleitkoeffizienten, wird sie zwischen oder unter den Sparren installiert. Sie senkt den Wärmeverlust über das Dach (Hauptursache für Energieverluste im Haus) drastisch und dämpft Außenlärm effektiv." :
               locale === "nl" ? "Continue thermische en akoestische isolatie voor hellende daken. Bestaande uit 220 mm dikke glaswol met een uitstekende geleidingscoëfficiënt, geïnstalleerd tussen of onder de dakspanten. Het vermindert warmteverlies via het dak (de belangrijkste bron van warmteverlies in een huis) drastisch et dempt omgevingslawaai." :
               "Isolation thermo-acoustique continue pour toitures inclinées. Composée de laine de verre de 220 mm d'épaisseur avec un excellent coefficient de conductivité, elle s'installe entre ou sous les chevrons de la charpente. Elle réduit drastiquement les déperditions thermiques par le toit (première source de perte de chaleur d'une maison) et atténue les bruits aériens extérieurs.",
-            modalImage: "/api/media/file/laine-de-verre.webp",
-            thumbnail: "/api/media/file/laine-de-verre.webp",
+            modalImage: publicMediaUrl("laine-de-verre.webp"),
+            thumbnail: publicMediaUrl("laine-de-verre.webp"),
             attributes: [
               { name: locale === "en" ? "Thickness" : locale === "de" ? "Dicke" : locale === "nl" ? "Dikte" : "Épaisseur", value: "220 mm" },
               { name: locale === "en" ? "Thermal resistance" : locale === "de" ? "Wärmewiderstand" : locale === "nl" ? "Warmteweerstand" : "Résistance thermique (R)", value: "R = 6.25 m².K/W" },
@@ -694,8 +695,8 @@ export function mapHouseDocToConfiguratorData(
               locale === "de" ? "Hochleistungs-Dachdämmung aus 220 mm dicker Steinwolle. Dank ihrer dichten Faserstruktur und Trägheit bietet sie eine hervorragende Schalldämmung gegen Schlaggeräusche (Regen, Hagel) und eine nicht brennbare Brandschutzbarriere. Sie ist absolut formstabil, sackt nicht ab und behält ihre Dämmleistung über Jahrzehnte." :
               locale === "nl" ? "Hoogwaardige dakisolatie in 220 mm dikke steenwol. Dankzij de dichtvezelige structuur en thermische traagheid biedt het een uitzonderlijke geluidsisolatie tegen contactgeluid (regen, hagel) en een onbrandbare brandbarrière. Vormvast in de loop der tijd, verzakt niet en behoudt zijn isolerende prestaties decennialang." :
               "Isolation de toiture haute performance en laine de roche de 220 mm d'épaisseur. Grâce à sa structure fibreuse dense et son inertie, elle offre une isolation acoustique exceptionnelle contre les bruits d'impact (pluie, grêle) et une barrière coupe-feu incombustible. Stable dans le temps, elle ne s'affaisse pas et maintient ses performances isolantes durant des décennies.",
-            modalImage: "/api/media/file/laine-de-roche.webp",
-            thumbnail: "/api/media/file/laine-de-roche.webp",
+            modalImage: publicMediaUrl("laine-de-roche.webp"),
+            thumbnail: publicMediaUrl("laine-de-roche.webp"),
             attributes: [
               { name: locale === "en" ? "Thickness" : locale === "de" ? "Dicke" : locale === "nl" ? "Dikte" : "Épaisseur", value: "220 mm" },
               { name: locale === "en" ? "Thermal resistance" : locale === "de" ? "Wärmewiderstand" : locale === "nl" ? "Warmteweerstand" : "Résistance thermique (R)", value: "R = 6.10 m².K/W" },
@@ -715,8 +716,8 @@ export function mapHouseDocToConfiguratorData(
               locale === "de" ? "Ökologische, biobasierte Dachdämmung aus 220 mm dicker Holzfaser. Ihre sehr hohe Dichte (55 kg/m³) verleiht ihr eine überragende Wärmekapazität mit einer außergewöhnlichen Phasenverschiebung von ca. 12 Stunden. Die ideale Dämmung für ausgebauten Wohnraum unter dem Dach für angenehme Kühle im Sommer und gesunde Wärme im Winter." :
               locale === "nl" ? "Ecologische bio-based dakisolatie in 220 mm dikke houtvezel. De zeer hoge dichtheid (55 kg/m³) geeft het een superieure warmtecapaciteit met een uitzonderlijke faseverschuiving van ongeveer 12 uur. Het is de ideale isolatie voor bewoonbare zolders, wat zorgt voor koele kamers in de zomer en behaaglijke warmte in de winter." :
               "Isolant de toiture biosourcé en fibre de bois de 220mm. Sa forte densité offre la meilleure protection contre la chaleur estivale sous les combles grâce à un temps de déphasage thermique exceptionnel d'environ 12 heures.",
-            modalImage: "/api/media/file/laine-de-bois.webp",
-            thumbnail: "/api/media/file/laine-de-bois.webp",
+            modalImage: publicMediaUrl("laine-de-bois.webp"),
+            thumbnail: publicMediaUrl("laine-de-bois.webp"),
             attributes: [
               { name: locale === "en" ? "Thickness" : locale === "de" ? "Dicke" : locale === "nl" ? "Dikte" : "Épaisseur", value: "220 mm" },
               { name: locale === "en" ? "Thermal lag" : locale === "de" ? "Phasenverschiebung" : locale === "nl" ? "Faseverschuiving" : "Déphasage thermique", value: locale === "en" ? "12 hours (Ideal for summer)" : locale === "de" ? "12 Stunden (Ideal für Sommer)" : locale === "nl" ? "12 uur (Ideaal voor de zomer)" : "12 heures (Idéal été)" },
@@ -772,8 +773,8 @@ export function mapHouseDocToConfiguratorData(
               locale === "de" ? "Klassische Eindeckung aus hochfesten Beton- oder Tonziegeln, montiert auf Holzlattung. Umfasst das komplette Entwässerungssystem mit Dachrinnen und Fallrohren aus Zink oder lackiertem Aluminium. Diese Eindeckung garantiert absolute Dichtheit und eine hervorragende Beständigkeit gegen starke Winde und Frost." :
               locale === "nl" ? "Traditionele dakbedekking bestaande uit betonnen of gebakken dakpannen van hoge sterkte, gemonteerd op houten latten. Inclusief de volledige installatie van het hemelwaterafvoersysteem met goten en regenpijpen in zink of gelakt aluminium. Dit systeem garandeert een perfecte waterdichtheid en weerstand tegen wind en vorst." :
               "Couverture traditionnelle composée de tuiles de béton ou terre cuite haute résistance, fixées sur liteaux bois. Elle comprend l'installation complète du système d'évacuation des eaux pluviales avec gouttières et descentes en zinc ou alu laqué. Ce système garantit une étanchéité parfaite de la toiture et une résistance exceptionnelle face aux vents forts et au gel.",
-            modalImage: "/api/media/file/tuiles.webp",
-            thumbnail: "/api/media/file/tuiles.webp",
+            modalImage: publicMediaUrl("tuiles.webp"),
+            thumbnail: publicMediaUrl("tuiles.webp"),
             attributes: [
               { name: locale === "en" ? "Material" : locale === "de" ? "Material" : locale === "nl" ? "Materiaal" : "Matériau", value: locale === "en" ? "Clay or high-strength concrete" : locale === "de" ? "Ton or hochfester Beton" : locale === "nl" ? "Klei of betonnen dakpannen" : "Terre cuite ou Béton haute résistance" },
               { name: locale === "en" ? "Warranty" : locale === "de" ? "Garantie" : locale === "nl" ? "Garantie" : "Garantie constructeur", value: locale === "en" ? "30 years" : locale === "de" ? "30 Jahre" : locale === "nl" ? "30 jaar" : "30 ans" },
@@ -792,8 +793,8 @@ export function mapHouseDocToConfiguratorData(
               locale === "de" ? "Moderne Eindeckung aus hochfesten Trapezblech-Stahlplatten. Die Bleche sind auf der Unterseite mit einem Vlies-Kondensationsschutz zur Feuchtigkeitsregulierung kaschiert. Leicht und robust bietet diese Lösung absolute Langzeitdichtheit, hält Hagel und Stürmen stand und verleiht dem Haus ein klares, zeitgemäßes Aussehen." :
               locale === "nl" ? "Moderne dakbedekking in geprofileerde stalen platen (damwandplaten) met hoge mechanische weerstand. De platen zijn voorzien van een geïntegreerde anti-condenslaag aan de onderzijde. Lichtgewicht en robuust zorgt deze oplossing voor absolute waterdichtheid, is bestand tegen storm en geeft een strakke afwerking." :
               "Couverture contemporaine en plaques d'acier nervuré (bac acier) à haute résistance mécanique. Les plaques intègrent un revêtement feutre anti-condensation en sous-face pour réguler l'humidité. Légère et robuste, cette solution assure une étanchéité absolue à long terme, résiste parfaitement à la grêle et aux tempêtes, et apporte une finition moderne et graphique.",
-            modalImage: "/api/media/file/bac-acier.webp",
-            thumbnail: "/api/media/file/bac-acier.webp",
+            modalImage: publicMediaUrl("bac-acier.webp"),
+            thumbnail: publicMediaUrl("bac-acier.webp"),
             attributes: [
               { name: locale === "en" ? "Anti-condensation" : locale === "de" ? "Antikondensschutz" : locale === "nl" ? "Anti-condenslaag" : "Anti-condensation", value: locale === "en" ? "Felt lining active regulator" : locale === "de" ? "Vlies-Kondensationsschutz" : locale === "nl" ? "Actieve viltlaagregulator" : "Régulateur feutre actif" },
               { name: locale === "en" ? "Steel thickness" : locale === "de" ? "Dicke" : locale === "nl" ? "Dikte" : "Épaisseur acier", value: "75/100" },
@@ -828,8 +829,8 @@ export function mapHouseDocToConfiguratorData(
               locale === "de" ? "Weißer Spritz-Mineralputz verleiht Ihrem Haus eine moderne und helle Ästhetik. In mehreren Schichten mit Glasfasergewebe-Armierung aufgetragen, bildet er eine schützende Haut, die absolut regendicht und gleichzeitig hochdampfdurchlässig ist (niedriger Sd-Wert). So schützt er das Tragwerk dauerhaft vor Witterungseinflüssen." :
               locale === "nl" ? "Witte minerale spuitpleister geeft uw woning een moderne en lichte uitstraling. In meerdere lagen aangebracht met glasvezelwapening vormt het een beschermende huid die volledig regenbestendig en tegelijkertijd zeer dampopen is (lage Sd-waarde). Dit zorgt voor langdurige bescherming en ademende muren." :
               "L'enduit minéral projeté blanc apporte une esthétique moderne et lumineuse à votre maison individuelle. Appliqué en plusieurs passes avec armature en fibre de verre, il forme une peau protectrice imperméable à l'eau de pluie mais hautement perméable à la vapeur d'eau (Sd faible). Il protège ainsi durablement le support contre les intempéries tout en laissant respirer les murs.",
-            modalImage: "/api/media/file/facade-blanche-enduit.webp",
-            thumbnail: "/api/media/file/facade-blanche-enduit.webp",
+            modalImage: publicMediaUrl("facade-blanche-enduit.webp"),
+            thumbnail: publicMediaUrl("facade-blanche-enduit.webp"),
             attributes: [
               { name: locale === "en" ? "Finish texture" : locale === "de" ? "Oberfläche" : locale === "nl" ? "Afwerkingstextuur" : "Finition", value: locale === "en" ? "Scraped fine grain" : locale === "de" ? "Kratzputz feine Körnung" : locale === "nl" ? "Fijn geschraapt" : "Gratté grain fin" },
               { name: locale === "en" ? "Vapor permeability" : locale === "de" ? "Dampfdurchlässigkeit" : locale === "nl" ? "Dampopenheid" : "Perméabilité à la vapeur", value: locale === "en" ? "High (breathable)" : locale === "de" ? "Hoch (atmungsaktiv)" : locale === "nl" ? "Hoog (dampopen)" : "Élevée (respirant)" },
@@ -849,8 +850,8 @@ export function mapHouseDocToConfiguratorData(
               locale === "de" ? "Premium-Außenverkleidung aus natürlichem Lärchenholz. Lärche ist ein dichtes Nadelholz, das von Natur aus der Dauerhaftigkeitsklasse 3 entspricht (verrottungsbeständig ohne chemische Behandlung). Auf einer hinterlüfteten Lattung mit Insektenschutz montiert, bietet es besten Schutz und bildet im Lauf der Zeit eine edle silbergraue Patina." :
               locale === "nl" ? "Premium buitenbekleding van natuurlijk larix. Larix is een dicht naaldhout, van nature geclassificeerd in duurzaamheidsklasse 3 (rotbestendig zonder chemische behandeling). Gemonteerd op geventileerd latwerk met knaagdierroosters biedt het uitstekende bescherming en ontwikkelt het na verloop van tijd een zilvergrijze patina." :
               "Revêtement extérieur haut de gamme en clin de Mélèze naturel. Le Mélèze est un bois résineux dense, naturellement de classe 3 (imputrescible sans aucun traitement chimique). Posé sur tasseaux ventilés avec grille anti-rongeurs, il assure une excellente protection thermique et mécanique. Avec le temps, il développe une superbe patine gris argenté qui s'intègre harmonieusement dans le paysage.",
-            modalImage: "/api/media/file/bardage-meleze.webp",
-            thumbnail: "/api/media/file/bardage-meleze.webp",
+            modalImage: publicMediaUrl("bardage-meleze.webp"),
+            thumbnail: publicMediaUrl("bardage-meleze.webp"),
             attributes: [
               { name: locale === "en" ? "Wood species" : locale === "de" ? "Holzart" : locale === "nl" ? "Houtsoort" : "Essence de bois", value: locale === "en" ? "European Larch" : locale === "de" ? "Europäische Lärche" : locale === "nl" ? "Europees larix" : "Mélèze d'Europe" },
               { name: locale === "en" ? "Durability class" : locale === "de" ? "Dauerhaftigkeitsklasse" : locale === "nl" ? "Duurzaamheidsklasse" : "Classe d'emploi", value: locale === "en" ? "Class 3 (Naturally durable)" : locale === "de" ? "Klasse 3 (Natürlich dauerhaft)" : locale === "nl" ? "Klasse 3 (Van nature duurzaam)" : "Classe 3 (Naturellement imputrescible)" },
@@ -886,8 +887,8 @@ export function mapHouseDocToConfiguratorData(
               locale === "de" ? "Leichte Wärme- und Schalldämmung für den Einbau in die Deckenkonstruktion der Zwischendecke. Die 100 mm dicke Glaswolle reduziert den Wärmedurchgang zwischen den Etagen und absorbiert Luftschall für einen spürbar besseren Schallschutz zwischen den Wohnräumen." :
               locale === "nl" ? "Lichte thermische en akoestische isolatie geplaatst in de spouw van het verlaagde plafond. Bestaande uit 100 mm dikke glaswol, beperkt het warmteoverdracht tussen verdiepingen en absorbeert het luchtgeluid voor een aangenaam akoestisch comfort." :
               "Isolant thermique et acoustique léger inséré dans le plénum du faux plafond. Composé de laine de verre de 100 mm, il limite les transferts thermiques entre les niveaux et absorbe les bruits aériens intérieurs pour un confort acoustique appréciable entre les différentes pièces de vie.",
-            modalImage: "/api/media/file/laine-de-verre.webp",
-            thumbnail: "/api/media/file/laine-de-verre.webp",
+            modalImage: publicMediaUrl("laine-de-verre.webp"),
+            thumbnail: publicMediaUrl("laine-de-verre.webp"),
             attributes: [
               { name: locale === "en" ? "Thickness" : locale === "de" ? "Dicke" : locale === "nl" ? "Dikte" : "Épaisseur", value: "100 mm" },
               { name: locale === "en" ? "Sound insulation" : locale === "de" ? "Schalldämmung" : locale === "nl" ? "Geluidsisolatie" : "Isolation acoustique", value: locale === "en" ? "Airborne noise reduction" : locale === "de" ? "Luftschalldämpfung" : locale === "nl" ? "Demping van luchtgeluid" : "Réduction des bruits aériens" },
@@ -906,8 +907,8 @@ export function mapHouseDocToConfiguratorData(
               locale === "de" ? "Wärme- und Schalldämmung aus dichter 100 mm Steinwolle für Zwischendecken. Dank ihrer dreidimensionalen Faserstruktur bietet sie hervorragende Schalldämpfung, um Stimmen- und Trittschall wirksam zu blockieren. Zudem bietet sie einen exzellenten Brandschutz zwischen den Etagen." :
               locale === "nl" ? "Thermische en akoestische isolatie in 100 mm dichte steenwol voor verlaagde plafonds. Dankzij de driedimensionale vezelstructuur biedt het superieure geluidsdempende prestaties om stemmen en contactgeluid te blokkeren. Het zorgt ook voor een uitstekende brandwerendheid." :
               "Isolation thermo-acoustique en laine de roche dense de 100 mm pour faux plafonds. Grâce à sa structure fibreuse tridimensionnelle, elle offre des performances d'affaiblissement acoustique supérieures pour bloquer les bruits de voix et d'impacts. Elle assure également une excellente protection coupe-feu entre les niveaux.",
-            modalImage: "/api/media/file/laine-de-roche.webp",
-            thumbnail: "/api/media/file/laine-de-roche.webp",
+            modalImage: publicMediaUrl("laine-de-roche.webp"),
+            thumbnail: publicMediaUrl("laine-de-roche.webp"),
             attributes: [
               { name: locale === "en" ? "Thickness" : locale === "de" ? "Dicke" : locale === "nl" ? "Dikte" : "Épaisseur", value: "100 mm" },
               { name: locale === "en" ? "Density" : locale === "de" ? "Dichte" : locale === "nl" ? "Dichtheid" : "Densité", value: "40 kg/m³" },
@@ -926,8 +927,8 @@ export function mapHouseDocToConfiguratorData(
               locale === "de" ? "Ökologische Dämmung aus 100 mm Holzfaser für Zwischendecken. Diese biobasierte, wohngesunde Dämmplatte bietet eine hervorragende Schallabsorption. Ihre natürliche Fähigkeit, Wasserdampf aufzunehmen und wieder abzugeben, reguliert das Raumklima für ein gesundes Wohngefühl." :
               locale === "nl" ? "Ecologische isolatie in 100 mm houtvezel voor verlaagde plafonds. Deze bio-based en gezonde isolatieplaat biedt een uitstekende geluidsabsorptie. Het natuurlijke vermogen om vocht op te nemen en af te geven reguleert de luchtvochtigheid voor een gezond binnenklimaat." :
               "Isolation écologique en fibre de bois de 100 mm pour faux plafonds. Ce panneau isolant biosourcé et sain offre une excellente absorption acoustique. Sa capacité naturelle à absorber et restituer la vapeur d'eau régule l'humidité de l'air intérieur, contribuant à un climat intérieur sain et agréable.",
-            modalImage: "/api/media/file/laine-de-bois.webp",
-            thumbnail: "/api/media/file/laine-de-bois.webp",
+            modalImage: publicMediaUrl("laine-de-bois.webp"),
+            thumbnail: publicMediaUrl("laine-de-bois.webp"),
             attributes: [
               { name: locale === "en" ? "Thickness" : locale === "de" ? "Dicke" : locale === "nl" ? "Dikte" : "Épaisseur", value: "100 mm" },
               { name: locale === "en" ? "Humidity regulation" : locale === "de" ? "Feuchtigkeitsregulierung" : locale === "nl" ? "Vochtregulatie" : "Régulation d'humidité", value: locale === "en" ? "Active (breathable)" : locale === "de" ? "Aktiv (atmungsaktiv)" : locale === "nl" ? "Actief (dampopen)" : "Active (perspirant)" },
@@ -962,8 +963,8 @@ export function mapHouseDocToConfiguratorData(
               locale === "de" ? "Hochwertige Aluminiumprofile in Anthrazitgrau (RAL 7016) mit Wärmeschutz-Doppelverglasung (Argongas). Die superschmalen, thermisch getrennten Profile maximieren den Lichteinfall, um Räume mit Tageslicht zu fluten, und garantieren gleichzeitig hervorragende Dichtigkeitswerte (AEV-Klasse) und Wärmedämmung." :
               locale === "nl" ? "Hoogwaardige aluminium profielen in antracietgrijs (RAL 7016) voorzien van HR++ dubbel glas (argongas). De ultraslanke, thermisch onderbroken profielen maximaliseren het glasoppervlak om kamers te vullen met natuurlijk licht, en garanderen uitstekende isolatiewaarden en AEV-wind- en waterdichtheidsklassen." :
               "Châssis haut de gamme en aluminium gris anthracite (RAL 7016) équipés de double vitrage thermique renforcé (gaz Argon). Les profilés ultra-fins à rupture de pont thermique maximisent le clair de vitrage pour inonder les pièces de lumière naturelle, tout en garantissant d'excellentes performances d'étanchéité AEV et d'isolation.",
-            modalImage: "/api/media/file/menuiseries-aluminium.webp",
-            thumbnail: "/api/media/file/menuiseries-aluminium.webp",
+            modalImage: publicMediaUrl("menuiseries-aluminium.webp"),
+            thumbnail: publicMediaUrl("menuiseries-aluminium.webp"),
             attributes: [
               { name: locale === "en" ? "Color" : locale === "de" ? "Farbe" : locale === "nl" ? "Kleur" : "Couleur extérieure", value: locale === "en" ? "Anthracite Gray (RAL 7016)" : locale === "de" ? "Anthrazitgrau (RAL 7016)" : locale === "nl" ? "Antracietgrijs (RAL 7016)" : "Gris Anthracite (RAL 7016)" },
               { name: locale === "en" ? "Glazing type" : locale === "de" ? "Verglasungstyp" : locale === "nl" ? "Beglazingstype" : "Type de vitrage", value: locale === "en" ? "Double 4/16/4 Low-E Argon" : locale === "de" ? "Doppelverglasung 4/16/4 Low-E Argon" : locale === "nl" ? "Dubbel glas 4/16/4 Low-E Argon" : "Double 4/16/4 Low-E Argon" },
@@ -983,8 +984,8 @@ export function mapHouseDocToConfiguratorData(
               locale === "de" ? "Verstärkte weiße PVC-Profile mit einem hervorragenden Preis-Leistungs-Verhältnis. Die Mehrkammerprofile verfügen über hocheffiziente Dichtungen und eine Wärmeschutz-Doppelverglasung mit Argongas. Diese Fenster garantieren hervorragende Wind- und Wasserdichtigkeit, hohe Wärmedämmung und sind komplett wartungsfrei." :
               locale === "nl" ? "Versterkte witte PVC profielen met een uitstekende prijs-isolatieverhouding. De meerkamerprofielen zijn voorzien van hoogwaardige dichtingen en HR++ dubbel glas met argongas. Dit buitenschrijnwerk garandeert een perfecte wind- en waterdichtheid, hoge natuurlijke isolatiewaarden en vereist geen onderhoud." :
               "Châssis en PVC blanc renforcé offrant un excellent rapport isolation/prix. Les profilés multi-chambres intègrent des joints à haute efficacité et un double vitrage thermique renforcé à gaz Argon. Cette menuiserie garantit une étanchéité parfaite à l'air et à l'eau, une isolation thermique naturelle élevée, et ne nécessite aucun entretien.",
-            modalImage: "/api/media/file/menuiseries-pvc.webp",
-            thumbnail: "/api/media/file/menuiseries-pvc.webp",
+            modalImage: publicMediaUrl("menuiseries-pvc.webp"),
+            thumbnail: publicMediaUrl("menuiseries-pvc.webp"),
             attributes: [
               { name: locale === "en" ? "Color" : locale === "de" ? "Farbe" : locale === "nl" ? "Kleur" : "Couleur extérieure", value: locale === "en" ? "White (RAL 9016)" : locale === "de" ? "Weiß (RAL 9016)" : locale === "nl" ? "Wit (RAL 9016)" : "Blanc (RAL 9016)" },
               { name: locale === "en" ? "Glazing type" : locale === "de" ? "Verglasungstyp" : locale === "nl" ? "Beglazingstype" : "Type de vitrage", value: locale === "en" ? "Double 4/16/4 Low-E Argon" : locale === "de" ? "Doppelverglasung 4/16/4 Low-E Argon" : locale === "nl" ? "Dubbel glas 4/16/4 Low-E Argon" : "Double 4/16/4 Low-E Argon" },

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { formatArchiveStartingPrice } from "@/data/houses-archive";
 import { CompareSlider } from "@/components/HousesArchive";
 import { useFavorites } from "@/lib/favorites";
+import { publicMediaUrl } from "@/lib/media-url";
 
 type House = {
   slug: string;
@@ -65,7 +66,7 @@ export function ProductsGrid({
           </button>
           <div className="material-modal-media">
             <Image
-              src={activePlanimetry.planimetry || '/api/media/file/asebra-me-atike_default.jpg'}
+              src={activePlanimetry.planimetry || publicMediaUrl('asebra-me-atike_default.jpg')}
               alt={`Planimetria - ${activePlanimetry.title}`}
               width={1100}
               height={620}

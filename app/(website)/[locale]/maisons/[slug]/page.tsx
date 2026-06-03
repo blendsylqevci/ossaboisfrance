@@ -40,7 +40,11 @@ const slugRedirects: Record<string, string> = {
   "mountain-valley-villa": "mountain-valley-villa-comble",
 };
 
-export const dynamic = "force-dynamic";
+// ISR: pages are statically cached and revalidated. House/option edits in
+// Payload trigger on-demand revalidation (see lib/revalidate-house.ts), so the
+// 600s window is only a safety net. Media URLs are stable (public, unsigned).
+export const revalidate = 600;
+export const dynamicParams = true;
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://ossaboisfrance.com";
 

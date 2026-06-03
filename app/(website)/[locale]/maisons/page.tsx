@@ -8,7 +8,10 @@ import { Metadata } from "next";
 import { calculateStructureSizePrice } from "@/lib/house-mapper";
 
 
-export const dynamic = "force-dynamic";
+// ISR: cached and revalidated on a 600s safety window; Payload house/option
+// edits trigger on-demand revalidation (see lib/revalidate-house.ts).
+export const revalidate = 600;
+export const dynamicParams = true;
 
 type HousesPageProps = {
   params: Promise<{ locale: Locale }>;

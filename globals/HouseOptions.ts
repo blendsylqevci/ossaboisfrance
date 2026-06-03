@@ -1,4 +1,5 @@
 import { GlobalConfig, Field } from 'payload'
+import { revalidateHousePaths } from '@/lib/revalidate-house'
 
 const optionFields: Field[] = [
   {
@@ -95,6 +96,7 @@ export const HouseOptions: GlobalConfig = {
         } catch (err) {
           req.payload.logger.error(`[HouseOptions Global Hook] Failed to propagate pricing updates: ${err}`);
         }
+        revalidateHousePaths();
       }
     ]
   },

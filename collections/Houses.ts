@@ -1,9 +1,15 @@
 import { CollectionConfig } from 'payload'
+import { revalidateHousePaths } from '@/lib/revalidate-house'
 
 export const Houses: CollectionConfig = {
   slug: 'houses',
   lockDocuments: false,
   hooks: {
+    afterChange: [
+      ({ doc }) => {
+        revalidateHousePaths(typeof doc?.slug === 'string' ? doc.slug : undefined);
+      },
+    ],
     beforeChange: [
       async ({ data, req }) => {
         const neto = data.perdhesa?.neto || 0;
@@ -73,6 +79,7 @@ export const Houses: CollectionConfig = {
             `[Houses Hook] Failed to query associated media for house ID ${id}: ${err}`
           )
         }
+        revalidateHousePaths();
       },
     ],
   },

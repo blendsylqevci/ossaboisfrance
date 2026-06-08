@@ -53,8 +53,10 @@ export default buildConfig({
   db: postgresAdapter({
     pool: {
       connectionString: process.env.DATABASE_URI || '',
-      max: 10,
-      idleTimeoutMillis: 1000,
+      // Serverless: few connections per instance (avoids Supabase pool exhaustion).
+      max: process.env.NODE_ENV === 'production' ? 2 : 10,
+      idleTimeoutMillis: 20_000,
+      connectionTimeoutMillis: 15_000,
       ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
     },
     push: false,

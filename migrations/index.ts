@@ -2,6 +2,7 @@ import * as addMediaOrganizationFields from './20260521_222000_add_media_organiz
 import * as updateOrdersSchema from './20260522_001200_update_orders_schema'
 import * as addOrderCancellationReason from './20260522_002500_add_order_cancellation_reason'
 import * as addPlanimetryVisual from './20260603_120000_add_planimetry_visual'
+import * as addSiteSettingsGlobal from './20260603_180000_add_site_settings_global'
 
 export const migrations = [
   {
@@ -23,5 +24,10 @@ export const migrations = [
     up: addPlanimetryVisual.up,
     down: addPlanimetryVisual.down,
     name: '20260603_120000_add_planimetry_visual',
+  },
+  {
+    up: addSiteSettingsGlobal.up,
+    down: addSiteSettingsGlobal.down,
+    name: '20260603_180000_add_site_settings_global',
   },
 ]

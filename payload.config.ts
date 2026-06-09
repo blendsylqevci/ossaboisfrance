@@ -14,6 +14,7 @@ import { Houses } from './collections/Houses'
 import { Orders } from './collections/Orders'
 import { FieldDefinitions } from './collections/FieldDefinitions'
 import { HouseOptions } from './globals/HouseOptions'
+import { SiteSettings } from './globals/SiteSettings'
 import { migrations } from './migrations'
 
 const filename = fileURLToPath(import.meta.url)
@@ -41,6 +42,7 @@ export default buildConfig({
   ],
   globals: [
     HouseOptions,
+    SiteSettings,
   ],
   editor: lexicalEditor({}),
   sharp,

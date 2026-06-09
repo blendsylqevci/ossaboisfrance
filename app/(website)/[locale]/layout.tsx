@@ -2,8 +2,10 @@ import { notFound } from "next/navigation";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { CookieConsent } from "@/components/CookieConsent";
+import { ComingSoonPage } from "@/components/ComingSoonPage";
 import { isLocale, Locale } from "@/lib/i18n";
 import { getDictionary } from "@/lib/dictionary";
+import { getSiteSettings } from "@/lib/site-settings";
 
 export function generateStaticParams() {
   return [
@@ -28,6 +30,15 @@ export default async function LocaleLayout({
   }
 
   const dict = await getDictionary(locale as Locale);
+  const siteSettings = await getSiteSettings();
+
+  if (siteSettings.comingSoonEnabled) {
+    return (
+      <div className="site-shell">
+        <ComingSoonPage locale={locale as Locale} />
+      </div>
+    );
+  }
 
   return (
     <div className="site-shell">

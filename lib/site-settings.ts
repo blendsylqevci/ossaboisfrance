@@ -1,4 +1,3 @@
-import { unstable_cache } from "next/cache";
 import { getPayload } from "payload";
 import config from "@/payload.config";
 
@@ -6,7 +5,8 @@ export type SiteSettingsView = {
   comingSoonEnabled: boolean;
 };
 
-async function fetchSiteSettings(): Promise<SiteSettingsView> {
+/** Always read fresh from DB — maintenance toggle must not be cached. */
+export async function getSiteSettings(): Promise<SiteSettingsView> {
   try {
     const payload = await getPayload({ config });
     const doc = await payload.findGlobal({
@@ -22,9 +22,3 @@ async function fetchSiteSettings(): Promise<SiteSettingsView> {
     return { comingSoonEnabled: false };
   }
 }
-
-export const getSiteSettings = unstable_cache(
-  fetchSiteSettings,
-  ["site-settings"],
-  { tags: ["site-settings"], revalidate: 60 }
-);

@@ -3,6 +3,17 @@ import { revalidatePath } from 'next/cache'
 
 const LOCALES = ['fr', 'en', 'de', 'nl'] as const
 
+function revalidatePublicSite(): void {
+  try {
+    revalidatePath('/', 'layout')
+    for (const locale of LOCALES) {
+      revalidatePath(`/${locale}`, 'layout')
+    }
+  } catch (err) {
+    console.warn('[site-settings] revalidate skipped:', err)
+  }
+}
+
 export const SiteSettings: GlobalConfig = {
   slug: 'site-settings',
   label: 'Paramètres du site',
@@ -18,13 +29,7 @@ export const SiteSettings: GlobalConfig = {
   hooks: {
     afterChange: [
       async () => {
-        try {
-          for (const locale of LOCALES) {
-            revalidatePath(`/${locale}`, 'layout')
-          }
-        } catch (err) {
-          console.warn('[site-settings] revalidate skipped:', err)
-        }
+        revalidatePublicSite()
       },
     ],
   },

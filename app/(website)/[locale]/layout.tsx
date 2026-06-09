@@ -7,6 +7,9 @@ import { isLocale, Locale } from "@/lib/i18n";
 import { getDictionary } from "@/lib/dictionary";
 import { getSiteSettings } from "@/lib/site-settings";
 
+/** Maintenance mode is read from CMS on every request — never statically cached. */
+export const dynamic = "force-dynamic";
+
 export function generateStaticParams() {
   return [
     { locale: "fr" },

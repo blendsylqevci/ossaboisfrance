@@ -17,6 +17,7 @@ import { translateText, translateHouseDescription } from "@/lib/translation-help
 import { calculateStructureSizePrice } from "@/lib/house-mapper";
 import { getPlanimetryRooms } from "@/lib/planimetry-rooms";
 import { getPlanimetryImageCropRight } from "@/lib/planimetry-visual-crop";
+import { siteAssets } from "@/lib/site-assets";
 
 
 type HomePageProps = {
@@ -108,40 +109,32 @@ const whyCards = [
   }
 ];
 
-const collabLogos = [
-  { src: "https://ossaboisfrance.com/wp-content/uploads/2025/10/logo-4.png", alt: "Millisy" },
-  { src: "https://ossaboisfrance.com/wp-content/uploads/2025/10/logo-3.png", alt: "Partner 2" },
-  { src: "https://ossaboisfrance.com/wp-content/uploads/2025/10/logo-2.png", alt: "Elementor" },
-  { src: "https://ossaboisfrance.com/wp-content/uploads/2025/10/logo-1.png", alt: "Booking Online" },
-  { src: "https://ossaboisfrance.com/wp-content/uploads/2025/10/logo-5.png", alt: "Partner 5" },
-  { src: "https://ossaboisfrance.com/wp-content/uploads/2025/10/Image-3.png", alt: "Partner 6" }
-];
 
 const clientReviews = [
   {
     content: "Service impeccable, livraison rapide et qualité supérieure. Notre maison modulaire a été installée parfaitement et le résultat dépasse nos attentes. Nous recommandons fortement Ossa Bois France.",
     name: "Mrs. Khorsan",
     title: "04/13/2025",
-    image: "https://ossaboisfrance.com/wp-content/uploads/2025/10/div.avarta.png",
-    socialIcon: "https://ossaboisfrance.com/wp-content/uploads/2025/10/SVG-1.svg"
+    image: siteAssets.reviewAvatar,
+    socialIcon: siteAssets.reviewSocial
   },
   {
     content: "“Une équipe très professionnelle, un accompagnement complet du début à la fin. La qualité de la construction est remarquable et les délais ont été parfaitement respectés. Je suis ravie de ma maison modulaire.”",
     name: "Sophie L.",
     title: "@nom d'utilisateur",
-    socialIcon: "https://ossaboisfrance.com/wp-content/uploads/2025/10/SVG-1.svg"
+    socialIcon: siteAssets.reviewSocial
   },
   {
     content: "“Installation rapide, matériaux solides et un service client toujours disponible. Notre maison est exactement comme nous l’avions imaginée. Merci à Ossa Bois France pour ce travail de qualité.”",
     name: "Marc et Élodie R.",
     title: "@nom d'utilisateur",
-    socialIcon: "https://ossaboisfrance.com/wp-content/uploads/2025/10/SVG-1.svg"
+    socialIcon: siteAssets.reviewSocial
   },
   {
     content: "“Excellent rapport qualité-prix. Le transport et le montage se sont déroulés sans aucun problème. Je recommande cette entreprise à 100 %.”",
     name: "Jean-Michel D.",
     title: "@nom d'utilisateur",
-    socialIcon: "https://ossaboisfrance.com/wp-content/uploads/2025/10/SVG-1.svg"
+    socialIcon: siteAssets.reviewSocial
   }
 ];
 
@@ -283,8 +276,8 @@ export default async function HomePage({ params }: HomePageProps) {
     content: rev.content,
     name: rev.name,
     title: rev.title,
-    image: index === 0 ? "https://ossaboisfrance.com/wp-content/uploads/2025/10/div.avarta.png" : undefined,
-    socialIcon: "https://ossaboisfrance.com/wp-content/uploads/2025/10/SVG-1.svg"
+    image: index === 0 ? siteAssets.reviewAvatar : undefined,
+    socialIcon: siteAssets.reviewSocial
   }));
 
   return (
@@ -411,8 +404,8 @@ export default async function HomePage({ params }: HomePageProps) {
                 <div className="why-card-header">
                   <div className="why-card-icon-container">
                     <Image
-                      src="https://ossaboisfrance.com/wp-content/uploads/2025/10/clipboard.png"
-                      alt="clipboard"
+                      src={siteAssets.clipboard}
+                      alt=""
                       width={24}
                       height={24}
                       style={{ objectFit: "contain" }}
@@ -431,7 +424,7 @@ export default async function HomePage({ params }: HomePageProps) {
       <section className="wp-section-collabs">
         <div className="container">
           <h2 className="collabs-title">{dict.home.collabsTitle}</h2>
-          <CollaboratorsCarousel logos={collabLogos} />
+          <CollaboratorsCarousel logos={[...siteAssets.collabLogos]} />
         </div>
       </section>
 
@@ -455,17 +448,6 @@ export default async function HomePage({ params }: HomePageProps) {
                   <path d="M7 17L17 7M17 7H9M17 7V15" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </Link>
-            </div>
-            
-            <div className="cta-right-image-overlay">
-              <Image
-                src="https://ossaboisfrance.com/wp-content/uploads/2025/10/5-asebra-1.png"
-                alt="Maison Asebra"
-                width={650}
-                height={400}
-                className="cta-image-el"
-                priority
-              />
             </div>
           </div>
         </div>

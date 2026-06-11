@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Locale } from "@/lib/i18n";
+import { siteAssets } from "@/lib/site-assets";
 
 type AboutPageClientProps = {
   locale: Locale;
@@ -117,7 +118,7 @@ export function AboutPageClient({ locale, dict }: AboutPageClientProps) {
               </div>
               <div className="concept-left-image">
                 <Image
-                  src="https://ossaboisfrance.com/wp-content/uploads/2025/10/Image-2.png"
+                  src={siteAssets.about.factory}
                   alt="Construction modulaire en usine"
                   width={550}
                   height={640}
@@ -129,7 +130,7 @@ export function AboutPageClient({ locale, dict }: AboutPageClientProps) {
             <div className="concept-images-col">
               <div className="concept-right-image-1">
                 <Image
-                  src="https://ossaboisfrance.com/wp-content/uploads/2025/10/Image.png"
+                  src={siteAssets.about.structure}
                   alt="Structure ossature bois"
                   width={680}
                   height={734}
@@ -138,7 +139,7 @@ export function AboutPageClient({ locale, dict }: AboutPageClientProps) {
               </div>
               <div className="concept-right-image-2">
                 <Image
-                  src="https://ossaboisfrance.com/wp-content/uploads/2025/10/Image-1.png"
+                  src={siteAssets.about.module}
                   alt="Assemblage module bois"
                   width={680}
                   height={309}
@@ -348,7 +349,7 @@ export function AboutPageClient({ locale, dict }: AboutPageClientProps) {
                   <div className="commitment-item" key={idx}>
                     <div className="commitment-title-row">
                       <Image
-                        src="https://ossaboisfrance.com/wp-content/uploads/2025/10/leaf-line.png"
+                        src={siteAssets.leafLine}
                         alt="Icon"
                         width={37}
                         height={37}

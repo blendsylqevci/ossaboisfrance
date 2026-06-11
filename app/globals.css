@@ -5141,16 +5141,11 @@ img {
   background: #F7F7F7;
   border-radius: 18px;
   padding: 80px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   position: relative;
-  overflow: hidden;
 }
 
 .cta-left-content {
-  max-width: 55%;
-  z-index: 2;
+  max-width: 100%;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -5202,26 +5197,6 @@ img {
 
 .cta-contact-btn:hover .cta-btn-arrow {
   transform: translate(3px, -3px);
-}
-
-.cta-right-image-overlay {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  height: 100%;
-  width: 55%;
-  z-index: 1;
-  pointer-events: none;
-}
-
-.cta-image-el {
-  position: absolute;
-  right: -30px;
-  bottom: -20px;
-  height: 135% !important;
-  width: auto !important;
-  object-fit: contain;
-  object-position: bottom right;
 }
 
 /* ═══════════════════════════════════════════════
@@ -5634,7 +5609,7 @@ img {
   height: 180px;
   border-radius: 16px;
   overflow: hidden;
-  background-image: url('https://ossaboisfrance.com/wp-content/uploads/2025/12/7-ambre-scaled.jpg');
+  background-image: url('/images/houses/7 ambre.jpg');
   background-size: cover;
   background-position: center;
   display: flex;
@@ -5938,7 +5913,7 @@ img {
   border-radius: 8px;
   aspect-ratio: 4/3;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-  background-image: url('https://ossaboisfrance.com/wp-content/uploads/2026/04/1.-Prapavija-scaled.png');
+  background-image: url('/images/houses/ambre me kulm/1. prapavija.png');
   background-size: cover;
   background-position: center;
   border: 1px solid #E4E7EB;
@@ -7619,15 +7594,7 @@ img {
     padding: 0 20px 60px !important;
   }
   .cta-gray-box {
-    padding: 40px 24px !important;
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: 30px !important;
-    position: relative !important;
-    overflow: hidden !important;
-  }
-  .cta-left-content {
-    max-width: 100% !important;
+    padding: 25px 20px !important;
   }
   .cta-box-title {
     font-size: 28px !important;
@@ -7636,26 +7603,6 @@ img {
   .cta-box-desc {
     font-size: 14px !important;
     margin-bottom: 24px !important;
-  }
-  .cta-right-image-overlay {
-    position: relative !important;
-    right: auto !important;
-    bottom: auto !important;
-    width: calc(100% + 48px) !important;
-    height: auto !important;
-    margin: 20px -24px -40px -24px !important;
-    display: block !important;
-  }
-  .cta-image-el {
-    position: relative !important;
-    right: auto !important;
-    bottom: auto !important;
-    width: 150% !important;
-    max-width: 150% !important;
-    margin-left: -25% !important;
-    height: auto !important;
-    object-fit: contain !important;
-    display: block !important;
   }
 }
 

@@ -52,13 +52,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true });
     }
 
-    const inquiryType = sanitizeText(formData.get("inquiryType"), 32);
-    const firstname = sanitizeText(formData.get("firstname"), 80);
-    const lastname = sanitizeText(formData.get("lastname"), 80);
-    const email = sanitizeText(formData.get("email"), 254);
-    const phone = sanitizeText(formData.get("phone"), 40);
+    const inquiryType = sanitizeText(formData.get("inquiryType"), 32, { singleLine: true });
+    const firstname = sanitizeText(formData.get("firstname"), 80, { singleLine: true });
+    const lastname = sanitizeText(formData.get("lastname"), 80, { singleLine: true });
+    const email = sanitizeText(formData.get("email"), 254, { singleLine: true });
+    const phone = sanitizeText(formData.get("phone"), 40, { singleLine: true });
     const message = sanitizeText(formData.get("message"), 8000);
-    const locale = sanitizeText(formData.get("locale"), 8) || "fr";
+    const locale = sanitizeText(formData.get("locale"), 8, { singleLine: true }) || "fr";
 
     if (!inquiryType || !firstname || !lastname || !email || !phone || !message) {
       return NextResponse.json(

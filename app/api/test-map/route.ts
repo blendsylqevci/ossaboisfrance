@@ -87,6 +87,8 @@ export async function GET(request: Request) {
       configuratorConfig
     });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message, stack: err.stack });
+    // Never reflect stack traces (absolute paths / internals) to the client.
+    console.error("[test-map]", err);
+    return NextResponse.json({ error: "Request failed." }, { status: 500 });
   }
 }

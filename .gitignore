@@ -8,6 +8,13 @@ coverage
 .env*
 !.env.example
 .DS_Store
+
+# Local throwaway debug/inspection scripts — MUST NOT be committed
+# (they historically contained hardcoded production DB credentials).
+scratch/
+
+# Credential dumps / exported secrets
+*.rtf
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

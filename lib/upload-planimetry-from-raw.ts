@@ -6,6 +6,27 @@ import { buildPlanimetryVisualBuffer } from "@/lib/planimetry-visual-crop";
 
 const RAW_DIR = path.join(process.cwd(), "public/planimetries-raw");
 
+/**
+ * Resolve a caller-supplied filename to a path INSIDE RAW_DIR, rejecting any
+ * path-traversal attempt (`../`, absolute paths, nested dirs). Without this a
+ * `?file=../../.env` style value would read arbitrary files off the server and
+ * (for image-parseable content) republish them to the public media bucket.
+ */
+function resolveRawFilePath(filename: string): string {
+  if (typeof filename !== "string" || !filename) {
+    throw new Error("Invalid planimetry filename.");
+  }
+  // Only a plain basename is allowed — no separators, no traversal.
+  if (filename.includes("/") || filename.includes("\\") || filename !== path.basename(filename)) {
+    throw new Error("Invalid planimetry filename.");
+  }
+  const resolved = path.resolve(RAW_DIR, filename);
+  if (resolved !== path.join(RAW_DIR, filename) || !resolved.startsWith(RAW_DIR + path.sep)) {
+    throw new Error("Invalid planimetry filename.");
+  }
+  return resolved;
+}
+
 export type UploadPlanimetryResult = {
   mediaId: number | string;
   mediaUrl: string | null;
@@ -28,7 +49,7 @@ export async function uploadPlanimetryFromRaw(
   }
 ): Promise<UploadPlanimetryResult> {
   const { filename, houseSlugs, alt } = options;
-  const filePath = path.join(RAW_DIR, filename);
+  const filePath = resolveRawFilePath(filename);
 
   if (!fs.existsSync(filePath)) {
     throw new Error(`Planimetry file not found: ${filePath}`);
@@ -139,7 +160,7 @@ export async function regeneratePlanimetryVisualFromRaw(
   slugs: string[];
 }> {
   const { filename, houseSlugs, alt } = options;
-  const filePath = path.join(RAW_DIR, filename);
+  const filePath = resolveRawFilePath(filename);
 
   if (!fs.existsSync(filePath)) {
     throw new Error(`Planimetry file not found: ${filePath}`);

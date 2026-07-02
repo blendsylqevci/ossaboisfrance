@@ -5,9 +5,34 @@ type RateLimitEntry = {
 
 const buckets = new Map<string, RateLimitEntry>();
 
+// Hard cap on the number of distinct keys held in memory. Without this, an
+// attacker minting unlimited keys could grow this Map without bound and OOM
+// the serverless instance.
+const MAX_BUCKETS = 10_000;
+
 export type RateLimitResult =
   | { allowed: true }
   | { allowed: false; retryAfterSec: number };
+
+/** Drop expired entries; if still over the cap, evict the soonest-to-reset. */
+function pruneBuckets(now: number): void {
+  const all: Array<[string, RateLimitEntry]> = [];
+  buckets.forEach((v, k) => all.push([k, v]));
+
+  for (let i = 0; i < all.length; i++) {
+    if (now >= all[i][1].resetAt) buckets.delete(all[i][0]);
+  }
+
+  if (buckets.size >= MAX_BUCKETS) {
+    const live = all
+      .filter((e) => buckets.has(e[0]))
+      .sort((a, b) => a[1].resetAt - b[1].resetAt);
+    const dropCount = buckets.size - MAX_BUCKETS + 1;
+    for (let i = 0; i < dropCount && i < live.length; i++) {
+      buckets.delete(live[i][0]);
+    }
+  }
+}
 
 /**
  * Simple in-memory rate limiter (per server instance).
@@ -22,6 +47,8 @@ export function checkRateLimit(
   const entry = buckets.get(key);
 
   if (!entry || now >= entry.resetAt) {
+    // Bound memory before inserting a new key (see MAX_BUCKETS).
+    if (buckets.size >= MAX_BUCKETS) pruneBuckets(now);
     buckets.set(key, { count: 1, resetAt: now + windowMs });
     return { allowed: true };
   }
@@ -91,11 +118,31 @@ export async function checkRateLimitAsync(
 }
 
 export function getClientIp(request: Request): string {
+  // SECURITY: never key rate limits on the LEFTMOST X-Forwarded-For entry. On
+  // Vercel that value is fully client-controlled (the platform appends the real
+  // IP rather than replacing a client-supplied header), so trusting it lets an
+  // attacker rotate a fake IP per request and get a fresh bucket every time.
+  //
+  // Prefer the platform-set trusted client IP.
+  const trusted =
+    request.headers.get("x-real-ip") ||
+    request.headers.get("x-vercel-forwarded-for");
+  if (trusted) {
+    const ip = trusted.split(",")[0]?.trim();
+    if (ip) return ip;
+  }
+
+  // Fallback: take the RIGHTMOST X-Forwarded-For entry (the hop closest to our
+  // infrastructure, appended by the platform) rather than the forgeable left.
   const forwarded = request.headers.get("x-forwarded-for");
   if (forwarded) {
-    return forwarded.split(",")[0]?.trim() || "unknown";
+    const parts = forwarded
+      .split(",")
+      .map((p) => p.trim())
+      .filter(Boolean);
+    if (parts.length) return parts[parts.length - 1];
   }
-  return request.headers.get("x-real-ip") || "unknown";
+  return "unknown";
 }
 
 export function rateLimitResponse(retryAfterSec: number): Response {

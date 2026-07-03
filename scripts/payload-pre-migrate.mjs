@@ -14,9 +14,17 @@ if (!uri) {
   process.exit(0);
 }
 
+// Mirror lib/db-ssl.ts: verify the server cert when a CA is provided
+// (DATABASE_CA_CERT), otherwise fall back to the documented Supabase default.
+function buildDbSsl() {
+  if (process.env.NODE_ENV !== "production") return false;
+  const ca = process.env.DATABASE_CA_CERT?.trim();
+  return ca ? { rejectUnauthorized: true, ca } : { rejectUnauthorized: false };
+}
+
 const client = new pg.Client({
   connectionString: uri,
-  ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
+  ssl: buildDbSsl(),
 });
 
 try {

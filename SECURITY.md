@@ -110,11 +110,15 @@ tools. They are:
   caching cannot use per-request nonces; the primary stored-XSS sink (JSON-LD)
   is mitigated in code. Revisit if a nonce-compatible rendering strategy is
   adopted.
-- **`npm audit`** reports advisories that are entirely transitive through the
+- **`npm audit`** — there are **no critical or high** advisories. Directly
+  actionable transitive advisories are pinned to patched versions via
+  `overrides` in `package.json` (`undici` ≥7.28, `uuid` ≥11.1.1, `ws` ≥8.21).
+  The remaining moderate/low advisories are entirely transitive through the
   Payload CMS framework and its build/admin tooling (`drizzle-kit`/`esbuild`,
-  `monaco-editor`/`dompurify`, `@babel/core`, OpenTelemetry). These are
-  dev/build-time or admin-panel-only and are not reachable from the
-  customer-facing application. They are remediated by keeping Payload updated.
+  `monaco-editor`/`dompurify`, `@babel/core`, OpenTelemetry) — all dev/build-time
+  or admin-panel-only, not reachable from the customer-facing application, and
+  not fixable without a breaking framework change. They are remediated by
+  keeping Payload updated.
 
 ## Reporting
 

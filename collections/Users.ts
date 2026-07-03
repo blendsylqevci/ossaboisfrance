@@ -17,8 +17,12 @@ export const Users: CollectionConfig = {
   fields: [
     // Email and password are added by default by auth: true
     {
+      // Stored as a plain varchar column (not a Postgres enum) so the migration
+      // and any manual DB apply stay trivially safe and portable. Access checks
+      // compare against the exact strings 'admin' / 'editor'; any other value is
+      // treated as non-admin (fail-safe deny).
       name: 'role',
-      type: 'select',
+      type: 'text',
       required: true,
       defaultValue: 'admin',
       // Only admins can change roles (no self-promotion). Everyone can read
@@ -27,13 +31,11 @@ export const Users: CollectionConfig = {
         update: isAdminAccess,
       },
       saveToJWT: true,
-      options: [
-        { label: 'Admin (full access)', value: 'admin' },
-        { label: 'Editor (no customer PII / no pricing)', value: 'editor' },
-      ],
+      validate: (val: string | null | undefined) =>
+        val === 'admin' || val === 'editor' || 'Role must be "admin" or "editor".',
       admin: {
         description:
-          'Admin = full access including Orders (customer PII) and pricing. Editor = restricted.',
+          'Values: "admin" (full access incl. Orders PII + pricing) or "editor" (restricted).',
       },
     },
   ],

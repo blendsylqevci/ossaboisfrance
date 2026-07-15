@@ -1,0 +1,107 @@
+name: Daily encrypted platform backup
+
+on:
+  schedule:
+    # One platform snapshot every day at 02:17 UTC.
+    - cron: "17 2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
+
+concurrency:
+  group: ossabois-platform-backup
+  cancel-in-progress: false
+
+jobs:
+  platform:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      DATABASE_BACKUP_URI: ${{ secrets.SUPABASE_DATABASE_BACKUP_URI }}
+      DATABASE_CA_CERT: ${{ secrets.DATABASE_CA_CERT }}
+      BACKUP_ENCRYPTION_PASSPHRASE: ${{ secrets.BACKUP_ENCRYPTION_PASSPHRASE }}
+      BACKUP_OUTPUT_DIR: ${{ runner.temp }}/ossabois-platform-backups
+      MEDIA_CACHE_DIR: ${{ runner.temp }}/ossabois-media-cache
+      S3_BUCKET: ${{ secrets.SUPABASE_S3_BUCKET }}
+      S3_ACCESS_KEY_ID: ${{ secrets.SUPABASE_S3_ACCESS_KEY_ID }}
+      S3_SECRET_ACCESS_KEY: ${{ secrets.SUPABASE_S3_SECRET_ACCESS_KEY }}
+      S3_REGION: ${{ secrets.SUPABASE_S3_REGION }}
+      S3_ENDPOINT: ${{ secrets.SUPABASE_S3_ENDPOINT }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set the UTC recovery-point date
+        id: snapshot
+        run: echo "date=$(date -u +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
+
+      - name: Install PostgreSQL 17 and backup tools
+        run: |
+          sudo install -d /usr/share/postgresql-common/pgdg
+          sudo curl --fail --silent --show-error \
+            -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc \
+            https://www.postgresql.org/media/keys/ACCC4CF8.asc
+          . /etc/os-release
+          echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt ${VERSION_CODENAME}-pgdg main" \
+            | sudo tee /etc/apt/sources.list.d/pgdg.list >/dev/null
+          sudo apt-get update
+          sudo apt-get install --yes postgresql-client-17 awscli gnupg
+
+      - name: Restore the latest verified media snapshot
+        id: media_restore
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ env.MEDIA_CACHE_DIR }}
+          key: ossabois-media-${{ steps.snapshot.outputs.date }}
+          restore-keys: |
+            ossabois-media-
+
+      - name: Synchronize and verify Supabase Storage snapshot
+        id: media
+        run: bash scripts/sync-platform-media-cache.sh
+
+      - name: Create and verify encrypted database backup
+        id: database
+        run: bash scripts/backup-platform.sh database
+
+      - name: Save today's verified media snapshot
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ env.MEDIA_CACHE_DIR }}
+          key: ossabois-media-${{ steps.snapshot.outputs.date }}
+
+      - name: Store encrypted database backup for seven days
+        uses: actions/upload-artifact@v4
+        with:
+          name: ossabois-database-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ steps.database.outputs.archive }}
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
+
+      - name: Remove media snapshots older than seven days
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cutoff="$(date -u -d '7 days ago' +%s)"
+          gh api --paginate "repos/${GITHUB_REPOSITORY}/actions/caches?per_page=100" \
+            --jq '.actions_caches[] | [.id, .key, .created_at] | @tsv' \
+            | while IFS=$'\t' read -r cache_id cache_key created_at; do
+                [[ "$cache_key" == ossabois-media-* ]] || continue
+                created_epoch="$(date -u -d "$created_at" +%s)"
+                if (( created_epoch < cutoff )); then
+                  gh api --method DELETE "repos/${GITHUB_REPOSITORY}/actions/caches/${cache_id}"
+                fi
+              done
+
+      - name: Record snapshot summary
+        run: |
+          {
+            echo '### Ossa Bois platform snapshot'
+            echo
+            echo "- Database: encrypted and verified, retention 7 days"
+            echo "- Media: ${{ steps.media.outputs.storage_files }} files / ${{ steps.media.outputs.storage_bytes }} bytes"
+            echo "- Media cache key: ossabois-media-${{ steps.snapshot.outputs.date }}"
+            echo "- Previous media cache: ${{ steps.media_restore.outputs.cache-matched-key || 'none (full sync)' }}"
+          } >> "$GITHUB_STEP_SUMMARY"

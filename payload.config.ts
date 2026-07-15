@@ -60,9 +60,8 @@ export default buildConfig({
       max: process.env.NODE_ENV === 'production' ? 2 : 10,
       idleTimeoutMillis: 20_000,
       connectionTimeoutMillis: 15_000,
-      // TLS: verify the server certificate when a CA is provided
-      // (DATABASE_CA_CERT), otherwise fall back to the documented Supabase
-      // pooler default. See lib/db-ssl.ts.
+      // TLS: production fails closed unless DATABASE_CA_CERT is configured,
+      // then verifies the Supabase certificate. See lib/db-ssl.ts.
       ssl: buildDbSsl(),
     },
     push: false,

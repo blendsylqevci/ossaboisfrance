@@ -5,6 +5,10 @@ import { optimizeHouseUploadImage } from "@/lib/optimize-house-upload-image";
 // Reject anything larger BEFORE decoding/processing to prevent memory/CPU
 // exhaustion (image-bomb DoS) from an attacker-crafted checkout body.
 const MAX_SCREENSHOT_BYTES = 6 * 1024 * 1024;
+// A 4K screenshot is ~8.3 MP. This allows headroom for high-DPI captures while
+// rejecting tiny vector/compressed inputs that declare enormous dimensions
+// before Sharp rasterizes them into hundreds of MB of memory.
+const MAX_SCREENSHOT_PIXELS = 16_000_000;
 
 export async function uploadOrderScreenshotToMedia(
   payload: Payload,
@@ -32,7 +36,9 @@ export async function uploadOrderScreenshotToMedia(
   }
   const filename = `order-${orderRef.toLowerCase().replace(/[^a-z0-9-]/g, "-")}-${Date.now()}.jpg`;
 
-  const optimized = await optimizeHouseUploadImage(buffer, filename);
+  const optimized = await optimizeHouseUploadImage(buffer, filename, {
+    limitInputPixels: MAX_SCREENSHOT_PIXELS,
+  });
 
   const mediaDoc = await payload.create({
     collection: "media",

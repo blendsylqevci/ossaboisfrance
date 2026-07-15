@@ -14,12 +14,22 @@ if (!uri) {
   process.exit(0);
 }
 
-// Mirror lib/db-ssl.ts: verify the server cert when a CA is provided
-// (DATABASE_CA_CERT), otherwise fall back to the documented Supabase default.
+// Mirror lib/db-ssl.ts: production connections must verify Supabase's CA.
 function buildDbSsl() {
   if (process.env.NODE_ENV !== "production") return false;
-  const ca = process.env.DATABASE_CA_CERT?.trim();
-  return ca ? { rejectUnauthorized: true, ca } : { rejectUnauthorized: false };
+  const ca = process.env.DATABASE_CA_CERT?.trim().replace(/\\n/g, "\n");
+  if (!ca) {
+    throw new Error(
+      "DATABASE_CA_CERT is required in production so PostgreSQL TLS can be verified.",
+    );
+  }
+  if (
+    !ca.includes("-----BEGIN CERTIFICATE-----") ||
+    !ca.includes("-----END CERTIFICATE-----")
+  ) {
+    throw new Error("DATABASE_CA_CERT must contain a PEM certificate.");
+  }
+  return { rejectUnauthorized: true, ca };
 }
 
 const client = new pg.Client({

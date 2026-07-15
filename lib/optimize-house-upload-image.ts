@@ -3,12 +3,29 @@ import sharp from "sharp";
 /** Target 4K canvas for configurator layers (3840×2160). Never upscale. */
 const MAX_DIMENSION = 3840;
 
+type OptimizeHouseUploadImageOptions = {
+  /** Reject metadata that declares more pixels before Sharp rasterizes it. */
+  limitInputPixels?: number;
+};
+
 export async function optimizeHouseUploadImage(
   input: Buffer,
-  filename: string
+  filename: string,
+  options: OptimizeHouseUploadImageOptions = {}
 ): Promise<{ buffer: Buffer; mimetype: string; size: number }> {
+  const { limitInputPixels } = options;
+  if (
+    limitInputPixels !== undefined &&
+    (!Number.isSafeInteger(limitInputPixels) || limitInputPixels <= 0)
+  ) {
+    throw new RangeError("limitInputPixels must be a positive safe integer");
+  }
+
   const lower = filename.toLowerCase();
-  let pipeline = sharp(input);
+  let pipeline = sharp(
+    input,
+    limitInputPixels === undefined ? undefined : { limitInputPixels }
+  );
   const meta = await pipeline.metadata();
 
   if (

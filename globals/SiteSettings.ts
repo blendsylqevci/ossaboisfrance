@@ -1,5 +1,6 @@
 import { GlobalConfig } from 'payload'
 import { revalidatePath } from 'next/cache'
+import { isAdminAccess } from '@/lib/access'
 
 const LOCALES = ['fr', 'en', 'de', 'nl'] as const
 
@@ -20,6 +21,9 @@ export const SiteSettings: GlobalConfig = {
   lockDocuments: false,
   access: {
     read: () => true,
+    // Maintenance mode controls the whole public site. Restricted editors may
+    // still manage permitted content, but only admins can toggle this switch.
+    update: isAdminAccess,
   },
   admin: {
     group: 'Admin',

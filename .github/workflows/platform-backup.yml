@@ -47,6 +47,8 @@ jobs:
             | sudo tee /etc/apt/sources.list.d/pgdg.list >/dev/null
           sudo apt-get update
           sudo apt-get install --yes postgresql-client-17 gnupg
+          echo "/usr/lib/postgresql/17/bin" >> "$GITHUB_PATH"
+          /usr/lib/postgresql/17/bin/pg_dump --version
           aws --version
 
       - name: Restore the latest verified media snapshot
@@ -62,15 +64,15 @@ jobs:
         id: media
         run: bash scripts/sync-platform-media-cache.sh
 
-      - name: Create and verify encrypted database backup
-        id: database
-        run: bash scripts/backup-platform.sh database
-
       - name: Save today's verified media snapshot
         uses: actions/cache/save@v4
         with:
           path: ${{ env.MEDIA_CACHE_DIR }}
           key: ossabois-media-${{ steps.snapshot.outputs.date }}
+
+      - name: Create and verify encrypted database backup
+        id: database
+        run: bash scripts/backup-platform.sh database
 
       - name: Store encrypted database backup for seven days
         uses: actions/upload-artifact@v4

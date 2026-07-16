@@ -12,6 +12,7 @@ import { translateText, translateHouseDescription } from "@/lib/translation-help
 import { safeJsonLd } from "@/lib/json-ld";
 import { HouseTitleDispatcher } from "@/components/HouseTitleDispatcher";
 import { Metadata } from "next";
+import { isPublishedHousePrice } from "@/lib/price-availability";
 
 const slugRedirects: Record<string, string> = {
   "emeraude-toiture-terrasse": "emeraude-avec-attique",
@@ -259,7 +260,7 @@ export default async function HouseDetailPage({ params }: HouseDetailPageProps) 
   const globalMargin = globalOptions?.marginPercent ?? 40;
   const marginMultiplier = 1 + (houseDoc.marginPercent ?? globalMargin) / 100;
   const neto = houseDoc.perdhesa?.neto || 0;
-  const rawPrice = houseDoc.price60x160
+  const rawPrice = isPublishedHousePrice(houseDoc.price60x160)
     ? calculateStructureSizePrice(
         "60x160",
         neto,
@@ -268,7 +269,7 @@ export default async function HouseDetailPage({ params }: HouseDetailPageProps) 
         globalOptions?.priceRate60x200
       )
     : null;
-  const finalPrice = rawPrice ? rawPrice * marginMultiplier : null;
+  const finalPrice = rawPrice !== null ? rawPrice * marginMultiplier : null;
   const price = formatArchiveStartingPrice(finalPrice);
   const defaultImageUrl = typeof houseDoc.defaultImage === 'object' ? houseDoc.defaultImage?.url : '';
   const categoryName = typeof houseDoc.category === 'object' ? houseDoc.category?.name : '';
@@ -300,7 +301,11 @@ export default async function HouseDetailPage({ params }: HouseDetailPageProps) 
               <span>{dict.configurator.startingPrice}</span>
               <strong>{price}&nbsp;€</strong>
             </div>
-          ) : null}
+          ) : (
+            <div className="house-detail-price">
+              <strong>{dict.archive.onQuote}</strong>
+            </div>
+          )}
           <div className="house-detail-status">
             <strong>{dict.configurator.labels.configuratorPrep}</strong>
             <p>

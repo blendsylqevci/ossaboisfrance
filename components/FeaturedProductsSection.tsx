@@ -34,6 +34,7 @@ type FeaturedProductsSectionProps = {
     featuredSubtitle: string;
     exploreCta: string;
     startingFrom: string;
+    onQuote: string;
     configureBtn: string;
   };
 };
@@ -165,6 +166,7 @@ export function FeaturedProductsSection({
                       }}
                       dict={{
                         startingFrom: dict.startingFrom,
+                        onQuote: dict.onQuote,
                         configureBtn: dict.configureBtn,
                       }}
                     />

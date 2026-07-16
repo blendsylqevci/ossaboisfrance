@@ -2421,6 +2421,11 @@ img {
   white-space: nowrap;
 }
 
+.price-total.price-on-request {
+  color: #5e6f4f;
+  font-size: 20px;
+}
+
 .price-dropdown {
   display: flex;
   align-items: center;
@@ -4741,6 +4746,11 @@ img {
   font-size: 20px;
   font-weight: 700;
   color: #181A20;
+}
+
+.prod-card-price-row.price-placeholder .prod-price-label {
+  color: #5e6f4f;
+  font-weight: 500;
 }
 
 .prod-card-button {
@@ -9931,5 +9941,3 @@ img {
     transform: none;
   }
 }
-
-

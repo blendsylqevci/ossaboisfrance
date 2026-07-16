@@ -5,6 +5,7 @@ import { isMeKulmHouseSlug } from "./house-import-shared";
 import { publicMediaUrl } from "./media-url";
 import { getPlanimetryRooms, resolvePlanimetryDisplayUrl } from "./planimetry-rooms";
 import { getPlanimetryImageCropRight } from "./planimetry-visual-crop";
+import { isPublishedHousePrice } from "./price-availability";
 
 export function calculateStructureSizePrice(
   sizeId: string,
@@ -221,34 +222,42 @@ export function mapHouseDocToConfiguratorData(
   const sizes: SizeOption[] = [];
   const netoSurface = houseDoc.perdhesa?.neto || 0;
 
-  if (houseDoc.price60x160) {
-    const calculatedPrice = calculateStructureSizePrice(
-      "60x160",
-      netoSurface,
-      houseDoc.price60x160,
-      globalOptions?.priceRate60x160,
-      globalOptions?.priceRate60x200
-    );
+  if (typeof houseDoc.price60x160 === "number") {
+    const priceAvailable = isPublishedHousePrice(houseDoc.price60x160);
+    const calculatedPrice = priceAvailable
+      ? calculateStructureSizePrice(
+          "60x160",
+          netoSurface,
+          houseDoc.price60x160,
+          globalOptions?.priceRate60x160,
+          globalOptions?.priceRate60x200
+        )
+      : 0;
     sizes.push({
       id: "60x160",
       label: "60x160",
       price: calculatedPrice,
-      image: defaultImage
+      image: defaultImage,
+      priceAvailable,
     });
   }
-  if (houseDoc.price60x200) {
-    const calculatedPrice = calculateStructureSizePrice(
-      "60x200",
-      netoSurface,
-      houseDoc.price60x200,
-      globalOptions?.priceRate60x160,
-      globalOptions?.priceRate60x200
-    );
+  if (typeof houseDoc.price60x200 === "number") {
+    const priceAvailable = isPublishedHousePrice(houseDoc.price60x200);
+    const calculatedPrice = priceAvailable
+      ? calculateStructureSizePrice(
+          "60x200",
+          netoSurface,
+          houseDoc.price60x200,
+          globalOptions?.priceRate60x160,
+          globalOptions?.priceRate60x200
+        )
+      : 0;
     sizes.push({
       id: "60x200",
       label: "60x200",
       price: calculatedPrice,
-      image: finalImage || defaultImage
+      image: finalImage || defaultImage,
+      priceAvailable,
     });
   }
 

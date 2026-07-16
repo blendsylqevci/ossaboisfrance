@@ -95,6 +95,9 @@ export function calculateCheckoutGrandTotal(
   if (!selectedSize) {
     return { error: "Invalid house size." };
   }
+  if (selectedSize.priceAvailable === false) {
+    return { error: "House pricing is not published." };
+  }
 
   const serverBasePrice = applyMarginToBasePrice(
     selectedSize.price,

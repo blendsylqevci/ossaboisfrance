@@ -35,6 +35,8 @@ export type SizeOption = {
   label: string;
   price: number;
   image: string;
+  /** False when the CMS value is the `1` placeholder and no price is published. */
+  priceAvailable?: boolean;
 };
 
 export type HouseSurfaceData = {
@@ -104,4 +106,3 @@ export type HouseConfiguratorData = {
   planimetryImageCropRight?: number | null;
   planimetryRooms?: { label: string; area: number }[];
 };
-

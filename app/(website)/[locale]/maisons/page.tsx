@@ -8,6 +8,7 @@ import { Metadata } from "next";
 import { calculateStructureSizePrice } from "@/lib/house-mapper";
 import { getPlanimetryRooms } from "@/lib/planimetry-rooms";
 import { getPlanimetryImageCropRight } from "@/lib/planimetry-visual-crop";
+import { isPublishedHousePrice } from "@/lib/price-availability";
 
 
 // ISR: cached and revalidated on a 600s safety window; Payload house/option
@@ -136,7 +137,7 @@ export default async function HousesPage({ params }: HousesPageProps) {
     const catObj = typeof doc.category === 'object' ? doc.category : null;
     
     const neto = doc.perdhesa?.neto || 0;
-    const rawPrice = doc.price60x160
+    const rawPrice = isPublishedHousePrice(doc.price60x160)
       ? calculateStructureSizePrice(
           "60x160",
           neto,
@@ -146,7 +147,7 @@ export default async function HousesPage({ params }: HousesPageProps) {
         )
       : null;
     const marginMultiplier = 1 + (doc.marginPercent ?? globalMargin) / 100;
-    const finalPrice = rawPrice ? rawPrice * marginMultiplier : null;
+    const finalPrice = rawPrice !== null ? rawPrice * marginMultiplier : null;
     
     return {
       slug: doc.slug,

@@ -126,7 +126,18 @@ no backup API to read or toggle these):
   usable; record the restore time.
 - **Storage (S3 media) backup** — order screenshots + house media live in the
   Supabase storage bucket and are **not** covered by Postgres/WAL backups.
-  Configure bucket versioning/retention.
+  Supabase Storage does not support S3 object versioning, so use an independent
+  provider for the media copy.
+
+**2026-07-16 implementation update:**
+
+- `.github/workflows/platform-backup.yml` now defines one matched daily
+  database + Storage recovery point with seven-day retention.
+- Database archives are encrypted artifacts. Public media are checksum-verified
+  daily snapshots in GitHub Actions Cache; later syncs transfer only changes
+  from Supabase and old cache keys are pruned after seven days.
+- The workflow is not operational until the secrets in
+  `docs/BACKUP_RUNBOOK.md` are configured and its first manual run succeeds.
 
 (See also `docs/OPERATIONS.md` → *Database backups & point-in-time recovery*.)
 

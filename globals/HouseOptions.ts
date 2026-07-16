@@ -1,5 +1,6 @@
 import { GlobalConfig, Field } from 'payload'
 import { revalidateHousePaths } from '@/lib/revalidate-house'
+import { isAuthenticatedAccess } from '@/lib/access'
 
 const optionFields: Field[] = [
   {
@@ -114,6 +115,11 @@ export const HouseOptions: GlobalConfig = {
       label: 'Marge globale (%) / Global Margin (%)',
       defaultValue: 40,
       required: true,
+      // Confidential cost basis: never expose via the public REST/GraphQL API.
+      // Server-side rendering uses the Local API (overrideAccess) so the public
+      // site/configurator is unaffected. Prevents reverse-engineering of the
+      // "protected" Houses base prices from the margin + per-m² rates.
+      access: { read: isAuthenticatedAccess },
       admin: {
         description: 'Marge globale appliquée au prix de toutes les maisons (si non surchargée individuellement).',
       },
@@ -124,6 +130,7 @@ export const HouseOptions: GlobalConfig = {
       label: 'Prix par m² pour 60x160 (€) / Rate per m² for 60x160 (€)',
       defaultValue: 350,
       required: true,
+      access: { read: isAuthenticatedAccess },
       admin: {
         description: 'Tarif par m² utilisé pour le calcul de la taille 60x160.',
       },
@@ -134,6 +141,7 @@ export const HouseOptions: GlobalConfig = {
       label: 'Prix par m² pour 60x200 (€) / Rate per m² for 60x200 (€)',
       defaultValue: 370,
       required: true,
+      access: { read: isAuthenticatedAccess },
       admin: {
         description: 'Tarif par m² utilisé pour le calcul de la taille 60x200.',
       },

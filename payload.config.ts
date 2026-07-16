@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url'
 import { s3Storage } from '@payloadcms/storage-s3'
 import sharp from 'sharp'
 import { publicMediaUrl } from './lib/media-url'
+import { buildDbSsl } from './lib/db-ssl'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
@@ -59,7 +60,9 @@ export default buildConfig({
       max: process.env.NODE_ENV === 'production' ? 2 : 10,
       idleTimeoutMillis: 20_000,
       connectionTimeoutMillis: 15_000,
-      ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+      // TLS: production fails closed unless DATABASE_CA_CERT is configured,
+      // then verifies the Supabase certificate. See lib/db-ssl.ts.
+      ssl: buildDbSsl(),
     },
     push: false,
     prodMigrations: migrations,

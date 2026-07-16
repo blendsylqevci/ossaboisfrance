@@ -8,6 +8,7 @@
 | `RESEND_API_KEY` | Required for real email delivery |
 | `NEXT_PUBLIC_SITE_URL` | e.g. `https://ossaboisfrance.com` — used for absolute media URLs in order emails |
 | `PAYLOAD_SECRET` | Must be set; no fallback in production |
+| `DATABASE_CA_CERT` | Required in production; Supabase CA PEM used for verified PostgreSQL TLS |
 
 ## API rate limits
 
@@ -109,7 +110,25 @@ for static fallbacks (option swatches in `lib/house-mapper.ts`, planimetry defau
 
 ## Database SSL
 
-`payload.config.ts` uses `rejectUnauthorized: false` for Supabase Postgres — common for managed providers; document in infra runbook.
+Production is fail-closed: `payload.config.ts` requires `DATABASE_CA_CERT` and
+uses `rejectUnauthorized: true`. Download the CA PEM from Supabase **Database →
+SSL Configuration** and configure it in Vercel before deploying. Local
+development keeps its existing non-TLS connection behavior.
+
+## Platform health check
+
+`GET /api/health` and `HEAD /api/health` perform real dependency checks:
+
+- a minimal Payload query verifies PostgreSQL;
+- a `HEAD` request to a real CMS media URL verifies Supabase Storage/CDN;
+- both must pass for HTTP `200`; otherwise the route returns HTTP `503`;
+- responses expose only `ok`/`error`, never connection strings or internal
+  errors;
+- results are reused internally for 10 seconds to prevent a public uptime probe
+  from creating a database query on every request.
+
+Configure the uptime monitor to use `GET` every 5 minutes and alert on any
+non-`200` response.
 
 ## Staging
 
@@ -135,8 +154,13 @@ CMS price or house changes.
 - **Point-in-Time Recovery (PITR)**: enable under *Database → Backups → PITR*
   (recommended for production; lets you restore to any second within the
   retention window). Free/lower tiers only have daily snapshots.
-- **Restore drill**: periodically test a restore into a throwaway project to
-  confirm backups are usable. Document the restore time observed.
-- **Storage (S3 media)**: the Supabase storage bucket holds order screenshots
-  and house media. Ensure bucket versioning/retention is configured; media is
-  not covered by Postgres backups.
+- **Independent automatic backups**: `.github/workflows/platform-backup.yml`
+  creates one matched platform recovery point daily. The encrypted database
+  artifact and the verified media cache snapshot both retain seven days. Media
+  sync is incremental after the first run and executes on GitHub, not Vercel.
+  See `docs/BACKUP_RUNBOOK.md` for secrets, quotas, and restore steps.
+- **Restore drill**: restore into a throwaway project at least quarterly and
+  record the observed RTO.
+- **Storage (S3 media)**: media is not covered by Postgres backups. The daily
+  seven-day snapshots use GitHub Actions Cache's separate 10 GiB repository
+  allowance; cache keys older than seven days are deleted automatically.

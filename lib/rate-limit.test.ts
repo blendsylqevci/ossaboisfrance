@@ -25,16 +25,33 @@ test("checkRateLimit resets after the window elapses", () => {
   assert.equal(checkRateLimit(key, 1, 1).allowed, true);
 });
 
-test("getClientIp prefers the first x-forwarded-for entry", () => {
+test("getClientIp prefers trusted x-real-ip over a spoofable x-forwarded-for", () => {
+  // A client can forge the LEFTMOST x-forwarded-for; x-real-ip is platform-set
+  // and must win so an attacker cannot rotate buckets by spoofing XFF.
+  const req = new Request("https://x.test", {
+    headers: {
+      "x-forwarded-for": "6.6.6.6, 5.6.7.8",
+      "x-real-ip": "9.9.9.9",
+    },
+  });
+  assert.equal(getClientIp(req), "9.9.9.9");
+});
+
+test("getClientIp uses the RIGHTMOST x-forwarded-for when no trusted header", () => {
   const req = new Request("https://x.test", {
     headers: { "x-forwarded-for": "1.2.3.4, 5.6.7.8" },
   });
-  assert.equal(getClientIp(req), "1.2.3.4");
+  // Leftmost (1.2.3.4) is attacker-controlled; rightmost (5.6.7.8) is closest to us.
+  assert.equal(getClientIp(req), "5.6.7.8");
 });
 
-test("getClientIp falls back to x-real-ip then unknown", () => {
+test("getClientIp falls back to x-vercel-forwarded-for then unknown", () => {
   assert.equal(
-    getClientIp(new Request("https://x.test", { headers: { "x-real-ip": "9.9.9.9" } })),
+    getClientIp(
+      new Request("https://x.test", {
+        headers: { "x-vercel-forwarded-for": "9.9.9.9" },
+      })
+    ),
     "9.9.9.9"
   );
   assert.equal(getClientIp(new Request("https://x.test")), "unknown");

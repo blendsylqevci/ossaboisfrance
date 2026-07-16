@@ -34,7 +34,10 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { selection, personalInfo, deliveryInfo, total, transportCost, locale = "fr" } = body;
+    // `clientTotal` is the price the browser CLAIMS. It is only used to detect a
+    // mismatch; the authoritative `total` is set to the server-computed figure
+    // below and is what gets persisted and emailed.
+    const { selection, personalInfo, deliveryInfo, total: clientTotal, transportCost, locale = "fr" } = body;
 
     // Sanitize + validate every client-provided value before it is persisted or
     // interpolated into transactional emails (prevents HTML/attribute injection).
@@ -46,9 +49,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const clientName = sanitizeText(personalInfo?.fullName, 120) || "Client";
-    const clientEmail = sanitizeText(personalInfo?.email, 254);
-    const clientPhone = sanitizeText(personalInfo?.phone, 40);
+    const clientName = sanitizeText(personalInfo?.fullName, 120, { singleLine: true }) || "Client";
+    const clientEmail = sanitizeText(personalInfo?.email, 254, { singleLine: true });
+    const clientPhone = sanitizeText(personalInfo?.phone, 40, { singleLine: true });
 
     if (!clientEmail || !isValidEmail(clientEmail)) {
       return NextResponse.json(
@@ -131,13 +134,24 @@ export async function POST(req: NextRequest) {
     const serverTransportCost =
       selectedSizeId === "60x160" || selectedSizeId === "60x200" ? 0 : 3000;
 
-    if (!isCheckoutTotalValid(total, calculatedGrandTotal)) {
-      console.warn(`[API Checkout] Price mismatch! Client: ${total}, Server calculated: ${calculatedGrandTotal}`);
+    if (!isCheckoutTotalValid(clientTotal, calculatedGrandTotal)) {
+      console.warn(`[API Checkout] Price mismatch! Client: ${clientTotal}, Server calculated: ${calculatedGrandTotal}`);
       return NextResponse.json(
         { success: false, error: "Prix de commande non valide (incohérence de calcul)." },
         { status: 400 }
       );
     }
+
+    // Authoritative total: from here on use the SERVER-computed price for
+    // persistence, emails, and the CCMI payment schedule — never the client's
+    // claimed figure (which is only used for the mismatch check above).
+    const total = calculatedGrandTotal;
+
+    // Do not persist the large base64 screenshot inside the selections JSON
+    // column — it is stored once as an optimized Media file below. Keep only the
+    // structured selection.
+    const { currentImage: _omitCurrentImage, ...selectionForStorage } =
+      (selection && typeof selection === "object" ? selection : {}) as Record<string, unknown>;
 
     // Persist order in the database
     const orderDoc = await payload.create({
@@ -156,7 +170,7 @@ export async function POST(req: NextRequest) {
         stateRegion: delivery.stateRegion,
         country: delivery.country,
         clientNotes: delivery.notes,
-        selections: selection,
+        selections: selectionForStorage,
         status: 'pending',
       }
     });
@@ -184,12 +198,39 @@ export async function POST(req: NextRequest) {
     }
 
     if (!houseImageUrl) {
-      const fallbackPath = selection?.currentImage || selection?.house?.image;
-      houseImageUrl = fallbackPath
-        ? fallbackPath.startsWith("http")
-          ? fallbackPath
-          : `${origin}${fallbackPath.startsWith("/") ? fallbackPath : `/${fallbackPath}`}`
-        : `${origin}/images/houses/ambre/10 ambre.jpg`;
+      const defaultImage = `${origin}/images/houses/ambre/10 ambre.jpg`;
+      // `selection` is attacker-controlled. Only allow a same-origin relative
+      // path or an absolute URL on a host we trust — never an arbitrary
+      // external URL (prevents attacker-chosen <img src> / tracking pixels in
+      // the confirmation email).
+      const ALLOWED_IMAGE_HOSTS = ["ossaboisfrance.com", "supabase.co"];
+      const isTrustedHttp = (url: string): boolean => {
+        try {
+          const u = new URL(url);
+          if (u.protocol !== "https:") return false;
+          return ALLOWED_IMAGE_HOSTS.some(
+            (h) => u.hostname === h || u.hostname.endsWith(`.${h}`)
+          );
+        } catch {
+          return false;
+        }
+      };
+
+      const rawFallback = selection?.currentImage || selection?.house?.image;
+      const fallbackPath =
+        typeof rawFallback === "string" && !rawFallback.startsWith("data:")
+          ? rawFallback
+          : "";
+
+      if (!fallbackPath) {
+        houseImageUrl = defaultImage;
+      } else if (fallbackPath.startsWith("http")) {
+        houseImageUrl = isTrustedHttp(fallbackPath) ? fallbackPath : defaultImage;
+      } else if (fallbackPath.startsWith("/")) {
+        houseImageUrl = `${origin}${fallbackPath}`;
+      } else {
+        houseImageUrl = defaultImage;
+      }
     }
 
     // Multi-Language translation dictionaries for client emails
@@ -1034,16 +1075,11 @@ export async function POST(req: NextRequest) {
     }
 
     if (!process.env.RESEND_API_KEY) {
-      console.log("=========================================================================");
-      console.warn("[WARNING] RESEND_API_KEY missing — order saved, emails logged:");
-      console.log(`Order Reference: ${orderRef}`);
-      console.log(`Total: ${euroFormatter.format(total)}`);
-      console.log(`Client: ${clientName} (${clientEmail}), Phone: ${clientPhone}`);
-      if (toAdminEmail) {
-        console.log(`To Admin (${toAdminEmail}): [html ${adminEmailHtml.length} chars]`);
-      }
-      console.log(`To Client (${clientEmail}): [html ${clientEmailHtml.length} chars]`);
-      console.log("=========================================================================");
+      // Do NOT log customer PII (name/email/phone) — reference the order by ref
+      // only. On Vercel these lines go to the platform log stream / Sentry.
+      console.warn(
+        `[API Checkout] RESEND_API_KEY missing — order ${orderRef} saved, emails NOT sent (total ${euroFormatter.format(total)}).`
+      );
     } else {
       console.log(`[API Checkout] Emails processed for order ${orderRef}.`);
     }
@@ -1054,9 +1090,11 @@ export async function POST(req: NextRequest) {
       message: "Order placed and emails sent successfully."
     });
   } catch (error: any) {
+    // Log the detail server-side; return a generic message so internal details
+    // (DB/driver/library internals) are never reflected to the client.
     console.error("[API Checkout Error]:", error);
     return NextResponse.json(
-      { success: false, error: error.message || "Failed to process checkout request" },
+      { success: false, error: "Failed to process checkout request." },
       { status: 500 }
     );
   }

@@ -37,13 +37,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true });
     }
 
-    const firstname = sanitizeText(body.firstname, 80);
-    const lastname = sanitizeText(body.lastname, 80);
-    const email = sanitizeText(body.email, 254);
-    const phone = sanitizeText(body.phone, 40);
-    const subject = sanitizeText(body.subject, 32);
+    const firstname = sanitizeText(body.firstname, 80, { singleLine: true });
+    const lastname = sanitizeText(body.lastname, 80, { singleLine: true });
+    const email = sanitizeText(body.email, 254, { singleLine: true });
+    const phone = sanitizeText(body.phone, 40, { singleLine: true });
+    const subject = sanitizeText(body.subject, 32, { singleLine: true });
     const message = sanitizeText(body.message, 8000);
-    const locale = sanitizeText(body.locale, 8) || "fr";
+    const locale = sanitizeText(body.locale, 8, { singleLine: true }) || "fr";
 
     if (!firstname || !lastname || !email || !message) {
       return NextResponse.json(

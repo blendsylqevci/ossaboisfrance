@@ -1,8 +1,22 @@
 import { CollectionConfig } from 'payload'
+import { isAdminAccess } from '@/lib/access'
 
 export const Orders: CollectionConfig = {
   slug: 'orders',
   lockDocuments: false,
+  // Orders hold customer PII (name, email, phone, delivery address, config).
+  // Lock the collection down EXPLICITLY rather than relying on Payload's
+  // implicit "any authenticated user" default:
+  //  - read/update/delete require the `admin` role (Editors are excluded),
+  //  - create via the public REST/GraphQL API is disabled entirely; the public
+  //    checkout route creates orders through the Local API (overrideAccess),
+  //    which bypasses this check by design.
+  access: {
+    read: isAdminAccess,
+    create: () => false,
+    update: isAdminAccess,
+    delete: isAdminAccess,
+  },
   admin: {
     useAsTitle: 'orderRef',
     defaultColumns: ['orderRef', 'customerName', 'customerEmail', 'stateRegion', 'status', 'totalPrice', 'createdAt'],

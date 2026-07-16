@@ -37,11 +37,14 @@ GitHub Actions: `.github/workflows/ci.yml`
 
 Required:
 
-- `DATABASE_URI`, `PAYLOAD_SECRET`
+- `DATABASE_URI`, `DATABASE_CA_CERT`, `PAYLOAD_SECRET`
 - S3: `S3_BUCKET`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, `S3_REGION`, `S3_ENDPOINT`
 - Email: `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, `RESEND_ADMIN_EMAIL`
 
 Optional: `NEXT_PUBLIC_SITE_URL` (absolute URLs for order screenshots in emails)
+
+Operational backup configuration and restore verification are documented in
+`docs/BACKUP_RUNBOOK.md`.
 
 ## Source of truth
 

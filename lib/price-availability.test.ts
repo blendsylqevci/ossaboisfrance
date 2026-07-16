@@ -1,10 +1,13 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { isPublishedHousePrice } from "./price-availability.ts";
+import {
+  isPublishedHousePrice,
+  UNPUBLISHED_HOUSE_PRICE_MARKER,
+} from "./price-availability.ts";
 
 describe("price availability", () => {
   it("treats the CMS value 1 as an unpublished placeholder", () => {
-    assert.equal(isPublishedHousePrice(1), false);
+    assert.equal(isPublishedHousePrice(UNPUBLISHED_HOUSE_PRICE_MARKER), false);
   });
 
   it("rejects missing, zero, negative, and non-finite prices", () => {

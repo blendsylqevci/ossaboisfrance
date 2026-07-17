@@ -12,22 +12,30 @@ const nextConfig = {
     "*": ["public/images/houses/**"],
   },
   images: {
-    // Supabase public objects are already the canonical originals. Explicitly
-    // bypass Next transforms so no fake width URLs, recompression, or pixel
-    // resizing is introduced.
-    unoptimized: true,
+    // Keep originals in Supabase, while serving right-sized WebP derivatives
+    // through Next/Vercel. The 3840px ceiling preserves full-detail delivery
+    // on large/high-DPR displays without producing an unbounded variant set.
+    formats: ["image/webp"],
+    deviceSizes: [640, 828, 1080, 1440, 1920, 2560, 3840],
+    imageSizes: [32, 48, 64, 96, 128, 256, 384],
+    qualities: [75, 90],
+    minimumCacheTTL: 86400,
     remotePatterns: [
       {
         protocol: "https",
         hostname: "ossaboisfrance.com",
-        pathname: "/wp-content/uploads/**"
+        port: "",
+        pathname: "/wp-content/uploads/**",
+        search: "",
       },
       {
         protocol: "https",
         hostname: "spyhpakoxxzceltbdehn.supabase.co",
-        pathname: "/**"
-      }
-    ]
+        port: "",
+        pathname: "/storage/v1/object/public/media/**",
+        search: "",
+      },
+    ],
   },
   async headers() {
     const securityHeaders = [

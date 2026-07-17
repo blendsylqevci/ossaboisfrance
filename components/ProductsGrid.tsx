@@ -176,7 +176,8 @@ export function ProductsGrid({
                           width={380}
                           height={320}
                           style={{ objectFit: "cover", width: "100%", height: "320px" }}
-                          priority
+                          sizes="100vw"
+                          quality={90}
                         />
                       ) : null}
                       
@@ -319,6 +320,8 @@ export function ProductsGrid({
                     width={380}
                     height={320}
                     style={{ objectFit: "cover", width: "100%", height: "320px" }}
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    quality={90}
                   />
                 ) : null}
                 

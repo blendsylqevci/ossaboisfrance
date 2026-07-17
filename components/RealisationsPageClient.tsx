@@ -250,7 +250,8 @@ export function RealisationsPageClient({ locale, dict }: RealisationsPageClientP
               width={800}
               height={530}
               sizes="(max-width: 768px) 90vw, (max-width: 1200px) 45vw, 30vw"
-              priority={project.id === "australe"}
+              quality={90}
+              preload={project.id === "australe"}
             />
             <div className="gallery-item-overlay">
               <span className="gallery-item-category">{translateCategory(project.category)}</span>

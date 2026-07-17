@@ -730,7 +730,8 @@ export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
                             alt={selection.house?.name || "Maison"}
                             width={90}
                             height={90}
-                            priority
+                            sizes="90px"
+                            quality={90}
                           />
                         </div>
                         <div className="order-product-info">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import { useFavorites } from "@/lib/favorites";
 
@@ -13,11 +13,12 @@ type SliderHouse = {
 
 type HeroSliderProps = {
   house: SliderHouse | null;
+  nextHouseSlug: string | null;
 };
 
-export function HeroSlider({ house }: HeroSliderProps) {
+export function HeroSlider({ house, nextHouseSlug }: HeroSliderProps) {
   const [pos, setPos] = useState(50);
-  const [secondaryRequested, setSecondaryRequested] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
   const [secondaryReady, setSecondaryReady] = useState(false);
   const [secondaryFailed, setSecondaryFailed] = useState(false);
   
@@ -25,6 +26,56 @@ export function HeroSlider({ house }: HeroSliderProps) {
   const dragging = useRef(false);
 
   const { isFavorite, handleToggle } = useFavorites();
+
+  // The server renders the current cookie-selected house. Store only the next
+  // slug so the following full refresh advances the hero without a flash.
+  useEffect(() => {
+    if (!nextHouseSlug) return;
+
+    try {
+      const secure = window.location.protocol === "https:" ? "; Secure" : "";
+      document.cookie = `hero_house_slug=${encodeURIComponent(nextHouseSlug)}; path=/; max-age=604800; SameSite=Lax${secure}`;
+    } catch (error) {
+      console.warn("Failed to rotate the homepage hero:", error);
+    }
+  }, [nextHouseSlug]);
+
+  // Preserve the original visual cue, but start only after the second image is
+  // ready so the movement can never reveal an unloaded half.
+  useEffect(() => {
+    if (!secondaryReady || hasInteracted) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let animationFrame = 0;
+    let cancelled = false;
+    const timer = globalThis.setTimeout(() => {
+      const duration = 2600;
+      const startTime = Date.now();
+
+      const animate = () => {
+        if (cancelled) return;
+
+        const elapsed = Date.now() - startTime;
+        if (elapsed >= duration) {
+          setPos(50);
+          return;
+        }
+
+        const progress = elapsed / duration;
+        const damping = Math.pow(1 - progress, 1.5);
+        setPos(50 + Math.sin(progress * Math.PI * 4) * 12 * damping);
+        animationFrame = requestAnimationFrame(animate);
+      };
+
+      animationFrame = requestAnimationFrame(animate);
+    }, 1200);
+
+    return () => {
+      cancelled = true;
+      globalThis.clearTimeout(timer);
+      if (animationFrame) cancelAnimationFrame(animationFrame);
+    };
+  }, [secondaryReady, hasInteracted]);
 
   // 3. Slider Interaction Handlers
   const updatePos = useCallback((clientX: number) => {
@@ -36,12 +87,8 @@ export function HeroSlider({ house }: HeroSliderProps) {
     setPos(pct);
   }, []);
 
-  const requestSecondary = useCallback(() => {
-    if (!secondaryFailed) setSecondaryRequested(true);
-  }, [secondaryFailed]);
-
   const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    requestSecondary();
+    setHasInteracted(true);
     dragging.current = true;
     e.currentTarget.setPointerCapture(e.pointerId);
     updatePos(e.clientX);
@@ -62,7 +109,7 @@ export function HeroSlider({ house }: HeroSliderProps) {
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
     e.preventDefault();
-    requestSecondary();
+    setHasInteracted(true);
     setPos((current) =>
       Math.max(0, Math.min(100, current + (e.key === "ArrowRight" ? 5 : -5)))
     );
@@ -80,12 +127,15 @@ export function HeroSlider({ house }: HeroSliderProps) {
       aria-valuemin={0}
       aria-valuemax={100}
       aria-valuenow={Math.round(pos)}
-      aria-busy={secondaryRequested && !secondaryReady && !secondaryFailed}
-      onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
-      onPointerUp={onPointerUp}
-      onPointerCancel={onPointerUp}
-      onKeyDown={onKeyDown}
+      aria-busy={!secondaryReady && !secondaryFailed}
+      aria-disabled={secondaryFailed || undefined}
+      data-house-slug={house.slug}
+      data-next-house-slug={nextHouseSlug ?? undefined}
+      onPointerDown={secondaryFailed ? undefined : onPointerDown}
+      onPointerMove={secondaryFailed ? undefined : onPointerMove}
+      onPointerUp={secondaryFailed ? undefined : onPointerUp}
+      onPointerCancel={secondaryFailed ? undefined : onPointerUp}
+      onKeyDown={secondaryFailed ? undefined : onKeyDown}
     >
       {/* Bottom Image — Bardage */}
       <div className="hero-slider-img-wrapper">
@@ -103,45 +153,43 @@ export function HeroSlider({ house }: HeroSliderProps) {
       </div>
 
       {/* Top Image — Enduit (Clipped) */}
-      {secondaryRequested ? (
-        <div
-          className="hero-slider-clip"
-          style={{
-            clipPath: `inset(0 ${100 - pos}% 0 0)`,
-            opacity: secondaryReady ? 1 : 0,
-          }}
-        >
-          <div className="hero-slider-img-wrapper">
-            <Image
-              className="hero-slider-img"
-              src={house.image}
-              alt={`${house.title} — Enduit`}
-              fill
-              sizes="100vw"
-              quality={90}
-              onLoad={() => setSecondaryReady(true)}
-              onError={() => setSecondaryFailed(true)}
-              style={{ objectFit: "cover" }}
-              draggable={false}
-            />
-          </div>
+      <div
+        className="hero-slider-clip"
+        style={{
+          clipPath: `inset(0 ${100 - pos}% 0 0)`,
+          opacity: secondaryReady ? 1 : 0,
+        }}
+      >
+        <div className="hero-slider-img-wrapper">
+          <Image
+            className="hero-slider-img"
+            src={house.image}
+            alt={`${house.title} — Enduit`}
+            fill
+            sizes="100vw"
+            quality={90}
+            loading="eager"
+            fetchPriority="low"
+            onLoad={() => setSecondaryReady(true)}
+            onError={() => setSecondaryFailed(true)}
+            style={{ objectFit: "cover" }}
+            draggable={false}
+          />
         </div>
-      ) : null}
+      </div>
 
       {/* Divider Bar */}
-      {secondaryReady ? (
-        <div className="hero-slider-divider" style={{ left: `${pos}%` }}>
-          <div className="hero-slider-divider-line" />
-          <div className="hero-slider-handle">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="15 18 9 12 15 6" />
-            </svg>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="9 18 15 12 9 6" />
-            </svg>
-          </div>
+      <div className="hero-slider-divider" style={{ left: `${pos}%` }}>
+        <div className="hero-slider-divider-line" />
+        <div className="hero-slider-handle">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
         </div>
-      ) : null}
+      </div>
 
       {/* Labels */}
       {secondaryReady ? (

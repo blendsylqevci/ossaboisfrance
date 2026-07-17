@@ -8,7 +8,7 @@
 | `RESEND_API_KEY` | Required for real email delivery |
 | `NEXT_PUBLIC_SITE_URL` | e.g. `https://ossaboisfrance.com` — used for absolute media URLs in order emails |
 | `PAYLOAD_SECRET` | Must be set; no fallback in production |
-| `DATABASE_CA_CERT` | Required in production; Supabase CA PEM used for verified PostgreSQL TLS |
+| `DATABASE_CA_CERT` | Required in Production and generic Preview scope; Supabase CA PEM used for verified PostgreSQL TLS |
 
 ## API rate limits
 
@@ -112,7 +112,9 @@ for static fallbacks (option swatches in `lib/house-mapper.ts`, planimetry defau
 
 Production is fail-closed: `payload.config.ts` requires `DATABASE_CA_CERT` and
 uses `rejectUnauthorized: true`. Download the CA PEM from Supabase **Database →
-SSL Configuration** and configure it in Vercel before deploying. Local
+SSL Configuration** and configure it in Vercel before deploying. The Vercel
+Preview value must target **all Preview branches**, not a branch-specific
+override, so future pull-request builds keep TLS verification enabled. Local
 development keeps its existing non-TLS connection behavior.
 
 ## Platform health check

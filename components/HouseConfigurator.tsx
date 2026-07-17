@@ -12,6 +12,7 @@ import {
 } from "@/lib/checkout-selection-storage";
 import { PlanimetryModal } from "@/components/PlanimetryModal";
 import { publicMediaUrl } from "@/lib/media-url";
+import { isPublishedHousePrice } from "@/lib/price-availability";
 
 function formatPrice(value: number) {
   // Format exactly with space as thousands separator and comma for decimals
@@ -340,10 +341,13 @@ export function HouseConfigurator({ config, locale, dict }: HouseConfiguratorPro
 
   const selectedSize = useMemo(() => {
     const rawSize = config.sizes.find((size) => size.id === selection.size) ?? config.sizes[0];
+    const priceAvailable =
+      rawSize.priceAvailable ?? isPublishedHousePrice(rawSize.price);
     const marginMultiplier = 1 + (config.marginPercent ?? 40) / 100;
     return {
       ...rawSize,
-      price: rawSize.price * marginMultiplier
+      price: priceAvailable ? rawSize.price * marginMultiplier : 0,
+      priceAvailable,
     };
   }, [config.sizes, selection.size, config.marginPercent]);
 
@@ -507,7 +511,9 @@ export function HouseConfigurator({ config, locale, dict }: HouseConfiguratorPro
         }
       });
       
-      detailsText += `\nPrix total estimé : € ${formatPrice(total)}\n`;
+      if (selectedSize.priceAvailable) {
+        detailsText += `\nPrix total estimé : € ${formatPrice(total)}\n`;
+      }
     } else {
       detailsText = `Modèle de maison : ${config.name} (${selectedSize.label})\n`;
     }
@@ -669,6 +675,11 @@ L'équipe Ossa Bois France`;
   }
 
   function continueToCheckout() {
+    if (!selectedSize.priceAvailable) {
+      router.push(`/${locale}/contact`);
+      return;
+    }
+
     // Build payload matching WordPress house-builder.js structure
     const getOptionPayload = (categoryId: string) => {
       const item = selectedOptions.find((item) => item?.category.id === categoryId);
@@ -1662,27 +1673,35 @@ L'équipe Ossa Bois France`;
 
             <div className="price-calculator">
               <div className="price-total-section">
-                <div className="price-total" id="price-total">
-                  <span className="price-label">€</span>
-                  <span className="price-value">{formatPrice(total)}</span>
-                  <button
-                    type="button"
-                    className={`price-dropdown${breakdownOpen ? " active" : ""}`}
-                    id="price-dropdown"
-                    aria-label={dict.breakdown.title}
-                    onClick={() => setBreakdownOpen((open) => !open)}
-                  >
-                    <svg className="dropdown-arrow" width="20" height="10" viewBox="0 0 20 10" fill="none">
-                      <path d="M0.640137 0.768219L9.64014 8.26822L18.6401 0.768219" stroke="black" strokeWidth="2" />
-                    </svg>
-                  </button>
-                </div>
+                {selectedSize.priceAvailable ? (
+                  <div className="price-total" id="price-total">
+                    <span className="price-label">€</span>
+                    <span className="price-value">{formatPrice(total)}</span>
+                    <button
+                      type="button"
+                      className={`price-dropdown${breakdownOpen ? " active" : ""}`}
+                      id="price-dropdown"
+                      aria-label={dict.breakdown.title}
+                      onClick={() => setBreakdownOpen((open) => !open)}
+                    >
+                      <svg className="dropdown-arrow" width="20" height="10" viewBox="0 0 20 10" fill="none">
+                        <path d="M0.640137 0.768219L9.64014 8.26822L18.6401 0.768219" stroke="black" strokeWidth="2" />
+                      </svg>
+                    </button>
+                  </div>
+                ) : (
+                  <div className="price-total price-on-request" id="price-total">
+                    <span className="price-value">
+                      {dict.labels.priceOnRequest ?? dict.labels.askQuote}
+                    </span>
+                  </div>
+                )}
                 <button className="continue-button" type="button" onClick={continueToCheckout}>
-                  {dict.labels.orderNow}
+                  {selectedSize.priceAvailable ? dict.labels.orderNow : dict.labels.askQuote}
                 </button>
               </div>
 
-              {breakdownOpen ? (
+              {selectedSize.priceAvailable && breakdownOpen ? (
                 <div className="price-breakdown" id="price-breakdown">
                   {priceBreakdown.map((item) => (
                     <div className="breakdown-item" key={item.label}>

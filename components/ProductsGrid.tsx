@@ -34,6 +34,7 @@ type ProductsGridProps = {
   onReachStart?: () => void;
   dict: {
     startingFrom: string;
+    onQuote: string;
     configureBtn: string;
   };
 };
@@ -243,7 +244,9 @@ export function ProductsGrid({
                               <span className="prod-price-val">{formattedPrice} €</span>
                             </div>
                           ) : (
-                            <div className="prod-card-price-row" style={{ minHeight: "24px" }} />
+                            <div className="prod-card-price-row price-placeholder">
+                              <span className="prod-price-label">{dict.onQuote}</span>
+                            </div>
                           );
                         })()}
                         
@@ -382,8 +385,9 @@ export function ProductsGrid({
                         <span className="prod-price-val">{formattedPrice} €</span>
                       </div>
                     ) : (
-                      // Keep spacing empty so buttons align nicely
-                      <div className="prod-card-price-row" style={{ minHeight: "24px" }} />
+                      <div className="prod-card-price-row price-placeholder">
+                        <span className="prod-price-label">{dict.onQuote}</span>
+                      </div>
                     );
                   })()}
                   
@@ -407,4 +411,3 @@ export function ProductsGrid({
   </>
   );
 }
-

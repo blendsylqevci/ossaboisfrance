@@ -103,4 +103,25 @@ describe("checkout-pricing", () => {
     const result = calculateCheckoutGrandTotal(mockConfig, {}, 40);
     assert.ok("error" in result);
   });
+
+  it("rejects checkout when the selected house price is unpublished", () => {
+    const unpublishedConfig = {
+      ...mockConfig,
+      sizes: [
+        {
+          id: "60x160" as const,
+          label: "60x160",
+          price: 0,
+          image: "/a.jpg",
+          priceAvailable: false,
+        },
+      ],
+    };
+    const result = calculateCheckoutGrandTotal(
+      unpublishedConfig,
+      { size: { value: "60x160" } },
+      40
+    );
+    assert.deepEqual(result, { error: "House pricing is not published." });
+  });
 });

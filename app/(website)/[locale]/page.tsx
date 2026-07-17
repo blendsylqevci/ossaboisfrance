@@ -18,6 +18,7 @@ import { calculateStructureSizePrice } from "@/lib/house-mapper";
 import { getPlanimetryRooms } from "@/lib/planimetry-rooms";
 import { getPlanimetryImageCropRight } from "@/lib/planimetry-visual-crop";
 import { siteAssets } from "@/lib/site-assets";
+import { isPublishedHousePrice } from "@/lib/price-availability";
 
 
 type HomePageProps = {
@@ -215,7 +216,7 @@ export default async function HomePage({ params }: HomePageProps) {
     const catObj = typeof doc.category === 'object' ? doc.category : null;
     
     const neto = doc.perdhesa?.neto || 0;
-    const rawPrice = doc.price60x160
+    const rawPrice = isPublishedHousePrice(doc.price60x160)
       ? calculateStructureSizePrice(
           "60x160",
           neto,
@@ -225,7 +226,7 @@ export default async function HomePage({ params }: HomePageProps) {
         )
       : null;
     const marginMultiplier = 1 + (doc.marginPercent ?? globalMargin) / 100;
-    const finalPrice = rawPrice ? rawPrice * marginMultiplier : null;
+    const finalPrice = rawPrice !== null ? rawPrice * marginMultiplier : null;
 
     return {
       slug: doc.slug,
@@ -368,6 +369,7 @@ export default async function HomePage({ params }: HomePageProps) {
           featuredSubtitle: dict.home.featuredSubtitle,
           exploreCta: dict.home.exploreCta,
           startingFrom: dict.archive.startingFrom,
+          onQuote: dict.archive.onQuote,
           configureBtn: dict.archive.configureBtn,
         }}
       />

@@ -7,24 +7,57 @@ test.describe("Critical path smoke", () => {
     await expect(page).toHaveTitle(/Ossa Bois/i);
   });
 
-  test("homepage serves a responsive hero and defers the comparison image", async ({ page }) => {
+  test("homepage rotates a responsive hero and keeps the comparison toggle", async ({ page }) => {
     await page.goto("/fr", { waitUntil: "domcontentloaded" });
 
     const slider = page.locator(".hero-compare-slider");
     const primary = slider.locator(".hero-slider-img").first();
+    const secondary = slider.locator(".hero-slider-img").nth(1);
+    const firstHouseSlug = await slider.getAttribute("data-house-slug");
+    const nextHouseSlug = await slider.getAttribute("data-next-house-slug");
+
+    expect(firstHouseSlug).toBeTruthy();
+    expect(nextHouseSlug).toBeTruthy();
+    expect(nextHouseSlug).not.toBe(firstHouseSlug);
+    await expect(slider.locator(".hero-slider-img")).toHaveCount(2);
     await expect(primary).toHaveAttribute("sizes", "100vw");
     await expect(primary).toHaveAttribute("srcset", /\/_next\/image\?/);
-    await expect(slider.locator(".hero-slider-clip")).toHaveCount(0);
+    await expect(secondary).toHaveAttribute("sizes", "100vw");
+    await expect(secondary).toHaveAttribute("srcset", /\/_next\/image\?/);
+    await expect(slider.locator(".hero-slider-divider")).toBeVisible();
+    await expect(slider.locator(".hero-slider-divider")).toHaveAttribute(
+      "style",
+      /left:\s*50%/
+    );
 
-    await slider.focus();
-    // DOM content can arrive before React hydration on a cold dev/preview
-    // start. Retry the real keyboard interaction until the handler is live.
+    await expect(slider).toHaveAttribute("aria-busy", "false");
+    await expect
+      .poll(() =>
+        slider.locator(".hero-slider-img").evaluateAll((images) =>
+          images.every(
+            (image) =>
+              image instanceof HTMLImageElement &&
+              image.complete &&
+              image.naturalWidth > 0
+          )
+        )
+      )
+      .toBe(true);
+
+    await page.reload({ waitUntil: "domcontentloaded" });
+    await expect(page.locator(".hero-compare-slider")).toHaveAttribute(
+      "data-house-slug",
+      nextHouseSlug!
+    );
+
+    const refreshedSlider = page.locator(".hero-compare-slider");
+    await refreshedSlider.focus();
     await expect
       .poll(async () => {
-        await slider.press("ArrowRight");
-        return slider.locator(".hero-slider-clip").count();
+        await refreshedSlider.press("ArrowRight");
+        return Number(await refreshedSlider.getAttribute("aria-valuenow"));
       })
-      .toBe(1);
+      .toBeGreaterThan(50);
   });
 
   test("houses listing loads and shows models", async ({ page }) => {

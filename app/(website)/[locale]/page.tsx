@@ -2,8 +2,7 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Metadata } from "next";
-import { getPayload } from "payload";
-import config from "@/payload.config";
+import { cookies } from "next/headers";
 import { Locale } from "@/lib/i18n";
 
 import { HeroSlider } from "@/components/HeroSlider";
@@ -18,15 +17,12 @@ import { getPlanimetryRooms } from "@/lib/planimetry-rooms";
 import { getPlanimetryImageCropRight } from "@/lib/planimetry-visual-crop";
 import { siteAssets } from "@/lib/site-assets";
 import { isPublishedHousePrice } from "@/lib/price-availability";
+import { getHomepageContent } from "@/lib/homepage-content";
 
 
 type HomePageProps = {
   params: Promise<{ locale: Locale }>;
 };
-
-// House and option hooks revalidate this route on demand. The TTL is a safety
-// net and keeps the homepage out of the request-by-request database path.
-export const revalidate = 600;
 
 export async function generateMetadata({ params }: HomePageProps): Promise<Metadata> {
   const { locale } = await params;
@@ -71,40 +67,15 @@ export async function generateMetadata({ params }: HomePageProps): Promise<Metad
 
 export default async function HomePage({ params }: HomePageProps) {
   const { locale } = await params;
-  const [dict, payload] = await Promise.all([
+  const [dict, homepageContent] = await Promise.all([
     getDictionary(locale),
-    getPayload({ config }),
+    getHomepageContent(locale),
   ]);
-
-  const categoriesPromise = payload.find({
-    collection: 'house-categories',
-    limit: 100,
-    locale: locale,
-  });
-
-  const housesPromise = payload.find({
-    collection: 'houses',
-    limit: 100,
-    depth: 1,
-    locale: locale,
-  });
-
-  const globalOptionsPromise = payload
-    .findGlobal({
-      slug: 'house-options',
-      locale: locale,
-    })
-    .catch((error) => {
-      console.error('Failed to fetch global house options on homepage:', error);
-      return null;
-    });
-
-  // These reads are independent, so avoid paying their latency sequentially.
-  const [categoriesRes, housesRes, globalOptions] = await Promise.all([
-    categoriesPromise,
-    housesPromise,
-    globalOptionsPromise,
-  ]);
+  const {
+    categories: categoriesRes,
+    houses: housesRes,
+    globalOptions,
+  } = homepageContent;
   const globalMargin = globalOptions?.marginPercent ?? 40;
 
   const categoryOrder = [
@@ -192,13 +163,32 @@ export default async function HomePage({ params }: HomePageProps) {
       imageBardage: h.imageBardage,
     }));
 
-  // Keep the first server render deterministic so the page can be ISR-cached.
-  // The comparison remains interactive; only the refresh-to-refresh rotation
-  // cookie is removed from the critical server path.
-  let initialIdx = sliderHouses.findIndex((h) => h.slug === "maison-2-etage-me-atike");
-  if (initialIdx === -1) {
-    initialIdx = 0;
+  // Select the cookie-requested house on the server so a refresh never flashes
+  // the previous image during hydration. The client stores only the next slug.
+  const cookieStore = await cookies();
+  const encodedHeroSlug = cookieStore.get("hero_house_slug")?.value;
+  let requestedHeroSlug: string | undefined;
+  if (encodedHeroSlug) {
+    try {
+      requestedHeroSlug = decodeURIComponent(encodedHeroSlug);
+    } catch {
+      requestedHeroSlug = undefined;
+    }
   }
+  const defaultHeroSlug = "maison-2-etage-me-atike";
+
+  let initialIdx = requestedHeroSlug
+    ? sliderHouses.findIndex((house) => house.slug === requestedHeroSlug)
+    : -1;
+  if (initialIdx === -1) {
+    initialIdx = sliderHouses.findIndex((house) => house.slug === defaultHeroSlug);
+  }
+  if (initialIdx === -1) initialIdx = 0;
+
+  const activeHeroHouse = sliderHouses[initialIdx] ?? null;
+  const nextHeroHouseSlug = sliderHouses.length
+    ? sliderHouses[(initialIdx + 1) % sliderHouses.length].slug
+    : null;
 
   // Construct localized client reviews by merging text with static media links
   const carouselReviews = (dict.home.clientReviews || []).map((rev: any, index: number) => ({
@@ -237,8 +227,9 @@ export default async function HomePage({ params }: HomePageProps) {
         <section className="wp-section-carousel">
           <div className="hero-carousel-container">
             <HeroSlider
-              key={`${sliderHouses[initialIdx]?.image ?? ""}|${sliderHouses[initialIdx]?.imageBardage ?? ""}`}
-              house={sliderHouses[initialIdx] ?? null}
+              key={`${activeHeroHouse?.image ?? ""}|${activeHeroHouse?.imageBardage ?? ""}`}
+              house={activeHeroHouse}
+              nextHouseSlug={nextHeroHouseSlug}
             />
           </div>
         </section>

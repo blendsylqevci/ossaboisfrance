@@ -1,4 +1,5 @@
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
+import { HOMEPAGE_CONTENT_CACHE_TAG } from "@/lib/cache-tags";
 
 const LOCALES = ["fr", "en", "de", "nl"];
 
@@ -8,6 +9,12 @@ const LOCALES = ["fr", "en", "de", "nl"];
  * swallows the error so a CMS save is never blocked.
  */
 export function revalidateHousePaths(slug?: string): void {
+  try {
+    revalidateTag(HOMEPAGE_CONTENT_CACHE_TAG, { expire: 0 });
+  } catch (err) {
+    console.warn("[revalidate-house] homepage cache skipped (no request context):", err);
+  }
+
   try {
     for (const locale of LOCALES) {
       revalidatePath(`/${locale}/maisons`);
@@ -20,6 +27,6 @@ export function revalidateHousePaths(slug?: string): void {
       revalidatePath(`/${locale}`);
     }
   } catch (err) {
-    console.warn("[revalidate-house] skipped (no request context):", err);
+    console.warn("[revalidate-house] paths skipped (no request context):", err);
   }
 }

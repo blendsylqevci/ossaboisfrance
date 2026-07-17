@@ -67,6 +67,31 @@ test.describe("Critical path smoke", () => {
     await expect(page.locator('a[href*="/fr/maisons/"]').first()).toBeVisible();
   });
 
+  test("house cards load the Enduit/Bardage comparison at 50/50", async ({ page }) => {
+    await page.goto("/fr/maisons", { waitUntil: "domcontentloaded" });
+
+    const slider = page.locator(".house-archive-card .compare-slider").first();
+    await slider.scrollIntoViewIfNeeded();
+    await expect(slider).toBeVisible();
+    await expect(slider).toHaveAttribute("aria-valuenow", "50");
+
+    const enduit = slider.locator('img[alt$="Enduit"]');
+    const bardage = slider.locator('img[alt$="Bardage"]');
+    await expect(enduit).toHaveCount(1);
+    await expect(bardage).toHaveCount(1);
+    await expect(slider.locator(".compare-clip")).toHaveAttribute(
+      "style",
+      /inset\(0(?:px)? 50% 0(?:px)? 0(?:px)?\)/
+    );
+    await expect(enduit).toHaveAttribute("loading", "lazy");
+
+    const enduitSrc = await enduit.getAttribute("src");
+    const bardageSrc = await bardage.getAttribute("src");
+    expect(enduitSrc).toBeTruthy();
+    expect(bardageSrc).toBeTruthy();
+    expect(enduitSrc).not.toBe(bardageSrc);
+  });
+
   test("a house page renders the configurator/visual", async ({ page }) => {
     test.setTimeout(60_000);
     await page.goto("/fr/maisons");

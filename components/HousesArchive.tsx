@@ -50,6 +50,32 @@ export function CompareSlider({ imageA, imageB, altA, altB }: { imageA: string; 
   const containerRef = useRef<HTMLDivElement>(null);
   const dragging = useRef(false);
 
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    if (!("IntersectionObserver" in window)) {
+      setSecondaryRequested(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting) return;
+        setSecondaryRequested(true);
+        observer.disconnect();
+      },
+      {
+        // Start the Enduit download just before the card enters the viewport so
+        // the 50/50 comparison is ready when the visitor reaches it.
+        rootMargin: "300px 0px",
+      }
+    );
+
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, []);
+
   const updatePos = useCallback((clientX: number) => {
     const el = containerRef.current;
     if (!el) return;
@@ -137,6 +163,7 @@ export function CompareSlider({ imageA, imageB, altA, altB }: { imageA: string; 
             height={600}
             sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
             quality={90}
+            loading="lazy"
             onLoad={() => setSecondaryReady(true)}
             onError={() => setSecondaryFailed(true)}
             draggable={false}

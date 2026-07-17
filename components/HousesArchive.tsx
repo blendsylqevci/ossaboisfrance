@@ -44,6 +44,9 @@ type HousesArchiveProps = {
 
 export function CompareSlider({ imageA, imageB, altA, altB }: { imageA: string; imageB: string; altA: string; altB: string }) {
   const [pos, setPos] = useState(50);
+  const [secondaryRequested, setSecondaryRequested] = useState(false);
+  const [secondaryReady, setSecondaryReady] = useState(false);
+  const [secondaryFailed, setSecondaryFailed] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const dragging = useRef(false);
 
@@ -56,41 +59,56 @@ export function CompareSlider({ imageA, imageB, altA, altB }: { imageA: string; 
     setPos(pct);
   }, []);
 
-  useEffect(() => {
-    const onMove = (e: MouseEvent | TouchEvent) => {
-      if (!dragging.current) return;
-      e.preventDefault();
-      const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
-      updatePos(clientX);
-    };
-    const onUp = () => { dragging.current = false; };
+  const requestSecondary = useCallback(() => {
+    if (!secondaryFailed) setSecondaryRequested(true);
+  }, [secondaryFailed]);
 
-    window.addEventListener("mousemove", onMove, { passive: false });
-    window.addEventListener("touchmove", onMove, { passive: false });
-    window.addEventListener("mouseup", onUp);
-    window.addEventListener("touchend", onUp);
-
-    return () => {
-      window.removeEventListener("mousemove", onMove);
-      window.removeEventListener("touchmove", onMove);
-      window.removeEventListener("mouseup", onUp);
-      window.removeEventListener("touchend", onUp);
-    };
-  }, [updatePos]);
-
-  const onPointerDown = (e: React.MouseEvent | React.TouchEvent) => {
-    e.preventDefault();
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    requestSecondary();
     dragging.current = true;
-    const clientX = "touches" in e ? e.touches[0].clientX : (e as React.MouseEvent).clientX;
-    updatePos(clientX);
+    e.currentTarget.setPointerCapture(e.pointerId);
+    updatePos(e.clientX);
+  };
+
+  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!dragging.current) return;
+    updatePos(e.clientX);
+  };
+
+  const onPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    dragging.current = false;
+    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    }
+  };
+
+  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+    e.preventDefault();
+    requestSecondary();
+    setPos((current) =>
+      Math.max(0, Math.min(100, current + (e.key === "ArrowRight" ? 5 : -5)))
+    );
   };
 
   return (
     <div
       ref={containerRef}
       className="compare-slider"
-      onMouseDown={onPointerDown}
-      onTouchStart={onPointerDown}
+      role="slider"
+      tabIndex={0}
+      aria-label={`${altA} / ${altB}`}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-valuenow={Math.round(pos)}
+      aria-busy={secondaryRequested && !secondaryReady && !secondaryFailed}
+      onPointerEnter={requestSecondary}
+      onFocus={requestSecondary}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      onPointerCancel={onPointerUp}
+      onKeyDown={onKeyDown}
     >
       {/* Bottom layer — Bardage (full) */}
       <Image
@@ -105,18 +123,28 @@ export function CompareSlider({ imageA, imageB, altA, altB }: { imageA: string; 
       />
 
       {/* Top layer — Enduit (clipped) */}
-      <div className="compare-clip" style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}>
-        <Image
-          className="compare-img"
-          src={imageA}
-          alt={altA}
-          width={900}
-          height={600}
-          sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          priority={false}
-          draggable={false}
-        />
-      </div>
+      {secondaryRequested ? (
+        <div
+          className="compare-clip"
+          style={{
+            clipPath: `inset(0 ${100 - pos}% 0 0)`,
+            opacity: secondaryReady ? 1 : 0,
+          }}
+        >
+          <Image
+            className="compare-img"
+            src={imageA}
+            alt={altA}
+            width={900}
+            height={600}
+            sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            priority={false}
+            onLoad={() => setSecondaryReady(true)}
+            onError={() => setSecondaryFailed(true)}
+            draggable={false}
+          />
+        </div>
+      ) : null}
 
       {/* Divider line */}
       <div className="compare-divider" style={{ left: `${pos}%` }}>
@@ -132,8 +160,12 @@ export function CompareSlider({ imageA, imageB, altA, altB }: { imageA: string; 
       </div>
 
       {/* Labels */}
-      <span className="compare-label compare-label-left" style={{ opacity: pos > 15 ? 1 : 0 }}>Enduit</span>
-      <span className="compare-label compare-label-right" style={{ opacity: pos < 85 ? 1 : 0 }}>Bardage</span>
+      {secondaryReady ? (
+        <>
+          <span className="compare-label compare-label-left" style={{ opacity: pos > 15 ? 1 : 0 }}>Enduit</span>
+          <span className="compare-label compare-label-right" style={{ opacity: pos < 85 ? 1 : 0 }}>Bardage</span>
+        </>
+      ) : null}
     </div>
   );
 }
@@ -148,6 +180,7 @@ function HouseCard({ house, locale, dict, onOpenPlanimetry }: { house: CMSHouseI
       <div className="house-archive-card-image">
         {hasBothImages ? (
           <CompareSlider
+            key={`${house.image}|${house.imageBardage}`}
             imageA={house.image}
             imageB={house.imageBardage}
             altA={`${house.title} — Enduit`}

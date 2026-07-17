@@ -163,6 +163,7 @@ export function ProductsGrid({
                     <div className="prod-card-img-container relative" style={{ height: "320px" }}>
                       {house.image && house.imageBardage && house.image !== house.imageBardage ? (
                         <CompareSlider
+                          key={`${house.image}|${house.imageBardage}`}
                           imageA={house.image}
                           imageB={house.imageBardage}
                           altA={`${house.title} — Enduit`}
@@ -305,6 +306,7 @@ export function ProductsGrid({
               <div className="prod-card-img-container relative" style={{ height: "320px" }}>
                 {house.image && house.imageBardage && house.image !== house.imageBardage ? (
                   <CompareSlider
+                    key={`${house.image}|${house.imageBardage}`}
                     imageA={house.image}
                     imageB={house.imageBardage}
                     altA={`${house.title} — Enduit`}

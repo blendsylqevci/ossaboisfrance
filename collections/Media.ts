@@ -1,8 +1,23 @@
 import { CollectionConfig } from 'payload'
+import { revalidateHousePaths } from '@/lib/revalidate-house'
 
 export const Media: CollectionConfig = {
   slug: 'media',
   lockDocuments: false,
+  hooks: {
+    afterChange: [
+      ({ req }) => {
+        if (req.context.skipPublicRevalidation) return
+        revalidateHousePaths()
+      },
+    ],
+    afterDelete: [
+      ({ req }) => {
+        if (req.context.skipPublicRevalidation) return
+        revalidateHousePaths()
+      },
+    ],
+  },
   admin: {
     defaultColumns: ['filename', 'alt', 'house', 'mediaType', 'updatedAt'],
   },

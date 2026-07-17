@@ -6,8 +6,15 @@ export const Houses: CollectionConfig = {
   lockDocuments: false,
   hooks: {
     afterChange: [
-      ({ doc }) => {
-        revalidateHousePaths(typeof doc?.slug === 'string' ? doc.slug : undefined);
+      ({ doc, previousDoc }) => {
+        const nextSlug = typeof doc?.slug === 'string' ? doc.slug : undefined;
+        const previousSlug =
+          typeof previousDoc?.slug === 'string' ? previousDoc.slug : undefined;
+
+        revalidateHousePaths(nextSlug);
+        if (previousSlug && previousSlug !== nextSlug) {
+          revalidateHousePaths(previousSlug);
+        }
       },
     ],
     beforeChange: [
@@ -45,7 +52,7 @@ export const Houses: CollectionConfig = {
       }
     ],
     afterDelete: [
-      async ({ req, id }) => {
+      async ({ req, id, doc }) => {
         try {
           const mediaDocs = await req.payload.find({
             collection: 'media',
@@ -58,20 +65,30 @@ export const Houses: CollectionConfig = {
             depth: 0,
           })
 
-          for (const mediaDoc of mediaDocs.docs) {
-            try {
-              req.payload.logger.info(
-                `[Houses Hook] Deleting associated media ID ${mediaDoc.id} (${mediaDoc.filename}) for house ID ${id}...`
-              )
-              await req.payload.delete({
-                collection: 'media',
-                id: mediaDoc.id,
-                req,
-              })
-            } catch (mediaErr) {
-              req.payload.logger.error(
-                `[Houses Hook] Failed to delete associated media ID ${mediaDoc.id}: ${mediaErr}`
-              )
+          const previousSkipRevalidation = req.context.skipPublicRevalidation
+          req.context.skipPublicRevalidation = true
+          try {
+            for (const mediaDoc of mediaDocs.docs) {
+              try {
+                req.payload.logger.info(
+                  `[Houses Hook] Deleting associated media ID ${mediaDoc.id} (${mediaDoc.filename}) for house ID ${id}...`
+                )
+                await req.payload.delete({
+                  collection: 'media',
+                  id: mediaDoc.id,
+                  req,
+                })
+              } catch (mediaErr) {
+                req.payload.logger.error(
+                  `[Houses Hook] Failed to delete associated media ID ${mediaDoc.id}: ${mediaErr}`
+                )
+              }
+            }
+          } finally {
+            if (previousSkipRevalidation === undefined) {
+              delete req.context.skipPublicRevalidation
+            } else {
+              req.context.skipPublicRevalidation = previousSkipRevalidation
             }
           }
         } catch (err) {
@@ -79,7 +96,7 @@ export const Houses: CollectionConfig = {
             `[Houses Hook] Failed to query associated media for house ID ${id}: ${err}`
           )
         }
-        revalidateHousePaths();
+        revalidateHousePaths(typeof doc?.slug === 'string' ? doc.slug : undefined);
       },
     ],
   },

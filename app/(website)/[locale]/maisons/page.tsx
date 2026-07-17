@@ -63,35 +63,39 @@ export async function generateMetadata({ params }: HousesPageProps): Promise<Met
 
 export default async function HousesPage({ params }: HousesPageProps) {
   const { locale } = await params;
-  const dict = await getDictionary(locale);
-
-  const payload = await getPayload({ config });
+  const [dict, payload] = await Promise.all([
+    getDictionary(locale),
+    getPayload({ config }),
+  ]);
   
-  // Fetch categories
-  const categoriesRes = await payload.find({
+  const categoriesPromise = payload.find({
     collection: 'house-categories',
     limit: 100,
     locale: locale,
   });
 
-  // Fetch houses with depth 1 to populate media and categories
-  const housesRes = await payload.find({
+  const housesPromise = payload.find({
     collection: 'houses',
     limit: 100,
     depth: 1,
     locale: locale,
   });
 
-  // Fetch global house options to get the global margin percentage
-  let globalOptions = null;
-  try {
-    globalOptions = await payload.findGlobal({
+  const globalOptionsPromise = payload
+    .findGlobal({
       slug: 'house-options',
       locale: locale,
+    })
+    .catch((error) => {
+      console.error('Failed to fetch global house options on archive:', error);
+      return null;
     });
-  } catch (error) {
-    console.error('Failed to fetch global house options on archive:', error);
-  }
+
+  const [categoriesRes, housesRes, globalOptions] = await Promise.all([
+    categoriesPromise,
+    housesPromise,
+    globalOptionsPromise,
+  ]);
   const globalMargin = globalOptions?.marginPercent ?? 40;
 
   const categoryOrder = [

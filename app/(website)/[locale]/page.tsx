@@ -5,7 +5,6 @@ import { Metadata } from "next";
 import { getPayload } from "payload";
 import config from "@/payload.config";
 import { Locale } from "@/lib/i18n";
-import { cookies } from "next/headers";
 
 import { HeroSlider } from "@/components/HeroSlider";
 import { ReviewsCarousel } from "@/components/ReviewsCarousel";
@@ -24,6 +23,10 @@ import { isPublishedHousePrice } from "@/lib/price-availability";
 type HomePageProps = {
   params: Promise<{ locale: Locale }>;
 };
+
+// House and option hooks revalidate this route on demand. The TTL is a safety
+// net and keeps the homepage out of the request-by-request database path.
+export const revalidate = 600;
 
 export async function generateMetadata({ params }: HomePageProps): Promise<Metadata> {
   const { locale } = await params;
@@ -66,110 +69,42 @@ export async function generateMetadata({ params }: HomePageProps): Promise<Metad
   };
 }
 
-const heroImages = [
-  "/images/hero/step1.jpg",
-  "/images/hero/step2.jpg",
-  "/images/hero/step3.jpg",
-  "/images/hero/step4.jpg",
-  "/images/hero/step5.jpg"
-];
-
-const featuredSlugs = [
-  "maison-emmy",
-  "emeraude-avec-attique",
-  "diademe-toiture-terrasse",
-  "boreale-avec-attique",
-  "australe",
-  "ambre-avec-attique",
-];
-
-const whyCards = [
-  {
-    title: "Prix très avantageux",
-    text: "Nos maisons modulaires sont proposées à des prix compétitifs grâce à notre propre usine de production. Un excellent rapport qualité-prix sans compromis sur la solidité ou la finition."
-  },
-  {
-    title: "Personnalisation complète en ligne",
-    text: "Vous pouvez configurer votre maison comme vous le souhaitez directement sur notre site : modèle, surface, isolation, matériaux, fenêtres et finitions — tout est personnalisable selon vos besoins."
-  },
-  {
-    title: "Livraison rapide dans toute l'Europe",
-    text: "We take care of the transport and deliver your modular home in a short time, anywhere in Europe, thanks to optimized logistics."
-  },
-  {
-    title: "Fabrication contrôlée en usine",
-    text: "Production réalisée dans notre usine moderne au France, sous contrôle strict de qualité : structure solide, précision millimétrique et matériaux certifiés."
-  },
-  {
-    title: "Installation simple et rapide",
-    text: "Grâce à la construction modulaire, l'installation sur votre terrain est propre, rapide et sans surprises. Un processus beaucoup plus efficace que la construction traditionnelle."
-  },
-  {
-    title: "Entreprise sérieuse & accompagnement complet",
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo."
-  }
-];
-
-
-const clientReviews = [
-  {
-    content: "Service impeccable, livraison rapide et qualité supérieure. Notre maison modulaire a été installée parfaitement et le résultat dépasse nos attentes. Nous recommandons fortement Ossa Bois France.",
-    name: "Mrs. Khorsan",
-    title: "04/13/2025",
-    image: siteAssets.reviewAvatar,
-    socialIcon: siteAssets.reviewSocial
-  },
-  {
-    content: "“Une équipe très professionnelle, un accompagnement complet du début à la fin. La qualité de la construction est remarquable et les délais ont été parfaitement respectés. Je suis ravie de ma maison modulaire.”",
-    name: "Sophie L.",
-    title: "@nom d'utilisateur",
-    socialIcon: siteAssets.reviewSocial
-  },
-  {
-    content: "“Installation rapide, matériaux solides et un service client toujours disponible. Notre maison est exactement comme nous l’avions imaginée. Merci à Ossa Bois France pour ce travail de qualité.”",
-    name: "Marc et Élodie R.",
-    title: "@nom d'utilisateur",
-    socialIcon: siteAssets.reviewSocial
-  },
-  {
-    content: "“Excellent rapport qualité-prix. Le transport et le montage se sont déroulés sans aucun problème. Je recommande cette entreprise à 100 %.”",
-    name: "Jean-Michel D.",
-    title: "@nom d'utilisateur",
-    socialIcon: siteAssets.reviewSocial
-  }
-];
-
 export default async function HomePage({ params }: HomePageProps) {
   const { locale } = await params;
-  const dict = await getDictionary(locale);
-  
-  const payload = await getPayload({ config });
+  const [dict, payload] = await Promise.all([
+    getDictionary(locale),
+    getPayload({ config }),
+  ]);
 
-  // Fetch categories
-  const categoriesRes = await payload.find({
+  const categoriesPromise = payload.find({
     collection: 'house-categories',
     limit: 100,
     locale: locale,
   });
 
-  // Fetch houses
-  const housesRes = await payload.find({
+  const housesPromise = payload.find({
     collection: 'houses',
     limit: 100,
     depth: 1,
     locale: locale,
   });
 
-  // Fetch global house options to get the global margin percentage
-  let globalOptions = null;
-  try {
-    globalOptions = await payload.findGlobal({
+  const globalOptionsPromise = payload
+    .findGlobal({
       slug: 'house-options',
       locale: locale,
+    })
+    .catch((error) => {
+      console.error('Failed to fetch global house options on homepage:', error);
+      return null;
     });
-  } catch (error) {
-    console.error('Failed to fetch global house options on homepage:', error);
-  }
+
+  // These reads are independent, so avoid paying their latency sequentially.
+  const [categoriesRes, housesRes, globalOptions] = await Promise.all([
+    categoriesPromise,
+    housesPromise,
+    globalOptionsPromise,
+  ]);
   const globalMargin = globalOptions?.marginPercent ?? 40;
 
   const categoryOrder = [
@@ -246,11 +181,6 @@ export default async function HomePage({ params }: HomePageProps) {
     };
   });
 
-  // Get the 6 featured houses from dynamic list
-  const featuredHouses = featuredSlugs
-    .map((s) => allHouses.find((h) => h.slug === s))
-    .filter((h): h is NonNullable<typeof h> => !!h);
-
   // Filter houses that have both images for the Hero Slider comparison
   const sliderHouses = allHouses
     .filter((h) => h.image && h.imageBardage && h.image !== h.imageBardage)
@@ -262,14 +192,12 @@ export default async function HomePage({ params }: HomePageProps) {
       imageBardage: h.imageBardage,
     }));
 
-  // Read cookie on the server to determine the initial house to render
-  const cookieStore = await cookies();
-  const heroHouseSlug = cookieStore.get("hero_house_slug")?.value || "maison-2-etage-me-atike";
-
-  let initialIdx = sliderHouses.findIndex((h) => h.slug === heroHouseSlug);
+  // Keep the first server render deterministic so the page can be ISR-cached.
+  // The comparison remains interactive; only the refresh-to-refresh rotation
+  // cookie is removed from the critical server path.
+  let initialIdx = sliderHouses.findIndex((h) => h.slug === "maison-2-etage-me-atike");
   if (initialIdx === -1) {
-    initialIdx = sliderHouses.findIndex((h) => h.slug === "maison-2-etage-me-atike");
-    if (initialIdx === -1) initialIdx = 0;
+    initialIdx = 0;
   }
 
   // Construct localized client reviews by merging text with static media links
@@ -308,7 +236,10 @@ export default async function HomePage({ params }: HomePageProps) {
         {/* ═══════════════ SEKTION 2: HERO CAROUSEL ═══════════════ */}
         <section className="wp-section-carousel">
           <div className="hero-carousel-container">
-            <HeroSlider houses={sliderHouses} initialIdx={initialIdx} />
+            <HeroSlider
+              key={`${sliderHouses[initialIdx]?.image ?? ""}|${sliderHouses[initialIdx]?.imageBardage ?? ""}`}
+              house={sliderHouses[initialIdx] ?? null}
+            />
           </div>
         </section>
       </div>

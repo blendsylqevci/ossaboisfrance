@@ -171,7 +171,15 @@ export function SiteHeader({ locale, dict }: SiteHeaderProps) {
     <header className="site-header">
       <div className="container header-inner">
         <Link href={`/${locale}`} className="brand-link" aria-label="Ossa Bois France" onClick={handleLogoClick}>
-          <Image src="/images/brand/ossa-bois-logo.png" alt="" width={86} height={78} priority />
+          <Image
+            src="/images/brand/ossa-bois-logo.png"
+            alt=""
+            width={86}
+            height={78}
+            sizes="86px"
+            quality={90}
+            loading="eager"
+          />
         </Link>
         {isHouseDetailPage && houseTitle && (
           <span className="mobile-header-house-title">

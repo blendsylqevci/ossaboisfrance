@@ -102,8 +102,6 @@ export function CompareSlider({ imageA, imageB, altA, altB }: { imageA: string; 
       aria-valuemax={100}
       aria-valuenow={Math.round(pos)}
       aria-busy={secondaryRequested && !secondaryReady && !secondaryFailed}
-      onPointerEnter={requestSecondary}
-      onFocus={requestSecondary}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
@@ -118,7 +116,7 @@ export function CompareSlider({ imageA, imageB, altA, altB }: { imageA: string; 
         width={900}
         height={600}
         sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
-        priority={false}
+        quality={90}
         draggable={false}
       />
 
@@ -138,7 +136,7 @@ export function CompareSlider({ imageA, imageB, altA, altB }: { imageA: string; 
             width={900}
             height={600}
             sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            priority={false}
+            quality={90}
             onLoad={() => setSecondaryReady(true)}
             onError={() => setSecondaryFailed(true)}
             draggable={false}
@@ -193,7 +191,7 @@ function HouseCard({ house, locale, dict, onOpenPlanimetry }: { house: CMSHouseI
             width={900} 
             height={600} 
             sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw" 
-            priority={false}
+            quality={90}
           />
         ) : null}
 

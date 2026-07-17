@@ -14,7 +14,9 @@ export function PageLoader({ label = "Chargement" }: PageLoaderProps) {
             alt=""
             width={72}
             height={66}
-            priority
+            sizes="72px"
+            quality={90}
+            loading="eager"
           />
         </div>
         <div className="page-loader__track" aria-hidden="true">

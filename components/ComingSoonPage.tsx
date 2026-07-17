@@ -16,7 +16,9 @@ export function ComingSoonPage({ locale }: ComingSoonPageProps) {
             alt=""
             width={96}
             height={88}
-            priority
+            sizes="96px"
+            quality={90}
+            preload
           />
         </div>
         <p className="coming-soon__kicker">Ossa Bois France</p>

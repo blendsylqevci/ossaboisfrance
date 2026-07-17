@@ -295,7 +295,15 @@ export default async function HouseDetailPage({ params }: HouseDetailPageProps) 
       <div className="container house-detail-hero">
         <div className="house-detail-media">
           {defaultImageUrl && (
-            <Image src={defaultImageUrl} alt={translatedTitle} width={1400} height={930} priority sizes="(max-width: 980px) 100vw, 58vw" />
+            <Image
+              src={defaultImageUrl}
+              alt={translatedTitle}
+              width={1400}
+              height={930}
+              sizes="(max-width: 980px) 100vw, 58vw"
+              quality={90}
+              preload
+            />
           )}
         </div>
         <div className="house-detail-copy">

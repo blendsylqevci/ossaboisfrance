@@ -3,7 +3,7 @@ import { test, expect, type Page } from "@playwright/test";
 /**
  * Captures CSP violations (these events fire even in Report-Only mode) across
  * the key pages. Run against the deployed site:
- *   E2E_BASE_URL=https://www.ossaboisfrance.com npx playwright test csp-audit
+ *   E2E_BASE_URL=https://ossaboisfrance.com npx playwright test csp-audit
  */
 type Violation = { directive: string; blockedURI: string };
 

@@ -14,7 +14,7 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   reporter: "list",
   use: {
-    baseURL: process.env.E2E_BASE_URL || "https://www.ossaboisfrance.com",
+    baseURL: process.env.E2E_BASE_URL || "https://ossaboisfrance.com",
     trace: "on-first-retry",
   },
   projects: [

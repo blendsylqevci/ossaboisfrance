@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useRef, useCallback } from "react";
 import Image from "next/image";
 import { useFavorites } from "@/lib/favorites";
 
@@ -17,8 +17,6 @@ type HeroSliderProps = {
 
 export function HeroSlider({ house }: HeroSliderProps) {
   const [pos, setPos] = useState(50);
-  const [hasInteracted, setHasInteracted] = useState(false);
-  const [primaryReady, setPrimaryReady] = useState(false);
   const [secondaryRequested, setSecondaryRequested] = useState(false);
   const [secondaryReady, setSecondaryReady] = useState(false);
   const [secondaryFailed, setSecondaryFailed] = useState(false);
@@ -27,59 +25,6 @@ export function HeroSlider({ house }: HeroSliderProps) {
   const dragging = useRef(false);
 
   const { isFavorite, handleToggle } = useFavorites();
-
-  // The first full-resolution image remains the LCP candidate. Request the
-  // comparison image only after the primary has loaded and the browser is idle.
-  useEffect(() => {
-    if (!primaryReady || secondaryRequested || secondaryFailed) return;
-
-    if ("requestIdleCallback" in window) {
-      const idleId = window.requestIdleCallback(
-        () => setSecondaryRequested(true),
-        { timeout: 4000 }
-      );
-      return () => window.cancelIdleCallback(idleId);
-    }
-
-    const timeoutId = globalThis.setTimeout(() => setSecondaryRequested(true), 1500);
-    return () => globalThis.clearTimeout(timeoutId);
-  }, [primaryReady, secondaryRequested, secondaryFailed]);
-
-  // Wiggle only when both originals are ready, so it cannot reveal an empty
-  // clipped layer while the second image is still downloading.
-  useEffect(() => {
-    if (!secondaryReady || hasInteracted) return;
-
-    // Wait 1.2s after mount to start wiggle so user sees the page load
-    const timer = setTimeout(() => {
-      if (hasInteracted) return;
-
-      const duration = 2600; // 2.6 seconds duration (longer is slower/smoother)
-      const startTime = Date.now();
-
-      const animate = () => {
-        if (hasInteracted) return;
-        const elapsed = Date.now() - startTime;
-        if (elapsed >= duration) {
-          setPos(50);
-          return;
-        }
-
-        const t = elapsed / duration;
-        // Decaying amplitude using a smooth cubic function for a very natural slow down: Math.pow(1 - t, 1.5)
-        const damping = Math.pow(1 - t, 1.5);
-        // Smooth slower wiggle: 2 full cycles (PI * 4), max 12% wiggle
-        const currentPos = 50 + Math.sin(t * Math.PI * 4) * 12 * damping;
-        setPos(currentPos);
-
-        requestAnimationFrame(animate);
-      };
-
-      requestAnimationFrame(animate);
-    }, 1200);
-
-    return () => clearTimeout(timer);
-  }, [secondaryReady, hasInteracted]);
 
   // 3. Slider Interaction Handlers
   const updatePos = useCallback((clientX: number) => {
@@ -96,7 +41,6 @@ export function HeroSlider({ house }: HeroSliderProps) {
   }, [secondaryFailed]);
 
   const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    setHasInteracted(true);
     requestSecondary();
     dragging.current = true;
     e.currentTarget.setPointerCapture(e.pointerId);
@@ -119,7 +63,6 @@ export function HeroSlider({ house }: HeroSliderProps) {
     if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
     e.preventDefault();
     requestSecondary();
-    setHasInteracted(true);
     setPos((current) =>
       Math.max(0, Math.min(100, current + (e.key === "ArrowRight" ? 5 : -5)))
     );
@@ -138,8 +81,6 @@ export function HeroSlider({ house }: HeroSliderProps) {
       aria-valuemax={100}
       aria-valuenow={Math.round(pos)}
       aria-busy={secondaryRequested && !secondaryReady && !secondaryFailed}
-      onPointerEnter={requestSecondary}
-      onFocus={requestSecondary}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
@@ -154,8 +95,8 @@ export function HeroSlider({ house }: HeroSliderProps) {
           alt={`${house.title} — Bardage`}
           fill
           sizes="100vw"
-          priority
-          onLoad={() => setPrimaryReady(true)}
+          quality={90}
+          preload
           style={{ objectFit: "cover" }}
           draggable={false}
         />
@@ -177,7 +118,7 @@ export function HeroSlider({ house }: HeroSliderProps) {
               alt={`${house.title} — Enduit`}
               fill
               sizes="100vw"
-              priority={false}
+              quality={90}
               onLoad={() => setSecondaryReady(true)}
               onError={() => setSecondaryFailed(true)}
               style={{ objectFit: "cover" }}
@@ -215,6 +156,7 @@ export function HeroSlider({ house }: HeroSliderProps) {
         <span>{house.title}</span>
         <button 
           className="hero-slider-favorite-btn"
+          onPointerDown={(e) => e.stopPropagation()}
           onClick={(e) => {
             e.stopPropagation();
             handleToggle(house.slug);

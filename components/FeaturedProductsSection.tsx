@@ -86,6 +86,13 @@ export function FeaturedProductsSection({
     setCurrentIndex((prev) => (prev === 0 ? activeCategories.length - 1 : prev - 1));
   };
 
+  const activeCategory = activeCategories[currentIndex];
+  const activeCategoryHouses = activeCategory
+    ? allHouses
+        .filter((house) => house.categorySlug === activeCategory.slug)
+        .slice(0, 6)
+    : [];
+
   return (
     <section className="wp-section-products">
       <div className="container">
@@ -126,53 +133,48 @@ export function FeaturedProductsSection({
         </div>
 
 
-        {/* Sliding Viewport containing a grid of 6 houses per slide */}
+        {/* Only mount the visible category. Hidden slides previously caused the
+            browser to discover dozens of full-resolution images immediately. */}
         <div className="prod-slider-container">
           <div className="prod-slider-viewport">
-            <div
-              className="prod-slider-track"
-              style={{
-                transform: `translateX(-${currentIndex * 100}%)`,
-              }}
-            >
-              {activeCategories.map((cat, idx) => {
-                // Get up to 6 houses for this category
-                const categoryHouses = allHouses
-                  .filter((h) => h.categorySlug === cat.slug)
-                  .slice(0, 6);
-
-                return (
-                  <div
-                    className="prod-slider-slide"
-                    key={cat.id}
-                    style={{ flex: "0 0 100%", width: "100%" }}
-                  >
-                    <ProductsGrid
-                      houses={categoryHouses}
-                      locale={locale}
-                      initialActiveIndex={idx === currentIndex ? houseInitialIndex : 0}
-                      onReachEnd={() => {
-                        const nextCatIdx = (currentIndex + 1) % activeCategories.length;
-                        setHouseInitialIndex(0);
-                        setCurrentIndex(nextCatIdx);
-                      }}
-                      onReachStart={() => {
-                        const prevCatIdx = (currentIndex - 1 + activeCategories.length) % activeCategories.length;
-                        const prevCat = activeCategories[prevCatIdx];
-                        const prevCategoryHousesCount = allHouses.filter((h) => h.categorySlug === prevCat.slug).length;
-                        const lastHouseIdx = Math.max(0, Math.min(prevCategoryHousesCount, 6) - 1);
-                        setHouseInitialIndex(lastHouseIdx);
-                        setCurrentIndex(prevCatIdx);
-                      }}
-                      dict={{
-                        startingFrom: dict.startingFrom,
-                        onQuote: dict.onQuote,
-                        configureBtn: dict.configureBtn,
-                      }}
-                    />
-                  </div>
-                );
-              })}
+            <div className="prod-slider-track">
+              {activeCategory ? (
+                <div
+                  className="prod-slider-slide"
+                  key={activeCategory.id}
+                  style={{ flex: "0 0 100%", width: "100%" }}
+                >
+                  <ProductsGrid
+                    houses={activeCategoryHouses}
+                    locale={locale}
+                    initialActiveIndex={houseInitialIndex}
+                    onReachEnd={() => {
+                      const nextCatIdx = (currentIndex + 1) % activeCategories.length;
+                      setHouseInitialIndex(0);
+                      setCurrentIndex(nextCatIdx);
+                    }}
+                    onReachStart={() => {
+                      const prevCatIdx =
+                        (currentIndex - 1 + activeCategories.length) % activeCategories.length;
+                      const prevCat = activeCategories[prevCatIdx];
+                      const prevCategoryHousesCount = allHouses.filter(
+                        (house) => house.categorySlug === prevCat.slug
+                      ).length;
+                      const lastHouseIdx = Math.max(
+                        0,
+                        Math.min(prevCategoryHousesCount, 6) - 1
+                      );
+                      setHouseInitialIndex(lastHouseIdx);
+                      setCurrentIndex(prevCatIdx);
+                    }}
+                    dict={{
+                      startingFrom: dict.startingFrom,
+                      onQuote: dict.onQuote,
+                      configureBtn: dict.configureBtn,
+                    }}
+                  />
+                </div>
+              ) : null}
             </div>
           </div>
 

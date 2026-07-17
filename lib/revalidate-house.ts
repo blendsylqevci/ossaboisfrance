@@ -13,6 +13,9 @@ export function revalidateHousePaths(slug?: string): void {
       revalidatePath(`/${locale}/maisons`);
       if (slug) {
         revalidatePath(`/${locale}/maisons/${slug}`);
+      } else {
+        // Global option/category/media changes can affect every configurator.
+        revalidatePath(`/${locale}/maisons/[slug]`, "page");
       }
       revalidatePath(`/${locale}`);
     }

@@ -13,6 +13,7 @@ import { safeJsonLd } from "@/lib/json-ld";
 import { HouseTitleDispatcher } from "@/components/HouseTitleDispatcher";
 import { Metadata } from "next";
 import { isPublishedHousePrice } from "@/lib/price-availability";
+import { cache } from "react";
 
 const slugRedirects: Record<string, string> = {
   "emeraude-toiture-terrasse": "emeraude-avec-attique",
@@ -54,6 +55,18 @@ type HouseDetailPageProps = {
   params: Promise<{ locale: Locale; slug: string }>;
 };
 
+const getHouseBySlug = cache(async (locale: Locale, slug: string) => {
+  const payload = await getPayload({ config });
+  const result = await payload.find({
+    collection: 'houses',
+    where: { slug: { equals: slug } },
+    locale,
+    limit: 1,
+  });
+
+  return result.docs[0] ?? null;
+});
+
 export async function generateMetadata({ params }: HouseDetailPageProps): Promise<Metadata> {
   const { locale, slug } = await params;
   
@@ -61,16 +74,8 @@ export async function generateMetadata({ params }: HouseDetailPageProps): Promis
   const resolvedSlug = slugRedirects[slug] || slug;
 
   try {
-    const payload = await getPayload({ config });
-    const result = await payload.find({
-      collection: 'houses',
-      where: { slug: { equals: resolvedSlug } },
-      locale: locale,
-    });
-
-    if (result.totalDocs === 0) return {};
-
-    const houseDoc = result.docs[0];
+    const houseDoc = await getHouseBySlug(locale, resolvedSlug);
+    if (!houseDoc) return {};
     const rawTitle = typeof houseDoc.title === 'string' ? houseDoc.title : 'Maison';
     const translatedTitle = translateText(rawTitle, locale);
     
@@ -128,37 +133,36 @@ export async function generateStaticParams() {
 
 export default async function HouseDetailPage({ params }: HouseDetailPageProps) {
   const { locale, slug } = await params;
-  const dict = await getDictionary(locale);
 
   // Perform permanent 308 redirect if the requested slug is an old one
   const targetNewSlug = slugRedirects[slug];
   if (targetNewSlug) {
     permanentRedirect(`/${locale}/maisons/${targetNewSlug}`);
   }
-  
-  const payload = await getPayload({ config });
-  const result = await payload.find({
-    collection: 'houses',
-    where: { slug: { equals: slug } },
-    locale: locale,
-  });
 
-  if (result.totalDocs === 0) {
+  const payloadPromise = getPayload({ config });
+  const globalOptionsPromise = payloadPromise.then((payload) =>
+    payload
+      .findGlobal({
+        slug: 'house-options',
+        locale,
+        depth: 2,
+      })
+      .catch((error) => {
+        console.error('Failed to fetch global house options:', error);
+        return null;
+      })
+  );
+
+  const [dict, payload, houseDoc, globalOptions] = await Promise.all([
+    getDictionary(locale),
+    payloadPromise,
+    getHouseBySlug(locale, slug),
+    globalOptionsPromise,
+  ]);
+
+  if (!houseDoc) {
     notFound();
-  }
-
-  const houseDoc = result.docs[0];
-  
-  // Fetch global house options to propagate dynamic pricing and metadata
-  let globalOptions = null;
-  try {
-    globalOptions = await payload.findGlobal({
-      slug: 'house-options',
-      locale: locale,
-      depth: 2,
-    });
-  } catch (error) {
-    console.error('Failed to fetch global house options:', error);
   }
 
   // Pre-fetch house-specific overridden media URLs from dynamicFieldsConfig
@@ -182,16 +186,18 @@ export default async function HouseDetailPage({ params }: HouseDetailPageProps) 
     }
   }
 
-  if (mediaIds.length > 0) {
+  const uniqueMediaIds = Array.from(new Set(mediaIds));
+
+  if (uniqueMediaIds.length > 0) {
     try {
       const mediaDocs = await payload.find({
         collection: 'media',
         where: {
           id: {
-            in: mediaIds,
+            in: uniqueMediaIds,
           },
         },
-        limit: mediaIds.length,
+        limit: uniqueMediaIds.length,
         depth: 0,
       });
       if (mediaDocs && mediaDocs.docs) {

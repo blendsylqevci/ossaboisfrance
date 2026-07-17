@@ -62,6 +62,63 @@ function isOuterLayer(key: string): boolean {
   );
 }
 
+async function waitForConfiguratorLayers(containerId: string, timeoutMs = 5000) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  const activeImages = Array.from(container.getElementsByTagName("img")).filter(
+    (image) => image.classList.contains("is-on")
+  );
+
+  const decoded = Promise.all(
+    activeImages.map(async (image) => {
+      if (!image.complete) {
+        await new Promise<void>((resolve) => {
+          image.addEventListener("load", () => resolve(), { once: true });
+          image.addEventListener("error", () => resolve(), { once: true });
+        });
+      }
+
+      if (image.naturalWidth > 0 && image.decode) {
+        await image.decode().catch(() => undefined);
+      }
+    })
+  );
+
+  await Promise.race([
+    decoded,
+    new Promise<void>((resolve) => globalThis.setTimeout(resolve, timeoutMs)),
+  ]);
+}
+
+function preloadConfiguratorLayer(src: string, timeoutMs = 10000): Promise<void> {
+  return new Promise((resolve) => {
+    const image = new window.Image();
+    let settled = false;
+
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      resolve();
+    };
+
+    image.addEventListener(
+      "load",
+      () => {
+        if (image.decode) {
+          void image.decode().catch(() => undefined).finally(finish);
+        } else {
+          finish();
+        }
+      },
+      { once: true }
+    );
+    image.addEventListener("error", finish, { once: true });
+    image.src = src;
+    globalThis.setTimeout(finish, timeoutMs);
+  });
+}
+
 export const PERDHESA_LABELS: Record<string, { fr: string; en: string; de: string; nl: string }> = {
   bruto: { fr: "Bruto", en: "Bruto", de: "Bruto", nl: "Bruto" },
   neto: { fr: "Neto", en: "Neto", de: "Neto", nl: "Neto" },
@@ -115,6 +172,7 @@ export function HouseConfigurator({ config, locale, dict }: HouseConfiguratorPro
   });
   const [formStatus, setFormStatus] = useState<"idle" | "success" | "error">("idle");
   const [isStructureTextExpanded, setIsStructureTextExpanded] = useState(false);
+  const [isPreparingCheckout, setIsPreparingCheckout] = useState(false);
 
   const scrollableRef = useRef<HTMLDivElement>(null);
 
@@ -473,6 +531,57 @@ export function HouseConfigurator({ config, locale, dict }: HouseConfiguratorPro
     return orderedLayers;
   }, [renderedCategories, config.constructionLayer, config.layerOrder, getEffectiveLayer]);
 
+  // Keep every source at its original resolution, but mount only the layers
+  // that participate in the current configuration. Previously invisible
+  // options still downloaded all of their large PNG files on first render.
+  const activeLayers = useMemo(
+    () => layers.filter((layer) => activeLayerKeys.has(layer.key)),
+    [layers, activeLayerKeys]
+  );
+  const [displayedLayers, setDisplayedLayers] = useState(activeLayers);
+  const [displayedSelection, setDisplayedSelection] = useState(selection);
+  const [layersReady, setLayersReady] = useState(true);
+  const hasMountedLayerSet = useRef(false);
+
+  useEffect(() => {
+    if (!hasMountedLayerSet.current) {
+      hasMountedLayerSet.current = true;
+      setDisplayedLayers(activeLayers);
+      setDisplayedSelection(selection);
+      setLayersReady(true);
+      return;
+    }
+
+    let cancelled = false;
+    const displayedSources = new Set(
+      displayedLayers.map((layer) => `${layer.key}:${layer.src}`)
+    );
+    const pendingLayers = activeLayers.filter(
+      (layer) => !displayedSources.has(`${layer.key}:${layer.src}`)
+    );
+
+    if (pendingLayers.length === 0) {
+      setDisplayedLayers(activeLayers);
+      setDisplayedSelection(selection);
+      setLayersReady(true);
+      return;
+    }
+
+    setLayersReady(false);
+    void Promise.all(
+      pendingLayers.map((layer) => preloadConfiguratorLayer(layer.src))
+    ).then(() => {
+      if (cancelled) return;
+      setDisplayedLayers(activeLayers);
+      setDisplayedSelection(selection);
+      setLayersReady(true);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [activeLayers, displayedLayers, selection]);
+
   const priceBreakdown = useMemo(() => {
     const baseItem = {
       label: dict.breakdown.basePrice,
@@ -483,7 +592,7 @@ export function HouseConfigurator({ config, locale, dict }: HouseConfiguratorPro
       value: item?.value ?? 0
     }));
     return [baseItem, ...optionItems.filter((item) => item.value > 0)];
-  }, [selectedOptions, selectedSize.price]);
+  }, [dict.breakdown.basePrice, selectedOptions, selectedSize.price]);
 
   const total = priceBreakdown.reduce((sum, item) => sum + item.value, 0);
 
@@ -674,67 +783,78 @@ L'équipe Ossa Bois France`;
     });
   }
 
-  function continueToCheckout() {
+  async function continueToCheckout() {
     if (!selectedSize.priceAvailable) {
       router.push(`/${locale}/contact`);
       return;
     }
 
-    // Build payload matching WordPress house-builder.js structure
-    const getOptionPayload = (categoryId: string) => {
-      const item = selectedOptions.find((item) => item?.category.id === categoryId);
-      if (!item) return null;
-      return {
-        value: item.option.label,
-        price: String(item.unitPrice),
-        image: getEffectiveLayer(item.category, item.option)
+    if (isPreparingCheckout || !layersReady) return;
+    setIsPreparingCheckout(true);
+
+    try {
+      // A newly selected original may still be decoding. Wait before composing
+      // the checkout preview so deferred layers never disappear from it.
+      await waitForConfiguratorLayers("house-layer-stage");
+
+      // Build payload matching WordPress house-builder.js structure
+      const getOptionPayload = (categoryId: string) => {
+        const item = selectedOptions.find((item) => item?.category.id === categoryId);
+        if (!item) return null;
+        return {
+          value: item.option.label,
+          price: String(item.unitPrice),
+          image: getEffectiveLayer(item.category, item.option)
+        };
       };
-    };
 
-    const screenshotImage = captureConfiguratorScreenshot(
-      "house-layer-stage",
-      config.finalImage
-    );
+      const screenshotImage = captureConfiguratorScreenshot(
+        "house-layer-stage",
+        config.finalImage
+      );
 
-    const payload = {
-      house: {
-        name: config.name,
-        id: config.id,
-        image: config.finalImage
-      },
-      size: {
-        value: selectedSize.label,
-        price: String(selectedSize.price),
-        image: selectedSize.image
-      },
-      currentImage: screenshotImage,
-      isolation: getOptionPayload("isolation"),
-      outerIsolation: getOptionPayload("outerIsolation"),
-      facade: getOptionPayload("facade"),
-      etancheite: getOptionPayload("etancheite"),
-      toiture: getOptionPayload("couverture"),
-      etancheiteTerrasse: getOptionPayload("terraceEtancheite"),
-      strukturaPlloqes: getOptionPayload("roof"),
-      izolimiPlloqes: getOptionPayload("fauxPlafond"),
-      dritaret: getOptionPayload("dritaret"),
-      basePrice: selectedSize.price,
-      priceBreakdown,
-      totalPrice: total,
-      perdhesa: config.perdhesa
-    };
-
-    if (!saveCheckoutSelection(payload)) {
-      const quotaMsg: Record<Locale, string> = {
-        fr: "Impossible d'enregistrer la configuration (stockage navigateur plein). Videz le cache du site ou utilisez un autre navigateur, puis réessayez.",
-        en: "Could not save your configuration (browser storage full). Clear site data or try another browser, then retry.",
-        de: "Konfiguration konnte nicht gespeichert werden (Browserspeicher voll). Löschen Sie Website-Daten oder nutzen Sie einen anderen Browser.",
-        nl: "Configuratie kon niet worden opgeslagen (browseropslag vol). Wis sitegegevens of gebruik een andere browser.",
+      const payload = {
+        house: {
+          name: config.name,
+          id: config.id,
+          image: config.finalImage
+        },
+        size: {
+          value: selectedSize.label,
+          price: String(selectedSize.price),
+          image: selectedSize.image
+        },
+        currentImage: screenshotImage,
+        isolation: getOptionPayload("isolation"),
+        outerIsolation: getOptionPayload("outerIsolation"),
+        facade: getOptionPayload("facade"),
+        etancheite: getOptionPayload("etancheite"),
+        toiture: getOptionPayload("couverture"),
+        etancheiteTerrasse: getOptionPayload("terraceEtancheite"),
+        strukturaPlloqes: getOptionPayload("roof"),
+        izolimiPlloqes: getOptionPayload("fauxPlafond"),
+        dritaret: getOptionPayload("dritaret"),
+        basePrice: selectedSize.price,
+        priceBreakdown,
+        totalPrice: total,
+        perdhesa: config.perdhesa
       };
-      triggerToast(quotaMsg[locale] || quotaMsg.fr);
-      return;
+
+      if (!saveCheckoutSelection(payload)) {
+        const quotaMsg: Record<Locale, string> = {
+          fr: "Impossible d'enregistrer la configuration (stockage navigateur plein). Videz le cache du site ou utilisez un autre navigateur, puis réessayez.",
+          en: "Could not save your configuration (browser storage full). Clear site data or try another browser, then retry.",
+          de: "Konfiguration konnte nicht gespeichert werden (Browserspeicher voll). Löschen Sie Website-Daten oder nutzen Sie einen anderen Browser.",
+          nl: "Configuratie kon niet worden opgeslagen (browseropslag vol). Wis sitegegevens of gebruik een andere browser.",
+        };
+        triggerToast(quotaMsg[locale] || quotaMsg.fr);
+        return;
+      }
+
+      router.push(`/${locale}/checkout`);
+    } finally {
+      setIsPreparingCheckout(false);
     }
-
-    router.push(`/${locale}/checkout`);
   }
 
   function renderLayerStage(className = "house-layer-stage") {
@@ -745,6 +865,7 @@ L'équipe Ossa Bois France`;
           className={className}
           style={{ position: "relative", width: "100%", height: "100%" }}
           aria-label={`Apercu configurateur ${config.name}`}
+          aria-busy={!layersReady}
         >
           {/* Background */}
           <img
@@ -754,11 +875,11 @@ L'équipe Ossa Bois France`;
             alt=""
           />
 
-          {/* Render all house layers in exact order */}
-          {layers.map((layer) => (
+          {/* Render active house layers in exact order */}
+          {displayedLayers.map((layer) => (
             <img
               key={layer.key}
-              className={`house-layer${activeLayerKeys.has(layer.key) ? " is-on" : ""}`}
+              className="house-layer is-on"
               data-layer={layer.key}
               src={layer.src}
               alt=""
@@ -784,14 +905,13 @@ L'équipe Ossa Bois France`;
     const sliderHeightPercent = typeof sliderHeight === "string" ? parseFloat(sliderHeight) : 100;
     const lineCenterYPercent = sliderTopPercent + sliderHeightPercent / 2;
 
-    const activeClippedLayer = [...layers].reverse().find((layer) => {
-      if (!activeLayerKeys.has(layer.key)) return false;
+    const activeClippedLayer = [...displayedLayers].reverse().find((layer) => {
       if (!isOuterLayer(layer.key)) return false;
       if (!clippableOptions) return true;
       const category = config.categories.find((c) =>
         c.options.some((opt) => opt.layerKey === layer.key)
       );
-      const selectedOptionId = category ? selection[category.id] : undefined;
+      const selectedOptionId = category ? displayedSelection[category.id] : undefined;
       return selectedOptionId ? clippableOptions.includes(selectedOptionId) : false;
     });
 
@@ -803,6 +923,7 @@ L'équipe Ossa Bois France`;
         className={className}
         style={{ position: "relative", width: "100%", height: "100%" }}
         aria-label={`Apercu configurateur ${config.name}`}
+        aria-busy={!layersReady}
       >
         {/* Background */}
         <img
@@ -812,8 +933,8 @@ L'équipe Ossa Bois France`;
           alt=""
         />
 
-        {/* Render all house layers in exact order */}
-        {layers.map((layer) => {
+        {/* Render active house layers in exact order */}
+        {displayedLayers.map((layer) => {
           let isClipped = false;
           if (isOuterLayer(layer.key)) {
             if (!clippableOptions) {
@@ -822,7 +943,7 @@ L'équipe Ossa Bois France`;
               const category = config.categories.find((c) =>
                 c.options.some((opt) => opt.layerKey === layer.key)
               );
-              const selectedOptionId = category ? selection[category.id] : undefined;
+              const selectedOptionId = category ? displayedSelection[category.id] : undefined;
               if (selectedOptionId && clippableOptions.includes(selectedOptionId)) {
                 isClipped = true;
               }
@@ -845,7 +966,7 @@ L'équipe Ossa Bois France`;
           return (
             <img
               key={layer.key}
-              className={`house-layer${activeLayerKeys.has(layer.key) ? " is-on" : ""}`}
+              className="house-layer is-on"
               data-layer={layer.key}
               src={layer.src}
               alt=""
@@ -1696,8 +1817,20 @@ L'équipe Ossa Bois France`;
                     </span>
                   </div>
                 )}
-                <button className="continue-button" type="button" onClick={continueToCheckout}>
-                  {selectedSize.priceAvailable ? dict.labels.orderNow : dict.labels.askQuote}
+                <button
+                  className="continue-button"
+                  type="button"
+                  onClick={continueToCheckout}
+                  disabled={
+                    selectedSize.priceAvailable &&
+                    (isPreparingCheckout || !layersReady)
+                  }
+                >
+                  {selectedSize.priceAvailable
+                    ? isPreparingCheckout || !layersReady
+                      ? `${dict.labels.orderNow}…`
+                      : dict.labels.orderNow
+                    : dict.labels.askQuote}
                 </button>
               </div>
 

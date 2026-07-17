@@ -1,8 +1,21 @@
 import { CollectionConfig } from 'payload'
+import { revalidateHousePaths } from '@/lib/revalidate-house'
 
 export const HouseCategories: CollectionConfig = {
   slug: 'house-categories',
   lockDocuments: false,
+  hooks: {
+    afterChange: [
+      () => {
+        revalidateHousePaths()
+      },
+    ],
+    afterDelete: [
+      () => {
+        revalidateHousePaths()
+      },
+    ],
+  },
   access: {
     read: () => true,
   },

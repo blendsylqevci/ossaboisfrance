@@ -12,9 +12,10 @@ const nextConfig = {
     "*": ["public/images/houses/**"],
   },
   images: {
-    loader: "custom",
-    loaderFile: "./lib/image-loader.ts",
-    formats: ["image/avif", "image/webp"],
+    // Supabase public objects are already the canonical originals. Explicitly
+    // bypass Next transforms so no fake width URLs, recompression, or pixel
+    // resizing is introduced.
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
@@ -81,6 +82,18 @@ const nextConfig = {
 
     return [
       { source: "/:path*", headers: securityHeaders },
+      {
+        // These public assets keep their original bytes and dimensions. A
+        // bounded browser cache speeds repeat visits while still allowing a
+        // future deployment to replace a file at the same path within a day.
+        source: "/(fonts|images/brand|images/site|images/hero|media)/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=86400, stale-while-revalidate=604800",
+          },
+        ],
+      },
       {
         // Apply CSP to everything except the Payload admin and API routes,
         // which manage their own script/connect needs.

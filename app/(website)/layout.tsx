@@ -5,6 +5,7 @@ import { safeJsonLd } from "@/lib/json-ld";
 import "../globals.css";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://ossaboisfrance.com";
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -38,6 +39,12 @@ export default async function RootLayout({
   const { locale } = await params;
   return (
     <html lang={locale || "fr"}>
+      {SUPABASE_URL ? (
+        <head>
+          <link rel="preconnect" href={SUPABASE_URL} crossOrigin="anonymous" />
+          <link rel="dns-prefetch" href={SUPABASE_URL} />
+        </head>
+      ) : null}
       <body>
         <script
           type="application/ld+json"

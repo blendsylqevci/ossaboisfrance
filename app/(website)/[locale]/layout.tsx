@@ -7,8 +7,9 @@ import { isLocale, Locale } from "@/lib/i18n";
 import { getDictionary } from "@/lib/dictionary";
 import { getSiteSettings } from "@/lib/site-settings";
 
-/** Maintenance mode is read from CMS on every request — never statically cached. */
-export const dynamic = "force-dynamic";
+// Cache public pages at the edge. CMS hooks invalidate these routes immediately
+// after house, pricing, or maintenance-mode changes; this is only a safety TTL.
+export const revalidate = 600;
 
 export function generateStaticParams() {
   return [
@@ -32,8 +33,10 @@ export default async function LocaleLayout({
     notFound();
   }
 
-  const dict = await getDictionary(locale as Locale);
-  const siteSettings = await getSiteSettings();
+  const [dict, siteSettings] = await Promise.all([
+    getDictionary(locale as Locale),
+    getSiteSettings(),
+  ]);
 
   if (siteSettings.comingSoonEnabled) {
     return (

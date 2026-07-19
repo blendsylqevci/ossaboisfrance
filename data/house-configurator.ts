@@ -35,7 +35,7 @@ export type SizeOption = {
   label: string;
   price: number;
   image: string;
-  /** False when the CMS value is the `1` placeholder and no price is published. */
+  /** False when the category or gross surface is not ready for calculation. */
   priceAvailable?: boolean;
 };
 
@@ -76,6 +76,8 @@ export type HouseConfiguratorData = {
   id: string;
   name: string;
   category: string;
+  /** Stable Payload category slug used by the authoritative pricing rules. */
+  categorySlug: string;
   subheading: string;
   description: string;
   specification: string;

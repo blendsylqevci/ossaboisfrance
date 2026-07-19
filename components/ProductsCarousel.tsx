@@ -3,14 +3,12 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { formatArchiveStartingPrice } from "@/data/houses-archive";
 
 type House = {
   slug: string;
   title: string;
   description: string;
   image: string;
-  price60x160?: number;
 };
 
 type ProductsCarouselProps = {
@@ -56,10 +54,10 @@ export function ProductsCarousel({ houses, locale }: ProductsCarouselProps) {
   // Auto-play
   useEffect(() => {
     const interval = setInterval(() => {
-      nextSlide();
+      setCurrentIndex((previous) => (previous >= maxIndex ? 0 : previous + 1));
     }, 8000);
     return () => clearInterval(interval);
-  }, [maxIndex, slidesToShow]);
+  }, [maxIndex]);
 
   const slideWidth = 100 / slidesToShow;
 
@@ -72,9 +70,7 @@ export function ProductsCarousel({ houses, locale }: ProductsCarouselProps) {
             transform: `translateX(-${currentIndex * slideWidth}%)`,
           }}
         >
-          {houses.map((house) => {
-            const price = formatArchiveStartingPrice(house.price60x160 ?? null);
-            return (
+          {houses.map((house) => (
               <div
                 className="prod-slider-slide"
                 key={house.slug}
@@ -95,13 +91,6 @@ export function ProductsCarousel({ houses, locale }: ProductsCarouselProps) {
                     <p className="prod-card-desc">{house.description}</p>
                     
                     <div className="prod-card-footer">
-                      {price && (
-                        <div className="prod-card-price-row">
-                          <span className="prod-price-label">À partir de</span>
-                          <strong className="prod-price-val">{price} €</strong>
-                        </div>
-                      )}
-                      
                       <Link
                         href={`/${locale}/maisons/${house.slug}`}
                         className="prod-card-button"
@@ -115,8 +104,7 @@ export function ProductsCarousel({ houses, locale }: ProductsCarouselProps) {
                   </div>
                 </div>
               </div>
-            );
-          })}
+          ))}
         </div>
       </div>
 

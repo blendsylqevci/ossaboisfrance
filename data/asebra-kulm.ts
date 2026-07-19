@@ -203,6 +203,7 @@ export const asebraKulmConfiguratorData: HouseConfiguratorData = {
   id: "asebra-me-kulm",
   name: "Asebra avec Toit",
   category: "Maison plain pied",
+  categorySlug: "maison-plein-pied",
   subheading: "Découvrez l'élégance intemporelle d'une maison de plain-pied à ossature bois haut de gamme, couronnée d'une magnifique toiture traditionnelle à double pente. Alliant design contemporain, volumes ouverts et haute performance thermique conforme RE2020, le modèle Asebra avec Toit offre un cadre de vie exceptionnel et durable, entièrement configurable.",
   description:
     "Le modèle Asebra avec Toit allie les espaces de vie spacieux et ouverts de plain-pied de la gamme Asebra au charme intemporel d'une toiture à double pente. Cette conception offre une allure classique tout en bénéficiant de notre technologie moderne d'ossature bois et d'une performance énergétique de premier plan (conforme RE2020).",
@@ -224,9 +225,7 @@ export const asebraKulmConfiguratorData: HouseConfiguratorData = {
   sizes: asebraKulmSizes,
   categories: asebraKulmCategories,
   layerOrder,
-  defaultSelection: {
-    size: "60x160"
-  },
+  defaultSelection: {},
   optionalCategoryIds: ["dritaret"],
   enableFlags: {
     enableRoofOption: true,
@@ -236,5 +235,5 @@ export const asebraKulmConfiguratorData: HouseConfiguratorData = {
     enableFauxPlafondOption: false
   },
   structureInfo:
-    "Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant rigidité et stabilité de l’ensemble. Comprend les murs porteurs, murs de séparation, solivage et charpente à fermettes. Le prix inclut le transport et le montage sous garantie décennale."
+    "Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant rigidité et stabilité de l’ensemble. Comprend les murs porteurs, murs de séparation, solivage et charpente à fermettes. Le transport et le montage sont en supplément et sont calculés séparément lors de la validation du projet."
 };

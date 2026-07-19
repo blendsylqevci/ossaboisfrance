@@ -12,11 +12,9 @@ import { FeaturedProductsSection } from "@/components/FeaturedProductsSection";
 import { AboutStats } from "@/components/AboutStats";
 import { getDictionary } from "@/lib/dictionary";
 import { translateText, translateHouseDescription } from "@/lib/translation-helper";
-import { calculateStructureSizePrice } from "@/lib/house-mapper";
 import { getPlanimetryRooms } from "@/lib/planimetry-rooms";
 import { getPlanimetryImageCropRight } from "@/lib/planimetry-visual-crop";
 import { siteAssets } from "@/lib/site-assets";
-import { isPublishedHousePrice } from "@/lib/price-availability";
 import { getHomepageContent } from "@/lib/homepage-content";
 
 
@@ -74,9 +72,7 @@ export default async function HomePage({ params }: HomePageProps) {
   const {
     categories: categoriesRes,
     houses: housesRes,
-    globalOptions,
   } = homepageContent;
-  const globalMargin = globalOptions?.marginPercent ?? 40;
 
   const categoryOrder = [
     "maison-toitu-terrasse",
@@ -121,19 +117,6 @@ export default async function HomePage({ params }: HomePageProps) {
       typeof doc.planimetryVisual === 'object' ? doc.planimetryVisual?.url : '';
     const catObj = typeof doc.category === 'object' ? doc.category : null;
     
-    const neto = doc.perdhesa?.neto || 0;
-    const rawPrice = isPublishedHousePrice(doc.price60x160)
-      ? calculateStructureSizePrice(
-          "60x160",
-          neto,
-          doc.price60x160,
-          globalOptions?.priceRate60x160,
-          globalOptions?.priceRate60x200
-        )
-      : null;
-    const marginMultiplier = 1 + (doc.marginPercent ?? globalMargin) / 100;
-    const finalPrice = rawPrice !== null ? rawPrice * marginMultiplier : null;
-
     return {
       slug: doc.slug,
       title: translateText(doc.title, locale),
@@ -142,7 +125,6 @@ export default async function HomePage({ params }: HomePageProps) {
       description: translateHouseDescription(doc.description || doc.subheading || '', doc.slug, locale),
       image: imageUrl || '',
       imageBardage: finalImageUrl || '',
-      price60x160: finalPrice,
       neto: doc.perdhesa?.neto || null,
       bruto: doc.perdhesa?.bruto || null,
       planimetry: planimetryUrl || null,
@@ -290,8 +272,6 @@ export default async function HomePage({ params }: HomePageProps) {
           featuredTitle: dict.home.featuredTitle,
           featuredSubtitle: dict.home.featuredSubtitle,
           exploreCta: dict.home.exploreCta,
-          startingFrom: dict.archive.startingFrom,
-          onQuote: dict.archive.onQuote,
           configureBtn: dict.archive.configureBtn,
         }}
       />

@@ -29,6 +29,7 @@ export const ambreHouse = {
   id: "ambre",
   name: "Ambre",
   category: "Maison a toiture terrasse",
+  categorySlug: "maison-toitu-terrasse",
   subheading:
     "Maison modulaire contemporaine de plain-pied, concue avec une ossature bois robuste et une finition configurable.",
   description:
@@ -227,9 +228,7 @@ export const ambreCategories: ConfigCategory[] = [
   }
 ];
 
-export const defaultAmbreSelection = {
-  size: "60x160"
-} as Record<string, string>;
+export const defaultAmbreSelection = {} as Record<string, string>;
 
 export const ambreConfiguratorData: HouseConfiguratorData = {
   ...ambreHouse,
@@ -245,5 +244,5 @@ export const ambreConfiguratorData: HouseConfiguratorData = {
     enableFauxPlafondOption: false
   },
   structureInfo:
-    "Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant rigidité et stabilité de l’ensemble. Comprend les murs porteurs, murs de séparation et charpente industrielle type fermette. Le prix inclut le transport et le montage sur site sous garantie décennale."
+    "Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant rigidité et stabilité de l’ensemble. Comprend les murs porteurs, murs de séparation et charpente industrielle type fermette. Le transport et le montage sont en supplément et sont calculés séparément lors de la validation du projet."
 };

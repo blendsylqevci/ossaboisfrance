@@ -5,10 +5,8 @@ import { Locale } from "@/lib/i18n";
 import { getDictionary } from "@/lib/dictionary";
 import { translateText, translateHouseDescription } from "@/lib/translation-helper";
 import { Metadata } from "next";
-import { calculateStructureSizePrice } from "@/lib/house-mapper";
 import { getPlanimetryRooms } from "@/lib/planimetry-rooms";
 import { getPlanimetryImageCropRight } from "@/lib/planimetry-visual-crop";
-import { isPublishedHousePrice } from "@/lib/price-availability";
 
 
 // ISR: cached and revalidated on a 600s safety window; Payload house/option
@@ -81,22 +79,10 @@ export default async function HousesPage({ params }: HousesPageProps) {
     locale: locale,
   });
 
-  const globalOptionsPromise = payload
-    .findGlobal({
-      slug: 'house-options',
-      locale: locale,
-    })
-    .catch((error) => {
-      console.error('Failed to fetch global house options on archive:', error);
-      return null;
-    });
-
-  const [categoriesRes, housesRes, globalOptions] = await Promise.all([
+  const [categoriesRes, housesRes] = await Promise.all([
     categoriesPromise,
     housesPromise,
-    globalOptionsPromise,
   ]);
-  const globalMargin = globalOptions?.marginPercent ?? 40;
 
   const categoryOrder = [
     "maison-toitu-terrasse",
@@ -140,19 +126,6 @@ export default async function HousesPage({ params }: HousesPageProps) {
       typeof doc.planimetryVisual === 'object' ? doc.planimetryVisual?.url : '';
     const catObj = typeof doc.category === 'object' ? doc.category : null;
     
-    const neto = doc.perdhesa?.neto || 0;
-    const rawPrice = isPublishedHousePrice(doc.price60x160)
-      ? calculateStructureSizePrice(
-          "60x160",
-          neto,
-          doc.price60x160,
-          globalOptions?.priceRate60x160,
-          globalOptions?.priceRate60x200
-        )
-      : null;
-    const marginMultiplier = 1 + (doc.marginPercent ?? globalMargin) / 100;
-    const finalPrice = rawPrice !== null ? rawPrice * marginMultiplier : null;
-    
     return {
       slug: doc.slug,
       title: translateText(doc.title, locale),
@@ -161,7 +134,6 @@ export default async function HousesPage({ params }: HousesPageProps) {
       description: translateHouseDescription(doc.description || doc.subheading || '', doc.slug, locale),
       image: imageUrl || '',
       imageBardage: finalImageUrl || '',
-      price60x160: finalPrice,
       neto: doc.perdhesa?.neto || null,
       bruto: doc.perdhesa?.bruto || null,
       planimetry: planimetryUrl || null,

@@ -51,7 +51,7 @@ export const PLACEHOLDER_WINDOWS = {
 } as const;
 
 export const DEFAULT_STRUCTURE_INFO_FR =
-  "Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant rigidité et stabilité de l'ensemble. Comprend les murs porteurs, murs de séparation et charpente industrielle type fermette. Le prix inclut le transport et le montage sur site sous garantie décennale.";
+  "Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant rigidité et stabilité de l'ensemble. Comprend les murs porteurs, murs de séparation et charpente industrielle type fermette. Le transport et le montage sont en supplément et sont calculés séparément lors de la validation du projet.";
 
 /** Toiture terrasse avec attique — EPDM + polystyrène d'attique (not me kulm). */
 export const ATTIQUE_TERRASSE_ENABLE_FLAGS = {

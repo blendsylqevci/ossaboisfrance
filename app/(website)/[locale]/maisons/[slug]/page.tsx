@@ -4,15 +4,13 @@ import Image from "next/image";
 import { getPayload } from "payload";
 import config from "@/payload.config";
 import { HouseConfigurator } from "@/components/HouseConfigurator";
-import { mapHouseDocToConfiguratorData, calculateStructureSizePrice } from "@/lib/house-mapper";
-import { formatArchiveStartingPrice } from "@/data/houses-archive";
+import { mapHouseDocToConfiguratorData } from "@/lib/house-mapper";
 import { Locale } from "@/lib/i18n";
 import { getDictionary } from "@/lib/dictionary";
 import { translateText, translateHouseDescription } from "@/lib/translation-helper";
 import { safeJsonLd } from "@/lib/json-ld";
 import { HouseTitleDispatcher } from "@/components/HouseTitleDispatcher";
 import { Metadata } from "next";
-import { isPublishedHousePrice } from "@/lib/price-availability";
 import { cache } from "react";
 
 const slugRedirects: Record<string, string> = {
@@ -263,20 +261,6 @@ export default async function HouseDetailPage({ params }: HouseDetailPageProps) 
   }
 
   // Otherwise, render the standard house detail page
-  const globalMargin = globalOptions?.marginPercent ?? 40;
-  const marginMultiplier = 1 + (houseDoc.marginPercent ?? globalMargin) / 100;
-  const neto = houseDoc.perdhesa?.neto || 0;
-  const rawPrice = isPublishedHousePrice(houseDoc.price60x160)
-    ? calculateStructureSizePrice(
-        "60x160",
-        neto,
-        houseDoc.price60x160,
-        globalOptions?.priceRate60x160,
-        globalOptions?.priceRate60x200
-      )
-    : null;
-  const finalPrice = rawPrice !== null ? rawPrice * marginMultiplier : null;
-  const price = formatArchiveStartingPrice(finalPrice);
   const defaultImageUrl = typeof houseDoc.defaultImage === 'object' ? houseDoc.defaultImage?.url : '';
   const categoryName = typeof houseDoc.category === 'object' ? houseDoc.category?.name : '';
 
@@ -310,16 +294,9 @@ export default async function HouseDetailPage({ params }: HouseDetailPageProps) 
           <p className="house-detail-category">{translatedCategoryName}</p>
           <h1>{translatedTitle}</h1>
           <p>{translatedDescription}</p>
-          {price ? (
-            <div className="house-detail-price">
-              <span>{dict.configurator.startingPrice}</span>
-              <strong>{price}&nbsp;€</strong>
-            </div>
-          ) : (
-            <div className="house-detail-price">
-              <strong>{dict.archive.onQuote}</strong>
-            </div>
-          )}
+          <div className="house-detail-price">
+            <strong>{dict.configurator.labels.priceOnRequest}</strong>
+          </div>
           <div className="house-detail-status">
             <strong>{dict.configurator.labels.configuratorPrep}</strong>
             <p>

@@ -44,27 +44,36 @@ export async function sendResendMail(
     headers["Idempotency-Key"] = params.idempotencyKey.slice(0, 256);
   }
 
-  const res = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers,
-    body: JSON.stringify({
-      from: params.from || getResendFromEmail(),
-      to: params.to,
-      reply_to: params.replyTo,
-      subject: params.subject,
-      html: params.html,
-      attachments: params.attachments,
-    }),
-  });
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        from: params.from || getResendFromEmail(),
+        to: params.to,
+        reply_to: params.replyTo,
+        subject: params.subject,
+        html: params.html,
+        attachments: params.attachments,
+      }),
+    });
 
-  if (!res.ok) {
-    const errorText = await res.text();
-    console.error("[Resend] send failed:", errorText);
-    return { ok: false, error: "Failed to send email." };
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.error("[Resend] send failed:", errorText);
+      return { ok: false, error: "Failed to send email." };
+    }
+
+    const data = (await res.json()) as { id?: string };
+    return { ok: true, id: data.id };
+  } catch (error) {
+    // Checkout orders may already be persisted when delivery is attempted.
+    // Convert DNS/timeout/response parsing failures into a result so callers can
+    // report a notification warning without returning 500 and inviting a
+    // duplicate order retry.
+    console.error("[Resend] transport failure:", error);
+    return { ok: false, error: "Email service is temporarily unavailable." };
   }
-
-  const data = (await res.json()) as { id?: string };
-  return { ok: true, id: data.id };
 }
 
 export function escapeHtml(text: string): string {

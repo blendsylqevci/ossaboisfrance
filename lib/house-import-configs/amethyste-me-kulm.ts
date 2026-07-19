@@ -8,7 +8,7 @@ import {
 const ALT = "Amethyste me Kulm";
 
 const STRUCTURE_INFO_ETAGE_FR =
-  "Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant rigidité et stabilité de l'ensemble. Comprend les murs porteurs, murs de séparation et charpente industrielle type fermette sur deux niveaux. Le prix inclut le transport et le montage sur site sous garantie décennale.";
+  "Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant rigidité et stabilité de l'ensemble. Comprend les murs porteurs, murs de séparation et charpente industrielle type fermette sur deux niveaux. Le transport et le montage sont en supplément et sont calculés séparément lors de la validation du projet.";
 
 export const amethysteMeKulmImportConfig: HouseImportConfig = {
   logLabel: "Import Amethyste me Kulm",

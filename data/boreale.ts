@@ -221,6 +221,7 @@ export const borealeConfiguratorData: HouseConfiguratorData = {
   id: "boreale-me-atike",
   name: "Boreale avec Attique",
   category: "Maison toiture terrasse avec étage",
+  categorySlug: "maison-sans-faitage",
   subheading:
     "Découvrez le modèle Boreale avec Attique, une réalisation modulaire d’exception dotée d’une architecture plate contemporaine et d’une structure bois performante.",
   description:
@@ -243,9 +244,7 @@ export const borealeConfiguratorData: HouseConfiguratorData = {
   sizes: borealeSizes,
   categories: borealeCategories,
   layerOrder: borealeLayerOrder,
-  defaultSelection: {
-    size: "60x160"
-  },
+  defaultSelection: {},
   optionalCategoryIds: ["dritaret"],
   enableFlags: {
     enableRoofOption: false,
@@ -255,5 +254,5 @@ export const borealeConfiguratorData: HouseConfiguratorData = {
     enableFauxPlafondOption: false
   },
   structureInfo:
-    "Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant rigidité et stabilité de l'ensemble. Comprend les murs porteurs, murs de séparation et charpente industrielle de type terrasse avec attique. Le prix inclut le transport et le montage sur site sous garantie décennale."
+    "Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant rigidité et stabilité de l'ensemble. Comprend les murs porteurs, murs de séparation et charpente industrielle de type terrasse avec attique. Le transport et le montage sont en supplément et sont calculés séparément lors de la validation du projet."
 };

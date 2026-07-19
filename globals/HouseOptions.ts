@@ -28,10 +28,12 @@ const optionFields: Field[] = [
     name: 'option_price',
     type: 'number',
     required: true,
+    min: 0,
   },
   {
     name: 'option_price_200',
     type: 'number',
+    min: 0,
     admin: {
       description: 'Optional price override for 60x200 (defaults to option_price if empty/undefined).',
     },
@@ -56,47 +58,10 @@ export const HouseOptions: GlobalConfig = {
   lockDocuments: false,
   hooks: {
     afterChange: [
-      async ({ doc, req }) => {
-        try {
-          const rate160 = doc.priceRate60x160 || 350;
-          const rate200 = doc.priceRate60x200 || 370;
-
-          req.payload.logger.info(
-            `[HouseOptions Global Hook] Re-calculating all house prices based on new rates: 60x160=${rate160}€, 60x200=${rate200}€...`
-          );
-
-          const houses = await req.payload.find({
-            collection: 'houses',
-            limit: 1000,
-            depth: 0,
-            req
-          });
-
-          for (const house of houses.docs) {
-            const neto = house.perdhesa?.neto || 0;
-            if (neto > 0) {
-              const newPrice160 = neto >= 131 ? (neto * rate160) + 3500 : neto * rate160;
-              const newPrice200 = neto >= 131 ? (neto * rate200) + 3500 : neto * rate200;
-
-              if (house.price60x160 !== newPrice160 || house.price60x200 !== newPrice200) {
-                req.payload.logger.info(
-                  `[HouseOptions Global Hook] Updating prices for ${house.slug}: 60x160=${newPrice160}€, 60x200=${newPrice200}€`
-                );
-                await req.payload.update({
-                  collection: 'houses',
-                  id: house.id,
-                  data: {
-                    price60x160: newPrice160,
-                    price60x200: newPrice200
-                  },
-                  req
-                });
-              }
-            }
-          }
-        } catch (err) {
-          req.payload.logger.error(`[HouseOptions Global Hook] Failed to propagate pricing updates: ${err}`);
-        }
+      () => {
+        // Structure prices now come from the category + Bruto rules in
+        // lib/house-pricing.ts. Saving material options must not rewrite every
+        // house with the retired Neto × 350/370 formula.
         revalidateHousePaths();
       }
     ]
@@ -121,7 +86,7 @@ export const HouseOptions: GlobalConfig = {
       // "protected" Houses base prices from the margin + per-m² rates.
       access: { read: isAuthenticatedAccess },
       admin: {
-        description: 'Marge globale appliquée au prix de toutes les maisons (si non surchargée individuellement).',
+        description: 'Champ historique — non appliqué par la nouvelle tarification publique.',
       },
     },
     {
@@ -132,7 +97,7 @@ export const HouseOptions: GlobalConfig = {
       required: true,
       access: { read: isAuthenticatedAccess },
       admin: {
-        description: 'Tarif par m² utilisé pour le calcul de la taille 60x160.',
+        description: 'Champ historique — remplacé par les tarifs par catégorie basés sur la surface Bruto.',
       },
     },
     {
@@ -143,7 +108,7 @@ export const HouseOptions: GlobalConfig = {
       required: true,
       access: { read: isAuthenticatedAccess },
       admin: {
-        description: 'Tarif par m² utilisé pour le calcul de la taille 60x200.',
+        description: 'Champ historique — remplacé par les tarifs par catégorie basés sur la surface Bruto.',
       },
     },
     {

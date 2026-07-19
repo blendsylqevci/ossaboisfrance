@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getPayload } from "payload";
 import config from "@/payload.config";
 import { mapHouseDocToConfiguratorData } from "@/lib/house-mapper";
-import { Locale } from "@/lib/i18n";
+import { isLocale, type Locale } from "@/lib/i18n";
 import {
   calculateCheckoutGrandTotal,
   CHECKOUT_CATEGORY_PAYLOAD_KEYS,
@@ -21,8 +21,8 @@ import { uploadOrderScreenshotToMedia } from "@/lib/upload-order-screenshot";
 const euroFormatter = new Intl.NumberFormat("fr-FR", {
   style: "currency",
   currency: "EUR",
-  minimumFractionDigits: 0,
-  maximumFractionDigits: 0
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2
 });
 
 export async function POST(req: NextRequest) {
@@ -34,10 +34,36 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
+    if (!body || typeof body !== "object" || Array.isArray(body)) {
+      return NextResponse.json(
+        { success: false, error: "Corps de requête invalide." },
+        { status: 400 }
+      );
+    }
     // `clientTotal` is the price the browser CLAIMS. It is only used to detect a
     // mismatch; the authoritative `total` is set to the server-computed figure
     // below and is what gets persisted and emailed.
-    const { selection, personalInfo, deliveryInfo, total: clientTotal, transportCost, locale = "fr" } = body;
+    const {
+      selection,
+      personalInfo,
+      deliveryInfo,
+      total: clientTotal,
+      locale: rawLocale,
+    } = body;
+    if (rawLocale !== undefined && (typeof rawLocale !== "string" || !isLocale(rawLocale))) {
+      return NextResponse.json(
+        { success: false, error: "Langue non prise en charge." },
+        { status: 400 }
+      );
+    }
+    const locale: Locale = rawLocale ?? "fr";
+    if (!selection || typeof selection !== "object" || Array.isArray(selection)) {
+      return NextResponse.json(
+        { success: false, error: "Configuration invalide." },
+        { status: 400 }
+      );
+    }
+    const selectionRecord = selection as Record<string, unknown>;
 
     // Sanitize + validate every client-provided value before it is persisted or
     // interpolated into transactional emails (prevents HTML/attribute injection).
@@ -49,7 +75,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const clientName = sanitizeText(personalInfo?.fullName, 120, { singleLine: true }) || "Client";
+    const clientName = sanitizeText(personalInfo?.fullName, 120, { singleLine: true });
     const clientEmail = sanitizeText(personalInfo?.email, 254, { singleLine: true });
     const clientPhone = sanitizeText(personalInfo?.phone, 40, { singleLine: true });
 
@@ -65,12 +91,31 @@ export async function POST(req: NextRequest) {
       city: sanitizeText(deliveryInfo?.city, 100),
       zipCode: sanitizeText(deliveryInfo?.zipCode, 20),
       stateRegion: sanitizeText(deliveryInfo?.stateRegion, 100),
-      country: sanitizeText(deliveryInfo?.country, 80) || "France",
+      country: sanitizeText(deliveryInfo?.country, 80),
       notes: sanitizeText(deliveryInfo?.notes, 4000),
     };
 
+    if (
+      !clientName ||
+      !clientPhone ||
+      !delivery.streetAddress ||
+      !delivery.city ||
+      !delivery.zipCode ||
+      !delivery.stateRegion ||
+      !delivery.country
+    ) {
+      return NextResponse.json(
+        { success: false, error: "Informations client ou de livraison incomplètes." },
+        { status: 400 }
+      );
+    }
+
     // Validate selection and resolve House Document ID
-    const houseSlug = selection?.house?.id;
+    const selectedHouse = selectionRecord.house;
+    const houseSlug =
+      selectedHouse && typeof selectedHouse === "object" && !Array.isArray(selectedHouse)
+        ? (selectedHouse as Record<string, unknown>).id
+        : undefined;
     if (!houseSlug) {
       return NextResponse.json(
         { success: false, error: "Missing house selection reference." },
@@ -106,7 +151,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Map house doc using configurator mapper
-    const configData = mapHouseDocToConfiguratorData(houseDoc, globalOptions, undefined, locale as Locale);
+    const configData = mapHouseDocToConfiguratorData(houseDoc, globalOptions, undefined, locale);
     if (!configData) {
       return NextResponse.json(
         { success: false, error: "Failed to map configurator config." },
@@ -114,25 +159,30 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const marginPercent = houseDoc.marginPercent ?? globalOptions?.marginPercent ?? 40;
-    const pricing = calculateCheckoutGrandTotal(configData, selection, marginPercent);
+    const pricing = calculateCheckoutGrandTotal(configData, selectionRecord);
     if ("error" in pricing) {
       return NextResponse.json(
-        { success: false, error: "Taille de maison invalide." },
+        { success: false, error: pricing.error },
         { status: 400 }
       );
     }
 
-    const { grandTotal: calculatedGrandTotal, selectedSizeId } = pricing;
+    const {
+      grandTotal: calculatedGrandTotal,
+      selectedSizeId,
+      installationMode,
+      baseStructurePrice: serverBasePrice,
+      optionsTotal: serverOptionsTotal,
+      configurationSubtotal,
+      truckCount,
+      transportCost: serverTransportCost,
+      assemblyCost: serverAssemblyCost,
+    } = pricing;
     const selectedSize = configData.sizes.find(
       (s) => s.id === selectedSizeId || s.label === selectedSizeId
     )!;
-    const marginMultiplier = 1 + marginPercent / 100;
-    const serverBasePrice = selectedSize.price * marginMultiplier;
     const roofArea = getRoofAreaM2(configData.perdhesa);
     const categoryIdToPayloadKey = CHECKOUT_CATEGORY_PAYLOAD_KEYS;
-    const serverTransportCost =
-      selectedSizeId === "60x160" || selectedSizeId === "60x200" ? 0 : 3000;
 
     if (!isCheckoutTotalValid(clientTotal, calculatedGrandTotal)) {
       console.warn(`[API Checkout] Price mismatch! Client: ${clientTotal}, Server calculated: ${calculatedGrandTotal}`);
@@ -143,15 +193,92 @@ export async function POST(req: NextRequest) {
     }
 
     // Authoritative total: from here on use the SERVER-computed price for
-    // persistence, emails, and the CCMI payment schedule — never the client's
-    // claimed figure (which is only used for the mismatch check above).
+    // persistence and emails — never the client's claimed figure (which is
+    // only used for the mismatch check above).
     const total = calculatedGrandTotal;
 
-    // Do not persist the large base64 screenshot inside the selections JSON
-    // column — it is stored once as an optimized Media file below. Keep only the
-    // structured selection.
-    const { currentImage: _omitCurrentImage, ...selectionForStorage } =
-      (selection && typeof selection === "object" ? selection : {}) as Record<string, unknown>;
+    // Construct an allowlisted, fully server-authored order snapshot. No client
+    // dimensions, labels, images, prices, or arbitrary fields are persisted.
+    const selectionForStorage: Record<string, unknown> = {
+      house: {
+        id: configData.id,
+        name: configData.name,
+        image: configData.finalImage || configData.defaultImage,
+      },
+      size: {
+        value: selectedSizeId,
+        label: selectedSize.label,
+        price: String(serverBasePrice),
+        image: selectedSize.image,
+      },
+      perdhesa: { ...configData.perdhesa },
+      basePrice: serverBasePrice,
+      baseStructurePrice: serverBasePrice,
+      optionsTotal: serverOptionsTotal,
+      configurationSubtotal,
+      truckCount,
+      transportCost: serverTransportCost,
+      installationMode,
+      assemblyCost: serverAssemblyCost,
+      totalPrice: total,
+      installation: {
+        mode: installationMode,
+        provider:
+          installationMode === "ossa" ? "ossa_bois" : "client_or_third_party",
+        performedByOssa: installationMode === "ossa",
+        cost: serverAssemblyCost,
+      },
+    };
+    const authoritativeSelectedOptions: Array<Record<string, unknown>> = [];
+
+    // Keep the chosen option labels/images for the order summary, but replace
+    // every client-supplied option price with the corresponding server price.
+    // Unknown option values are removed instead of being documented as if they
+    // had been accepted by the configurator.
+    for (const category of configData.categories) {
+      const payloadKey = categoryIdToPayloadKey[category.id] || category.id;
+      const requestedOption = selectionRecord[payloadKey];
+      if (!requestedOption || typeof requestedOption !== "object" || Array.isArray(requestedOption)) {
+        continue;
+      }
+
+      const value = (requestedOption as Record<string, unknown>).value;
+      const option = category.options.find(
+        (candidate) => candidate.id === value || candidate.label === value
+      );
+      // Unknown explicit values were already rejected by the pricing validator.
+      if (!option) continue;
+
+      const authoritativeUnitPrice =
+        selectedSizeId === "60x200"
+          ? (option.price200 ?? option.price160)
+          : option.price160;
+      const multiplier =
+        category.priceMode === "wall_m2"
+          ? configData.perdhesa.mure_te_jashtme
+          : category.priceMode === "roof_m2"
+            ? roofArea
+            : 1;
+      selectionForStorage[payloadKey] = {
+        id: option.id,
+        value: option.label,
+        label: option.label,
+        price: String(authoritativeUnitPrice),
+        image: option.layer,
+      };
+      authoritativeSelectedOptions.push({
+        categoryId: category.id,
+        categoryLabel: category.label,
+        payloadKey,
+        optionId: option.id,
+        label: option.label,
+        unitPrice: authoritativeUnitPrice,
+        multiplier,
+        totalPrice: authoritativeUnitPrice * multiplier,
+        priceMode: category.priceMode,
+      });
+    }
+    selectionForStorage.selectedOptions = authoritativeSelectedOptions;
 
     // Persist order in the database
     const orderDoc = await payload.create({
@@ -177,10 +304,13 @@ export async function POST(req: NextRequest) {
 
     console.log(`[API Checkout] Order persisted in database with ID: ${orderDoc.id}`);
 
-    const origin = req.headers.get("origin") || "https://ossaboisfrance.com";
+    const configuredSiteUrl =
+      process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
+      "https://ossaboisfrance.com";
+    const siteOrigin = new URL(configuredSiteUrl).origin;
     let houseImageUrl = "";
 
-    const base64Image = selection?.currentImage;
+    const base64Image = selectionRecord.currentImage;
     if (base64Image && typeof base64Image === "string") {
       try {
         const uploaded = await uploadOrderScreenshotToMedia(
@@ -198,36 +328,16 @@ export async function POST(req: NextRequest) {
     }
 
     if (!houseImageUrl) {
-      const defaultImage = `${origin}/images/houses/ambre/10 ambre.jpg`;
-      // `selection` is attacker-controlled. Only allow a same-origin relative
-      // path or an absolute URL on a host we trust — never an arbitrary
-      // external URL (prevents attacker-chosen <img src> / tracking pixels in
-      // the confirmation email).
-      const ALLOWED_IMAGE_HOSTS = ["ossaboisfrance.com", "supabase.co"];
-      const isTrustedHttp = (url: string): boolean => {
-        try {
-          const u = new URL(url);
-          if (u.protocol !== "https:") return false;
-          return ALLOWED_IMAGE_HOSTS.some(
-            (h) => u.hostname === h || u.hostname.endsWith(`.${h}`)
-          );
-        } catch {
-          return false;
-        }
-      };
-
-      const rawFallback = selection?.currentImage || selection?.house?.image;
-      const fallbackPath =
-        typeof rawFallback === "string" && !rawFallback.startsWith("data:")
-          ? rawFallback
-          : "";
+      const defaultImage = `${siteOrigin}/images/houses/ambre/10 ambre.jpg`;
+      const rawFallback = configData.finalImage || configData.defaultImage;
+      const fallbackPath = typeof rawFallback === "string" ? rawFallback : "";
 
       if (!fallbackPath) {
         houseImageUrl = defaultImage;
       } else if (fallbackPath.startsWith("http")) {
-        houseImageUrl = isTrustedHttp(fallbackPath) ? fallbackPath : defaultImage;
+        houseImageUrl = fallbackPath;
       } else if (fallbackPath.startsWith("/")) {
-        houseImageUrl = `${origin}${fallbackPath}`;
+        houseImageUrl = `${siteOrigin}${fallbackPath}`;
       } else {
         houseImageUrl = defaultImage;
       }
@@ -247,28 +357,22 @@ export async function POST(req: NextRequest) {
         roof: "Surface Toiture",
         componentHeader: "Composant",
         choiceHeader: "Choix sélectionné",
-        priceHeader: "Tarif (TTC)",
+        priceHeader: "Tarif estimé",
         baseStructure: "Structure & Ossature Bois",
         baseStructureDesc: "Modèle {model} ({size})",
         transport: "Logistique & Transport",
-        transportDesc: "Livraison de la structure sur site",
-        transportInclus: "Inclus",
-        totalEstimation: "Estimation Globale de la Structure",
-        ccmiHeader: "Plan de Financement CCMI (Échelonné)",
-        ccmiPhase1Title: "Signature & Études Techniques (30%)",
-        ccmiPhase1Desc: "Faisabilité, plans d'implantation & préparation du dossier technique.",
-        ccmiPhase2Title: "Montage de la structure en bois (40%)",
-        ccmiPhase2Desc: "Levage de la structure bois, murs porteurs et charpente sur votre chantier.",
-        ccmiPhase3Title: "Remise des clés & Réception (30%)",
-        ccmiPhase3Desc: "Vérifications finales, livraison de la maison et remise officielle des clés.",
-        warranty: "✓ GARANTIE DÉCENNALE CONSTRUCTEUR &nbsp;&bull;&nbsp; ✓ ISOLATION PERFORMANCE ÉCOLOGIQUE",
+        transportDesc: "Livraison sur site : {trucks} camion(s) × 3 500 €",
+        assembly: "Montage",
+        assemblyOssaDesc: "Montage réalisé par Ossa Bois",
+        assemblyProfessionalDesc: "Montage réalisé par le client ou une entreprise tierce (non pris en charge par Ossa Bois)",
+        totalEstimation: "Estimation globale du projet configuré",
         nextStepsHeader: "Prochaines étapes de votre projet",
         step1Title: "Étape 1 : Bureau d'études",
         step1Desc: "Notre équipe technique analyse votre terrain et l'accès au chantier sous 24 à 48 heures.",
         step2Title: "Étape 2 : Entretien conseil",
         step2Desc: "Un conseiller technique Ossa Bois prend contact avec vous par téléphone au <strong>{phone}</strong> pour valider les finitions.",
         step3Title: "Étape 3 : Devis définitif",
-        step3Desc: "Établissement du contrat de construction CCMI officiel et sécurisé.",
+        step3Desc: "Établissement du devis personnalisé avec les conditions contractuelles applicables.",
         footerText: "L'équipe Ossa Bois France reste à votre entière disposition pour donner vie à vos projets."
       },
       en: {
@@ -283,28 +387,22 @@ export async function POST(req: NextRequest) {
         roof: "Roof Area",
         componentHeader: "Component",
         choiceHeader: "Selected choice",
-        priceHeader: "Price (incl. VAT)",
+        priceHeader: "Estimated price",
         baseStructure: "Timber Frame Structure",
         baseStructureDesc: "Model {model} ({size})",
         transport: "Logistics & Shipping",
-        transportDesc: "Delivery of the structure on-site",
-        transportInclus: "Included",
-        totalEstimation: "Global Structure Estimation",
-        ccmiHeader: "CCMI Payment Schedule (Phased)",
-        ccmiPhase1Title: "Signature & Technical Studies (30%)",
-        ccmiPhase1Desc: "Feasibility, site plans & preparation of the technical file.",
-        ccmiPhase2Title: "Wooden Structure Assembly (40%)",
-        ccmiPhase2Desc: "Erection of the timber frame, load-bearing walls and roof structure on-site.",
-        ccmiPhase3Title: "Key Handover & Acceptance (30%)",
-        ccmiPhase3Desc: "Final checks, delivery of the house and official handover of the keys.",
-        warranty: "✓ DECENNIAL BUILDER WARRANTY &nbsp;&bull;&nbsp; ✓ ECO-PERFORMANCE INSULATION",
+        transportDesc: "On-site delivery: {trucks} truck(s) × €3,500",
+        assembly: "Assembly",
+        assemblyOssaDesc: "Assembly performed by Ossa Bois",
+        assemblyProfessionalDesc: "Assembly performed by the client or a third-party company (not provided by Ossa Bois)",
+        totalEstimation: "Configured project estimate",
         nextStepsHeader: "Next steps of your project",
         step1Title: "Step 1: Engineering Review",
         step1Desc: "Our technical team analyzes your land and access configuration within 24 to 48 hours.",
         step2Title: "Step 2: Expert Consult",
         step2Desc: "An Ossa Bois technical advisor will contact you by phone at <strong>{phone}</strong> to confirm your finishes.",
         step3Title: "Step 3: Final Quote",
-        step3Desc: "Drafting and signing of the secure construction contract (CCMI).",
+        step3Desc: "Preparation of your personalized quotation with the applicable contractual terms.",
         footerText: "The Ossa Bois France team remains at your complete disposal to bring your projects to life."
       },
       de: {
@@ -319,28 +417,22 @@ export async function POST(req: NextRequest) {
         roof: "Dachfläche",
         componentHeader: "Komponente",
         choiceHeader: "Ausgewählte Option",
-        priceHeader: "Tarif (inkl. MwSt.)",
+        priceHeader: "Geschätzter Preis",
         baseStructure: "Holzrahmenstruktur & Tragwerk",
         baseStructureDesc: "Modell {model} ({size})",
         transport: "Logistik & Transport",
-        transportDesc: "Lieferung der Struktur auf die Baustelle",
-        transportInclus: "Inklusive",
-        totalEstimation: "Gesamtschätzung der Struktur",
-        ccmiHeader: "CCMI Ratenzahlungsplan (Gestaffelt)",
-        ccmiPhase1Title: "Vertragsunterzeichnung & technische Studien (30%)",
-        ccmiPhase1Desc: "Machbarkeitsanalyse, Lagepläne & Erstellung der technischen Unterlagen.",
-        ccmiPhase2Title: "Montage des Holzbaus (40%)",
-        ccmiPhase2Desc: "Aufbau der Holzrahmenkonstruktion, tragenden Wände und des Dachstuhls vor Ort.",
-        ccmiPhase3Title: "Schlüsselübergabe & Abnahme (30%)",
-        ccmiPhase3Desc: "Endkontrolle, Übergabe des Hauses und offizielle Schlüsselübergabe.",
-        warranty: "✓ 10-JÄHRIGE BAUGARANTIE (DÉCENNALE) &nbsp;&bull;&nbsp; ✓ ÖKO-EFFIZIENTE DÄMMUNG",
+        transportDesc: "Lieferung zur Baustelle: {trucks} Lkw × 3.500 €",
+        assembly: "Montage",
+        assemblyOssaDesc: "Montage durch Ossa Bois",
+        assemblyProfessionalDesc: "Montage durch den Kunden oder ein Drittunternehmen (nicht durch Ossa Bois)",
+        totalEstimation: "Schätzung des konfigurierten Projekts",
         nextStepsHeader: "Nächste Schritte Ihres Projekts",
         step1Title: "Schritt 1: Technische Prüfung",
         step1Desc: "Unser technisches Team analysiert Ihr Grundstück und die Logistik innerhalb von 24 bis 48 Stunden.",
         step2Title: "Schritt 2: Beratungsgespräch",
         step2Desc: "Ein technischer Berater von Ossa Bois kontaktiert Sie telefonisch unter <strong>{phone}</strong>, um Details abzustimmen.",
         step3Title: "Schritt 3: Endgültiges Angebot",
-        step3Desc: "Erstellung des offiziellen und abgesicherten Bauvertrags (CCMI).",
+        step3Desc: "Erstellung Ihres persönlichen Angebots mit den geltenden Vertragsbedingungen.",
         footerText: "Das Team von Ossa Bois France steht Ihnen jederzeit gerne zur Verfügung, um Ihre Träume zu verwirklichen."
       },
       nl: {
@@ -355,37 +447,28 @@ export async function POST(req: NextRequest) {
         roof: "Dakoppervlakte",
         componentHeader: "Component",
         choiceHeader: "Geselecteerde optie",
-        priceHeader: "Tarief (incl. btw)",
+        priceHeader: "Geschatte prijs",
         baseStructure: "Houtskelet & Structuur",
         baseStructureDesc: "Model {model} ({size})",
         transport: "Logistiek & Transport",
-        transportDesc: "Levering van de structuur op de werf",
-        transportInclus: "Inclusief",
-        totalEstimation: "Totale Schatting van de Structuur",
-        ccmiHeader: "CCMI Betalingsschema (In fasen)",
-        ccmiPhase1Title: "Handtekening & Technische Studies (30%)",
-        ccmiPhase1Desc: "Haalbaarheidsstudie, inplantingsplannen & voorbereiding van het technisch dossier.",
-        ccmiPhase2Title: "Montage van de houten structuur (40%)",
-        ccmiPhase2Desc: "Opbouw van het houtskelet, dragende muren en dakkap op uw bouwterrein.",
-        ccmiPhase3Title: "Sleuteloverdracht & Oplevering (30%)",
-        ccmiPhase3Desc: "Eindcontroles, oplevering van de woning en officiële overhandiging van de sleutels.",
-        warranty: "✓ 10-JARIGE BOUWGARANTIE &nbsp;&bull;&nbsp; ✓ ECO-PERFORMANTE ISOLATIE",
+        transportDesc: "Levering op de werf: {trucks} vrachtwagen(s) × € 3.500",
+        assembly: "Montage",
+        assemblyOssaDesc: "Montage uitgevoerd door Ossa Bois",
+        assemblyProfessionalDesc: "Montage uitgevoerd door de klant of een extern bedrijf (niet door Ossa Bois)",
+        totalEstimation: "Raming van het geconfigureerde project",
         nextStepsHeader: "Volgende stappen van uw project",
         step1Title: "Stap 1: Technische Analyse",
         step1Desc: "Ons technisch team analyseert uw terrein en de bereikbaarheid binnen 24 tot 48 uur.",
         step2Title: "Stap 2: Adviesgesprek",
         step2Desc: "Een technisch adviseur van Ossa Bois neemt telefonisch contact met u op via <strong>{phone}</strong> om de afwerking te bespreken.",
         step3Title: "Stap 3: Definitieve Offerte",
-        step3Desc: "Opstellen van het officiële en beveiligde bouwcontract (CCMI).",
+        step3Desc: "Opstellen van uw persoonlijke offerte met de toepasselijke contractvoorwaarden.",
         footerText: "Het team van Ossa Bois France staat volledig tot uw beschikking om uw project te realiseren."
       }
     };
 
-    // French fallback dictionary for always-French Admin notification emails
-    const adminTranslations = clientEmailTranslations.fr;
-
     // Resolve client locale context (fallbacks to French if not defined/supported)
-    const clientLocaleKey = (clientEmailTranslations[locale] ? locale : "fr") as string;
+    const clientLocaleKey = locale;
     const l = clientEmailTranslations[clientLocaleKey];
 
     // Helper function to build the options row details list for client or admin email
@@ -402,7 +485,9 @@ export async function POST(req: NextRequest) {
 
       for (const category of cfgData.categories) {
         const payloadKey = categoryIdToPayloadKey[category.id] || category.id;
-        const selectedOptionPayload = selection?.[payloadKey];
+        const selectedOptionPayload = selectionRecord[payloadKey] as
+          | Record<string, unknown>
+          | undefined;
         if (!selectedOptionPayload || !selectedOptionPayload.value) continue;
 
         // Find the selected option in the original client-locale config first,
@@ -490,10 +575,6 @@ export async function POST(req: NextRequest) {
     const clientOptionsRowsHtml = buildOptionsHtml(clientOptionsList);
     const adminOptionsRowsHtml = buildOptionsHtml(adminOptionsList);
 
-    const payment1 = Math.round(total * 0.3);
-    const payment2 = Math.round(total * 0.4);
-    const payment3 = total - payment1 - payment2;
-
     const formattedClientName = clientName.trim();
     const formattedClientPhone = clientPhone ? clientPhone.trim() : "";
 
@@ -504,8 +585,8 @@ export async function POST(req: NextRequest) {
     const phoneHref = formattedClientPhone
       ? `tel:${encodeURIComponent(formattedClientPhone)}`
       : "#";
-    const houseNameClean = sanitizeText(selection?.house?.name, 120);
-    const sizeValueClean = sanitizeText(selection?.size?.value, 40);
+    const houseNameClean = sanitizeText(configData.name, 120);
+    const sizeValueClean = sanitizeText(selectedSize.label || selectedSizeId, 40);
     const safeHouseName = escapeHtml(houseNameClean);
     const safeSizeValue = escapeHtml(sizeValueClean);
     const safeHouseImageUrl = escapeHtml(houseImageUrl);
@@ -517,6 +598,10 @@ export async function POST(req: NextRequest) {
       country: escapeHtml(delivery.country),
       notes: escapeHtml(delivery.notes),
     };
+    const adminAssemblyDescription =
+      installationMode === "ossa"
+        ? "Montage réalisé par Ossa Bois"
+        : "Montage par le client ou une entreprise tierce — non pris en charge par Ossa Bois";
 
     // 1. Compile Admin Notification Email (info@ossaboisfrance.com) - STRICTLY IN FRENCH
     const adminEmailHtml = `
@@ -703,9 +788,16 @@ export async function POST(req: NextRequest) {
                   ${adminOptionsRowsHtml}
                   <tr style="border-bottom: 1px dashed #E2E8F0; background-color: #F8FAFC;">
                     <td style="padding: 12px 14px; font-size: 13px; font-weight: 600; color: #1E293B; vertical-align: top;">Transport</td>
-                    <td style="padding: 12px 14px; font-size: 12.5px; color: #475569; vertical-align: top;">Logistique acheminement</td>
+                    <td style="padding: 12px 14px; font-size: 12.5px; color: #475569; vertical-align: top;">Livraison sur site : ${truckCount} camion(s) × 3 500 €</td>
                     <td align="right" style="padding: 12px 14px; font-size: 13px; font-weight: 700; color: #1E293B; vertical-align: top;">
-                      ${serverTransportCost > 0 ? euroFormatter.format(serverTransportCost) : "Inclus"}
+                      ${euroFormatter.format(serverTransportCost)}
+                    </td>
+                  </tr>
+                  <tr style="border-bottom: 1px dashed #E2E8F0; background-color: #F8FAFC;">
+                    <td style="padding: 12px 14px; font-size: 13px; font-weight: 600; color: #1E293B; vertical-align: top;">Montage</td>
+                    <td style="padding: 12px 14px; font-size: 12.5px; color: #475569; vertical-align: top;">${adminAssemblyDescription}</td>
+                    <td align="right" style="padding: 12px 14px; font-size: 13px; font-weight: 700; color: #1E293B; vertical-align: top;">
+                      ${euroFormatter.format(serverAssemblyCost)}
                     </td>
                   </tr>
                   <tr style="background-color: #FAFBFB;">
@@ -715,37 +807,6 @@ export async function POST(req: NextRequest) {
                     </td>
                   </tr>
                 </tbody>
-              </table>
-            </td>
-          </tr>
-
-          <!-- CCMI Schedule -->
-          <tr>
-            <td style="padding: 0 24px 24px 24px;">
-              <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #FAFBFB; border-radius: 8px; border: 1px solid #E2E8F0; padding: 18px;">
-                <tr>
-                  <td style="border-bottom: 1px solid #E2E8F0; padding-bottom: 8px; font-weight: 700; font-size: 13px; text-transform: uppercase; color: #1E293B;">
-                    Échéancier financier (CCMI)
-                  </td>
-                </tr>
-                <tr>
-                  <td style="padding-top: 12px;">
-                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="font-size: 13px; line-height: 1.6; color: #475569;">
-                      <tr>
-                        <td>1. Signature contrat / Acompte (30%) :</td>
-                        <td align="right" style="font-weight: 700; color: #1E293B;">${euroFormatter.format(payment1)}</td>
-                      </tr>
-                      <tr>
-                        <td>2. Montage structure sur site (40%) :</td>
-                        <td align="right" style="font-weight: 700; color: #1E293B;">${euroFormatter.format(payment2)}</td>
-                      </tr>
-                      <tr>
-                        <td>3. Réception de chantier / Clés (30%) :</td>
-                        <td align="right" style="font-weight: 700; color: #1E293B;">${euroFormatter.format(payment3)}</td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
               </table>
             </td>
           </tr>
@@ -767,6 +828,14 @@ export async function POST(req: NextRequest) {
     const formattedGreeting = l.greeting.replace("{name}", safeClientName);
     const formattedIntro = l.intro.replace("{ref}", orderRef);
     const formattedBaseStructureDesc = l.baseStructureDesc.replace("{model}", safeHouseName).replace("{size}", safeSizeValue);
+    const formattedTransportDesc = l.transportDesc.replace(
+      "{trucks}",
+      String(truckCount)
+    );
+    const formattedAssemblyDesc =
+      installationMode === "ossa"
+        ? l.assemblyOssaDesc
+        : l.assemblyProfessionalDesc;
     const formattedStep2Desc = l.step2Desc.replace("{phone}", safeClientPhone || "...");
 
     const clientEmailHtml = `
@@ -910,10 +979,21 @@ export async function POST(req: NextRequest) {
                       ${l.transport}
                     </td>
                     <td style="padding: 12px 14px; font-size: 12.5px; color: #475569; vertical-align: top;">
-                      ${l.transportDesc}
+                      ${formattedTransportDesc}
                     </td>
                     <td align="right" style="padding: 12px 14px; font-size: 13.5px; font-weight: 700; color: #1E293B; vertical-align: top;">
-                      ${serverTransportCost > 0 ? euroFormatter.format(serverTransportCost) : l.transportInclus}
+                      ${euroFormatter.format(serverTransportCost)}
+                    </td>
+                  </tr>
+                  <tr style="border-bottom: 1px dashed #E5E7EB; background-color: #FAFBFB;">
+                    <td style="padding: 12px 14px; font-size: 13.5px; font-weight: 600; color: #1E293B; vertical-align: top;">
+                      ${l.assembly}
+                    </td>
+                    <td style="padding: 12px 14px; font-size: 12.5px; color: #475569; vertical-align: top;">
+                      ${formattedAssemblyDesc}
+                    </td>
+                    <td align="right" style="padding: 12px 14px; font-size: 13.5px; font-weight: 700; color: #1E293B; vertical-align: top;">
+                      ${euroFormatter.format(serverAssemblyCost)}
                     </td>
                   </tr>
                   <tr style="background-color: #FAF9F6;">
@@ -921,78 +1001,10 @@ export async function POST(req: NextRequest) {
                       ${l.totalEstimation}
                     </td>
                     <td align="right" style="padding: 14px 14px; font-size: 18px; font-weight: 800; color: #5E6F4F;">
-                      ${euroFormatter.format(total)} <span style="font-size: 11px; font-weight: 500; color: #64748B; vertical-align: middle;">TTC</span>
+                      ${euroFormatter.format(total)}
                     </td>
                   </tr>
                 </tbody>
-              </table>
-            </td>
-          </tr>
-
-          <!-- CCMI schedule timeline -->
-          <tr>
-            <td style="padding: 8px 24px 16px 24px;">
-              <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #FDFBF7; border-radius: 8px; border: 1px solid #EBE9E2; padding: 20px;">
-                <tr>
-                  <td style="padding-bottom: 12px; border-bottom: 1px solid #F1ECE3;">
-                    <h3 style="font-size: 13.5px; font-weight: 800; color: #5E6F4F; text-transform: uppercase; letter-spacing: 0.5px; margin: 0;">${l.ccmiHeader}</h3>
-                  </td>
-                </tr>
-                <tr>
-                  <td style="padding-top: 14px;">
-                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
-                      <tr>
-                        <td style="width: 28px; vertical-align: top; padding-bottom: 14px;">
-                          <div style="width: 20px; height: 20px; background-color: #5E6F4F; color: #FFFFFF; border-radius: 50%; text-align: center; font-size: 11px; font-weight: 700; line-height: 20px;">1</div>
-                        </td>
-                        <td style="padding-left: 10px; padding-bottom: 14px; vertical-align: top;">
-                          <div style="font-size: 13px; font-weight: 700; color: #1E293B; margin-bottom: 2px;">${l.ccmiPhase1Title}</div>
-                          <div style="font-size: 12px; color: #64748B; line-height: 1.4;">${l.ccmiPhase1Desc}</div>
-                        </td>
-                        <td align="right" style="vertical-align: top; font-weight: 700; color: #1E293B; font-size: 13px; width: 110px;">
-                          ${euroFormatter.format(payment1)}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style="width: 28px; vertical-align: top; padding-bottom: 14px;">
-                          <div style="width: 20px; height: 20px; background-color: #5E6F4F; color: #FFFFFF; border-radius: 50%; text-align: center; font-size: 11px; font-weight: 700; line-height: 20px;">2</div>
-                        </td>
-                        <td style="padding-left: 10px; padding-bottom: 14px; vertical-align: top;">
-                          <div style="font-size: 13px; font-weight: 700; color: #1E293B; margin-bottom: 2px;">${l.ccmiPhase2Title}</div>
-                          <div style="font-size: 12px; color: #64748B; line-height: 1.4;">${l.ccmiPhase2Desc}</div>
-                        </td>
-                        <td align="right" style="vertical-align: top; font-weight: 700; color: #1E293B; font-size: 13px;">
-                          ${euroFormatter.format(payment2)}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style="width: 28px; vertical-align: top;">
-                          <div style="width: 20px; height: 20px; background-color: #5E6F4F; color: #FFFFFF; border-radius: 50%; text-align: center; font-size: 11px; font-weight: 700; line-height: 20px;">3</div>
-                        </td>
-                        <td style="padding-left: 10px; vertical-align: top;">
-                          <div style="font-size: 13px; font-weight: 700; color: #1E293B; margin-bottom: 2px;">${l.ccmiPhase3Title}</div>
-                          <div style="font-size: 12px; color: #64748B; line-height: 1.4;">${l.ccmiPhase3Desc}</div>
-                        </td>
-                        <td align="right" style="vertical-align: top; font-weight: 700; color: #1E293B; font-size: 13px;">
-                          ${euroFormatter.format(payment3)}
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-
-          <!-- Warranty Banner -->
-          <tr>
-            <td style="padding: 8px 24px;">
-              <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #F3F8F2; border: 1px solid #D5E5D0; border-radius: 6px; padding: 12px; text-align: center;">
-                <tr>
-                  <td align="center" style="font-size: 11.5px; color: #435E35; font-weight: 700; letter-spacing: 0.5px;">
-                    ${l.warranty}
-                  </td>
-                </tr>
               </table>
             </td>
           </tr>
@@ -1050,8 +1062,11 @@ export async function POST(req: NextRequest) {
     const toAdminEmail = getResendAdminEmail();
     const orderFromEmail = getResendOrderFromEmail();
 
+    let adminEmailSent = false;
+    let clientEmailSent = false;
+
     if (toAdminEmail) {
-      await sendResendMail({
+      const adminEmailResult = await sendResendMail({
         to: toAdminEmail,
         from: orderFromEmail,
         replyTo: clientEmail || undefined,
@@ -1059,12 +1074,16 @@ export async function POST(req: NextRequest) {
         html: adminEmailHtml,
         idempotencyKey: `checkout-admin/${orderRef}`,
       });
+      adminEmailSent = adminEmailResult.ok;
+      if (!adminEmailResult.ok) {
+        console.error(`[API Checkout] Admin email failed for order ${orderRef}.`);
+      }
     } else if (process.env.NODE_ENV === "production") {
       console.error("[API Checkout] RESEND_ADMIN_EMAIL missing in production.");
     }
 
     if (clientEmail) {
-      await sendResendMail({
+      const clientEmailResult = await sendResendMail({
         to: clientEmail,
         from: orderFromEmail,
         replyTo: toAdminEmail || undefined,
@@ -1072,6 +1091,10 @@ export async function POST(req: NextRequest) {
         html: clientEmailHtml,
         idempotencyKey: `checkout-client/${orderRef}`,
       });
+      clientEmailSent = clientEmailResult.ok;
+      if (!clientEmailResult.ok) {
+        console.error(`[API Checkout] Client email failed for order ${orderRef}.`);
+      }
     }
 
     if (!process.env.RESEND_API_KEY) {
@@ -1080,14 +1103,19 @@ export async function POST(req: NextRequest) {
       console.warn(
         `[API Checkout] RESEND_API_KEY missing — order ${orderRef} saved, emails NOT sent (total ${euroFormatter.format(total)}).`
       );
-    } else {
+    } else if (adminEmailSent && clientEmailSent) {
       console.log(`[API Checkout] Emails processed for order ${orderRef}.`);
     }
+
+    const notificationsSent = adminEmailSent && clientEmailSent;
 
     return NextResponse.json({
       success: true,
       orderRef,
-      message: "Order placed and emails sent successfully."
+      notificationsSent,
+      message: notificationsSent
+        ? "Order saved and notifications sent."
+        : "Order saved, but one or more notifications could not be sent."
     });
   } catch (error: any) {
     // Log the detail server-side; return a generic message so internal details

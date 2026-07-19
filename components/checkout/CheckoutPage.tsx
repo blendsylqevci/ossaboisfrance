@@ -2,8 +2,18 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { FormEvent, useEffect, useMemo, useState } from "react";
+
+import type { InstallationMode } from "@/lib/house-pricing";
+
+type StoredOption = { value?: string; label?: string; price?: string; image?: string };
+
+type StoredSelectedOption = {
+  categoryId?: string;
+  categoryLabel?: string;
+  optionId?: string;
+  label?: string;
+};
 
 type StoredSelection = {
   house?: {
@@ -13,36 +23,51 @@ type StoredSelection = {
   };
   size?: {
     value?: string;
+    label?: string;
     price?: string;
     image?: string;
   };
   currentImage?: string;
-  isolation?: { value?: string; price?: string; image?: string };
-  outerIsolation?: { value?: string; price?: string; image?: string };
-  facade?: { value?: string; price?: string; image?: string };
-  etancheite?: { value?: string; price?: string; image?: string };
-  toiture?: { value?: string; price?: string; image?: string };
-  etancheiteTerrasse?: { value?: string; price?: string; image?: string };
-  strukturaPlloqes?: { value?: string; price?: string; image?: string };
-  izolimiPlloqes?: { value?: string; price?: string; image?: string };
-  dritaret?: { value?: string; price?: string; image?: string };
+  isolation?: StoredOption;
+  outerIsolation?: StoredOption;
+  facade?: StoredOption;
+  etancheite?: StoredOption;
+  toiture?: StoredOption;
+  etancheiteTerrasse?: StoredOption;
+  strukturaPlloqes?: StoredOption;
+  izolimiPlloqes?: StoredOption;
+  dritaret?: StoredOption;
+  selectedOptions?: StoredSelectedOption[];
+  configurationSubtotal?: number;
+  truckCount?: number;
+  transportCost?: number;
+  installationMode?: InstallationMode;
+  assemblyCost?: number;
   totalPrice?: number;
   priceBreakdown?: Array<{ label: string; value: number }>;
   perdhesa?: Record<string, number | string>;
 };
 
-const TRANSPORTATION_COST = 3000;
-
 const euroFormatter = new Intl.NumberFormat("fr-FR", {
   style: "currency",
   currency: "EUR",
-  minimumFractionDigits: 0,
-  maximumFractionDigits: 0
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2
 });
+
+function getNonNegativeNumber(value: unknown): number | null {
+  if (value === null || value === undefined || value === "") return null;
+  const number = typeof value === "number" ? value : Number(value);
+  return Number.isFinite(number) && number >= 0 ? number : null;
+}
+
+function getPositiveInteger(value: unknown): number | null {
+  const number = getNonNegativeNumber(value);
+  return number !== null && number > 0 && Number.isInteger(number) ? number : null;
+}
 
 type CheckoutPageProps = {
   locale: string;
-  dict: any;
 };
 
 const PERDHESA_LABELS: Record<string, { fr: string; en: string; de: string; nl: string }> = {
@@ -59,18 +84,15 @@ const PERDHESA_LABELS: Record<string, { fr: string; en: string; de: string; nl: 
   kulmi: { fr: "Toiture", en: "Roof Area", de: "Dachbereich", nl: "Dakgebied" },
 };
 
-export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
-  const pathname = usePathname();
+export function CheckoutPage({ locale }: CheckoutPageProps) {
   const isEn = locale === "en";
 
   const [selection, setSelection] = useState<StoredSelection | null>(null);
   const [success, setSuccess] = useState(false);
+  const [notificationsSent, setNotificationsSent] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderRef, setOrderRef] = useState("");
   const [clientName, setClientName] = useState("");
-
-  // Transport is mandatory and locked
-  const transport = true;
 
   // Agreement checkbox states
   const [agreeShipping, setAgreeShipping] = useState(false);
@@ -212,16 +234,27 @@ export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
     }
   }, []);
 
-  const basePrice = selection?.totalPrice ?? 0;
-  const transportCost = useMemo(() => {
-    const size = selection?.size?.value;
-    if (size === "60x160" || size === "60x200") {
-      return 0;
-    }
-    return TRANSPORTATION_COST;
-  }, [selection?.size?.value]);
-
-  const total = useMemo(() => basePrice + transportCost, [basePrice, transportCost]);
+  const storedTotal = getNonNegativeNumber(selection?.totalPrice);
+  const transportCost = getNonNegativeNumber(selection?.transportCost) ?? 0;
+  const assemblyCost = getNonNegativeNumber(selection?.assemblyCost) ?? 0;
+  const truckCount = getPositiveInteger(selection?.truckCount);
+  const installationMode = selection?.installationMode;
+  const hasAuthoritativeBreakdown = Boolean(
+    selection &&
+      (selection.configurationSubtotal !== undefined ||
+        selection.transportCost !== undefined ||
+        selection.assemblyCost !== undefined ||
+        selection.installationMode !== undefined)
+  );
+  const configurationSubtotal =
+    getNonNegativeNumber(selection?.configurationSubtotal) ??
+    (hasAuthoritativeBreakdown && storedTotal !== null
+      ? Math.max(0, storedTotal - transportCost - assemblyCost)
+      : storedTotal ?? 0);
+  const total =
+    hasAuthoritativeBreakdown && storedTotal !== null
+      ? storedTotal
+      : configurationSubtotal + transportCost + assemblyCost;
 
   const formatTransportCost = (value: number) => {
     if (value === 0) return "0.00 €";
@@ -232,6 +265,7 @@ export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
   const hasCustomizations = useMemo(() => {
     if (!selection) return false;
     return !!(
+      selection.selectedOptions?.length ||
       selection.isolation?.value ||
       selection.outerIsolation?.value ||
       selection.facade?.value ||
@@ -243,6 +277,22 @@ export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
       selection.izolimiPlloqes?.value
     );
   }, [selection]);
+
+  const coreCategoryIds = new Set([
+    "isolation",
+    "outerIsolation",
+    "facade",
+    "couverture",
+    "dritaret",
+    "etancheite",
+    "terraceEtancheite",
+    "roof",
+    "fauxPlafond",
+  ]);
+  const dynamicSelectedOptions = (selection?.selectedOptions ?? []).filter(
+    (item) => item.categoryId && !coreCategoryIds.has(item.categoryId)
+  );
+  const optionLabel = (option?: StoredOption) => option?.label || option?.value;
 
 
   const t = {
@@ -282,22 +332,33 @@ export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
       : locale === "de" ? "Lieferung per Kranwagen direkt auf Ihr Grundstück unter sicheren Bedingungen innerhalb von 3 bis 4 Wochen"
       : locale === "nl" ? "Levering met kraanwagen direct op uw grond onder veilige omstandigheden binnen 3 tot 4 weken"
       : "Livraison par camion grue directement sur votre terrain sous 3 à 4 semaines avec encadrement de sécurité",
-    assemblyTitle: locale === "en" ? "Professional Assembly & Installation" : locale === "de" ? "Professionelle Montage & Installation" : locale === "nl" ? "Professionele Montage & Installatie" : "Montage & Installation professionnelle",
+    assemblyTitle: locale === "en" ? "Assembly by Ossa Bois" : locale === "de" ? "Montage durch Ossa Bois" : locale === "nl" ? "Montage door Ossa Bois" : "Montage par Ossa Bois",
     assemblyDesc: locale === "en"
       ? "Complete assembly of the timber frame structure on your foundations by our expert crew"
       : locale === "de" ? "Vollständiger Aufbau der Holzrahmenstruktur auf Ihrem Fundament durch unser Expertenteam"
       : locale === "nl" ? "Volledige montage van de houtskeletstructuur op uw fundering door ons expertteam"
       : "Montage complet de la structure en ossature bois sur vos fondations par nos équipes spécialisées",
+    professionalAssemblyTitle: locale === "en" ? "Assembly by you or a third-party professional" : locale === "de" ? "Montage durch Sie oder einen externen Fachbetrieb" : locale === "nl" ? "Montage door uzelf of een externe professional" : "Montage par vous-même ou un professionnel tiers",
+    professionalAssemblyDesc: locale === "en"
+      ? "Assembly by Ossa Bois is not included; transport remains calculated separately"
+      : locale === "de" ? "Die Montage durch Ossa Bois ist nicht enthalten; der Transport wird separat berechnet"
+      : locale === "nl" ? "Montage door Ossa Bois is niet inbegrepen; het transport wordt apart berekend"
+      : "Le montage par Ossa Bois n'est pas inclus ; le transport reste calculé séparément",
+    pendingAssemblyTitle: locale === "en" ? "Assembly choice pending" : locale === "de" ? "Montagewahl ausstehend" : locale === "nl" ? "Montagekeuze ontbreekt" : "Choix du montage à confirmer",
+    pendingAssemblyDesc: locale === "en" ? "Return to the configurator to select an assembly option" : locale === "de" ? "Kehren Sie zum Konfigurator zurück, um eine Montageoption auszuwählen" : locale === "nl" ? "Ga terug naar de configurator om een montageoptie te kiezen" : "Retournez au configurateur pour sélectionner une option de montage",
+    notIncluded: locale === "en" ? "Not included" : locale === "de" ? "Nicht enthalten" : locale === "nl" ? "Niet inbegrepen" : "Non inclus",
+    pending: locale === "en" ? "Pending" : locale === "de" ? "Ausstehend" : locale === "nl" ? "In afwachting" : "À confirmer",
+    trucks: (count: number) => locale === "en" ? `${count} truck${count === 1 ? "" : "s"}` : locale === "de" ? `${count} Lkw` : locale === "nl" ? `${count} vrachtwagen${count === 1 ? "" : "s"}` : `${count} camion${count === 1 ? "" : "s"}`,
     agreeShippingText: locale === "en"
       ? "I accept the delivery conditions by special convoy. I certify that my plot is accessible for heavy crane trucks."
       : locale === "de" ? "Ich akzeptiere die Lieferbedingungen per Spezialtransport. Ich bestätige, dass mein Grundstück für schwere Kranwagen zugänglich ist."
       : locale === "nl" ? "Ik accepteer de leveringsvoorwaarden per speciaal transport. Ik verklaar dat mijn grond toegankelijk is voor zware kraanwagens."
       : "J'accepte les conditions de livraison par convoi exceptionnel. Je certifie que mon terrain est accessible aux camions grues de gros tonnage.",
     agreeTermsText: locale === "en"
-      ? "I accept the general terms of sale and payment conditions (30% downpayment on order, 40% on timber frame assembly, 30% on key handover)."
-      : locale === "de" ? "Ich akzeptiere die Allgemeinen Geschäftsbedingungen und Zahlungsbedingungen (30% Anzahlung bei Bestellung, 40% bei Montage der Struktur, 30% bei Schlüsselübergabe)."
-      : locale === "nl" ? "Ik accepteer de algemene verkoopvoorwaarden en betalingsvoorwaarden (30% aanbetaling bij bestelling, 40% bij montage van de structuur, 30% bij sleuteloverdracht)."
-      : "J'accepte les conditions générales de vente et les modalités de paiement (30% d'acompte à la commande, 40% au montage de la structure, 30% à la remise des clés).",
+      ? "I accept the general terms of sale and the payment terms that will be specified in the personalized quotation."
+      : locale === "de" ? "Ich akzeptiere die Allgemeinen Geschäftsbedingungen und die Zahlungsbedingungen, die im persönlichen Angebot festgelegt werden."
+      : locale === "nl" ? "Ik accepteer de algemene verkoopvoorwaarden en de betalingsvoorwaarden die in de persoonlijke offerte worden vermeld."
+      : "J'accepte les conditions générales de vente et les modalités de paiement qui seront précisées dans le devis personnalisé.",
     agreeUrbanText: locale === "en"
       ? "I confirm the compliance of my project with local urban planning regulations (PLU) and accept the building permit steps."
       : locale === "de" ? "Ich bestätige die Übereinstimmung meines Projekts mit den lokalen Bauvorschriften (B-Plan) und nehme die erforderlichen Baugenehmigungsschritte zur Kenntnis."
@@ -315,11 +376,10 @@ export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
       : "Veuillez accepter toutes les conditions ci-dessus pour envoyer votre demande.",
     summaryTitle: locale === "en" ? "Project Summary" : locale === "de" ? "Projektzusammenfassung" : locale === "nl" ? "Projectsamenvatting" : "Récapitulatif du projet",
     selectedModel: locale === "en" ? "Selected Model" : locale === "de" ? "Ausgewähltes Modell" : locale === "nl" ? "Geselecteerd model" : "Modèle choisi",
-    basePriceLabel: locale === "en" ? "Base Price" : locale === "de" ? "Basispreis" : locale === "nl" ? "Basisprijs" : "Prix de base",
+    basePriceLabel: locale === "en" ? "Configured house" : locale === "de" ? "Konfiguriertes Haus" : locale === "nl" ? "Geconfigureerd huis" : "Maison configurée",
     shippingCost: locale === "en" ? "Transport Estimate" : locale === "de" ? "Transportkosten-Schätzung" : locale === "nl" ? "Geschatte transportkosten" : "Estimation transport",
     assemblyCostLabel: locale === "en" ? "Assembly & Installation" : locale === "de" ? "Montage & Installation" : locale === "nl" ? "Montage & Installatie" : "Montage & Installation",
     totalEst: locale === "en" ? "Total Estimate" : locale === "de" ? "Gesamtschätzung" : locale === "nl" ? "Totale schatting" : "Estimation totale",
-    vatIncl: locale === "en" ? "incl. VAT" : locale === "de" ? "inkl. MwSt." : locale === "nl" ? "incl. btw" : "TTC",
     submitButton: locale === "en" ? "Submit Project Request" : locale === "de" ? "Projektanfrage senden" : locale === "nl" ? "Projectaanvraag indienen" : "Envoyer ma demande de projet",
     submitLoading: locale === "en" ? "Processing Request..." : locale === "de" ? "Anfrage wird verarbeitet..." : locale === "nl" ? "Aanvraag wordt verwerkt..." : "Traitement en cours...",
     terms: locale === "en" 
@@ -340,14 +400,21 @@ export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
       : locale === "de" ? `Vielen Dank, ${name}. Unser technisches Team prüft Ihre Projektdetails. Ein Experte für Modulbau wird sich innerhalb von 24 Stunden mit Ihnen in Verbindung setzen, um die nächsten Schritte zu besprechen.`
       : locale === "nl" ? `Dank u, ${name}. Ons technisch team beoordeelt uw projectgegevens. Een expert in modulaire bouw neemt binnen 24 uur contact met u op om de volgende stappen te bespreken.`
       : `Merci, ${name}. Notre bureau d'études analyse les détails de votre configuration. Un expert en construction bois vous recontactera sous 24h pour affiner votre projet.`,
+    notificationWarning: locale === "en"
+      ? "Your request was saved, but the confirmation email could not be sent. Please keep the project reference below."
+      : locale === "de"
+        ? "Ihre Anfrage wurde gespeichert, aber die Bestätigungs-E-Mail konnte nicht gesendet werden. Bitte bewahren Sie die Projektreferenz unten auf."
+        : locale === "nl"
+          ? "Uw aanvraag is opgeslagen, maar de bevestigingsmail kon niet worden verzonden. Bewaar de projectreferentie hieronder."
+          : "Votre demande a bien été enregistrée, mais l'e-mail de confirmation n'a pas pu être envoyé. Conservez la référence ci-dessous.",
     orderRefLabel: locale === "en" ? "Project Reference" : locale === "de" ? "Projekt-Referenz" : locale === "nl" ? "Projectreferentie" : "Référence du projet",
     goHome: locale === "en" ? "Back to Homepage" : locale === "de" ? "Zurück zur Startseite" : locale === "nl" ? "Terug naar startpagina" : "Retour à l'accueil",
-    trust1Title: locale === "en" ? "10-Year CCMI Guarantee" : locale === "de" ? "10 Jahre CCMI-Garantie" : locale === "nl" ? "10 jaar CCMI-garantie" : "Garantie Décennale CCMI",
+    trust1Title: locale === "en" ? "Personalized quotation" : locale === "de" ? "Persönliches Angebot" : locale === "nl" ? "Persoonlijke offerte" : "Devis personnalisé",
     trust1Desc: locale === "en" 
-      ? "All structural components are insured for 10 years by French law." 
-      : locale === "de" ? "Alle tragenden Teile sind gesetzlich für 10 Jahre versichert."
-      : locale === "nl" ? "Alle structurele componenten zijn wettelijk verzekerd voor 10 jaar."
-      : "Garantie de livraison et assurance décennale structurelle incluses.",
+      ? "Final prices, taxes, guarantees, and contractual terms are confirmed in your quotation."
+      : locale === "de" ? "Endpreise, Steuern, Garantien und Vertragsbedingungen werden im Angebot bestätigt."
+      : locale === "nl" ? "Eindprijzen, belastingen, garanties en contractvoorwaarden worden in uw offerte bevestigd."
+      : "Les prix finaux, taxes, garanties et conditions contractuelles sont confirmés dans votre devis.",
     trust2Title: locale === "en" ? "RE2020 Energy Standards" : locale === "de" ? "RE2020 Energiestandards" : locale === "nl" ? "RE2020 energiestandaarden" : "Normes Thermiques RE2020",
     trust2Desc: locale === "en" 
       ? "Engineered for superior energy savings and insulation." 
@@ -362,8 +429,32 @@ export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
       : "Provenance certifiée de forêts gérées durablement."
   };
 
+  const assemblyCardTitle =
+    installationMode === "ossa"
+      ? t.assemblyTitle
+      : installationMode === "professional"
+        ? t.professionalAssemblyTitle
+        : t.pendingAssemblyTitle;
+  const assemblyCardDescription =
+    installationMode === "ossa"
+      ? t.assemblyDesc
+      : installationMode === "professional"
+        ? t.professionalAssemblyDesc
+        : t.pendingAssemblyDesc;
+  const assemblyPriceText =
+    installationMode === "professional"
+      ? t.notIncluded
+      : installationMode === "ossa"
+        ? formatTransportCost(assemblyCost)
+        : t.pending;
+  const transportLabel = truckCount ? `${t.shippingCost} (${t.trucks(truckCount)})` : t.shippingCost;
+
   function submitOrder(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    // The configurator step is mandatory. This also protects legacy or manually
+    // crafted session payloads before the server performs the same validation.
+    if (!installationMode) return;
     
     // Check custom agreements validation
     if (!agreeShipping || !agreeTerms || !agreeUrban || !agreePrivacy) {
@@ -377,7 +468,11 @@ export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
     setClientName(fullName);
     setIsSubmitting(true);
 
-    const randomCode = Math.random().toString(36).substring(2, 7).toUpperCase();
+    const randomCode = globalThis.crypto
+      .randomUUID()
+      .replace(/-/g, "")
+      .slice(0, 12)
+      .toUpperCase();
     const year = new Date().getFullYear();
     const ref = `OB-${year}-${randomCode}`;
     setOrderRef(ref);
@@ -406,7 +501,6 @@ export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
         deliveryInfo,
         orderRef: ref,
         total,
-        transportCost: transportCost,
         locale
       })
     })
@@ -414,6 +508,7 @@ export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
       .then((result) => {
         setIsSubmitting(false);
         if (result.success) {
+          setNotificationsSent(result.notificationsSent !== false);
           setSuccess(true);
           sessionStorage.removeItem("house_selections");
           window.scrollTo({ top: 0, behavior: "smooth" });
@@ -463,19 +558,46 @@ export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
             </div>
             <h3>{t.successTitle}</h3>
             <p>{t.successDesc(clientName)}</p>
+            {!notificationsSent ? (
+              <p className="checkout-notification-warning" role="status">
+                {t.notificationWarning}
+              </p>
+            ) : null}
             
             <div className="order-ref-card">
               <div className="order-ref-label">{t.orderRefLabel}</div>
               <div className="order-ref-val">{orderRef}</div>
             </div>
 
-            <Link href={`/${isEn ? "en" : "fr"}`} className="home-btn">
+            <Link href={`/${locale}`} className="home-btn">
               {t.goHome}
             </Link>
           </div>
         ) : (
           <>
-            {selection ? (
+            {selection && !installationMode ? (
+              <div className="empty-checkout">
+                <div className="empty-checkout-icon" aria-hidden="true">🛠️</div>
+                <h2>{t.pendingAssemblyTitle}</h2>
+                <p>{t.pendingAssemblyDesc}</p>
+                <Link
+                  href={
+                    selection.house?.id
+                      ? `/${locale}/maisons/${selection.house.id}`
+                      : `/${locale}/maisons`
+                  }
+                  className="discover-btn"
+                >
+                  {locale === "en"
+                    ? "Return to the configurator"
+                    : locale === "de"
+                      ? "Zum Konfigurator zurückkehren"
+                      : locale === "nl"
+                        ? "Terug naar de configurator"
+                        : "Retourner au configurateur"}
+                </Link>
+              </div>
+            ) : selection ? (
               <div className="checkout-content">
                 <div className="checkout-form-section">
                   <form id="checkout-form" className="checkout-form-card" onSubmit={submitOrder}>
@@ -685,32 +807,39 @@ export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
                             type="checkbox"
                             checked={true}
                             readOnly
+                            tabIndex={-1}
+                            aria-hidden="true"
                           />
                           <span className="transportation-custom-checkbox" />
                           <div className="transportation-content">
                             <div className="transportation-info">
                               <span className="transportation-name">{t.shippingMethod}</span>
-                              <span className="transportation-description">{t.shippingDesc}</span>
+                              <span className="transportation-description">
+                                {t.shippingDesc}
+                                {truckCount ? ` · ${t.trucks(truckCount)}` : ""}
+                              </span>
                             </div>
                             <span className="transportation-price">{formatTransportCost(transportCost)}</span>
                           </div>
                         </div>
 
-                        {/* Static locked checked assembly option card */}
-                        <div className="transportation-card checked static-card">
+                        {/* Assembly option chosen in the mandatory configurator step */}
+                        <div className={`transportation-card static-card${installationMode ? " checked" : ""}`}>
                           <input
                             className="transportation-checkbox"
                             type="checkbox"
-                            checked={true}
+                            checked={Boolean(installationMode)}
                             readOnly
+                            tabIndex={-1}
+                            aria-hidden="true"
                           />
                           <span className="transportation-custom-checkbox" />
                           <div className="transportation-content">
                             <div className="transportation-info">
-                              <span className="transportation-name">{t.assemblyTitle}</span>
-                              <span className="transportation-description">{t.assemblyDesc}</span>
+                              <span className="transportation-name">{assemblyCardTitle}</span>
+                              <span className="transportation-description">{assemblyCardDescription}</span>
                             </div>
-                            <span className="transportation-price">{formatTransportCost(0)}</span>
+                            <span className="transportation-price">{assemblyPriceText}</span>
                           </div>
                         </div>
                       </div>
@@ -738,7 +867,7 @@ export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
                           <div className="order-product-name">{selection.house?.name || "Maison"}</div>
                           <div className="order-product-qty">1 · {selection.size?.value}</div>
                         </div>
-                        <div className="order-product-price">{euroFormatter.format(basePrice)}</div>
+                        <div className="order-product-price">{euroFormatter.format(configurationSubtotal)}</div>
                       </div>
 
                       {/* Displaying configured customizations */}
@@ -754,7 +883,7 @@ export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
                                   </svg>
                                   {locale === "en" ? "Insulation" : locale === "de" ? "Isolierung" : locale === "nl" ? "Isolatie" : "Isolation"}
                                 </span>
-                                <span>{selection.isolation.value}</span>
+                                <span>{optionLabel(selection.isolation)}</span>
                               </div>
                             )}
                             {selection.outerIsolation?.value && (
@@ -765,7 +894,7 @@ export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
                                   </svg>
                                   {locale === "en" ? "Ext. Insulation" : locale === "de" ? "Außenisolierung" : locale === "nl" ? "Buitenisolatie" : "Isolation Ext."}
                                 </span>
-                                <span>{selection.outerIsolation.value}</span>
+                                <span>{optionLabel(selection.outerIsolation)}</span>
                               </div>
                             )}
                             {selection.facade?.value && (
@@ -776,7 +905,7 @@ export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
                                   </svg>
                                   {locale === "en" ? "Facade" : locale === "de" ? "Fassade" : locale === "nl" ? "Gevel" : "Façade"}
                                 </span>
-                                <span>{selection.facade.value}</span>
+                                <span>{optionLabel(selection.facade)}</span>
                               </div>
                             )}
                             {selection.toiture?.value && (
@@ -787,7 +916,7 @@ export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
                                   </svg>
                                   {locale === "en" ? "Roof Cover" : locale === "de" ? "Dacheindeckung" : locale === "nl" ? "Dakbedekking" : "Couverture"}
                                 </span>
-                                <span>{selection.toiture.value}</span>
+                                <span>{optionLabel(selection.toiture)}</span>
                               </div>
                             )}
                             {selection.dritaret?.value && (
@@ -798,7 +927,7 @@ export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
                                   </svg>
                                   {locale === "en" ? "Windows" : locale === "de" ? "Fenster" : locale === "nl" ? "Ramen" : "Menuiseries"}
                                 </span>
-                                <span>{selection.dritaret.value}</span>
+                                <span>{optionLabel(selection.dritaret)}</span>
                               </div>
                             )}
                             {selection.etancheite?.value && (
@@ -809,7 +938,7 @@ export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
                                   </svg>
                                   {locale === "en" ? "Waterproofing" : locale === "de" ? "Abdichtung" : locale === "nl" ? "Waterdichting" : "Étanchéité"}
                                 </span>
-                                <span>{selection.etancheite.value}</span>
+                                <span>{optionLabel(selection.etancheite)}</span>
                               </div>
                             )}
                             {selection.etancheiteTerrasse?.value && (
@@ -820,7 +949,7 @@ export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
                                   </svg>
                                   {locale === "en" ? "Attic Isolation" : locale === "de" ? "Attika-Isolierung" : locale === "nl" ? "Attiek-isolatie" : "Isolation de l'attique"}
                                 </span>
-                                <span>{selection.etancheiteTerrasse.value}</span>
+                                <span>{optionLabel(selection.etancheiteTerrasse)}</span>
                               </div>
                             )}
                             {selection.strukturaPlloqes?.value && (
@@ -831,7 +960,7 @@ export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
                                   </svg>
                                   {locale === "en" ? "Roof Insulation" : locale === "de" ? "Dachisolierung" : locale === "nl" ? "Dakisolatie" : "Isolation de la toiture"}
                                 </span>
-                                <span>{selection.strukturaPlloqes.value}</span>
+                                <span>{optionLabel(selection.strukturaPlloqes)}</span>
                               </div>
                             )}
                             {selection.izolimiPlloqes?.value && (
@@ -842,9 +971,15 @@ export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
                                   </svg>
                                   {locale === "en" ? "False Ceiling" : locale === "de" ? "Zwischendecke" : locale === "nl" ? "Verlaagd plafond" : "Faux plafond"}
                                 </span>
-                                <span>{selection.izolimiPlloqes.value}</span>
+                                <span>{optionLabel(selection.izolimiPlloqes)}</span>
                               </div>
                             )}
+                            {dynamicSelectedOptions.map((item, index) => (
+                              <div className="config-option-item" key={`${item.categoryId}-${item.optionId}-${index}`}>
+                                <span>{item.categoryLabel || item.categoryId}</span>
+                                <span>{item.label || item.optionId}</span>
+                              </div>
+                            ))}
                           </div>
                         </>
                       )}
@@ -855,7 +990,7 @@ export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
                           <div className="specs-table-title">{t.archSpecs}</div>
                           <div className="configured-options-list architectural-specs">
                             {Object.entries(selection.perdhesa)
-                              .filter(([_, value]) => value && Number(value) > 0)
+                              .filter((entry) => entry[1] && Number(entry[1]) > 0)
                               .map(([key, value]) => {
                                 const translation = PERDHESA_LABELS[key];
                                 const label = translation ? (translation[locale as keyof typeof translation] || translation.fr) : key.replaceAll("_", " ");
@@ -880,21 +1015,21 @@ export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
                     
                     <div className="order-price-row">
                       <span className="order-price-label">{t.basePriceLabel}</span>
-                      <span className="order-price-value">{euroFormatter.format(basePrice)}</span>
+                      <span className="order-price-value">{euroFormatter.format(configurationSubtotal)}</span>
                     </div>
                     <div className="order-price-row">
-                      <span className="order-price-label">{t.shippingCost}</span>
+                      <span className="order-price-label">{transportLabel}</span>
                       <span className="order-price-value">{formatTransportCost(transportCost)}</span>
                     </div>
                     <div className="order-price-row">
                       <span className="order-price-label">{t.assemblyCostLabel}</span>
-                      <span className="order-price-value">{formatTransportCost(0)}</span>
+                      <span className="order-price-value">{assemblyPriceText}</span>
                     </div>
                     
                     <div className="order-divider" />
                     
                     <div className="order-price-row order-total-row">
-                      <span className="order-price-label">{t.totalEst} <small style={{fontSize: "11px", color: "#8c8c80", fontWeight: "normal"}}>({t.vatIncl})</small></span>
+                      <span className="order-price-label">{t.totalEst}</span>
                       <span className="order-price-value order-total-price">{euroFormatter.format(total)}</span>
                     </div>
                   </div>
@@ -904,7 +1039,7 @@ export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
                       className="place-order-button" 
                       type="submit" 
                       form="checkout-form"
-                      disabled={isSubmitting}
+                      disabled={isSubmitting || !installationMode}
                     >
                       {isSubmitting ? (
                         <>
@@ -930,7 +1065,7 @@ export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
 
                     {/* Validation Error Message Box */}
                     {agreementsError && (
-                      <div className="agreements-error-message">
+                      <div className="agreements-error-message" role="alert">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{marginRight: "6px", flexShrink: 0}}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
                         </svg>
@@ -1063,7 +1198,7 @@ export function CheckoutPage({ locale, dict }: CheckoutPageProps) {
                 <div className="empty-checkout-icon">🛖</div>
                 <h2>{t.emptyTitle}</h2>
                 <p>{t.emptyDesc}</p>
-                <Link href={`/${isEn ? "en" : "fr"}/maisons`} className="discover-btn">
+                <Link href={`/${locale}/maisons`} className="discover-btn">
                   {t.discoverModels}
                 </Link>
               </div>

@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { formatArchiveStartingPrice } from "@/data/houses-archive";
 import { Locale } from "@/lib/i18n";
 import { useFavorites } from "@/lib/favorites";
 import { useSavedConfigurations } from "@/lib/saved-configs";
@@ -26,7 +25,6 @@ export type CMSHouseItem = {
   description: string;
   image: string;
   imageBardage: string;
-  price60x160: number | null;
   neto?: number | null;
   bruto?: number | null;
   planimetry?: string | null;
@@ -196,7 +194,6 @@ export function CompareSlider({ imageA, imageB, altA, altB }: { imageA: string; 
 }
 
 function HouseCard({ house, locale, dict, onOpenPlanimetry }: { house: CMSHouseItem; locale: Locale; dict: any; onOpenPlanimetry?: (house: CMSHouseItem) => void }) {
-  const price = formatArchiveStartingPrice(house.price60x160);
   const hasBothImages = !!house.image && !!house.imageBardage && house.image !== house.imageBardage;
   const { isFavorite, handleToggle } = useFavorites();
 
@@ -278,16 +275,6 @@ function HouseCard({ house, locale, dict, onOpenPlanimetry }: { house: CMSHouseI
         <p className="house-archive-card-desc">{house.description}</p>
         
         <div className="house-archive-card-footer">
-          {price ? (
-            <div className="house-archive-price">
-              <span className="price-label">{dict.startingFrom}</span>
-              <strong className="price-val">{price}&nbsp;€</strong>
-            </div>
-          ) : (
-            <div className="house-archive-price price-placeholder">
-              <span className="price-label">{dict.onQuote}</span>
-            </div>
-          )}
           <Link className="house-archive-button" href={`/${locale}/maisons/${house.slug}`}>
             <span>{dict.configureBtn}</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">

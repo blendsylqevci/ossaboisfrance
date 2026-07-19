@@ -1261,6 +1261,7 @@ img {
   font-weight: 600;
   text-decoration: none;
   transition: all 0.25s ease;
+  width: 100%;
 }
 
 .house-archive-button svg {
@@ -2426,6 +2427,42 @@ img {
   font-size: 20px;
 }
 
+.price-total.price-pending {
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 3px;
+  max-width: 520px;
+}
+
+.price-total.price-pending .price-value {
+  color: #263126;
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 1.3;
+  white-space: normal;
+}
+
+.price-extra-note {
+  color: #687167;
+  font-size: 12px;
+  font-weight: 450;
+  line-height: 1.35;
+}
+
+.price-display-stack {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.continue-button:disabled {
+  background: #d9ddd7;
+  color: #7c857a;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .price-dropdown {
   display: flex;
   align-items: center;
@@ -2519,6 +2556,293 @@ img {
   animation: modal-backdrop-fade-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+.installation-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: grid;
+  place-items: center;
+  overflow-y: auto;
+  background: rgba(16, 20, 14, 0.68);
+  padding: 24px;
+  animation: modal-backdrop-fade-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+body:has(.installation-modal-backdrop) .cookie-reopen-trigger {
+  display: none;
+}
+
+.installation-modal {
+  position: relative;
+  width: min(720px, 100%);
+  max-height: calc(100dvh - 48px);
+  overflow-y: auto;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.3);
+  padding: 32px;
+  animation: modal-scale-up 0.36s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.installation-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 50%;
+  background: #181a20;
+  color: #fff;
+  font-size: 27px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.installation-modal-close:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+.installation-modal-header {
+  padding-right: 42px;
+}
+
+.installation-modal-header h2 {
+  margin: 7px 0 9px;
+  color: #171b18;
+  font-size: clamp(25px, 4vw, 34px);
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.installation-modal-header > p:last-child {
+  margin: 0;
+  max-width: 62ch;
+  color: #667066;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.installation-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.installation-option {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-height: 152px;
+  border: 1px solid #dce2da;
+  border-radius: 12px;
+  background: #fff;
+  padding: 18px;
+  cursor: pointer;
+  transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+}
+
+.installation-option:hover {
+  border-color: #758767;
+}
+
+.installation-option.selected {
+  border-color: #5e6f4f;
+  background: #f3f6f1;
+  box-shadow: 0 0 0 2px rgba(94, 111, 79, 0.12);
+}
+
+.installation-option.disabled {
+  background: #f5f5f3;
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
+.installation-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.installation-option input:focus-visible + .installation-option-check,
+.size-option input:focus-visible + .size-option-content,
+.house-option-label input:focus-visible + .option-content {
+  outline: 3px solid rgba(78, 146, 128, 0.5);
+  outline-offset: 3px;
+}
+
+.installation-option-check {
+  flex: 0 0 21px;
+  width: 21px;
+  height: 21px;
+  border: 2px solid #b8c0b4;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: inset 0 0 0 4px #fff;
+  transition: background 160ms ease, border-color 160ms ease;
+}
+
+.installation-option.selected .installation-option-check {
+  border-color: #5e6f4f;
+  background: #5e6f4f;
+}
+
+.installation-option-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.installation-option-copy strong {
+  color: #1d231d;
+  font-size: 15px;
+  line-height: 1.25;
+}
+
+.installation-option-copy span {
+  color: #677067;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.installation-quote-summary {
+  margin-top: 18px;
+  border: 1px solid #e0e5de;
+  border-radius: 12px;
+  background: #fafbf9;
+  padding: 6px 18px;
+}
+
+.installation-quote-summary > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  border-bottom: 1px solid #e5e8e3;
+  padding: 11px 0;
+  color: #545d53;
+  font-size: 14px;
+}
+
+.installation-quote-summary > div:last-child {
+  border-bottom: 0;
+}
+
+.installation-quote-summary strong {
+  color: #20271f;
+  text-align: right;
+}
+
+.installation-quote-summary .installation-quote-total {
+  color: #1d231d;
+  font-size: 16px;
+  font-weight: 650;
+}
+
+.installation-tax-note {
+  margin: 0;
+  padding: 10px 0 12px;
+  color: #70786f;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.checkout-notification-warning {
+  border: 1px solid #d99a50;
+  border-radius: 8px;
+  background: #fff8ee;
+  padding: 12px 14px;
+  color: #7a4a17;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.installation-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.installation-back-button,
+.installation-confirm-button {
+  min-height: 46px;
+  border-radius: 8px;
+  padding: 11px 18px;
+  font-size: 14px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.installation-back-button {
+  border: 1px solid #cfd5cc;
+  background: #fff;
+  color: #354034;
+}
+
+.installation-confirm-button {
+  border: 1px solid #181a20;
+  background: #181a20;
+  color: #fff;
+}
+
+.installation-back-button:disabled,
+.installation-confirm-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.installation-required-message {
+  margin: 10px 0 0;
+  color: #9a4f24;
+  font-size: 12px;
+  text-align: right;
+}
+
+@media (max-width: 640px) {
+  .installation-modal-backdrop {
+    align-items: end;
+    padding: 0;
+  }
+
+  .installation-modal {
+    width: 100%;
+    max-height: 94dvh;
+    border-radius: 18px 18px 0 0;
+    padding: 24px 18px calc(20px + env(safe-area-inset-bottom));
+  }
+
+  .installation-options {
+    grid-template-columns: 1fr;
+  }
+
+  .installation-option {
+    min-height: 0;
+  }
+
+  .installation-modal-actions {
+    align-items: stretch;
+    flex-direction: row;
+  }
+
+  .installation-back-button,
+  .installation-confirm-button {
+    width: auto;
+    min-width: 0;
+    flex: 1;
+    padding-inline: 10px;
+  }
+
+  .installation-required-message {
+    text-align: center;
+  }
+}
+
 .image-zoom-backdrop {
   position: fixed;
   inset: 0;
@@ -2600,6 +2924,15 @@ img {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .material-modal-backdrop,
+  .installation-modal-backdrop,
+  .material-modal,
+  .installation-modal {
+    animation: none;
   }
 }
 
@@ -3967,6 +4300,22 @@ img {
     justify-content: space-between;
     gap: 12px;
     width: 100%;
+  }
+
+  .price-total-section.price-state-pending {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .price-total-section.price-state-pending .price-total {
+    min-width: 0;
+    width: 100%;
+    flex-shrink: 1;
+  }
+
+  .price-total-section.price-state-pending .continue-button {
+    width: 100%;
+    max-width: none;
   }
 
   .price-total {

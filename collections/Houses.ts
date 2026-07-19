@@ -17,40 +17,6 @@ export const Houses: CollectionConfig = {
         }
       },
     ],
-    beforeChange: [
-      async ({ data, req }) => {
-        const neto = data.perdhesa?.neto || 0;
-        if (neto > 0) {
-          let rate160 = 350;
-          let rate200 = 370;
-
-          try {
-            const globalOptions = await req.payload.findGlobal({
-              slug: 'house-options',
-              depth: 0,
-              req
-            });
-            if (globalOptions?.priceRate60x160) {
-              rate160 = globalOptions.priceRate60x160;
-            }
-            if (globalOptions?.priceRate60x200) {
-              rate200 = globalOptions.priceRate60x200;
-            }
-          } catch (globalErr) {
-            req.payload.logger.error(`[Houses Hook] Failed to load global options rates: ${globalErr}`);
-          }
-
-          if (neto >= 131) {
-            data.price60x160 = (neto * rate160) + 3500;
-            data.price60x200 = (neto * rate200) + 3500;
-          } else {
-            data.price60x160 = neto * rate160;
-            data.price60x200 = neto * rate200;
-          }
-        }
-        return data;
-      }
-    ],
     afterDelete: [
       async ({ req, id, doc }) => {
         try {
@@ -191,7 +157,7 @@ export const Houses: CollectionConfig = {
       // rendering uses the Local API (overrideAccess) so the site is unaffected.
       access: { read: ({ req }) => Boolean(req.user) },
       admin: {
-        description: 'Base structure price for 60x160 size (before 40% margin).',
+        description: 'Legacy field — ignored by public pricing. Structure pricing is calculated from Bruto, category, and wall thickness.',
       },
     },
     {
@@ -199,7 +165,7 @@ export const Houses: CollectionConfig = {
       type: 'number',
       access: { read: ({ req }) => Boolean(req.user) },
       admin: {
-        description: 'Base structure price for 60x200 size (before 40% margin).',
+        description: 'Legacy field — ignored by public pricing. Structure pricing is calculated from Bruto, category, and wall thickness.',
       },
     },
     {
@@ -207,7 +173,7 @@ export const Houses: CollectionConfig = {
       type: 'number',
       access: { read: ({ req }) => Boolean(req.user) },
       admin: {
-        description: 'Surcharge optionnelle de la marge commerciale (%) (laisse vide pour utiliser la marge globale dans House Options).',
+        description: 'Champ historique — non appliqué par la nouvelle tarification publique.',
       },
     },
     {
@@ -218,17 +184,17 @@ export const Houses: CollectionConfig = {
         {
           type: 'row',
           fields: [
-            { name: 'bruto', type: 'number', label: 'Bruto (m²)', admin: { width: '9%' } },
-            { name: 'neto', type: 'number', label: 'Neto (m²)', admin: { width: '9%' } },
-            { name: 'mure_te_jashtme', type: 'number', label: 'Murs Extérieurs (m²)', admin: { width: '9%' } },
-            { name: 'mure_mbajtese', type: 'number', label: 'Murs Porteurs (m²)', admin: { width: '9%' } },
-            { name: 'mure_ndarese', type: 'number', label: 'Murs Séparateurs (m²)', admin: { width: '9%' } },
-            { name: 'pllaka_e_kulmit', type: 'number', label: 'Dalle de Toit (m²)', admin: { width: '9%' } },
-            { name: 'pllaka_e_katit_0', type: 'number', label: 'Dalle d’Étage 0 (m²)', admin: { width: '9%' } },
-            { name: 'pllaka_e_katit_1', type: 'number', label: 'Dalle d’Étage 1 (m²)', admin: { width: '9%' } },
-            { name: 'pllaka_e_katit_2', type: 'number', label: 'Dalle d’Étage 2 (m²)', admin: { width: '9%' } },
-            { name: 'pllaka_e_katit', type: 'number', label: 'Dalle d’Étage (m²)', admin: { width: '9%' } },
-            { name: 'kulmi', type: 'number', label: 'Toiture (m²)', admin: { width: '9%' } },
+            { name: 'bruto', type: 'number', min: 0, label: 'Bruto (m²)', admin: { width: '9%' } },
+            { name: 'neto', type: 'number', min: 0, label: 'Neto (m²)', admin: { width: '9%' } },
+            { name: 'mure_te_jashtme', type: 'number', min: 0, label: 'Murs Extérieurs (m²)', admin: { width: '9%' } },
+            { name: 'mure_mbajtese', type: 'number', min: 0, label: 'Murs Porteurs (m²)', admin: { width: '9%' } },
+            { name: 'mure_ndarese', type: 'number', min: 0, label: 'Murs Séparateurs (m²)', admin: { width: '9%' } },
+            { name: 'pllaka_e_kulmit', type: 'number', min: 0, label: 'Dalle de Toit (m²)', admin: { width: '9%' } },
+            { name: 'pllaka_e_katit_0', type: 'number', min: 0, label: 'Dalle d’Étage 0 (m²)', admin: { width: '9%' } },
+            { name: 'pllaka_e_katit_1', type: 'number', min: 0, label: 'Dalle d’Étage 1 (m²)', admin: { width: '9%' } },
+            { name: 'pllaka_e_katit_2', type: 'number', min: 0, label: 'Dalle d’Étage 2 (m²)', admin: { width: '9%' } },
+            { name: 'pllaka_e_katit', type: 'number', min: 0, label: 'Dalle d’Étage (m²)', admin: { width: '9%' } },
+            { name: 'kulmi', type: 'number', min: 0, label: 'Toiture (m²)', admin: { width: '9%' } },
           ],
         },
       ],
@@ -270,7 +236,7 @@ export const Houses: CollectionConfig = {
       name: 'structureInfo',
       type: 'textarea',
       localized: true,
-      defaultValue: 'Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant rigidité et stabilité de l’ensemble. Comprend les murs porteurs, murs de séparation et charpente industrielle type fermette. Le prix inclut le transport et le montage sur site sous garantie décennale.',
+      defaultValue: 'Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant rigidité et stabilité de l’ensemble. Comprend les murs porteurs, murs de séparation et charpente industrielle type fermette. Le transport et le montage sont en supplément et sont calculés séparément lors de la validation du projet.',
       admin: {
         description: 'Informational text displayed beside the structure price.',
       },

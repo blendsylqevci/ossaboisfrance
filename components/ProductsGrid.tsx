@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { formatArchiveStartingPrice } from "@/data/houses-archive";
 import { CompareSlider } from "@/components/HousesArchive";
 import { useFavorites } from "@/lib/favorites";
 import { publicMediaUrl } from "@/lib/media-url";
@@ -16,7 +15,6 @@ type House = {
   description: string;
   image: string;
   imageBardage?: string;
-  price60x160?: number | null;
   neto?: number | null;
   bruto?: number | null;
   planimetry?: string | null;
@@ -33,8 +31,6 @@ type ProductsGridProps = {
   onReachEnd?: () => void;
   onReachStart?: () => void;
   dict: {
-    startingFrom: string;
-    onQuote: string;
     configureBtn: string;
   };
 };
@@ -238,20 +234,6 @@ export function ProductsGrid({
                       </div>
                       
                       <div className="prod-card-footer">
-                        {(() => {
-                          const formattedPrice = formatArchiveStartingPrice(house.price60x160 ?? null);
-                          return formattedPrice ? (
-                            <div className="prod-card-price-row">
-                              <span className="prod-price-label">{dict.startingFrom}</span>
-                              <span className="prod-price-val">{formattedPrice} €</span>
-                            </div>
-                          ) : (
-                            <div className="prod-card-price-row price-placeholder">
-                              <span className="prod-price-label">{dict.onQuote}</span>
-                            </div>
-                          );
-                        })()}
-                        
                         <Link
                           href={`/${locale}/maisons/${house.slug}`}
                           className="prod-card-button"
@@ -382,20 +364,6 @@ export function ProductsGrid({
                 </div>
                 
                 <div className="prod-card-footer">
-                  {(() => {
-                    const formattedPrice = formatArchiveStartingPrice(house.price60x160 ?? null);
-                    return formattedPrice ? (
-                      <div className="prod-card-price-row">
-                        <span className="prod-price-label">{dict.startingFrom}</span>
-                        <span className="prod-price-val">{formattedPrice} €</span>
-                      </div>
-                    ) : (
-                      <div className="prod-card-price-row price-placeholder">
-                        <span className="prod-price-label">{dict.onQuote}</span>
-                      </div>
-                    );
-                  })()}
-                  
                   <Link
                     href={`/${locale}/maisons/${house.slug}`}
                     className="prod-card-button"

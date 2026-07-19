@@ -180,10 +180,10 @@
       "atticTerrace": "Attic Terrace",
       "couverture": "Roof cover",
       "options": "Additional options",
-      "subtotal": "Subtotal excl. VAT",
+      "subtotal": "Subtotal",
       "transport": "Transport fees",
-      "tva": "VAT (20%)",
-      "total": "Total incl. VAT"
+      "tva": "VAT to be confirmed",
+      "total": "Configuration subtotal"
     },
     "labels": {
       "configureYourHouse": "Configure your house",
@@ -194,6 +194,9 @@
       "close": "Close",
       "askQuote": "Request information",
       "priceOnRequest": "Price on request",
+      "pricePending": "Choose a structure or material to calculate your price.",
+      "priceUnavailable": "Gross surface required — price on request",
+      "extrasNotice": "Configuration subtotal. Transport is mandatory and extra; Ossa Bois assembly is added only if you choose it.",
       "nextStep": "Next step",
       "prevStep": "Previous step",
       "orderNow": "Validate project",
@@ -231,6 +234,24 @@
       "successInterest": "Thank you! Your expression of interest has been sent successfully. We will contact you very soon.",
       "configuratorPrep": "Configurator in preparation",
       "configuratorPrepDesc": "The data for this house is imported from the CMS. The visual configurator will be activated after the graphic layers are fully loaded."
+    },
+    "assemblyModal": {
+      "kicker": "Project validation",
+      "title": "Who will assemble the house?",
+      "intro": "Transport is mandatory and extra. Ossa Bois assembly is added only if you choose it. Select an option to continue.",
+      "professionalTitle": "I am a professional or will hire another company",
+      "professionalDescription": "I will arrange the assembly. No Ossa Bois assembly cost will be added; only transport costs will be calculated.",
+      "ossaTitle": "I want assembly by Ossa Bois France",
+      "ossaDescription": "Ossa Bois France will carry out the assembly. Its cost will be added automatically together with transport.",
+      "unavailable": "Assembly pricing requires a gross surface between 80 and 200 m². Contact us for this model.",
+      "transport": "Transport",
+      "assembly": "Assembly",
+      "excluded": "Not included — arranged by the client",
+      "total": "Estimated total",
+      "taxNotice": "Indicative estimate: VAT and the final contractual amount will be confirmed in your personalized quotation.",
+      "required": "Select an assembly option to continue.",
+      "back": "Back to configuration",
+      "confirm": "Confirm and continue"
     }
   },
   "checkout": {
@@ -273,7 +294,7 @@
       "subtotal": "Subtotal",
       "transport": "Transport fees",
       "tva": "VAT (20%)",
-      "total": "Total incl. VAT",
+      "total": "Estimated total",
       "placeRequest": "Send my project request",
       "processing": "Processing your request...",
       "successTitle": "Thank you for your request!",

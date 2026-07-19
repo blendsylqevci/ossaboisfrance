@@ -24,6 +24,17 @@ interface StoredSelection {
   strukturaPlloqes?: { value?: string };
   izolimiPlloqes?: { value?: string };
   dritaret?: { value?: string };
+  selectedOptions?: Array<{
+    categoryId?: string;
+    categoryLabel?: string;
+    optionId?: string;
+    label?: string;
+  }>;
+  configurationSubtotal?: number;
+  truckCount?: number;
+  transportCost?: number;
+  installationMode?: 'professional' | 'ossa';
+  assemblyCost?: number;
   totalPrice?: number;
   priceBreakdown?: Array<{ label: string; value: number }>;
   perdhesa?: Record<string, number | string>;
@@ -41,6 +52,17 @@ const PERDHESA_LABELS: Record<string, string> = {
   pllaka_e_katit_2: "Dalle d'Étage 2",
   pllaka_e_katit: "Dalle d'Étage",
   kulmi: "Toiture",
+}
+
+function getNonNegativeNumber(value: unknown): number | null {
+  if (value === null || value === undefined || value === '') return null
+  const number = typeof value === 'number' ? value : Number(value)
+  return Number.isFinite(number) && number >= 0 ? number : null
+}
+
+function getPositiveInteger(value: unknown): number | null {
+  const number = getNonNegativeNumber(value)
+  return number !== null && number > 0 && Number.isInteger(number) ? number : null
 }
 
 export const OrderSummaryView: React.FC<{ path: string }> = ({ path }) => {
@@ -77,16 +99,50 @@ export const OrderSummaryView: React.FC<{ path: string }> = ({ path }) => {
   const euroFormatter = new Intl.NumberFormat("fr-FR", {
     style: "currency",
     currency: "EUR",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
   })
 
   const houseImageUrl = selection.currentImage || selection.house?.image
 
-  // Calculate pricing components
-  const shippingCost = transportCostValue !== undefined && transportCostValue !== null ? Number(transportCostValue) : 0
-  const grandTotal = totalPriceValue !== undefined && totalPriceValue !== null ? Number(totalPriceValue) : (selection.totalPrice || 0) + shippingCost
-  const housePrice = totalPriceValue !== undefined && totalPriceValue !== null ? grandTotal - shippingCost : (selection.totalPrice || 0)
+  // New orders carry a server-authored breakdown in selections. The top-level
+  // order fields remain useful as a fallback for historical records.
+  const storedSelectionTotal = getNonNegativeNumber(selection.totalPrice)
+  const topLevelTotal = getNonNegativeNumber(totalPriceValue)
+  const shippingCost =
+    getNonNegativeNumber(selection.transportCost) ??
+    getNonNegativeNumber(transportCostValue) ??
+    0
+  const assemblyCost = getNonNegativeNumber(selection.assemblyCost) ?? 0
+  const truckCount = getPositiveInteger(selection.truckCount)
+  const hasAuthoritativeBreakdown =
+    selection.configurationSubtotal !== undefined ||
+    selection.transportCost !== undefined ||
+    selection.assemblyCost !== undefined ||
+    selection.installationMode !== undefined
+  const grandTotal =
+    topLevelTotal ??
+    (hasAuthoritativeBreakdown
+      ? storedSelectionTotal ??
+        (getNonNegativeNumber(selection.configurationSubtotal) ?? 0) +
+          shippingCost +
+          assemblyCost
+      : (storedSelectionTotal ?? 0) + shippingCost)
+  const configurationSubtotal =
+    getNonNegativeNumber(selection.configurationSubtotal) ??
+    Math.max(0, grandTotal - shippingCost - assemblyCost)
+  const assemblyLabel =
+    selection.installationMode === 'ossa'
+      ? 'Montage par Ossa Bois'
+      : selection.installationMode === 'professional'
+        ? 'Montage client / professionnel tiers'
+        : 'Choix du montage non enregistré'
+  const assemblyPrice =
+    selection.installationMode === 'professional'
+      ? `Non inclus · ${euroFormatter.format(0)}`
+      : selection.installationMode === 'ossa'
+        ? euroFormatter.format(assemblyCost)
+        : 'À confirmer'
 
   return (
     <div style={{
@@ -116,7 +172,7 @@ export const OrderSummaryView: React.FC<{ path: string }> = ({ path }) => {
           </h3>
           <div style={{ fontSize: '14px', color: 'var(--theme-elevation-600, #64748b)', display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
             <span><strong>Dimensions:</strong> {selection.size?.value || 'Non spécifié'}</span>
-            <span>• <strong>Montant de base:</strong> {euroFormatter.format(housePrice)}</span>
+            <span>• <strong>Maison configurée:</strong> {euroFormatter.format(configurationSubtotal)}</span>
           </div>
         </div>
       </div>
@@ -185,6 +241,24 @@ export const OrderSummaryView: React.FC<{ path: string }> = ({ path }) => {
                   <td style={{ padding: '8px 0', textAlign: 'right', fontWeight: '600' }}>{selection.izolimiPlloqes.value}</td>
                 </tr>
               )}
+              {(selection.selectedOptions ?? [])
+                .filter((item) => ![
+                  'isolation',
+                  'outerIsolation',
+                  'facade',
+                  'couverture',
+                  'dritaret',
+                  'etancheite',
+                  'terraceEtancheite',
+                  'roof',
+                  'fauxPlafond',
+                ].includes(item.categoryId || ''))
+                .map((item, index) => (
+                  <tr key={`${item.categoryId}-${item.optionId}-${index}`} style={{ borderBottom: '1px solid var(--theme-elevation-100, #f1f5f9)' }}>
+                    <td style={{ padding: '8px 0', color: 'var(--theme-elevation-500, #64748b)', fontWeight: '500' }}>{item.categoryLabel || item.categoryId}</td>
+                    <td style={{ padding: '8px 0', textAlign: 'right', fontWeight: '600' }}>{item.label || item.optionId}</td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
@@ -198,7 +272,7 @@ export const OrderSummaryView: React.FC<{ path: string }> = ({ path }) => {
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13.5px' }}>
               <tbody>
                 {Object.entries(selection.perdhesa)
-                  .filter(([_, val]) => val !== undefined && val !== null && val !== "" && Number(val) > 0)
+                  .filter((entry) => entry[1] !== undefined && entry[1] !== null && entry[1] !== "" && Number(entry[1]) > 0)
                   .map(([key, val]) => {
                     const label = PERDHESA_LABELS[key] || key.replace(/_/g, ' ');
                     return (
@@ -242,7 +316,7 @@ export const OrderSummaryView: React.FC<{ path: string }> = ({ path }) => {
             color: '#22c55e', 
             fontWeight: '700' 
           }}>
-            Détails du Financement (TTC)
+            Détail du prix enregistré
           </h4>
           <div style={{ 
             fontSize: '14px', 
@@ -252,12 +326,18 @@ export const OrderSummaryView: React.FC<{ path: string }> = ({ path }) => {
             gap: '8px',
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ color: 'var(--theme-elevation-500, #94a3b8)', fontWeight: '500' }}>Montant Maison:</span>
-              <strong style={{ fontSize: '15px', color: 'var(--theme-elevation-900, #ffffff)' }}>{euroFormatter.format(housePrice)}</strong>
+              <span style={{ color: 'var(--theme-elevation-500, #94a3b8)', fontWeight: '500' }}>Maison configurée:</span>
+              <strong style={{ fontSize: '15px', color: 'var(--theme-elevation-900, #ffffff)' }}>{euroFormatter.format(configurationSubtotal)}</strong>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ color: 'var(--theme-elevation-500, #94a3b8)', fontWeight: '500' }}>Frais de transport:</span>
+              <span style={{ color: 'var(--theme-elevation-500, #94a3b8)', fontWeight: '500' }}>
+                Frais de transport{truckCount ? ` (${truckCount} camion${truckCount === 1 ? '' : 's'})` : ''}:
+              </span>
               <strong style={{ fontSize: '15px', color: 'var(--theme-elevation-900, #ffffff)' }}>{euroFormatter.format(shippingCost)}</strong>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ color: 'var(--theme-elevation-500, #94a3b8)', fontWeight: '500' }}>{assemblyLabel}:</span>
+              <strong style={{ fontSize: '15px', color: 'var(--theme-elevation-900, #ffffff)' }}>{assemblyPrice}</strong>
             </div>
           </div>
         </div>

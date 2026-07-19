@@ -57,6 +57,7 @@ export const maisonCalmeConfiguratorData: HouseConfiguratorData = {
   id: "maison-calme",
   name: "Maison Calme Toiture Terrasse",
   category: "Maison Toiture Terrasse",
+  categorySlug: "maison-toitu-terrasse",
   subheading:
     "Maison modulaire contemporaine de plain-pied, construite sur une ossature bois robuste avec toiture terrasse.",
   description:
@@ -80,7 +81,6 @@ export const maisonCalmeConfiguratorData: HouseConfiguratorData = {
   categories: maisonCalmeCategories,
   layerOrder: layerOrder.filter((key) => key in maisonCalmeLayers),
   defaultSelection: {
-    size: "60x160",
     etancheite: "epdm",
   },
   optionalCategoryIds: ["dritaret"],
@@ -92,5 +92,5 @@ export const maisonCalmeConfiguratorData: HouseConfiguratorData = {
     enableFauxPlafondOption: false,
   },
   structureInfo:
-    "Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant rigidité et stabilité de l'ensemble. Le prix inclut le transport et le montage sur site sous garantie décennale.",
+    "Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant rigidité et stabilité de l'ensemble. Le transport et le montage sont en supplément et sont calculés séparément lors de la validation du projet.",
 };

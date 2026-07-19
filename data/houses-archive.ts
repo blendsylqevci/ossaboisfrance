@@ -1,5 +1,3 @@
-import { isPublishedHousePrice } from "@/lib/price-availability";
-
 export type HouseArchiveCategory = {
   id: string;
   title: string;
@@ -324,16 +322,6 @@ export const houseArchiveItems: HouseArchiveItem[] = [
     price60x160: 41500
   }
 ];
-
-export function formatArchiveStartingPrice(price: number | null) {
-  if (!isPublishedHousePrice(price)) return null;
-
-  // Format exactly with space as thousands separator and comma for decimals
-  const formatted = price.toFixed(2);
-  const [integerPart, decimalPart] = formatted.split(".");
-  const groupedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-  return `${groupedInteger},${decimalPart}`;
-}
 
 export function findArchiveHouse(slug: string) {
   return houseArchiveItems.find((house) => house.slug === slug);

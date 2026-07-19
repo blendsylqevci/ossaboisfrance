@@ -203,6 +203,7 @@ export const eneaKulmConfiguratorData: HouseConfiguratorData = {
   id: "maison-enea-me-kulm",
   name: "Enea avec Toit",
   category: "Maison plain pied",
+  categorySlug: "maison-plein-pied",
   subheading: "Découvrez l'élégance moderne d'une maison de plain-pied d'exception à ossature bois, sublimée par une toiture traditionnelle à double pente. Conçue pour offrir des espaces intérieurs fluides et inondés de lumière, le modèle Enea avec Toit allie confort thermique RE2020 et design contemporain personnalisable.",
   description:
     "Le modèle Enea avec Toit réinterprète le charme intemporel de la maison individuelle de plain-pied. Son architecture associe la convivialité d'un grand espace de vie ouvert à l'efficacité énergétique d'une isolation bois multicouche de pointe. Entièrement configurable, elle s'adapte à vos envies : choix des isolations, bardage en mélèze naturel, menuiseries premium et toiture en tuiles céramiques ou bac acier moderne.",
@@ -224,9 +225,7 @@ export const eneaKulmConfiguratorData: HouseConfiguratorData = {
   sizes: eneaKulmSizes,
   categories: eneaKulmCategories,
   layerOrder,
-  defaultSelection: {
-    size: "60x160"
-  },
+  defaultSelection: {},
   optionalCategoryIds: ["dritaret"],
   enableFlags: {
     enableRoofOption: true,
@@ -236,5 +235,5 @@ export const eneaKulmConfiguratorData: HouseConfiguratorData = {
     enableFauxPlafondOption: false
   },
   structureInfo:
-    "Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant rigidité et stabilité de l’ensemble. Le prix inclut le transport et le montage."
+    "Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant rigidité et stabilité de l’ensemble. Le transport et le montage sont en supplément et sont calculés séparément lors de la validation du projet."
 };

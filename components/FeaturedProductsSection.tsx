@@ -16,7 +16,6 @@ type FeaturedHouseItem = {
   description: string;
   image: string;
   imageBardage?: string;
-  price60x160: number | null;
   neto?: number | null;
   bruto?: number | null;
   planimetry?: string | null;
@@ -33,8 +32,6 @@ type FeaturedProductsSectionProps = {
     featuredTitle: string;
     featuredSubtitle: string;
     exploreCta: string;
-    startingFrom: string;
-    onQuote: string;
     configureBtn: string;
   };
 };
@@ -168,8 +165,6 @@ export function FeaturedProductsSection({
                       setCurrentIndex(prevCatIdx);
                     }}
                     dict={{
-                      startingFrom: dict.startingFrom,
-                      onQuote: dict.onQuote,
                       configureBtn: dict.configureBtn,
                     }}
                   />

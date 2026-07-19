@@ -180,10 +180,10 @@
       "atticTerrace": "Attic Terrasse",
       "couverture": "Couverture de toit",
       "options": "Options additionnelles",
-      "subtotal": "Sous-total HT",
+      "subtotal": "Sous-total",
       "transport": "Frais de transport",
-      "tva": "TVA (20%)",
-      "total": "Total TTC"
+      "tva": "TVA à confirmer",
+      "total": "Sous-total configuration"
     },
     "labels": {
       "configureYourHouse": "Configurez votre maison",
@@ -194,6 +194,9 @@
       "close": "Fermer",
       "askQuote": "Demander des informations",
       "priceOnRequest": "Prix sur devis",
+      "pricePending": "Choisissez une structure ou un matériau pour calculer votre prix.",
+      "priceUnavailable": "Surface brute à compléter — prix sur devis",
+      "extrasNotice": "Sous-total de configuration. Le transport est obligatoire et en supplément ; le montage Ossa Bois est ajouté uniquement si vous le choisissez.",
       "nextStep": "Étape suivante",
       "prevStep": "Étape précédente",
       "orderNow": "Valider le projet",
@@ -231,6 +234,24 @@
       "successInterest": "Merci ! Votre expression d'intérêt a été envoyée avec succès. Nous vous contacterons très prochainement.",
       "configuratorPrep": "Configurateur en préparation",
       "configuratorPrepDesc": "Les données de cette maison sont importées depuis le CMS. Le configurateur visuel sera activé après chargement complet des calques graphiques."
+    },
+    "assemblyModal": {
+      "kicker": "Validation du projet",
+      "title": "Qui réalisera le montage de la maison ?",
+      "intro": "Le transport est obligatoire et en supplément. Le montage Ossa Bois est ajouté uniquement si vous le choisissez. Sélectionnez une option pour continuer.",
+      "professionalTitle": "Je suis professionnel ou je mandate une entreprise",
+      "professionalDescription": "J'organise le montage moi-même. Aucun coût de montage Ossa Bois ne sera ajouté ; seuls les frais de transport seront calculés.",
+      "ossaTitle": "Je souhaite le montage par Ossa Bois France",
+      "ossaDescription": "Ossa Bois France assurera le montage. Son coût sera ajouté automatiquement avec le transport.",
+      "unavailable": "Le tarif de montage nécessite une surface brute comprise entre 80 et 200 m². Contactez-nous pour ce modèle.",
+      "transport": "Transport",
+      "assembly": "Montage",
+      "excluded": "Non inclus — organisé par le client",
+      "total": "Total estimé",
+      "taxNotice": "Estimation indicative : la TVA et le montant contractuel final seront confirmés dans le devis personnalisé.",
+      "required": "Sélectionnez une option de montage pour continuer.",
+      "back": "Retour à la configuration",
+      "confirm": "Confirmer et continuer"
     }
   },
   "checkout": {
@@ -273,7 +294,7 @@
       "subtotal": "Sous-total",
       "transport": "Frais de transport",
       "tva": "TVA (20%)",
-      "total": "Total TTC",
+      "total": "Total estimé",
       "placeRequest": "Envoyer ma demande de projet",
       "processing": "Traitement de votre demande...",
       "successTitle": "Merci pour votre demande !",

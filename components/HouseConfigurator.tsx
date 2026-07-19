@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { ConfigCategory, ConfigOption, HouseConfiguratorData, SizeOption } from "@/data/house-configurator";
 import { Locale } from "@/lib/i18n";
@@ -13,6 +13,12 @@ import {
 import { PlanimetryModal } from "@/components/PlanimetryModal";
 import { publicMediaUrl } from "@/lib/media-url";
 import { isPublishedHousePrice } from "@/lib/price-availability";
+import {
+  getAssemblyCost,
+  getTransportQuote,
+  type InstallationMode,
+} from "@/lib/house-pricing";
+import { CHECKOUT_CATEGORY_PAYLOAD_KEYS } from "@/lib/checkout-pricing";
 
 function formatPrice(value: number) {
   // Format exactly with space as thousands separator and comma for decimals
@@ -23,6 +29,7 @@ function formatPrice(value: number) {
 }
 
 const HOUSE_CONFIG_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+const HOUSE_CONFIG_VERSION = 2;
 
 function getHouseConfigExpiresAt(now?: number) {
   return (now ?? Date.now()) + HOUSE_CONFIG_TTL_MS;
@@ -135,13 +142,10 @@ export const PERDHESA_LABELS: Record<string, { fr: string; en: string; de: strin
 
 export function HouseConfigurator({ config, locale, dict }: HouseConfiguratorProps) {
   const router = useRouter();
-  const pathname = usePathname();
-  const isEn = locale === "en";
   const [selection, setSelection] = useState<Record<string, string>>(() => ({
     ...config.defaultSelection,
     houseId: config.id
   }));
-  const [hasRestoredSave, setHasRestoredSave] = useState(false);
   const [showSaveToast, setShowSaveToast] = useState(false);
   const [breakdownOpen, setBreakdownOpen] = useState(false);
   const [sliderPos, setSliderPos] = useState(50);
@@ -173,8 +177,88 @@ export function HouseConfigurator({ config, locale, dict }: HouseConfiguratorPro
   const [formStatus, setFormStatus] = useState<"idle" | "success" | "error">("idle");
   const [isStructureTextExpanded, setIsStructureTextExpanded] = useState(false);
   const [isPreparingCheckout, setIsPreparingCheckout] = useState(false);
+  const [installationModalOpen, setInstallationModalOpen] = useState(false);
+  const [installationMode, setInstallationMode] = useState<InstallationMode | null>(null);
+  const configuratorRootRef = useRef<HTMLDivElement>(null);
+  const installationModalRef = useRef<HTMLDivElement>(null);
+  const installationTriggerRef = useRef<HTMLButtonElement>(null);
+  const isPreparingCheckoutRef = useRef(false);
 
   const scrollableRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    isPreparingCheckoutRef.current = isPreparingCheckout;
+  }, [isPreparingCheckout]);
+
+  useEffect(() => {
+    if (!installationModalOpen) return;
+
+    const modal = installationModalRef.current;
+    const root = configuratorRootRef.current;
+    const trigger = installationTriggerRef.current;
+    const previousOverflow = document.body.style.overflow;
+    const previousAriaHidden = root?.getAttribute("aria-hidden");
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+
+    document.body.style.overflow = "hidden";
+    root?.setAttribute("inert", "");
+    root?.setAttribute("aria-hidden", "true");
+
+    const getFocusableElements = () =>
+      modal
+        ? Array.from(
+            modal.querySelectorAll<HTMLElement>(
+              'button:not([disabled]), input:not([disabled]), [href], [tabindex]:not([tabindex="-1"])'
+            )
+          ).filter((element) => !element.hasAttribute("hidden"))
+        : [];
+
+    const focusTimer = window.requestAnimationFrame(() => {
+      const firstRadio = modal?.querySelector<HTMLInputElement>(
+        'input[type="radio"]:not([disabled])'
+      );
+      (firstRadio ?? getFocusableElements()[0])?.focus();
+    });
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !isPreparingCheckoutRef.current) {
+        event.preventDefault();
+        setInstallationModalOpen(false);
+        setInstallationMode(null);
+        return;
+      }
+      if (event.key !== "Tab") return;
+
+      const focusable = getFocusableElements();
+      if (focusable.length === 0) {
+        event.preventDefault();
+        return;
+      }
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.cancelAnimationFrame(focusTimer);
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = previousOverflow;
+      root?.removeAttribute("inert");
+      if (previousAriaHidden == null) root?.removeAttribute("aria-hidden");
+      else root?.setAttribute("aria-hidden", previousAriaHidden);
+      (previouslyFocused?.isConnected
+        ? previouslyFocused
+        : trigger
+      )?.focus();
+    };
+  }, [installationModalOpen]);
 
   useEffect(() => {
     setIsStructureTextExpanded(false);
@@ -220,12 +304,25 @@ export function HouseConfigurator({ config, locale, dict }: HouseConfiguratorPro
           const parsed = JSON.parse(stored);
           const now = Date.now();
           if (parsed && parsed.selection && parsed.expiresAt > now) {
-            savedSel = parsed.selection;
+            const restoredSelection = { ...parsed.selection };
+            // Version 1 always saved the implicit 60×160 default. Remove it so
+            // legacy saves cannot reveal a price without an explicit choice.
+            if (
+              parsed.version !== HOUSE_CONFIG_VERSION &&
+              restoredSelection.size === "60x160"
+            ) {
+              delete restoredSelection.size;
+            }
+            savedSel = restoredSelection;
             hasConfig = true;
 
             // Extend lifetime to 30 days
             const expiresAt = getHouseConfigExpiresAt(now);
-            safeLocalStorageSet(key, JSON.stringify({ selection: parsed.selection, expiresAt }));
+            safeLocalStorageSet(key, JSON.stringify({
+              version: HOUSE_CONFIG_VERSION,
+              selection: restoredSelection,
+              expiresAt,
+            }));
           }
         }
       } catch (err) {
@@ -236,12 +333,13 @@ export function HouseConfigurator({ config, locale, dict }: HouseConfiguratorPro
     setSelection(savedSel ? { ...savedSel, houseId: config.id } : { ...config.defaultSelection, houseId: config.id });
     setSavedSelection(savedSel);
     setHasSavedConfig(hasConfig);
-    setHasRestoredSave(true);
     setBreakdownOpen(false);
     setSliderPos(50);
     setActiveTab("description");
     setFacadeWarning("");
     setMaterialModal(null);
+    setInstallationModalOpen(false);
+    setInstallationMode(null);
     setPlanimetryOpen(false);
     setLayoutMode("split");
     setIsStructureTextExpanded(false);
@@ -265,7 +363,11 @@ export function HouseConfigurator({ config, locale, dict }: HouseConfiguratorPro
     try {
       const key = `ossa_house_config_${config.id}`;
       const expiresAt = getHouseConfigExpiresAt();
-      safeLocalStorageSet(key, JSON.stringify({ selection, expiresAt }));
+      safeLocalStorageSet(key, JSON.stringify({
+        version: HOUSE_CONFIG_VERSION,
+        selection,
+        expiresAt,
+      }));
       
       const isUpdating = hasSavedConfig;
       setHasSavedConfig(true);
@@ -401,13 +503,14 @@ export function HouseConfigurator({ config, locale, dict }: HouseConfiguratorPro
     const rawSize = config.sizes.find((size) => size.id === selection.size) ?? config.sizes[0];
     const priceAvailable =
       rawSize.priceAvailable ?? isPublishedHousePrice(rawSize.price);
-    const marginMultiplier = 1 + (config.marginPercent ?? 40) / 100;
     return {
       ...rawSize,
-      price: priceAvailable ? rawSize.price * marginMultiplier : 0,
+      price: priceAvailable ? rawSize.price : 0,
       priceAvailable,
     };
-  }, [config.sizes, selection.size, config.marginPercent]);
+  }, [config.sizes, selection.size]);
+
+  const hasSelectedStructure = Boolean(selection.size);
 
   // Determine effective roof area (fallback to kulmi if pllaka_e_kulmit is 0)
   const roofArea = useMemo(() => {
@@ -591,7 +694,10 @@ export function HouseConfigurator({ config, locale, dict }: HouseConfiguratorPro
       label: `${item?.category.label} — ${item?.option.label}`,
       value: item?.value ?? 0
     }));
-    return [baseItem, ...optionItems.filter((item) => item.value > 0)];
+    return [
+      baseItem,
+      ...optionItems.filter((item) => item.value > 0),
+    ];
   }, [dict.breakdown.basePrice, selectedOptions, selectedSize.price]);
 
   const total = priceBreakdown.reduce((sum, item) => sum + item.value, 0);
@@ -678,12 +784,9 @@ L'équipe Ossa Bois France`;
   const optionalCategories = renderedCategories.filter((category) => config.optionalCategoryIds.includes(category.id));
 
   function selectSize(size: SizeOption) {
-    // WordPress: size change = nuclear reset of ALL selections
-    // But preserve couverture default (pare-pluie) if the house has it
-    setSelection(() => ({
-      size: size.id,
-      ...(config.defaultSelection.couverture ? { couverture: config.defaultSelection.couverture } : {}),
-    }));
+    // Changing wall thickness must only change the price basis. Every material
+    // and sticky/default layer stays selected.
+    setSelection((current) => ({ ...current, size: size.id, houseId: config.id }));
     setFacadeWarning("");
     setSliderPos(50);
   }
@@ -696,15 +799,21 @@ L'équipe Ossa Bois France`;
     }
 
     setSelection((current) => {
+      // The first material interaction selects 60×160 atomically. This keeps
+      // the initial price hidden while preserving all existing dependencies.
+      const currentWithStructure = current.size
+        ? current
+        : { ...current, size: "60x160" };
+
       // Special handling for couverture to keep "Pare Pluie et Lattage" sticky
       if (category.id === "couverture") {
-        const next = { ...current };
+        const next = { ...currentWithStructure };
         if (option.id === "pare-pluie") {
           // Revert to only pare-pluie, removing tiles/bac-acier covering
           next.couverture = "pare-pluie";
         } else {
           // If Tuiles or Bac Acier is clicked
-          if (current.couverture === option.id) {
+          if (currentWithStructure.couverture === option.id) {
             // Toggle off -> revert to pare-pluie
             next.couverture = "pare-pluie";
           } else {
@@ -716,11 +825,11 @@ L'équipe Ossa Bois France`;
         return next;
       }
 
-      const isSelected = current[category.id] === option.id;
+      const isSelected = currentWithStructure[category.id] === option.id;
 
       // Toggle off if already selected
       if (isSelected) {
-        const next = { ...current };
+        const next = { ...currentWithStructure };
         delete next[category.id];
 
         if (category.id === "facade") {
@@ -745,13 +854,13 @@ L'équipe Ossa Bois France`;
       }
 
       // Facade validation: requires both isolations
-      if (category.id === "facade" && (!current.isolation || !current.outerIsolation)) {
+      if (category.id === "facade" && (!currentWithStructure.isolation || !currentWithStructure.outerIsolation)) {
         setFacadeWarning(`Vous ne pouvez pas sélectionner ${option.label} sans avoir choisi l’isolation.`);
-        return current;
+        return currentWithStructure;
       }
 
       const next = {
-        ...current,
+        ...currentWithStructure,
         [category.id]: option.id
       };
 
@@ -783,8 +892,26 @@ L'équipe Ossa Bois France`;
     });
   }
 
-  async function continueToCheckout() {
+  function continueToCheckout() {
+    if (!hasSelectedStructure) return;
     if (!selectedSize.priceAvailable) {
+      router.push(`/${locale}/contact`);
+      return;
+    }
+
+    setInstallationMode(null);
+    setInstallationModalOpen(true);
+  }
+
+  async function confirmInstallationAndContinue() {
+    if (!installationMode) return;
+
+    const transport = getTransportQuote(config.perdhesa.bruto);
+    const assemblyCost = getAssemblyCost(
+      config.perdhesa.bruto,
+      installationMode
+    );
+    if (!transport || assemblyCost === null) {
       router.push(`/${locale}/contact`);
       return;
     }
@@ -797,21 +924,58 @@ L'équipe Ossa Bois France`;
       // the checkout preview so deferred layers never disappear from it.
       await waitForConfiguratorLayers("house-layer-stage");
 
-      // Build payload matching WordPress house-builder.js structure
-      const getOptionPayload = (categoryId: string) => {
-        const item = selectedOptions.find((item) => item?.category.id === categoryId);
-        if (!item) return null;
-        return {
-          value: item.option.label,
+      // Send stable option IDs for authoritative server lookup. Labels remain
+      // separate display-only metadata so changing locale cannot invalidate a
+      // saved configuration.
+      const selectedOptionsPayload = selectedOptions.flatMap((item) => {
+        if (!item) return [];
+        const payloadKey =
+          CHECKOUT_CATEGORY_PAYLOAD_KEYS[item.category.id] ?? item.category.id;
+        return [{
+          categoryId: item.category.id,
+          categoryLabel: item.category.label,
+          payloadKey,
+          optionId: item.option.id,
+          label: item.option.label,
           price: String(item.unitPrice),
-          image: getEffectiveLayer(item.category, item.option)
-        };
-      };
+          image: getEffectiveLayer(item.category, item.option),
+        }];
+      });
+      const optionPayload = Object.fromEntries(
+        selectedOptionsPayload.map((item) => [
+          item.payloadKey,
+          {
+            value: item.optionId,
+            label: item.label,
+            price: item.price,
+            image: item.image,
+          },
+        ])
+      );
 
       const screenshotImage = captureConfiguratorScreenshot(
         "house-layer-stage",
         config.finalImage
       );
+
+      const configurationSubtotal = total;
+      const totalPrice = total + transport.cost + assemblyCost;
+      const installationLabel =
+        installationMode === "professional"
+          ? locale === "en"
+            ? "Assembly arranged by the client / another company"
+            : locale === "de"
+              ? "Montage durch den Kunden / ein Drittunternehmen"
+              : locale === "nl"
+                ? "Montage door de klant / een ander bedrijf"
+                : "Montage organisé par le client / une autre entreprise"
+          : locale === "en"
+            ? "Assembly by Ossa Bois France"
+            : locale === "de"
+              ? "Montage durch Ossa Bois France"
+              : locale === "nl"
+                ? "Montage door Ossa Bois France"
+                : "Montage par Ossa Bois France";
 
       const payload = {
         house: {
@@ -820,23 +984,39 @@ L'équipe Ossa Bois France`;
           image: config.finalImage
         },
         size: {
-          value: selectedSize.label,
+          value: selectedSize.id,
+          label: selectedSize.label,
           price: String(selectedSize.price),
           image: selectedSize.image
         },
         currentImage: screenshotImage,
-        isolation: getOptionPayload("isolation"),
-        outerIsolation: getOptionPayload("outerIsolation"),
-        facade: getOptionPayload("facade"),
-        etancheite: getOptionPayload("etancheite"),
-        toiture: getOptionPayload("couverture"),
-        etancheiteTerrasse: getOptionPayload("terraceEtancheite"),
-        strukturaPlloqes: getOptionPayload("roof"),
-        izolimiPlloqes: getOptionPayload("fauxPlafond"),
-        dritaret: getOptionPayload("dritaret"),
+        ...optionPayload,
+        selectedOptions: selectedOptionsPayload,
         basePrice: selectedSize.price,
-        priceBreakdown,
-        totalPrice: total,
+        priceBreakdown: [
+          ...priceBreakdown,
+          {
+            label: `${dict.breakdown.transport} (${transport.truckCount} ${
+              transport.truckCount === 1 ? "camion" : "camions"
+            })`,
+            value: transport.cost,
+          },
+          {
+            label: installationLabel,
+            value: assemblyCost,
+          },
+        ],
+        configurationSubtotal,
+        truckCount: transport.truckCount,
+        transportCost: transport.cost,
+        installationMode,
+        assemblyCost,
+        installation: {
+          mode: installationMode,
+          label: installationLabel,
+          cost: assemblyCost,
+        },
+        totalPrice,
         perdhesa: config.perdhesa
       };
 
@@ -1105,6 +1285,7 @@ L'équipe Ossa Bois France`;
                   type={category.id === "couverture" ? "checkbox" : category.selectionMode === "checkbox" ? "checkbox" : "radio"}
                   name={category.id === "couverture" ? undefined : category.inputName}
                   value={option.id}
+                  data-testid={`material-${category.id}-${option.id}`}
                   checked={selected}
                   readOnly
                 />
@@ -1155,7 +1336,7 @@ L'équipe Ossa Bois France`;
 
   return (
     <div className={`house-builder-container layout-${layoutMode}`}>
-      <div className={`house-product-page ${isMobileDrawerExpanded ? "drawer-expanded" : ""}`}>
+      <div ref={configuratorRootRef} className={`house-product-page ${isMobileDrawerExpanded ? "drawer-expanded" : ""}`}>
         <div className="house-main-section">
           <div className="house-image-section">
             <div className="house-main-image">
@@ -1249,6 +1430,7 @@ L'équipe Ossa Bois France`;
                           type="radio"
                           name="house_size"
                           value={size.id}
+                          data-testid={`structure-${size.id}`}
                           checked={selection.size === size.id}
                           onChange={() => selectSize(size)}
                         />
@@ -1283,12 +1465,12 @@ L'équipe Ossa Bois France`;
                                 layerKey: "konstruksioni",
                                 layer: "",
                                 materialDescription: locale === "en"
-                                  ? "Timber frame structure built according to current standards, braced by 12 mm OSB panels ensuring rigidity and stability of the whole. Includes load-bearing walls, partition walls, and industrial truss framework. Price includes transport and on-site assembly under a decennial guarantee."
+                                  ? "Timber frame structure built according to current standards, braced by 12 mm OSB panels ensuring rigidity and stability. Transport and assembly are calculated separately when the project is validated."
                                   : locale === "de"
-                                  ? "Holzrahmenstruktur nach geltenden Normen gebaut, ausgesteift mit 12 mm OSB-Platten zur Gewährleistung von Stabilität. Inklusive tragender Wände, Trennwände und Dachstuhl. Preis inklusive Transport und Montage unter zehnjähriger Garantie."
+                                  ? "Holzrahmenstruktur nach geltenden Normen, ausgesteift mit 12-mm-OSB-Platten. Transport und Montage werden bei der Projektbestätigung separat berechnet."
                                   : locale === "nl"
-                                  ? "Houtskeletstructuur gebouwd volgens de geldende normen, geschoord met 12 mm OSB-platen voor stabiliteit. Inclusief dragende muren, scheidingswanden en dakkap. Prijs inclusief transport en montage onder tienjarige garantie."
-                                  : "Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant la rigidité et la stabilité de l'ensemble. Comprend les murs porteurs, les murs de séparation et la charpente. Le prix inclut le transport et le montage sur site sous garantie décennale.",
+                                  ? "Houtskeletstructuur gebouwd volgens de geldende normen en geschoord met 12 mm OSB-platen. Transport en montage worden afzonderlijk berekend bij de projectbevestiging."
+                                  : "Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm. Le transport et le montage sont calculés séparément lors de la validation du projet.",
                                 thumbnail: "/media/konstruksioni.webp",
                                 modalImage: "/media/konstruksioni.webp",
                                 attributes: [
@@ -1322,9 +1504,9 @@ L'équipe Ossa Bois France`;
                       {locale === "en" ? (
                         <>
                           <p>
-                            <strong>Descriptive price:</strong>
+                            <strong>Price calculation:</strong>
                             <br />
-                            <strong style={{ color: "rgb(255, 0, 0)", fontSize: "22px" }}>Starting from only €350 excl. VAT.</strong>
+                            <strong>Choose a structure or material to calculate your price.</strong>
                           </p>
                           <p>
                             You have the choice between two types of exterior walls with different thicknesses:{" "}
@@ -1341,9 +1523,9 @@ L'équipe Ossa Bois France`;
                       ) : locale === "de" ? (
                         <>
                           <p>
-                            <strong>Richtpreis:</strong>
+                            <strong>Preisberechnung:</strong>
                             <br />
-                            <strong style={{ color: "rgb(255, 0, 0)", fontSize: "22px" }}>Ab nur 350 € zzgl. MwSt.</strong>
+                            <strong>Wählen Sie eine Struktur oder ein Material, um den Preis zu berechnen.</strong>
                           </p>
                           <p>
                             Sie haben die Wahl zwischen zwei Arten von Außenwänden mit unterschiedlichen Dicken:{" "}
@@ -1360,9 +1542,9 @@ L'équipe Ossa Bois France`;
                       ) : locale === "nl" ? (
                         <>
                           <p>
-                            <strong>Richtprijs:</strong>
+                            <strong>Prijsberekening:</strong>
                             <br />
-                            <strong style={{ color: "rgb(255, 0, 0)", fontSize: "22px" }}>Vanaf slechts € 350 excl. btw.</strong>
+                            <strong>Kies een structuur of materiaal om uw prijs te berekenen.</strong>
                           </p>
                           <p>
                             U heeft de keuze uit twee soorten buitenmuren met verschillende diktes:{" "}
@@ -1379,9 +1561,9 @@ L'équipe Ossa Bois France`;
                       ) : (
                         <>
                           <p>
-                            <strong>Prix descriptif :</strong>
+                            <strong>Calcul du prix :</strong>
                             <br />
-                            <strong style={{ color: "rgb(255, 0, 0)", fontSize: "22px" }}>À partir de seulement 350 € HT.</strong>
+                            <strong>Choisissez une structure ou un matériau pour calculer votre prix.</strong>
                           </p>
                           <p>
                             Vous avez le choix entre deux types de murs extérieurs avec différentes épaisseurs :{" "}
@@ -1411,9 +1593,9 @@ L'équipe Ossa Bois France`;
                       {locale === "en" ? (
                         <>
                           <p>
-                            <strong>Descriptive price:</strong>
+                            <strong>Price calculation:</strong>
                             <br />
-                            <strong style={{ color: "rgb(255, 0, 0)", fontSize: "22px" }}>Starting from only €350 excl. VAT.</strong>
+                            <strong>The structure price is calculated from the gross surface and the selected wall thickness.</strong>
                           </p>
                           <p>
                             You have the choice between two types of exterior walls with different thicknesses:{" "}
@@ -1428,15 +1610,15 @@ L'équipe Ossa Bois France`;
                             Including shear walls and separation walls are also braced with a 12 mm OSB panel.
                           </p>
                           <p>
-                            The price includes transport as well as the assembly of your structure under a French decennial guarantee.
+                            Transport and assembly are additional and are calculated separately when the project is validated.
                           </p>
                         </>
                       ) : locale === "de" ? (
                         <>
                           <p>
-                            <strong>Richtpreis:</strong>
+                            <strong>Preisberechnung:</strong>
                             <br />
-                            <strong style={{ color: "rgb(255, 0, 0)", fontSize: "22px" }}>Ab nur 350 € zzgl. MwSt.</strong>
+                            <strong>Der Strukturpreis wird anhand der Bruttofläche und der gewählten Wandstärke berechnet.</strong>
                           </p>
                           <p>
                             Sie haben die Wahl zwischen zwei Arten von Außenwänden mit unterschiedlichen Dicken:{" "}
@@ -1451,15 +1633,15 @@ L'équipe Ossa Bois France`;
                             Auch tragende Innenwände und Trennwände sind mit einer 12 mm OSB-Platte versteift.
                           </p>
                           <p>
-                            Der Preis beinhaltet den Transport sowie die Montage Ihrer Struktur unter einer zehnjährigen französischen Garantie.
+                            Transport und Montage sind Zusatzleistungen und werden bei der Projektbestätigung separat berechnet.
                           </p>
                         </>
                       ) : locale === "nl" ? (
                         <>
                           <p>
-                            <strong>Richtprijs:</strong>
+                            <strong>Prijsberekening:</strong>
                             <br />
-                            <strong style={{ color: "rgb(255, 0, 0)", fontSize: "22px" }}>Vanaf slechts € 350 excl. btw.</strong>
+                            <strong>De structuurprijs wordt berekend op basis van de bruto-oppervlakte en de gekozen wanddikte.</strong>
                           </p>
                           <p>
                             U heeft de keuze uit twee soorten buitenmuren met verschillende diktes:{" "}
@@ -1474,15 +1656,15 @@ L'équipe Ossa Bois France`;
                             Ook de binnenmuren en scheidingswanden zijn geschoord met een 12 mm OSB-plaat.
                           </p>
                           <p>
-                            De prijs is inclusief transport en de montage van uw structuur onder een Franse tienjarige garantie.
+                            Transport en montage zijn extra en worden afzonderlijk berekend bij de projectbevestiging.
                           </p>
                         </>
                       ) : (
                         <>
                           <p>
-                            <strong>Prix descriptif :</strong>
+                            <strong>Calcul du prix :</strong>
                             <br />
-                            <strong style={{ color: "rgb(255, 0, 0)", fontSize: "22px" }}>À partir de seulement 350 € HT.</strong>
+                            <strong>Le prix de la structure est calculé selon la surface brute et l'épaisseur de mur choisie.</strong>
                           </p>
                           <p>
                             Vous avez le choix entre deux types de murs extérieurs avec différentes épaisseurs :{" "}
@@ -1497,7 +1679,7 @@ L'équipe Ossa Bois France`;
                             Y compris les murs de refend et de séparation sont également contreventés avec un panneau OSB de 12 mm.
                           </p>
                           <p>
-                            Le prix comprend le transport ainsi que le montage de votre structure sous garantie décennale française.
+                            Le transport et le montage sont en supplément et sont calculés séparément lors de la validation du projet.
                           </p>
                         </>
                       )}
@@ -1610,7 +1792,7 @@ L'équipe Ossa Bois France`;
                       <p>{config.specification}</p>
                       <div className="perdhesa-table">
                         {Object.entries(config.perdhesa)
-                          .filter(([_, value]) => value && Number(value) > 0)
+                          .filter((entry) => entry[1] && Number(entry[1]) > 0)
                           .map(([key, value]) => {
                             const translation = PERDHESA_LABELS[key];
                             const label = translation ? (translation[locale as keyof typeof translation] || translation.fr) : key.replaceAll("_", " ");
@@ -1793,37 +1975,49 @@ L'équipe Ossa Bois France`;
             </div>
 
             <div className="price-calculator">
-              <div className="price-total-section">
-                {selectedSize.priceAvailable ? (
-                  <div className="price-total" id="price-total">
-                    <span className="price-label">€</span>
-                    <span className="price-value">{formatPrice(total)}</span>
-                    <button
-                      type="button"
-                      className={`price-dropdown${breakdownOpen ? " active" : ""}`}
-                      id="price-dropdown"
-                      aria-label={dict.breakdown.title}
-                      onClick={() => setBreakdownOpen((open) => !open)}
-                    >
-                      <svg className="dropdown-arrow" width="20" height="10" viewBox="0 0 20 10" fill="none">
-                        <path d="M0.640137 0.768219L9.64014 8.26822L18.6401 0.768219" stroke="black" strokeWidth="2" />
-                      </svg>
-                    </button>
+              <div className={`price-total-section${!hasSelectedStructure ? " price-state-pending" : ""}`}>
+                {!hasSelectedStructure ? (
+                  <div className="price-total price-pending" id="price-total" data-testid="price-pending" aria-live="polite">
+                    <span className="price-value">{dict.labels.pricePending}</span>
+                    <span className="price-extra-note">{dict.labels.extrasNotice}</span>
+                  </div>
+                ) : selectedSize.priceAvailable ? (
+                  <div className="price-display-stack" aria-live="polite">
+                    <div className="price-total" id="price-total" data-testid="configuration-price">
+                      <span className="price-label">€</span>
+                      <span className="price-value">{formatPrice(total)}</span>
+                      <button
+                        type="button"
+                        className={`price-dropdown${breakdownOpen ? " active" : ""}`}
+                        id="price-dropdown"
+                        aria-label={dict.breakdown.title}
+                        aria-expanded={breakdownOpen}
+                        aria-controls="price-breakdown"
+                        onClick={() => setBreakdownOpen((open) => !open)}
+                      >
+                        <svg className="dropdown-arrow" width="20" height="10" viewBox="0 0 20 10" fill="none">
+                          <path d="M0.640137 0.768219L9.64014 8.26822L18.6401 0.768219" stroke="black" strokeWidth="2" />
+                        </svg>
+                      </button>
+                    </div>
+                    <span className="price-extra-note">{dict.labels.extrasNotice}</span>
                   </div>
                 ) : (
                   <div className="price-total price-on-request" id="price-total">
                     <span className="price-value">
-                      {dict.labels.priceOnRequest ?? dict.labels.askQuote}
+                      {dict.labels.priceUnavailable ?? dict.labels.priceOnRequest ?? dict.labels.askQuote}
                     </span>
                   </div>
                 )}
                 <button
                   className="continue-button"
                   type="button"
+                  data-testid="validate-project"
+                  ref={installationTriggerRef}
                   onClick={continueToCheckout}
                   disabled={
-                    selectedSize.priceAvailable &&
-                    (isPreparingCheckout || !layersReady)
+                    !hasSelectedStructure ||
+                    (selectedSize.priceAvailable && (isPreparingCheckout || !layersReady))
                   }
                 >
                   {selectedSize.priceAvailable
@@ -1834,7 +2028,7 @@ L'équipe Ossa Bois France`;
                 </button>
               </div>
 
-              {selectedSize.priceAvailable && breakdownOpen ? (
+              {hasSelectedStructure && selectedSize.priceAvailable && breakdownOpen ? (
                 <div className="price-breakdown" id="price-breakdown">
                   {priceBreakdown.map((item) => (
                     <div className="breakdown-item" key={item.label}>
@@ -1903,6 +2097,150 @@ L'équipe Ossa Bois France`;
           </div>
         </div>
       ) : null}
+      {installationModalOpen ? (() => {
+        const transport = getTransportQuote(config.perdhesa.bruto);
+        const ossaAssemblyCost = getAssemblyCost(config.perdhesa.bruto, "ossa");
+        const selectedAssemblyCost = installationMode
+          ? getAssemblyCost(config.perdhesa.bruto, installationMode)
+          : null;
+        const canConfirm =
+          Boolean(installationMode) &&
+          transport !== null &&
+          selectedAssemblyCost !== null &&
+          !isPreparingCheckout &&
+          layersReady;
+
+        return (
+          <div
+            className="installation-modal-backdrop"
+            role="presentation"
+            onMouseDown={(event) => {
+              if (event.target === event.currentTarget && !isPreparingCheckout) {
+                setInstallationModalOpen(false);
+                setInstallationMode(null);
+              }
+            }}
+          >
+            <div
+              ref={installationModalRef}
+              className="installation-modal"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="installation-modal-title"
+              data-testid="installation-modal"
+            >
+              <button
+                type="button"
+                className="installation-modal-close"
+                aria-label={dict.labels.close}
+                onClick={() => {
+                  setInstallationModalOpen(false);
+                  setInstallationMode(null);
+                }}
+                disabled={isPreparingCheckout}
+              >
+                ×
+              </button>
+              <div className="installation-modal-header">
+                <p className="material-modal-kicker">{dict.assemblyModal.kicker}</p>
+                <h2 id="installation-modal-title">{dict.assemblyModal.title}</h2>
+                <p>{dict.assemblyModal.intro}</p>
+              </div>
+
+              <div className="installation-options" role="radiogroup" aria-label={dict.assemblyModal.title}>
+                <label className={`installation-option${installationMode === "professional" ? " selected" : ""}`}>
+                  <input
+                    type="radio"
+                    name="installation_mode"
+                    value="professional"
+                    data-testid="installation-professional"
+                    checked={installationMode === "professional"}
+                    onChange={() => setInstallationMode("professional")}
+                  />
+                  <span className="installation-option-check" aria-hidden="true" />
+                  <span className="installation-option-copy">
+                    <strong>{dict.assemblyModal.professionalTitle}</strong>
+                    <span>{dict.assemblyModal.professionalDescription}</span>
+                  </span>
+                </label>
+
+                <label className={`installation-option${installationMode === "ossa" ? " selected" : ""}${ossaAssemblyCost === null ? " disabled" : ""}`}>
+                  <input
+                    type="radio"
+                    name="installation_mode"
+                    value="ossa"
+                    data-testid="installation-ossa"
+                    checked={installationMode === "ossa"}
+                    onChange={() => setInstallationMode("ossa")}
+                    disabled={ossaAssemblyCost === null}
+                  />
+                  <span className="installation-option-check" aria-hidden="true" />
+                  <span className="installation-option-copy">
+                    <strong>{dict.assemblyModal.ossaTitle}</strong>
+                    <span>
+                      {ossaAssemblyCost === null
+                        ? dict.assemblyModal.unavailable
+                        : dict.assemblyModal.ossaDescription}
+                    </span>
+                  </span>
+                </label>
+              </div>
+
+              {installationMode && transport && selectedAssemblyCost !== null ? (
+                <div className="installation-quote-summary" data-testid="installation-quote" aria-live="polite">
+                  <div>
+                    <span>{dict.assemblyModal.transport}</span>
+                    <strong>€ {formatPrice(transport.cost)}</strong>
+                  </div>
+                  <div>
+                    <span>{dict.assemblyModal.assembly}</span>
+                    <strong>
+                      {installationMode === "professional"
+                        ? dict.assemblyModal.excluded
+                        : `€ ${formatPrice(selectedAssemblyCost)}`}
+                    </strong>
+                  </div>
+                  <div className="installation-quote-total">
+                    <span>{dict.assemblyModal.total}</span>
+                    <strong>€ {formatPrice(total + transport.cost + selectedAssemblyCost)}</strong>
+                  </div>
+                  <p className="installation-tax-note">{dict.assemblyModal.taxNotice}</p>
+                </div>
+              ) : null}
+
+              <div className="installation-modal-actions">
+                <button
+                  type="button"
+                  className="installation-back-button"
+                  onClick={() => {
+                    setInstallationModalOpen(false);
+                    setInstallationMode(null);
+                  }}
+                  disabled={isPreparingCheckout}
+                >
+                  {dict.assemblyModal.back}
+                </button>
+                <button
+                  type="button"
+                  className="installation-confirm-button"
+                  data-testid="installation-confirm"
+                  onClick={confirmInstallationAndContinue}
+                  disabled={!canConfirm}
+                >
+                  {isPreparingCheckout
+                    ? `${dict.assemblyModal.confirm}…`
+                    : dict.assemblyModal.confirm}
+                </button>
+              </div>
+              {!installationMode ? (
+                <p className="installation-required-message" role="status">
+                  {dict.assemblyModal.required}
+                </p>
+              ) : null}
+            </div>
+          </div>
+        );
+      })() : null}
       {isZoomed ? (
         <div
           className="image-zoom-backdrop"

@@ -226,6 +226,7 @@ export const escapeVillaAtikeConfiguratorData: HouseConfiguratorData = {
   id: "escape-villa-me-atike",
   name: "Escape Villa avec Attique",
   category: "Maison toiture terrasse avec étage",
+  categorySlug: "maison-sans-faitage",
   subheading: "Découvrez l'Escape Villa avec Attique, une réalisation architecturale contemporaine et haut de gamme dotée d'une superbe toiture terrasse et de prestations énergétiques de premier ordre.",
   description: "L'Escape Villa avec Attique propose une intégration volumétrique moderne avec sa toiture plate attenante. Dotée d'une ossature bois performante et de larges ouvertures, elle favorise la luminosité naturelle et offre des finitions raffinées en bardage bois naturel de mélèze ou en enduit blanc. Entièrement personnalisable dans le configurateur.",
   specification: "Fiche technique de l'Escape Villa avec Attique. Toiture plate avec isolation d'attique en polystyrène et membrane d'étanchéité EPDM.",
@@ -245,9 +246,7 @@ export const escapeVillaAtikeConfiguratorData: HouseConfiguratorData = {
   sizes: escapeVillaSizes,
   categories: escapeVillaCategories,
   layerOrder: escapeVillaLayerOrder,
-  defaultSelection: {
-    size: "60x160"
-  },
+  defaultSelection: {},
   optionalCategoryIds: ["dritaret"],
   enableFlags: {
     enableRoofOption: false,

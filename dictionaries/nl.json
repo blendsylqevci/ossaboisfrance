@@ -180,10 +180,10 @@
       "atticTerrace": "Attic Terras",
       "couverture": "Dakbedekking",
       "options": "Aanvullende opties",
-      "subtotal": "Subtotaal excl. btw",
+      "subtotal": "Subtotaal",
       "transport": "Transportkosten",
-      "tva": "Btw (20%)",
-      "total": "Totaal incl. btw"
+      "tva": "Btw nog te bevestigen",
+      "total": "Subtotaal configuratie"
     },
     "labels": {
       "configureYourHouse": "Configureer uw woning",
@@ -194,6 +194,9 @@
       "close": "Sluiten",
       "askQuote": "Informatie aanvragen",
       "priceOnRequest": "Prijs op aanvraag",
+      "pricePending": "Kies een structuur of materiaal om uw prijs te berekenen.",
+      "priceUnavailable": "Bruto-oppervlakte vereist — prijs op aanvraag",
+      "extrasNotice": "Subtotaal van de configuratie. Transport is verplicht en extra; Ossa Bois-montage wordt alleen toegevoegd als u die kiest.",
       "nextStep": "Volgende stap",
       "prevStep": "Vorige stap",
       "orderNow": "Project valideren",
@@ -231,6 +234,24 @@
       "successInterest": "Dank u! Uw interesseformulier is succesvol verzonden. We nemen zeer snel contact met u op.",
       "configuratorPrep": "Configurator in voorbereiding",
       "configuratorPrepDesc": "De gegevens van dit huis worden geïmporteerd uit het CMS. De visuele configurator wordt geactiveerd nadat de grafische lagen volledig zijn geladen."
+    },
+    "assemblyModal": {
+      "kicker": "Projectvalidatie",
+      "title": "Wie zal de woning monteren?",
+      "intro": "Transport is verplicht en extra. Ossa Bois-montage wordt alleen toegevoegd als u die kiest. Kies een optie om verder te gaan.",
+      "professionalTitle": "Ik ben vakman of schakel een ander bedrijf in",
+      "professionalDescription": "Ik organiseer de montage zelf. Er worden geen montagekosten van Ossa Bois toegevoegd; alleen de transportkosten worden berekend.",
+      "ossaTitle": "Ik wil montage door Ossa Bois France",
+      "ossaDescription": "Ossa Bois France voert de montage uit. De kosten worden automatisch samen met het transport toegevoegd.",
+      "unavailable": "Voor de montageprijs is een bruto-oppervlakte tussen 80 en 200 m² nodig. Neem contact met ons op voor dit model.",
+      "transport": "Transport",
+      "assembly": "Montage",
+      "excluded": "Niet inbegrepen — georganiseerd door de klant",
+      "total": "Geschat totaal",
+      "taxNotice": "Indicatieve raming: btw en het definitieve contractbedrag worden bevestigd in uw persoonlijke offerte.",
+      "required": "Kies een montageoptie om verder te gaan.",
+      "back": "Terug naar configuratie",
+      "confirm": "Bevestigen en doorgaan"
     }
   },
   "checkout": {
@@ -273,7 +294,7 @@
       "subtotal": "Subtotaal",
       "transport": "Transportkosten",
       "tva": "Btw (20%)",
-      "total": "Totaal incl. btw",
+      "total": "Geschat totaal",
       "placeRequest": "Mijn projectaanvraag verzenden",
       "processing": "Uw aanvraag wordt verwerkt...",
       "successTitle": "Bedankt voor uw aanvraag!",

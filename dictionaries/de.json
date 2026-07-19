@@ -180,10 +180,10 @@
       "atticTerrace": "Attika-Terrasse",
       "couverture": "Dacheindeckung",
       "options": "Zusatzoptionen",
-      "subtotal": "Zwischensumme zzgl. MwSt.",
+      "subtotal": "Zwischensumme",
       "transport": "Transportkosten",
-      "tva": "MwSt. (20%)",
-      "total": "Gesamtsumme inkl. MwSt."
+      "tva": "MwSt. noch zu bestätigen",
+      "total": "Zwischensumme Konfiguration"
     },
     "labels": {
       "configureYourHouse": "Konfigurieren Sie Ihr Haus",
@@ -194,6 +194,9 @@
       "close": "Schließen",
       "askQuote": "Informationen anfordern",
       "priceOnRequest": "Preis auf Anfrage",
+      "pricePending": "Wählen Sie eine Struktur oder ein Material, um Ihren Preis zu berechnen.",
+      "priceUnavailable": "Bruttofläche erforderlich — Preis auf Anfrage",
+      "extrasNotice": "Zwischensumme der Konfiguration. Der Transport ist obligatorisch und zusätzlich; die Ossa-Bois-Montage wird nur bei Auswahl hinzugefügt.",
       "nextStep": "Nächster Schritt",
       "prevStep": "Vorheriger Schritt",
       "orderNow": "Projekt bestätigen",
@@ -231,6 +234,24 @@
       "successInterest": "Vielen Dank! Ihre Interessenbekundung wurde erfolgreich versendet. Wir werden uns in Kürze mit Ihnen in Verbindung setzen.",
       "configuratorPrep": "Konfigurator in Vorbereitung",
       "configuratorPrepDesc": "Die Daten dieses Hauses werden aus dem CMS importiert. Der visuelle Konfigurator wird nach dem vollständigen Laden der Grafik-Ebenen aktiviert."
+    },
+    "assemblyModal": {
+      "kicker": "Projektbestätigung",
+      "title": "Wer wird das Haus montieren?",
+      "intro": "Der Transport ist obligatorisch und zusätzlich. Die Ossa-Bois-Montage wird nur bei Auswahl hinzugefügt. Wählen Sie eine Option, um fortzufahren.",
+      "professionalTitle": "Ich bin Fachmann oder beauftrage ein anderes Unternehmen",
+      "professionalDescription": "Ich organisiere die Montage selbst. Es werden keine Montagekosten von Ossa Bois berechnet; nur die Transportkosten werden hinzugefügt.",
+      "ossaTitle": "Ich wünsche die Montage durch Ossa Bois France",
+      "ossaDescription": "Ossa Bois France übernimmt die Montage. Die Kosten werden automatisch zusammen mit dem Transport hinzugefügt.",
+      "unavailable": "Der Montagetarif erfordert eine Bruttofläche zwischen 80 und 200 m². Kontaktieren Sie uns für dieses Modell.",
+      "transport": "Transport",
+      "assembly": "Montage",
+      "excluded": "Nicht enthalten — vom Kunden organisiert",
+      "total": "Geschätzte Gesamtsumme",
+      "taxNotice": "Unverbindliche Schätzung: Mehrwertsteuer und endgültiger Vertragsbetrag werden im persönlichen Angebot bestätigt.",
+      "required": "Wählen Sie eine Montageoption, um fortzufahren.",
+      "back": "Zurück zur Konfiguration",
+      "confirm": "Bestätigen und fortfahren"
     }
   },
   "checkout": {
@@ -273,7 +294,7 @@
       "subtotal": "Zwischensumme",
       "transport": "Transportkosten",
       "tva": "MwSt. (20%)",
-      "total": "Gesamtsumme inkl. MwSt.",
+      "total": "Geschätzte Gesamtsumme",
       "placeRequest": "Meine Projektanfrage senden",
       "processing": "Ihre Anfrage wird bearbeitet...",
       "successTitle": "Vielen Dank für Ihre Anfrage!",

@@ -5,36 +5,7 @@ import { isMeKulmHouseSlug } from "./house-import-shared";
 import { publicMediaUrl } from "./media-url";
 import { getPlanimetryRooms, resolvePlanimetryDisplayUrl } from "./planimetry-rooms";
 import { getPlanimetryImageCropRight } from "./planimetry-visual-crop";
-import { isPublishedHousePrice } from "./price-availability";
-
-export function calculateStructureSizePrice(
-  sizeId: string,
-  neto: number,
-  fallbackPrice: number,
-  rate60x160?: number,
-  rate60x200?: number
-): number {
-  const r160 = typeof rate60x160 === 'number' ? rate60x160 : 350;
-  const r200 = typeof rate60x200 === 'number' ? rate60x200 : 370;
-  if (sizeId === "60x160") {
-    if (neto > 0) {
-      if (neto >= 131) {
-        return (neto * r160) + 3500;
-      } else {
-        return neto * r160;
-      }
-    }
-  } else if (sizeId === "60x200") {
-    if (neto > 0) {
-      if (neto >= 131) {
-        return (neto * r200) + 3500;
-      } else {
-        return neto * r200;
-      }
-    }
-  }
-  return fallbackPrice;
-}
+import { calculateStructurePrice } from "./house-pricing";
 
 
 function buildCategoryOptions(
@@ -188,7 +159,17 @@ export function mapHouseDocToConfiguratorData(
   if (!houseDoc) return null;
 
   const categoryId = typeof houseDoc.category === 'object' ? houseDoc.category?.id : houseDoc.category;
-  const categorySlug = typeof houseDoc.category === 'object' ? houseDoc.category?.slug : '';
+  const legacyCategorySlugs: Record<number, string> = {
+    1: "maison-toitu-terrasse",
+    2: "maison-sans-faitage",
+    3: "maison-plein-pied",
+    4: "maison-combles-ammenageable",
+    5: "maison-avec-etage",
+  };
+  const categorySlug =
+    (typeof houseDoc.category === 'object' ? houseDoc.category?.slug : '') ||
+    legacyCategorySlugs[Number(houseDoc.category_id ?? categoryId)] ||
+    '';
   const isTerraceOrTerraceEtage = 
     houseDoc.category_id === 1 ||
     houseDoc.category_id === 2 ||
@@ -220,50 +201,26 @@ export function mapHouseDocToConfiguratorData(
 
   // Build sizes
   const sizes: SizeOption[] = [];
-  const netoSurface = houseDoc.perdhesa?.neto || 0;
+  const grossSurface = houseDoc.perdhesa?.bruto || 0;
+  const price160 = calculateStructurePrice(categorySlug, grossSurface, "60x160");
+  const price200 = calculateStructurePrice(categorySlug, grossSurface, "60x200");
 
-  if (typeof houseDoc.price60x160 === "number") {
-    const priceAvailable = isPublishedHousePrice(houseDoc.price60x160);
-    const calculatedPrice = priceAvailable
-      ? calculateStructureSizePrice(
-          "60x160",
-          netoSurface,
-          houseDoc.price60x160,
-          globalOptions?.priceRate60x160,
-          globalOptions?.priceRate60x200
-        )
-      : 0;
-    sizes.push({
+  sizes.push(
+    {
       id: "60x160",
       label: "60x160",
-      price: calculatedPrice,
+      price: price160 ?? 0,
       image: defaultImage,
-      priceAvailable,
-    });
-  }
-  if (typeof houseDoc.price60x200 === "number") {
-    const priceAvailable = isPublishedHousePrice(houseDoc.price60x200);
-    const calculatedPrice = priceAvailable
-      ? calculateStructureSizePrice(
-          "60x200",
-          netoSurface,
-          houseDoc.price60x200,
-          globalOptions?.priceRate60x160,
-          globalOptions?.priceRate60x200
-        )
-      : 0;
-    sizes.push({
+      priceAvailable: price160 !== null,
+    },
+    {
       id: "60x200",
       label: "60x200",
-      price: calculatedPrice,
+      price: price200 ?? 0,
       image: finalImage || defaultImage,
-      priceAvailable,
-    });
-  }
-
-  if (sizes.length === 0) {
-    return null;
-  }
+      priceAvailable: price200 !== null,
+    }
+  );
 
   // Build a dictionary of custom fields values
   const customFields: Record<string, any> = {};
@@ -335,7 +292,7 @@ export function mapHouseDocToConfiguratorData(
 
       // Map the options configured globally
       if (Array.isArray(dynOptConfig.options) && dynOptConfig.options.length > 0) {
-        const optionsList = dynOptConfig.options.map((o: any) => {
+        const optionsList = dynOptConfig.options.map((o: any, optionIndex: number) => {
           // Resolve layer URL: check for house override first, fallback to house default layer
           let layerUrl = '';
           const overrideMediaId = houseFieldConfig.options?.[o.layer_key];
@@ -345,7 +302,9 @@ export function mapHouseDocToConfiguratorData(
             layerUrl = layers[o.layer_key] || '';
           }
 
-          const optionId = o.option_name ? o.option_name.toLowerCase().replace(/[^a-z0-9]+/g, '-') : `opt-${o.id}`;
+          // Payload row IDs (or the layer key fallback) are stable across
+          // locales; translated option names are display text, never identity.
+          const optionId = String(o.id || o.layer_key || `option-${optionIndex}`);
 
           // Map dynamic values to attributes
           const dynamicValues = o.dynamicValues
@@ -1070,6 +1029,7 @@ export function mapHouseDocToConfiguratorData(
     id: houseDoc.slug,
     name: translateText(houseDoc.title, locale),
     category: translateText(houseDoc.category?.name || 'Maison ossature bois', locale),
+    categorySlug,
     subheading: translateText(houseDoc.subheading || '', locale),
     description: translateHouseDescription(houseDoc.description || houseDoc.subheading || '', houseDoc.slug, locale),
     specification: translateText(houseDoc.specification || '', locale),
@@ -1127,7 +1087,6 @@ export function mapHouseDocToConfiguratorData(
       ...dynamicCategories.flatMap(cat => cat.options.map(opt => opt.layerKey).filter(Boolean))
     ])),
     defaultSelection: {
-      size: "60x160",
       ...dynamicDefaultSelections,
       ...(usesFranceCouverturePattern ? { couverture: "pare-pluie" } : {}),
     },
@@ -1142,7 +1101,7 @@ export function mapHouseDocToConfiguratorData(
       enableCouvertureOption: houseDoc.enableFlags?.enableCouvertureOption ?? false,
       enableFauxPlafondOption: houseDoc.enableFlags?.enableFauxPlafondOption ?? false,
     },
-    structureInfo: translateText(houseDoc.structureInfo || 'Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant rigidité et stabilité de l’ensemble. Comprend les murs porteurs, murs de séparation et charpente industrielle type fermette. Le prix inclut le transport et le montage sur site sous garantie décennale.', locale),
+    structureInfo: translateText(houseDoc.structureInfo || 'Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant rigidité et stabilité de l’ensemble. Comprend les murs porteurs, murs de séparation et charpente industrielle type fermette. Le transport et le montage sont en supplément et sont calculés séparément lors de la validation du projet.', locale),
     customFields,
     sliderConfig: houseDoc.sliderConfig || (usesFranceCouverturePattern ? {
       top: "10%",

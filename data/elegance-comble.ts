@@ -313,6 +313,7 @@ export const eleganceCombleConfiguratorData: HouseConfiguratorData = {
   id: "elegance-comble",
   name: "Elegance Comble",
   category: "Maison combles amenageable",
+  categorySlug: "maison-combles-ammenageable",
   subheading:
     "Découvrez Elegance Comble, un modèle de maison d'exception à combles aménageables avec une structure bois performante.",
   description:
@@ -336,7 +337,6 @@ export const eleganceCombleConfiguratorData: HouseConfiguratorData = {
   categories: eleganceCombleCategories,
   layerOrder: eleganceCombleLayerOrder,
   defaultSelection: {
-    size: "60x160",
     couverture: "pare-pluie"
   },
   optionalCategoryIds: ["dritaret"],
@@ -348,7 +348,7 @@ export const eleganceCombleConfiguratorData: HouseConfiguratorData = {
     enableFauxPlafondOption: true
   },
   structureInfo:
-    "Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant rigidité et stabilité de l'ensemble. Comprend les murs porteurs, murs de séparation et charpente bois de type combles aménageables. Le prix inclut le transport et le montage sur site sous garantie décennale.",
+    "Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant rigidité et stabilité de l'ensemble. Comprend les murs porteurs, murs de séparation et charpente bois de type combles aménageables. Le transport et le montage sont en supplément et sont calculés séparément lors de la validation du projet.",
   sliderConfig: {
     top: "10%",
     height: "55%",

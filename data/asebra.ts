@@ -226,6 +226,7 @@ export const asebraConfiguratorData: HouseConfiguratorData = {
   id: "asebra-me-atike",
   name: "Asebra avec Attique",
   category: "Maison toiture terrasse avec étage",
+  categorySlug: "maison-sans-faitage",
   subheading: "Découvrez le modèle Asebra avec Attique, une réalisation modulaire d'exception dotée d'une architecture plate contemporaine et d'une structure bois performante.",
   description: "Le modèle Asebra avec Attique séduit par son design contemporain, ses volumes harmonieux et sa structure robuste en ossature bois à haute performance thermique (conforme RE2020). Cette maison modulaire haut de gamme propose un toit plat avec attique, créant des lignes géométriques épurées qui s'intègrent à la perfection dans les environnements urbains et résidentiels modernes. Entièrement personnalisable, elle allie confort et élégance architecturale.",
   specification: "Fiche technique de l'Asebra avec Attique. Toiture plate avec isolation d'attique en polystyrène et membrane d'étanchéité EPDM.",
@@ -245,9 +246,7 @@ export const asebraConfiguratorData: HouseConfiguratorData = {
   sizes: asebraSizes,
   categories: asebraCategories,
   layerOrder: asebraLayerOrder,
-  defaultSelection: {
-    size: "60x160"
-  },
+  defaultSelection: {},
   optionalCategoryIds: ["dritaret"],
   enableFlags: {
     enableRoofOption: false,
@@ -256,5 +255,5 @@ export const asebraConfiguratorData: HouseConfiguratorData = {
     enableCouvertureOption: false,
     enableFauxPlafondOption: false
   },
-  structureInfo: "Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant rigidité et stabilité de l'ensemble. Comprend les murs porteurs, murs de séparation et charpente industrielle de type terrasse avec attique. Le prix inclut le transport et le montage sur site sous garantie décennale."
+  structureInfo: "Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm assurant rigidité et stabilité de l'ensemble. Comprend les murs porteurs, murs de séparation et charpente industrielle de type terrasse avec attique. Le transport et le montage sont en supplément et sont calculés séparément lors de la validation du projet."
 };

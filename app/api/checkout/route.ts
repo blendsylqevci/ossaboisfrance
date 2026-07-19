@@ -332,7 +332,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (!houseImageUrl) {
-      const defaultImage = `${siteOrigin}/images/houses/ambre/10 ambre.jpg`;
+      const defaultImage = `${siteOrigin}/images/houses/7 ambre.jpg`;
       const rawFallback = configData.finalImage || configData.defaultImage;
       const fallbackPath = typeof rawFallback === "string" ? rawFallback : "";
 

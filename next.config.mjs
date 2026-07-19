@@ -4,12 +4,15 @@ import { withPayload } from "@payloadcms/next/withPayload";
 const nextConfig = {
   trailingSlash: false,
   skipTrailingSlashRedirect: true,
-  // House layer source images (public/images/houses ≈ 630MB) are only read by the
-  // dev/staging import routes via fs. Without this, Next traces those fs reads and
-  // bundles the whole folder into each /api/import-* serverless function, blowing
-  // past Vercel's 300MB function limit and failing production deploys.
+  // Raw house, planimetry, and texture sources are only read by local/dev import
+  // tooling. Without this, Next traces those fs reads into serverless functions,
+  // making every deployment hundreds of megabytes larger.
   outputFileTracingExcludes: {
-    "*": ["public/images/houses/**"],
+    "/*": [
+      "./public/images/houses/**/*",
+      "./public/planimetries-raw/**/*",
+      "./public/textures-raw/**/*",
+    ],
   },
   images: {
     // Keep originals in Supabase, while serving right-sized WebP derivatives

@@ -1,0 +1,91 @@
+# Local/build artifacts and secrets are never deployment inputs.
+/.git/
+/.github/
+/.vercel/
+/.claude/
+/node_modules/
+/.next/
+/out/
+/dist/
+/coverage/
+/test-results/
+/playwright-report/
+/blob-report/
+/.playwright/
+/scratch/
+*.tsbuildinfo
+.env
+.env*
+!.env.example
+.DS_Store
+*.rtf
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Historical/reference sources are not used by the production application.
+/house_layers/
+/sources/
+
+# House layer renders are local import sources. The live configurator, cards,
+# and hero load their originals from Supabase Storage/CDN.
+public/images/houses/**
+
+# Keep only the static marketing images that still use local public URLs.
+!public/images/houses/7 ambre.jpg
+
+!public/images/houses/ambre me kulm/
+!public/images/houses/ambre me kulm/1. prapavija.png
+
+!public/images/houses/Australe/
+!public/images/houses/Australe/australe 7.jpg
+!public/images/houses/Australe/australe 10.jpg
+
+!public/images/houses/Boreale me atike/
+!public/images/houses/Boreale me atike/7 boreale.jpg
+!public/images/houses/Boreale me atike/10 boreale.jpg
+
+!public/images/houses/calme-atike/
+!public/images/houses/calme-atike/7 CALME.jpg
+!public/images/houses/calme-atike/10 CALME.jpg
+
+!public/images/houses/ambre me atike/
+!public/images/houses/ambre me atike/7 ambre.jpg
+!public/images/houses/ambre me atike/10 ambre.jpg
+
+!public/images/houses/Maison Loren me atike/
+!public/images/houses/Maison Loren me atike/LOREN 7.jpg
+!public/images/houses/Maison Loren me atike/LOREN 10.jpg
+
+!public/images/houses/emmy house etage me atike/
+!public/images/houses/emmy house etage me atike/EMMY 7.jpg
+!public/images/houses/emmy house etage me atike/EMMY 10.jpg
+
+!public/images/houses/cristal comble/
+!public/images/houses/cristal comble/cristal comble 7.jpg
+!public/images/houses/cristal comble/cristal comble 10.jpg
+
+!public/images/houses/asebra me atike/
+!public/images/houses/asebra me atike/2. kons.png
+!public/images/houses/asebra me atike/3. lesh guri.png
+!public/images/houses/asebra me atike/4. lesh druri.png
+!public/images/houses/asebra me atike/5. lesh xhami.png
+!public/images/houses/asebra me atike/6. stiropori.png
+!public/images/houses/asebra me atike/7. fibra.png
+!public/images/houses/asebra me atike/8. leshi gurit jashte.png
+!public/images/houses/asebra me atike/10. epdm.png
+!public/images/houses/asebra me atike/11. fasada e bardhe.png
+!public/images/houses/asebra me atike/12. fasada arish.png
+!public/images/houses/asebra me atike/13. dritaret alumin.png
+!public/images/houses/asebra me atike/5 asebra.jpg
+
+# Payload media is stored in Supabase. Keep only the two intentionally local
+# configurator reference images.
+public/media/**
+!public/media/konstruksioni.webp
+!public/media/folia-dhe-listelat.webp
+
+# Local-only sources for admin/import tooling; they are not website assets.
+public/planimetries-raw/**
+public/textures-raw/**

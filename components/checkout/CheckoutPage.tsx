@@ -864,7 +864,7 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
                       <div className="order-product-details">
                         <div className="order-product-image">
                           <Image
-                            src={selection.currentImage || selection.house?.image || "/images/houses/ambre/10 ambre.jpg"}
+                            src={selection.currentImage || selection.house?.image || "/images/houses/7 ambre.jpg"}
                             alt={selection.house?.name || "Maison"}
                             width={90}
                             height={90}

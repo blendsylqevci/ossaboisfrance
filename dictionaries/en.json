@@ -196,7 +196,7 @@
       "priceOnRequest": "Price on request",
       "pricePending": "Choose a structure or material to calculate your price.",
       "priceUnavailable": "Gross surface required — price on request",
-      "extrasNotice": "Configuration subtotal excluding VAT. Transport is mandatory and extra; Ossa Bois assembly is added only if you choose it.",
+      "extrasNotice": "Transport and assembly information: the amount shown covers only the configured house, excluding VAT. After “Validate project”, mandatory transport, charged separately, and Ossa Bois assembly if selected will be calculated and displayed in the final summary before you submit your quote request.",
       "nextStep": "Next step",
       "prevStep": "Previous step",
       "orderNow": "Validate project",

@@ -2,9 +2,17 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
-import type { InstallationMode } from "@/lib/house-pricing";
+import {
+  getAssemblyCost,
+  getTransportQuote,
+  type InstallationMode,
+} from "@/lib/house-pricing";
+import {
+  CHECKOUT_SELECTION_KEY,
+  saveCheckoutSelection,
+} from "@/lib/checkout-selection-storage";
 
 type StoredOption = { value?: string; label?: string; price?: string; image?: string };
 
@@ -15,7 +23,7 @@ type StoredSelectedOption = {
   label?: string;
 };
 
-type StoredSelection = {
+type StoredSelection = Record<string, unknown> & {
   house?: {
     name?: string;
     id?: string;
@@ -43,6 +51,11 @@ type StoredSelection = {
   transportCost?: number;
   installationMode?: InstallationMode;
   assemblyCost?: number;
+  installation?: {
+    mode: InstallationMode;
+    label: string;
+    cost: number;
+  };
   totalPrice?: number;
   priceBasis?: "excl_vat";
   vatIncluded?: false;
@@ -95,6 +108,15 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderRef, setOrderRef] = useState("");
   const [clientName, setClientName] = useState("");
+  const [installationModalOpen, setInstallationModalOpen] = useState(false);
+  const [installationConfirmedInCheckout, setInstallationConfirmedInCheckout] =
+    useState(false);
+  const [pendingInstallationMode, setPendingInstallationMode] =
+    useState<InstallationMode | null>(null);
+  const checkoutContainerRef = useRef<HTMLDivElement>(null);
+  const installationModalRef = useRef<HTMLDivElement>(null);
+  const submitTriggerRef = useRef<HTMLButtonElement>(null);
+  const isSubmittingRef = useRef(false);
 
   // Agreement checkbox states
   const [agreeShipping, setAgreeShipping] = useState(false);
@@ -111,6 +133,76 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
   const [selectedCountry, setSelectedCountry] = useState("France");
   const [addressSuggestions, setAddressSuggestions] = useState<any[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+
+  useEffect(() => {
+    if (!installationModalOpen) return;
+
+    const modal = installationModalRef.current;
+    const content = checkoutContainerRef.current;
+    const trigger = submitTriggerRef.current;
+    const previousOverflow = document.body.style.overflow;
+    const previousAriaHidden = content?.getAttribute("aria-hidden");
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+
+    document.body.style.overflow = "hidden";
+    content?.setAttribute("inert", "");
+    content?.setAttribute("aria-hidden", "true");
+
+    const getFocusableElements = () =>
+      modal
+        ? Array.from(
+            modal.querySelectorAll<HTMLElement>(
+              'button:not([disabled]), input:not([disabled]), [href], [tabindex]:not([tabindex="-1"])'
+            )
+          ).filter((element) => !element.hasAttribute("hidden"))
+        : [];
+
+    const focusTimer = window.requestAnimationFrame(() => {
+      const firstRadio = modal?.querySelector<HTMLInputElement>(
+        'input[type="radio"]:not([disabled])'
+      );
+      (firstRadio ?? getFocusableElements()[0])?.focus();
+    });
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setInstallationModalOpen(false);
+        setPendingInstallationMode(null);
+        return;
+      }
+      if (event.key !== "Tab") return;
+
+      const focusable = getFocusableElements();
+      if (focusable.length === 0) {
+        event.preventDefault();
+        return;
+      }
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.cancelAnimationFrame(focusTimer);
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = previousOverflow;
+      content?.removeAttribute("inert");
+      if (previousAriaHidden == null) content?.removeAttribute("aria-hidden");
+      else content?.setAttribute("aria-hidden", previousAriaHidden);
+      (previouslyFocused?.isConnected
+        ? previouslyFocused
+        : trigger
+      )?.focus();
+    };
+  }, [installationModalOpen]);
 
   useEffect(() => {
     if (streetAddress.trim().length < 4) {
@@ -227,7 +319,7 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
   };
 
   useEffect(() => {
-    const raw = sessionStorage.getItem("house_selections");
+    const raw = sessionStorage.getItem(CHECKOUT_SELECTION_KEY);
     if (!raw) return;
     try {
       setSelection(JSON.parse(raw) as StoredSelection);
@@ -237,10 +329,20 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
   }, []);
 
   const storedTotal = getNonNegativeNumber(selection?.totalPrice);
-  const transportCost = getNonNegativeNumber(selection?.transportCost) ?? 0;
-  const assemblyCost = getNonNegativeNumber(selection?.assemblyCost) ?? 0;
-  const truckCount = getPositiveInteger(selection?.truckCount);
-  const installationMode = selection?.installationMode;
+  const storedTransportCost = getNonNegativeNumber(selection?.transportCost) ?? 0;
+  const storedAssemblyCost = getNonNegativeNumber(selection?.assemblyCost) ?? 0;
+  const installationMode = installationConfirmedInCheckout
+    ? selection?.installationMode
+    : undefined;
+  const transportCost = installationMode
+    ? storedTransportCost
+    : 0;
+  const assemblyCost = installationMode
+    ? storedAssemblyCost
+    : 0;
+  const truckCount = installationMode
+    ? getPositiveInteger(selection?.truckCount)
+    : null;
   const hasAuthoritativeBreakdown = Boolean(
     selection &&
       (selection.configurationSubtotal !== undefined ||
@@ -251,12 +353,19 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
   const configurationSubtotal =
     getNonNegativeNumber(selection?.configurationSubtotal) ??
     (hasAuthoritativeBreakdown && storedTotal !== null
-      ? Math.max(0, storedTotal - transportCost - assemblyCost)
+      ? Math.max(0, storedTotal - storedTransportCost - storedAssemblyCost)
       : storedTotal ?? 0);
-  const total =
-    hasAuthoritativeBreakdown && storedTotal !== null
+  const total = installationMode
+    ? hasAuthoritativeBreakdown && storedTotal !== null
       ? storedTotal
-      : configurationSubtotal + transportCost + assemblyCost;
+      : configurationSubtotal + transportCost + assemblyCost
+    : configurationSubtotal;
+  const grossArea = getNonNegativeNumber(selection?.perdhesa?.bruto);
+  const pendingTransportQuote = getTransportQuote(grossArea);
+  const ossaAssemblyCost = getAssemblyCost(grossArea, "ossa");
+  const pendingAssemblyCost = pendingInstallationMode
+    ? getAssemblyCost(grossArea, pendingInstallationMode)
+    : null;
 
   const formatTransportCost = (value: number) => {
     if (value === 0) return "0.00 €";
@@ -383,14 +492,63 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
     assemblyCostLabel: locale === "en" ? "Assembly & Installation" : locale === "de" ? "Montage & Installation" : locale === "nl" ? "Montage & Installatie" : "Montage & Installation",
     totalEst: locale === "en" ? "Total estimate excl. VAT" : locale === "de" ? "Gesamtschätzung netto" : locale === "nl" ? "Totale schatting excl. btw" : "Estimation totale HT",
     taxNotice: locale === "en"
-      ? "All displayed amounts exclude VAT. Applicable VAT will be calculated in the personalized quotation."
+      ? "All displayed amounts exclude VAT. Applicable VAT and the final price including VAT will be specified in the personalized quotation. This is a non-binding quote request with no obligation to pay."
       : locale === "de"
-        ? "Alle angezeigten Beträge sind Nettopreise zzgl. MwSt. Die MwSt. wird im persönlichen Angebot berechnet."
+        ? "Alle angezeigten Beträge sind Nettopreise. Die anwendbare MwSt. und der endgültige Bruttopreis werden im persönlichen Angebot ausgewiesen. Dies ist eine unverbindliche Angebotsanfrage ohne Zahlungspflicht."
         : locale === "nl"
-          ? "Alle weergegeven bedragen zijn exclusief btw. De btw wordt berekend in de persoonlijke offerte."
-          : "Tous les montants affichés sont hors taxes (HT). La TVA sera calculée dans le devis personnalisé.",
-    submitButton: locale === "en" ? "Submit Project Request" : locale === "de" ? "Projektanfrage senden" : locale === "nl" ? "Projectaanvraag indienen" : "Envoyer ma demande de projet",
+          ? "Alle weergegeven bedragen zijn exclusief btw. De toepasselijke btw en de definitieve prijs inclusief btw worden in de persoonlijke offerte vermeld. Dit is een vrijblijvende offerteaanvraag zonder betalingsverplichting."
+          : "Tous les montants affichés sont hors taxes (HT). La TVA applicable et le prix définitif TTC seront précisés dans le devis personnalisé. Il s’agit d’une demande de devis sans engagement et sans obligation de paiement.",
+    preValidationNotice: locale === "en"
+      ? "Transport is mandatory and charged separately. Assembly is not included: you may arrange it yourself or with a professional, or select Ossa Bois assembly for an additional charge. Continue to choose an option; all corresponding costs will be displayed separately before you submit your quote request."
+      : locale === "de"
+        ? "Der Transport ist obligatorisch und wird separat berechnet. Die Montage ist nicht enthalten: Sie können sie selbst oder durch einen Fachbetrieb organisieren oder die kostenpflichtige Montage durch Ossa Bois wählen. Fahren Sie fort, um eine Option auszuwählen; alle entsprechenden Kosten werden vor dem Absenden Ihrer Angebotsanfrage separat angezeigt."
+        : locale === "nl"
+          ? "Transport is verplicht en wordt afzonderlijk berekend. Montage is niet inbegrepen: u kunt deze zelf of via een professional regelen, of tegen meerprijs voor montage door Ossa Bois kiezen. Ga verder om een optie te kiezen; alle bijbehorende kosten worden afzonderlijk getoond voordat u uw offerteaanvraag verzendt."
+          : "Le transport est obligatoire et facturé séparément. Le montage n’est pas inclus : vous pouvez l’organiser vous-même ou avec un professionnel, ou choisir le montage Ossa Bois moyennant un supplément. Continuez pour sélectionner une option ; tous les frais correspondants seront affichés séparément avant l’envoi de votre demande de devis.",
+    submitButton: locale === "en" ? "Continue: transport and assembly" : locale === "de" ? "Weiter: Transport und Montage" : locale === "nl" ? "Verder: transport en montage" : "Continuer : transport et montage",
+    finalSubmitButton: locale === "en" ? "Submit quote request" : locale === "de" ? "Angebotsanfrage senden" : locale === "nl" ? "Offerteaanvraag verzenden" : "Envoyer ma demande de devis",
     submitLoading: locale === "en" ? "Processing Request..." : locale === "de" ? "Anfrage wird verarbeitet..." : locale === "nl" ? "Aanvraag wordt verwerkt..." : "Traitement en cours...",
+    assemblyModalKicker: locale === "en" ? "PROJECT VALIDATION" : locale === "de" ? "PROJEKTBESTÄTIGUNG" : locale === "nl" ? "PROJECTVALIDATIE" : "VALIDATION DU PROJET",
+    assemblyModalTitle: locale === "en" ? "Who will assemble the house?" : locale === "de" ? "Wer wird das Haus montieren?" : locale === "nl" ? "Wie zal de woning monteren?" : "Qui réalisera le montage de la maison ?",
+    assemblyModalIntro: locale === "en"
+      ? "Transport is mandatory and charged separately. Ossa Bois assembly is added only if you choose it. Select an option to continue."
+      : locale === "de"
+        ? "Der Transport ist obligatorisch und wird separat berechnet. Die Montage durch Ossa Bois wird nur hinzugefügt, wenn Sie sie auswählen. Wählen Sie eine Option, um fortzufahren."
+        : locale === "nl"
+          ? "Transport is verplicht en wordt afzonderlijk berekend. Montage door Ossa Bois wordt alleen toegevoegd als u daarvoor kiest. Selecteer een optie om door te gaan."
+          : "Le transport est obligatoire et facturé séparément. Le montage Ossa Bois est ajouté uniquement si vous le choisissez. Sélectionnez une option pour continuer.",
+    professionalModalTitle: locale === "en" ? "I am a professional or will hire another company" : locale === "de" ? "Ich bin Fachmann oder beauftrage ein anderes Unternehmen" : locale === "nl" ? "Ik ben professional of schakel een ander bedrijf in" : "Je suis professionnel ou je ferai appel à une autre entreprise",
+    professionalModalDesc: locale === "en"
+      ? "I will arrange the assembly. No Ossa Bois assembly cost will be added; only transport will be calculated."
+      : locale === "de"
+        ? "Ich organisiere die Montage. Es werden keine Montagekosten von Ossa Bois hinzugefügt; nur der Transport wird berechnet."
+        : locale === "nl"
+          ? "Ik regel de montage. Er worden geen montagekosten van Ossa Bois toegevoegd; alleen het transport wordt berekend."
+          : "J'organise le montage. Aucun coût de montage Ossa Bois ne sera ajouté ; seul le transport sera calculé.",
+    ossaModalTitle: locale === "en" ? "I want assembly by Ossa Bois France" : locale === "de" ? "Ich wünsche die Montage durch Ossa Bois France" : locale === "nl" ? "Ik wil montage door Ossa Bois France" : "Je souhaite le montage par Ossa Bois France",
+    ossaModalDesc: locale === "en"
+      ? "Ossa Bois France will carry out the assembly. Its cost will be added automatically together with transport."
+      : locale === "de"
+        ? "Ossa Bois France übernimmt die Montage. Die Kosten werden zusammen mit dem Transport automatisch hinzugefügt."
+        : locale === "nl"
+          ? "Ossa Bois France voert de montage uit. De kosten worden automatisch samen met het transport toegevoegd."
+          : "Ossa Bois France réalisera le montage. Son coût sera automatiquement ajouté avec le transport.",
+    assemblyUnavailable: locale === "en" ? "Assembly price requires a personalized quote for this surface." : locale === "de" ? "Für diese Fläche ist ein individuelles Montageangebot erforderlich." : locale === "nl" ? "Voor deze oppervlakte is een persoonlijke montageofferte nodig." : "Le tarif de montage nécessite un devis personnalisé pour cette surface.",
+    modalTransport: locale === "en" ? "Mandatory transport" : locale === "de" ? "Obligatorischer Transport" : locale === "nl" ? "Verplicht transport" : "Transport obligatoire",
+    modalAssembly: locale === "en" ? "Assembly" : locale === "de" ? "Montage" : locale === "nl" ? "Montage" : "Montage",
+    modalExcluded: locale === "en" ? "Not included" : locale === "de" ? "Nicht enthalten" : locale === "nl" ? "Niet inbegrepen" : "Non inclus",
+    modalTotal: locale === "en" ? "Final estimate excl. VAT" : locale === "de" ? "Endschätzung netto" : locale === "nl" ? "Eindschatting excl. btw" : "Estimation finale HT",
+    modalBack: locale === "en" ? "Back to checkout" : locale === "de" ? "Zurück zur Übersicht" : locale === "nl" ? "Terug naar checkout" : "Retour au récapitulatif",
+    modalConfirm: locale === "en" ? "Add to project summary" : locale === "de" ? "Zur Projektübersicht hinzufügen" : locale === "nl" ? "Toevoegen aan projectoverzicht" : "Ajouter au récapitulatif",
+    modalRequired: locale === "en" ? "Select an assembly option to continue." : locale === "de" ? "Wählen Sie eine Montageoption, um fortzufahren." : locale === "nl" ? "Selecteer een montageoptie om door te gaan." : "Sélectionnez une option de montage pour continuer.",
+    reviewReadyText: locale === "en"
+      ? "Transport and assembly have been added. Review the final project summary, then confirm the submission."
+      : locale === "de"
+        ? "Transport und Montage wurden hinzugefügt. Prüfen Sie die endgültige Projektübersicht und bestätigen Sie anschließend das Absenden."
+        : locale === "nl"
+          ? "Transport en montage zijn toegevoegd. Controleer het definitieve projectoverzicht en bevestig daarna de aanvraag."
+          : "Le transport et le montage ont été ajoutés. Vérifiez le récapitulatif final du projet, puis confirmez l'envoi.",
+    changeInstallation: locale === "en" ? "Change transport / assembly choice" : locale === "de" ? "Transport-/Montagewahl ändern" : locale === "nl" ? "Transport-/montagekeuze wijzigen" : "Modifier le choix transport / montage",
     terms: locale === "en" 
       ? "By submitting your request, you agree to our general terms of service." 
       : locale === "de" ? "Mit dem Absenden Ihrer Anfrage stimmen Sie unseren Allgemeinen Geschäftsbedingungen zu."
@@ -458,21 +616,15 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
         : t.pending;
   const transportLabel = truckCount ? `${t.shippingCost} (${t.trucks(truckCount)})` : t.shippingCost;
 
-  function submitOrder(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  async function performOrderSubmission(
+    submittedSelection: StoredSelection,
+    submittedTotal: number,
+    form: HTMLFormElement
+  ) {
+    if (isSubmittingRef.current) return;
+    isSubmittingRef.current = true;
 
-    // The configurator step is mandatory. This also protects legacy or manually
-    // crafted session payloads before the server performs the same validation.
-    if (!installationMode) return;
-    
-    // Check custom agreements validation
-    if (!agreeShipping || !agreeTerms || !agreeUrban || !agreePrivacy) {
-      setAgreementsError(true);
-      return;
-    }
-    
-    setAgreementsError(false);
-    const data = new FormData(event.currentTarget);
+    const data = new FormData(form);
     const fullName = (data.get("full_name") as string) || "Client";
     setClientName(fullName);
     setIsSubmitting(true);
@@ -501,41 +653,113 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
       notes: data.get("notes")
     };
 
-    fetch("/api/checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        selection,
-        personalInfo,
-        deliveryInfo,
-        orderRef: ref,
-        total,
-        locale
-      })
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        setIsSubmitting(false);
-        if (result.success) {
-          setNotificationsSent(result.notificationsSent !== false);
-          setSuccess(true);
-          sessionStorage.removeItem("house_selections");
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        } else {
-          alert(locale === "en" ? "Failed to send request. Please try again." : locale === "de" ? "Fehler beim Senden der Anfrage. Bitte versuchen Sie es erneut." : locale === "nl" ? "Verzenden van verzoek mislukt. Probeer het opnieuw." : "Échec de l'envoi de la demande. Veuillez réessayer.");
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-        setIsSubmitting(false);
-        alert(locale === "en" ? "An error occurred. Please try again." : locale === "de" ? "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut." : locale === "nl" ? "Er is een fout opgetreden. Probeer het opnieuw." : "Une erreur est survenue. Veuillez réessayer.");
+    try {
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          selection: submittedSelection,
+          personalInfo,
+          deliveryInfo,
+          orderRef: ref,
+          total: submittedTotal,
+          locale
+        })
       });
+      const result = await response.json();
+      if (result.success) {
+        setNotificationsSent(result.notificationsSent !== false);
+        setSuccess(true);
+        sessionStorage.removeItem(CHECKOUT_SELECTION_KEY);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        alert(locale === "en" ? "Failed to send request. Please try again." : locale === "de" ? "Fehler beim Senden der Anfrage. Bitte versuchen Sie es erneut." : locale === "nl" ? "Verzenden van verzoek mislukt. Probeer het opnieuw." : "Échec de l'envoi de la demande. Veuillez réessayer.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert(locale === "en" ? "An error occurred. Please try again." : locale === "de" ? "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut." : locale === "nl" ? "Er is een fout opgetreden. Probeer het opnieuw." : "Une erreur est survenue. Veuillez réessayer.");
+    } finally {
+      isSubmittingRef.current = false;
+      setIsSubmitting(false);
+    }
+  }
+
+  function submitOrder(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (!agreeShipping || !agreeTerms || !agreeUrban || !agreePrivacy) {
+      setAgreementsError(true);
+      return;
+    }
+
+    setAgreementsError(false);
+    if (!selection) return;
+
+    if (!installationMode) {
+      setPendingInstallationMode(null);
+      setInstallationModalOpen(true);
+      return;
+    }
+
+    void performOrderSubmission(selection, total, event.currentTarget);
+  }
+
+  function confirmInstallationForReview() {
+    if (
+      !selection ||
+      !pendingInstallationMode ||
+      !pendingTransportQuote ||
+      pendingAssemblyCost === null ||
+      isSubmittingRef.current
+    ) {
+      return;
+    }
+
+    const submittedTotal = Math.round(
+      (configurationSubtotal + pendingTransportQuote.cost + pendingAssemblyCost) * 100
+    ) / 100;
+    const installationLabel =
+      pendingInstallationMode === "ossa"
+        ? t.ossaModalTitle
+        : t.professionalModalTitle;
+    const submittedSelection: StoredSelection = {
+      ...selection,
+      configurationSubtotal,
+      truckCount: pendingTransportQuote.truckCount,
+      transportCost: pendingTransportQuote.cost,
+      installationMode: pendingInstallationMode,
+      assemblyCost: pendingAssemblyCost,
+      installation: {
+        mode: pendingInstallationMode,
+        label: installationLabel,
+        cost: pendingAssemblyCost,
+      },
+      totalPrice: submittedTotal,
+      priceBasis: "excl_vat",
+      vatIncluded: false,
+    };
+
+    let selectionSaved = false;
+    try {
+      selectionSaved = saveCheckoutSelection(submittedSelection);
+    } catch (error) {
+      console.error("Could not persist the finalized checkout selection:", error);
+    }
+    if (!selectionSaved) {
+      alert(locale === "en" ? "Could not save the final quote. Please try again." : locale === "de" ? "Das endgültige Angebot konnte nicht gespeichert werden. Bitte versuchen Sie es erneut." : locale === "nl" ? "De definitieve offerte kon niet worden opgeslagen. Probeer het opnieuw." : "Impossible d'enregistrer l'estimation finale. Veuillez réessayer.");
+      return;
+    }
+
+    setSelection(submittedSelection);
+    setInstallationConfirmedInCheckout(true);
+    setInstallationModalOpen(false);
+    setPendingInstallationMode(null);
   }
 
 
   return (
     <div className={`checkout-page${success ? " success-showing" : ""}`}>
-      <div className="checkout-container">
+      <div ref={checkoutContainerRef} className="checkout-container">
         
         {/* Step Indicator Header */}
         <div className="checkout-header-wrapper">
@@ -584,29 +808,7 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
           </div>
         ) : (
           <>
-            {selection && !installationMode ? (
-              <div className="empty-checkout">
-                <div className="empty-checkout-icon" aria-hidden="true">🛠️</div>
-                <h2>{t.pendingAssemblyTitle}</h2>
-                <p>{t.pendingAssemblyDesc}</p>
-                <Link
-                  href={
-                    selection.house?.id
-                      ? `/${locale}/maisons/${selection.house.id}`
-                      : `/${locale}/maisons`
-                  }
-                  className="discover-btn"
-                >
-                  {locale === "en"
-                    ? "Return to the configurator"
-                    : locale === "de"
-                      ? "Zum Konfigurator zurückkehren"
-                      : locale === "nl"
-                        ? "Terug naar de configurator"
-                        : "Retourner au configurateur"}
-                </Link>
-              </div>
-            ) : selection ? (
+            {selection ? (
               <div className="checkout-content">
                 <div className="checkout-form-section">
                   <form id="checkout-form" className="checkout-form-card" onSubmit={submitOrder}>
@@ -797,8 +999,9 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
                       </div>
                     </div>
 
-                    {/* Section 3: Shipping logistics options */}
-                    <div className="form-section">
+                    {/* Added only after the required final assembly choice. */}
+                    {installationMode ? (
+                    <div className="form-section" data-testid="checkout-logistics-section">
                       <div className="form-section-header">
                         <span className="form-section-icon">
                           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -832,12 +1035,11 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
                           </div>
                         </div>
 
-                        {/* Assembly option chosen in the mandatory configurator step */}
-                        <div className={`transportation-card static-card${installationMode ? " checked" : ""}`}>
+                        <div className="transportation-card static-card checked">
                           <input
                             className="transportation-checkbox"
                             type="checkbox"
-                            checked={Boolean(installationMode)}
+                            checked={true}
                             readOnly
                             tabIndex={-1}
                             aria-hidden="true"
@@ -852,7 +1054,19 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
                           </div>
                         </div>
                       </div>
+                      <button
+                        type="button"
+                        className="checkout-change-installation-button"
+                        data-testid="change-installation"
+                        onClick={() => {
+                          setPendingInstallationMode(installationMode);
+                          setInstallationModalOpen(true);
+                        }}
+                      >
+                        {t.changeInstallation}
+                      </button>
                     </div>
+                    ) : null}
                   </form>
                 </div>
 
@@ -1022,22 +1236,26 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
                     
                     <div className="order-divider" />
                     
-                    <div className="order-price-row">
+                    <div className="order-price-row" data-testid="checkout-configuration-subtotal">
                       <span className="order-price-label">{t.basePriceLabel}</span>
                       <span className="order-price-value">{euroFormatter.format(configurationSubtotal)}</span>
                     </div>
-                    <div className="order-price-row">
-                      <span className="order-price-label">{transportLabel}</span>
-                      <span className="order-price-value">{formatTransportCost(transportCost)}</span>
-                    </div>
-                    <div className="order-price-row">
-                      <span className="order-price-label">{t.assemblyCostLabel}</span>
-                      <span className="order-price-value">{assemblyPriceText}</span>
-                    </div>
+                    {installationMode ? (
+                      <>
+                        <div className="order-price-row" data-testid="checkout-transport-row">
+                          <span className="order-price-label">{transportLabel}</span>
+                          <span className="order-price-value">{formatTransportCost(transportCost)}</span>
+                        </div>
+                        <div className="order-price-row" data-testid="checkout-assembly-row">
+                          <span className="order-price-label">{t.assemblyCostLabel}</span>
+                          <span className="order-price-value">{assemblyPriceText}</span>
+                        </div>
+                      </>
+                    ) : null}
                     
                     <div className="order-divider" />
                     
-                    <div className="order-price-row order-total-row">
+                    <div className="order-price-row order-total-row" data-testid="checkout-total">
                       <span className="order-price-label">{t.totalEst}</span>
                       <span className="order-price-value order-total-price">{euroFormatter.format(total)}</span>
                     </div>
@@ -1045,11 +1263,26 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
                   </div>
 
                   <div className="order-summary-footer">
+                    {installationMode ? (
+                      <div className="checkout-final-review-notice" data-testid="checkout-review-ready" role="status">
+                        {t.reviewReadyText}
+                      </div>
+                    ) : (
+                      <div className="checkout-pre-validation-notice" data-testid="checkout-logistics-notice" role="note">
+                        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <circle cx="12" cy="12" r="9" />
+                          <path strokeLinecap="round" d="M12 10.5v5M12 7.5h.01" />
+                        </svg>
+                        <span>{t.preValidationNotice}</span>
+                      </div>
+                    )}
                     <button 
+                      ref={submitTriggerRef}
                       className="place-order-button" 
                       type="submit" 
                       form="checkout-form"
-                      disabled={isSubmitting || !installationMode}
+                      data-testid="checkout-submit"
+                      disabled={isSubmitting}
                     >
                       {isSubmitting ? (
                         <>
@@ -1068,7 +1301,7 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
                           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
                           </svg>
-                          {t.submitButton}
+                          {installationMode ? t.finalSubmitButton : t.submitButton}
                         </>
                       )}
                     </button>
@@ -1216,6 +1449,145 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
           </>
         )}
       </div>
+      {installationModalOpen ? (
+        <div
+          className="installation-modal-backdrop"
+          role="presentation"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) {
+              setInstallationModalOpen(false);
+              setPendingInstallationMode(null);
+            }
+          }}
+        >
+          <div
+            ref={installationModalRef}
+            className="installation-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="installation-modal-title"
+            data-testid="installation-modal"
+          >
+            <button
+              type="button"
+              className="installation-modal-close"
+              aria-label={t.modalBack}
+              onClick={() => {
+                setInstallationModalOpen(false);
+                setPendingInstallationMode(null);
+              }}
+            >
+              ×
+            </button>
+
+            <div className="installation-modal-header">
+              <p className="material-modal-kicker">{t.assemblyModalKicker}</p>
+              <h2 id="installation-modal-title">{t.assemblyModalTitle}</h2>
+              <p>{t.assemblyModalIntro}</p>
+            </div>
+
+            <div className="installation-options" role="radiogroup" aria-label={t.assemblyModalTitle}>
+              <label className={`installation-option${pendingInstallationMode === "professional" ? " selected" : ""}`}>
+                <input
+                  type="radio"
+                  name="installation_mode"
+                  value="professional"
+                  data-testid="installation-professional"
+                  checked={pendingInstallationMode === "professional"}
+                  onChange={() => setPendingInstallationMode("professional")}
+                />
+                <span className="installation-option-check" aria-hidden="true" />
+                <span className="installation-option-copy">
+                  <strong>{t.professionalModalTitle}</strong>
+                  <span>{t.professionalModalDesc}</span>
+                </span>
+              </label>
+
+              <label className={`installation-option${pendingInstallationMode === "ossa" ? " selected" : ""}${ossaAssemblyCost === null ? " disabled" : ""}`}>
+                <input
+                  type="radio"
+                  name="installation_mode"
+                  value="ossa"
+                  data-testid="installation-ossa"
+                  checked={pendingInstallationMode === "ossa"}
+                  onChange={() => setPendingInstallationMode("ossa")}
+                  disabled={ossaAssemblyCost === null}
+                />
+                <span className="installation-option-check" aria-hidden="true" />
+                <span className="installation-option-copy">
+                  <strong>{t.ossaModalTitle}</strong>
+                  <span>
+                    {ossaAssemblyCost === null
+                      ? t.assemblyUnavailable
+                      : t.ossaModalDesc}
+                  </span>
+                </span>
+              </label>
+            </div>
+
+            {pendingInstallationMode && pendingTransportQuote && pendingAssemblyCost !== null ? (
+              <div className="installation-quote-summary" data-testid="installation-quote" aria-live="polite">
+                <div>
+                  <span>{t.modalTransport} ({t.trucks(pendingTransportQuote.truckCount)})</span>
+                  <strong>{formatTransportCost(pendingTransportQuote.cost)}</strong>
+                </div>
+                <div>
+                  <span>{t.modalAssembly}</span>
+                  <strong>
+                    {pendingInstallationMode === "professional"
+                      ? t.modalExcluded
+                      : formatTransportCost(pendingAssemblyCost)}
+                  </strong>
+                </div>
+                <div className="installation-quote-total">
+                  <span>{t.modalTotal}</span>
+                  <strong>
+                    {euroFormatter.format(
+                      configurationSubtotal +
+                        pendingTransportQuote.cost +
+                        pendingAssemblyCost
+                    )}
+                  </strong>
+                </div>
+                <p className="installation-tax-note">{t.taxNotice}</p>
+              </div>
+            ) : null}
+
+            <div className="installation-modal-actions">
+              <button
+                type="button"
+                className="installation-back-button"
+                onClick={() => {
+                  setInstallationModalOpen(false);
+                  setPendingInstallationMode(null);
+                }}
+              >
+                {t.modalBack}
+              </button>
+              <button
+                type="button"
+                className="installation-confirm-button"
+                data-testid="installation-confirm"
+                onClick={confirmInstallationForReview}
+                disabled={
+                  !pendingInstallationMode ||
+                  !pendingTransportQuote ||
+                  pendingAssemblyCost === null ||
+                  isSubmitting
+                }
+              >
+                {t.modalConfirm}
+              </button>
+            </div>
+
+            {!pendingInstallationMode ? (
+              <p className="installation-required-message" role="status">
+                {t.modalRequired}
+              </p>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

@@ -13,11 +13,6 @@ import {
 import { PlanimetryModal } from "@/components/PlanimetryModal";
 import { publicMediaUrl } from "@/lib/media-url";
 import { isPublishedHousePrice } from "@/lib/price-availability";
-import {
-  getAssemblyCost,
-  getTransportQuote,
-  type InstallationMode,
-} from "@/lib/house-pricing";
 import { CHECKOUT_CATEGORY_PAYLOAD_KEYS } from "@/lib/checkout-pricing";
 
 function formatPrice(value: number) {
@@ -177,88 +172,8 @@ export function HouseConfigurator({ config, locale, dict }: HouseConfiguratorPro
   const [formStatus, setFormStatus] = useState<"idle" | "success" | "error">("idle");
   const [isStructureTextExpanded, setIsStructureTextExpanded] = useState(false);
   const [isPreparingCheckout, setIsPreparingCheckout] = useState(false);
-  const [installationModalOpen, setInstallationModalOpen] = useState(false);
-  const [installationMode, setInstallationMode] = useState<InstallationMode | null>(null);
-  const configuratorRootRef = useRef<HTMLDivElement>(null);
-  const installationModalRef = useRef<HTMLDivElement>(null);
-  const installationTriggerRef = useRef<HTMLButtonElement>(null);
-  const isPreparingCheckoutRef = useRef(false);
 
   const scrollableRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    isPreparingCheckoutRef.current = isPreparingCheckout;
-  }, [isPreparingCheckout]);
-
-  useEffect(() => {
-    if (!installationModalOpen) return;
-
-    const modal = installationModalRef.current;
-    const root = configuratorRootRef.current;
-    const trigger = installationTriggerRef.current;
-    const previousOverflow = document.body.style.overflow;
-    const previousAriaHidden = root?.getAttribute("aria-hidden");
-    const previouslyFocused = document.activeElement as HTMLElement | null;
-
-    document.body.style.overflow = "hidden";
-    root?.setAttribute("inert", "");
-    root?.setAttribute("aria-hidden", "true");
-
-    const getFocusableElements = () =>
-      modal
-        ? Array.from(
-            modal.querySelectorAll<HTMLElement>(
-              'button:not([disabled]), input:not([disabled]), [href], [tabindex]:not([tabindex="-1"])'
-            )
-          ).filter((element) => !element.hasAttribute("hidden"))
-        : [];
-
-    const focusTimer = window.requestAnimationFrame(() => {
-      const firstRadio = modal?.querySelector<HTMLInputElement>(
-        'input[type="radio"]:not([disabled])'
-      );
-      (firstRadio ?? getFocusableElements()[0])?.focus();
-    });
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && !isPreparingCheckoutRef.current) {
-        event.preventDefault();
-        setInstallationModalOpen(false);
-        setInstallationMode(null);
-        return;
-      }
-      if (event.key !== "Tab") return;
-
-      const focusable = getFocusableElements();
-      if (focusable.length === 0) {
-        event.preventDefault();
-        return;
-      }
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.cancelAnimationFrame(focusTimer);
-      document.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = previousOverflow;
-      root?.removeAttribute("inert");
-      if (previousAriaHidden == null) root?.removeAttribute("aria-hidden");
-      else root?.setAttribute("aria-hidden", previousAriaHidden);
-      (previouslyFocused?.isConnected
-        ? previouslyFocused
-        : trigger
-      )?.focus();
-    };
-  }, [installationModalOpen]);
 
   useEffect(() => {
     setIsStructureTextExpanded(false);
@@ -338,8 +253,6 @@ export function HouseConfigurator({ config, locale, dict }: HouseConfiguratorPro
     setActiveTab("description");
     setFacadeWarning("");
     setMaterialModal(null);
-    setInstallationModalOpen(false);
-    setInstallationMode(null);
     setPlanimetryOpen(false);
     setLayoutMode("split");
     setIsStructureTextExpanded(false);
@@ -892,26 +805,9 @@ L'équipe Ossa Bois France`;
     });
   }
 
-  function continueToCheckout() {
+  async function continueToCheckout() {
     if (!hasSelectedStructure) return;
     if (!selectedSize.priceAvailable) {
-      router.push(`/${locale}/contact`);
-      return;
-    }
-
-    setInstallationMode(null);
-    setInstallationModalOpen(true);
-  }
-
-  async function confirmInstallationAndContinue() {
-    if (!installationMode) return;
-
-    const transport = getTransportQuote(config.perdhesa.bruto);
-    const assemblyCost = getAssemblyCost(
-      config.perdhesa.bruto,
-      installationMode
-    );
-    if (!transport || assemblyCost === null) {
       router.push(`/${locale}/contact`);
       return;
     }
@@ -959,23 +855,6 @@ L'équipe Ossa Bois France`;
       );
 
       const configurationSubtotal = total;
-      const totalPrice = total + transport.cost + assemblyCost;
-      const installationLabel =
-        installationMode === "professional"
-          ? locale === "en"
-            ? "Assembly arranged by the client / another company"
-            : locale === "de"
-              ? "Montage durch den Kunden / ein Drittunternehmen"
-              : locale === "nl"
-                ? "Montage door de klant / een ander bedrijf"
-                : "Montage organisé par le client / une autre entreprise"
-          : locale === "en"
-            ? "Assembly by Ossa Bois France"
-            : locale === "de"
-              ? "Montage durch Ossa Bois France"
-              : locale === "nl"
-                ? "Montage door Ossa Bois France"
-                : "Montage par Ossa Bois France";
 
       const payload = {
         house: {
@@ -993,30 +872,9 @@ L'équipe Ossa Bois France`;
         ...optionPayload,
         selectedOptions: selectedOptionsPayload,
         basePrice: selectedSize.price,
-        priceBreakdown: [
-          ...priceBreakdown,
-          {
-            label: `${dict.breakdown.transport} (${transport.truckCount} ${
-              transport.truckCount === 1 ? "camion" : "camions"
-            })`,
-            value: transport.cost,
-          },
-          {
-            label: installationLabel,
-            value: assemblyCost,
-          },
-        ],
+        priceBreakdown,
         configurationSubtotal,
-        truckCount: transport.truckCount,
-        transportCost: transport.cost,
-        installationMode,
-        assemblyCost,
-        installation: {
-          mode: installationMode,
-          label: installationLabel,
-          cost: assemblyCost,
-        },
-        totalPrice,
+        totalPrice: configurationSubtotal,
         priceBasis: "excl_vat",
         vatIncluded: false,
         perdhesa: config.perdhesa
@@ -1338,7 +1196,7 @@ L'équipe Ossa Bois France`;
 
   return (
     <div className={`house-builder-container layout-${layoutMode}`}>
-      <div ref={configuratorRootRef} className={`house-product-page ${isMobileDrawerExpanded ? "drawer-expanded" : ""}`}>
+      <div className={`house-product-page ${isMobileDrawerExpanded ? "drawer-expanded" : ""}`}>
         <div className="house-main-section">
           <div className="house-image-section">
             <div className="house-main-image">
@@ -1981,7 +1839,7 @@ L'équipe Ossa Bois France`;
                 {!hasSelectedStructure ? (
                   <div className="price-total price-pending" id="price-total" data-testid="price-pending" aria-live="polite">
                     <span className="price-value">{dict.labels.pricePending}</span>
-                    <span className="price-extra-note">{dict.labels.extrasNotice}</span>
+                    <span className="price-extra-note" id="configurator-logistics-notice">{dict.labels.extrasNotice}</span>
                   </div>
                 ) : selectedSize.priceAvailable ? (
                   <div className="price-display-stack" aria-live="polite">
@@ -2002,7 +1860,7 @@ L'équipe Ossa Bois France`;
                         </svg>
                       </button>
                     </div>
-                    <span className="price-extra-note">{dict.labels.extrasNotice}</span>
+                    <span className="price-extra-note" id="configurator-logistics-notice">{dict.labels.extrasNotice}</span>
                   </div>
                 ) : (
                   <div className="price-total price-on-request" id="price-total">
@@ -2015,7 +1873,7 @@ L'équipe Ossa Bois France`;
                   className="continue-button"
                   type="button"
                   data-testid="validate-project"
-                  ref={installationTriggerRef}
+                  aria-describedby={!hasSelectedStructure || selectedSize.priceAvailable ? "configurator-logistics-notice" : undefined}
                   onClick={continueToCheckout}
                   disabled={
                     !hasSelectedStructure ||
@@ -2099,150 +1957,6 @@ L'équipe Ossa Bois France`;
           </div>
         </div>
       ) : null}
-      {installationModalOpen ? (() => {
-        const transport = getTransportQuote(config.perdhesa.bruto);
-        const ossaAssemblyCost = getAssemblyCost(config.perdhesa.bruto, "ossa");
-        const selectedAssemblyCost = installationMode
-          ? getAssemblyCost(config.perdhesa.bruto, installationMode)
-          : null;
-        const canConfirm =
-          Boolean(installationMode) &&
-          transport !== null &&
-          selectedAssemblyCost !== null &&
-          !isPreparingCheckout &&
-          layersReady;
-
-        return (
-          <div
-            className="installation-modal-backdrop"
-            role="presentation"
-            onMouseDown={(event) => {
-              if (event.target === event.currentTarget && !isPreparingCheckout) {
-                setInstallationModalOpen(false);
-                setInstallationMode(null);
-              }
-            }}
-          >
-            <div
-              ref={installationModalRef}
-              className="installation-modal"
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="installation-modal-title"
-              data-testid="installation-modal"
-            >
-              <button
-                type="button"
-                className="installation-modal-close"
-                aria-label={dict.labels.close}
-                onClick={() => {
-                  setInstallationModalOpen(false);
-                  setInstallationMode(null);
-                }}
-                disabled={isPreparingCheckout}
-              >
-                ×
-              </button>
-              <div className="installation-modal-header">
-                <p className="material-modal-kicker">{dict.assemblyModal.kicker}</p>
-                <h2 id="installation-modal-title">{dict.assemblyModal.title}</h2>
-                <p>{dict.assemblyModal.intro}</p>
-              </div>
-
-              <div className="installation-options" role="radiogroup" aria-label={dict.assemblyModal.title}>
-                <label className={`installation-option${installationMode === "professional" ? " selected" : ""}`}>
-                  <input
-                    type="radio"
-                    name="installation_mode"
-                    value="professional"
-                    data-testid="installation-professional"
-                    checked={installationMode === "professional"}
-                    onChange={() => setInstallationMode("professional")}
-                  />
-                  <span className="installation-option-check" aria-hidden="true" />
-                  <span className="installation-option-copy">
-                    <strong>{dict.assemblyModal.professionalTitle}</strong>
-                    <span>{dict.assemblyModal.professionalDescription}</span>
-                  </span>
-                </label>
-
-                <label className={`installation-option${installationMode === "ossa" ? " selected" : ""}${ossaAssemblyCost === null ? " disabled" : ""}`}>
-                  <input
-                    type="radio"
-                    name="installation_mode"
-                    value="ossa"
-                    data-testid="installation-ossa"
-                    checked={installationMode === "ossa"}
-                    onChange={() => setInstallationMode("ossa")}
-                    disabled={ossaAssemblyCost === null}
-                  />
-                  <span className="installation-option-check" aria-hidden="true" />
-                  <span className="installation-option-copy">
-                    <strong>{dict.assemblyModal.ossaTitle}</strong>
-                    <span>
-                      {ossaAssemblyCost === null
-                        ? dict.assemblyModal.unavailable
-                        : dict.assemblyModal.ossaDescription}
-                    </span>
-                  </span>
-                </label>
-              </div>
-
-              {installationMode && transport && selectedAssemblyCost !== null ? (
-                <div className="installation-quote-summary" data-testid="installation-quote" aria-live="polite">
-                  <div>
-                    <span>{dict.assemblyModal.transport}</span>
-                    <strong>€ {formatPrice(transport.cost)}</strong>
-                  </div>
-                  <div>
-                    <span>{dict.assemblyModal.assembly}</span>
-                    <strong>
-                      {installationMode === "professional"
-                        ? dict.assemblyModal.excluded
-                        : `€ ${formatPrice(selectedAssemblyCost)}`}
-                    </strong>
-                  </div>
-                  <div className="installation-quote-total">
-                    <span>{dict.assemblyModal.total}</span>
-                    <strong>€ {formatPrice(total + transport.cost + selectedAssemblyCost)}</strong>
-                  </div>
-                  <p className="installation-tax-note">{dict.assemblyModal.taxNotice}</p>
-                </div>
-              ) : null}
-
-              <div className="installation-modal-actions">
-                <button
-                  type="button"
-                  className="installation-back-button"
-                  onClick={() => {
-                    setInstallationModalOpen(false);
-                    setInstallationMode(null);
-                  }}
-                  disabled={isPreparingCheckout}
-                >
-                  {dict.assemblyModal.back}
-                </button>
-                <button
-                  type="button"
-                  className="installation-confirm-button"
-                  data-testid="installation-confirm"
-                  onClick={confirmInstallationAndContinue}
-                  disabled={!canConfirm}
-                >
-                  {isPreparingCheckout
-                    ? `${dict.assemblyModal.confirm}…`
-                    : dict.assemblyModal.confirm}
-                </button>
-              </div>
-              {!installationMode ? (
-                <p className="installation-required-message" role="status">
-                  {dict.assemblyModal.required}
-                </p>
-              ) : null}
-            </div>
-          </div>
-        );
-      })() : null}
       {isZoomed ? (
         <div
           className="image-zoom-backdrop"

@@ -196,7 +196,7 @@
       "priceOnRequest": "Prix sur devis",
       "pricePending": "Choisissez une structure ou un matériau pour calculer votre prix.",
       "priceUnavailable": "Surface brute à compléter — prix sur devis",
-      "extrasNotice": "Sous-total de configuration hors taxes (HT). Le transport est obligatoire et en supplément ; le montage Ossa Bois est ajouté uniquement si vous le choisissez.",
+      "extrasNotice": "Information transport et montage : le montant affiché correspond uniquement à la configuration de la maison (HT). Après « Valider le projet », le transport obligatoire, facturé séparément, et le montage Ossa Bois, si vous le choisissez, seront calculés et affichés dans le récapitulatif final avant l’envoi de votre demande de devis.",
       "nextStep": "Étape suivante",
       "prevStep": "Étape précédente",
       "orderNow": "Valider le projet",

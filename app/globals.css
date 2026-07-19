@@ -2444,9 +2444,9 @@ img {
 
 .price-extra-note {
   color: #687167;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 450;
-  line-height: 1.35;
+  line-height: 1.45;
 }
 
 .price-display-stack {
@@ -3542,6 +3542,26 @@ body:has(.installation-modal-backdrop) .cookie-reopen-trigger {
   color: #5E6F4F;
 }
 
+.checkout-change-installation-button {
+  display: inline-flex;
+  margin-top: 14px;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: #5E6F4F;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 650;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.checkout-change-installation-button:focus-visible {
+  outline: 3px solid rgba(78, 146, 128, 0.4);
+  outline-offset: 4px;
+}
+
 /* Sidebar Agreements styling */
 .sidebar-agreements-section {
   display: flex;
@@ -3838,6 +3858,37 @@ body:has(.installation-modal-backdrop) .cookie-reopen-trigger {
 
 .order-summary-footer {
   margin-top: 30px;
+}
+
+.checkout-final-review-notice {
+  margin-bottom: 14px;
+  border: 1px solid #cfd9c9;
+  border-radius: 10px;
+  background: #f3f6f1;
+  padding: 12px 14px;
+  color: #42513c;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.checkout-pre-validation-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  margin-bottom: 0.85rem;
+  padding: 0.85rem 0.95rem;
+  border: 1px solid rgba(91, 111, 76, 0.28);
+  border-radius: 12px;
+  background: rgba(91, 111, 76, 0.08);
+  color: #35412f;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.checkout-pre-validation-notice svg {
+  flex: 0 0 auto;
+  margin-top: 0.08rem;
+  color: var(--primary-green);
 }
 
 .place-order-button {

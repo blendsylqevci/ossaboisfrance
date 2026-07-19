@@ -196,7 +196,7 @@
       "priceOnRequest": "Preis auf Anfrage",
       "pricePending": "Wählen Sie eine Struktur oder ein Material, um Ihren Preis zu berechnen.",
       "priceUnavailable": "Bruttofläche erforderlich — Preis auf Anfrage",
-      "extrasNotice": "Netto-Zwischensumme der Konfiguration (zzgl. MwSt.). Der Transport ist obligatorisch und zusätzlich; die Ossa-Bois-Montage wird nur bei Auswahl hinzugefügt.",
+      "extrasNotice": "Information zu Transport und Montage: Der angezeigte Betrag umfasst nur das konfigurierte Haus ohne MwSt. Nach „Projekt bestätigen“ werden der obligatorische, separat berechnete Transport und die Montage durch Ossa Bois, falls gewählt, berechnet und vor dem Absenden Ihrer Angebotsanfrage in der endgültigen Übersicht ausgewiesen.",
       "nextStep": "Nächster Schritt",
       "prevStep": "Vorheriger Schritt",
       "orderNow": "Projekt bestätigen",

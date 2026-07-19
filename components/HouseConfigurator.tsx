@@ -727,7 +727,7 @@ export function HouseConfigurator({ config, locale, dict }: HouseConfiguratorPro
       });
       
       if (selectedSize.priceAvailable) {
-        detailsText += `\nPrix total estimé : € ${formatPrice(total)}\n`;
+        detailsText += `\nPrix total estimé HT (TVA non incluse) : € ${formatPrice(total)}\n`;
       }
     } else {
       detailsText = `Modèle de maison : ${config.name} (${selectedSize.label})\n`;
@@ -1017,6 +1017,8 @@ L'équipe Ossa Bois France`;
           cost: assemblyCost,
         },
         totalPrice,
+        priceBasis: "excl_vat",
+        vatIncluded: false,
         perdhesa: config.perdhesa
       };
 

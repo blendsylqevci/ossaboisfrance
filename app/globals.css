@@ -3829,6 +3829,13 @@ body:has(.installation-modal-backdrop) .cookie-reopen-trigger {
   color: #5E6F4F;
 }
 
+.order-tax-notice {
+  margin: 10px 0 0;
+  color: #70786f;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
 .order-summary-footer {
   margin-top: 30px;
 }

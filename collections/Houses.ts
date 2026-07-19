@@ -184,7 +184,17 @@ export const Houses: CollectionConfig = {
         {
           type: 'row',
           fields: [
-            { name: 'bruto', type: 'number', min: 0, label: 'Bruto (m²)', admin: { width: '9%' } },
+            {
+              name: 'bruto',
+              type: 'number',
+              min: 0,
+              label: 'Bruto (m²)',
+              admin: {
+                width: '9%',
+                description:
+                  'Enregistrez la surface Bruto réelle (> 1 m²) : les prix 60×160/60×200, le transport et le montage seront recalculés automatiquement selon la catégorie.',
+              },
+            },
             { name: 'neto', type: 'number', min: 0, label: 'Neto (m²)', admin: { width: '9%' } },
             { name: 'mure_te_jashtme', type: 'number', min: 0, label: 'Murs Extérieurs (m²)', admin: { width: '9%' } },
             { name: 'mure_mbajtese', type: 'number', min: 0, label: 'Murs Porteurs (m²)', admin: { width: '9%' } },

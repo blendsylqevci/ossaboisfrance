@@ -177,6 +177,8 @@ export async function POST(req: NextRequest) {
       truckCount,
       transportCost: serverTransportCost,
       assemblyCost: serverAssemblyCost,
+      priceBasis,
+      vatIncluded,
     } = pricing;
     const selectedSize = configData.sizes.find(
       (s) => s.id === selectedSizeId || s.label === selectedSizeId
@@ -221,6 +223,8 @@ export async function POST(req: NextRequest) {
       installationMode,
       assemblyCost: serverAssemblyCost,
       totalPrice: total,
+      priceBasis,
+      vatIncluded,
       installation: {
         mode: installationMode,
         provider:
@@ -357,15 +361,16 @@ export async function POST(req: NextRequest) {
         roof: "Surface Toiture",
         componentHeader: "Composant",
         choiceHeader: "Choix sélectionné",
-        priceHeader: "Tarif estimé",
+        priceHeader: "Tarif estimé HT",
         baseStructure: "Structure & Ossature Bois",
         baseStructureDesc: "Modèle {model} ({size})",
         transport: "Logistique & Transport",
-        transportDesc: "Livraison sur site : {trucks} camion(s) × 3 500 €",
+        transportDesc: "Livraison sur site : {trucks} camion(s) × 3 500 € HT",
         assembly: "Montage",
         assemblyOssaDesc: "Montage réalisé par Ossa Bois",
         assemblyProfessionalDesc: "Montage réalisé par le client ou une entreprise tierce (non pris en charge par Ossa Bois)",
-        totalEstimation: "Estimation globale du projet configuré",
+        totalEstimation: "Estimation globale du projet configuré (HT)",
+        taxNotice: "Tous les montants affichés sont hors taxes (HT). La TVA n'est pas incluse et sera calculée dans le devis personnalisé.",
         nextStepsHeader: "Prochaines étapes de votre projet",
         step1Title: "Étape 1 : Bureau d'études",
         step1Desc: "Notre équipe technique analyse votre terrain et l'accès au chantier sous 24 à 48 heures.",
@@ -387,15 +392,16 @@ export async function POST(req: NextRequest) {
         roof: "Roof Area",
         componentHeader: "Component",
         choiceHeader: "Selected choice",
-        priceHeader: "Estimated price",
+        priceHeader: "Estimated price excl. VAT",
         baseStructure: "Timber Frame Structure",
         baseStructureDesc: "Model {model} ({size})",
         transport: "Logistics & Shipping",
-        transportDesc: "On-site delivery: {trucks} truck(s) × €3,500",
+        transportDesc: "On-site delivery: {trucks} truck(s) × €3,500 excl. VAT",
         assembly: "Assembly",
         assemblyOssaDesc: "Assembly performed by Ossa Bois",
         assemblyProfessionalDesc: "Assembly performed by the client or a third-party company (not provided by Ossa Bois)",
-        totalEstimation: "Configured project estimate",
+        totalEstimation: "Configured project estimate excl. VAT",
+        taxNotice: "All displayed amounts exclude VAT. Applicable VAT is not included and will be calculated in your personalized quotation.",
         nextStepsHeader: "Next steps of your project",
         step1Title: "Step 1: Engineering Review",
         step1Desc: "Our technical team analyzes your land and access configuration within 24 to 48 hours.",
@@ -417,15 +423,16 @@ export async function POST(req: NextRequest) {
         roof: "Dachfläche",
         componentHeader: "Komponente",
         choiceHeader: "Ausgewählte Option",
-        priceHeader: "Geschätzter Preis",
+        priceHeader: "Geschätzter Preis zzgl. MwSt.",
         baseStructure: "Holzrahmenstruktur & Tragwerk",
         baseStructureDesc: "Modell {model} ({size})",
         transport: "Logistik & Transport",
-        transportDesc: "Lieferung zur Baustelle: {trucks} Lkw × 3.500 €",
+        transportDesc: "Lieferung zur Baustelle: {trucks} Lkw × 3.500 € zzgl. MwSt.",
         assembly: "Montage",
         assemblyOssaDesc: "Montage durch Ossa Bois",
         assemblyProfessionalDesc: "Montage durch den Kunden oder ein Drittunternehmen (nicht durch Ossa Bois)",
-        totalEstimation: "Schätzung des konfigurierten Projekts",
+        totalEstimation: "Schätzung des konfigurierten Projekts (zzgl. MwSt.)",
+        taxNotice: "Alle angezeigten Beträge sind Nettopreise zzgl. MwSt. Die MwSt. ist nicht enthalten und wird im persönlichen Angebot berechnet.",
         nextStepsHeader: "Nächste Schritte Ihres Projekts",
         step1Title: "Schritt 1: Technische Prüfung",
         step1Desc: "Unser technisches Team analysiert Ihr Grundstück und die Logistik innerhalb von 24 bis 48 Stunden.",
@@ -447,15 +454,16 @@ export async function POST(req: NextRequest) {
         roof: "Dakoppervlakte",
         componentHeader: "Component",
         choiceHeader: "Geselecteerde optie",
-        priceHeader: "Geschatte prijs",
+        priceHeader: "Geschatte prijs excl. btw",
         baseStructure: "Houtskelet & Structuur",
         baseStructureDesc: "Model {model} ({size})",
         transport: "Logistiek & Transport",
-        transportDesc: "Levering op de werf: {trucks} vrachtwagen(s) × € 3.500",
+        transportDesc: "Levering op de werf: {trucks} vrachtwagen(s) × € 3.500 excl. btw",
         assembly: "Montage",
         assemblyOssaDesc: "Montage uitgevoerd door Ossa Bois",
         assemblyProfessionalDesc: "Montage uitgevoerd door de klant of een extern bedrijf (niet door Ossa Bois)",
-        totalEstimation: "Raming van het geconfigureerde project",
+        totalEstimation: "Raming van het geconfigureerde project excl. btw",
+        taxNotice: "Alle weergegeven bedragen zijn exclusief btw. De btw is niet inbegrepen en wordt berekend in uw persoonlijke offerte.",
         nextStepsHeader: "Volgende stappen van uw project",
         step1Title: "Stap 1: Technische Analyse",
         step1Desc: "Ons technisch team analyseert uw terrein en de bereikbaarheid binnen 24 tot 48 uur.",
@@ -521,10 +529,18 @@ export async function POST(req: NextRequest) {
         const itemTotal = rawPrice * multiplier;
 
         let formattedCalculation = "";
+        const priceBasisSuffix =
+          lang === "fr"
+            ? " HT"
+            : lang === "en"
+              ? " excl. VAT"
+              : lang === "de"
+                ? " zzgl. MwSt."
+                : " excl. btw";
         if (targetCategory.priceMode === "wall_m2" || targetCategory.priceMode === "roof_m2") {
-          formattedCalculation = `${multiplier} m²${multiplierUnit} × ${euroFormatter.format(rawPrice)}/m²`;
+          formattedCalculation = `${multiplier} m²${multiplierUnit} × ${euroFormatter.format(rawPrice)}${priceBasisSuffix}/m²`;
         } else {
-          formattedCalculation = lang === "fr" ? "Tarif forfaitaire" : lang === "en" ? "Flat rate" : lang === "de" ? "Pauschalpreis" : "Vaste prijs";
+          formattedCalculation = lang === "fr" ? "Tarif forfaitaire HT" : lang === "en" ? "Flat rate excl. VAT" : lang === "de" ? "Pauschalpreis zzgl. MwSt." : "Vaste prijs excl. btw";
         }
 
         list.push({
@@ -771,7 +787,7 @@ export async function POST(req: NextRequest) {
                   <tr style="background-color: #F8FAFC; border-bottom: 1px solid #E2E8F0;">
                     <th align="left" style="padding: 12px 14px; font-size: 12.5px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px;">Composant</th>
                     <th align="left" style="padding: 12px 14px; font-size: 12.5px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px;">Choix technique (FR)</th>
-                    <th align="right" style="padding: 12px 14px; font-size: 12.5px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; width: 110px;">Tarif</th>
+                    <th align="right" style="padding: 12px 14px; font-size: 12.5px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; width: 110px;">Tarif HT</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -788,7 +804,7 @@ export async function POST(req: NextRequest) {
                   ${adminOptionsRowsHtml}
                   <tr style="border-bottom: 1px dashed #E2E8F0; background-color: #F8FAFC;">
                     <td style="padding: 12px 14px; font-size: 13px; font-weight: 600; color: #1E293B; vertical-align: top;">Transport</td>
-                    <td style="padding: 12px 14px; font-size: 12.5px; color: #475569; vertical-align: top;">Livraison sur site : ${truckCount} camion(s) × 3 500 €</td>
+                    <td style="padding: 12px 14px; font-size: 12.5px; color: #475569; vertical-align: top;">Livraison sur site : ${truckCount} camion(s) × 3 500 € HT</td>
                     <td align="right" style="padding: 12px 14px; font-size: 13px; font-weight: 700; color: #1E293B; vertical-align: top;">
                       ${euroFormatter.format(serverTransportCost)}
                     </td>
@@ -801,9 +817,14 @@ export async function POST(req: NextRequest) {
                     </td>
                   </tr>
                   <tr style="background-color: #FAFBFB;">
-                    <td colspan="2" style="padding: 14px 14px; font-size: 13px; font-weight: 800; color: #1E293B; text-transform: uppercase;">Total validé serveur</td>
+                    <td colspan="2" style="padding: 14px 14px; font-size: 13px; font-weight: 800; color: #1E293B; text-transform: uppercase;">Total validé serveur HT</td>
                     <td align="right" style="padding: 14px 14px; font-size: 18px; font-weight: 800; color: #DC2626;">
                       ${euroFormatter.format(total)}
+                    </td>
+                  </tr>
+                  <tr style="background-color: #FAFBFB;">
+                    <td colspan="3" style="padding: 0 14px 14px; font-size: 11.5px; color: #64748B; text-align: right;">
+                      Prix hors taxes (HT) — TVA non incluse.
                     </td>
                   </tr>
                 </tbody>
@@ -1002,6 +1023,11 @@ export async function POST(req: NextRequest) {
                     </td>
                     <td align="right" style="padding: 14px 14px; font-size: 18px; font-weight: 800; color: #5E6F4F;">
                       ${euroFormatter.format(total)}
+                    </td>
+                  </tr>
+                  <tr style="background-color: #FAF9F6;">
+                    <td colspan="3" style="padding: 0 14px 14px; font-size: 11.5px; color: #64748B; text-align: right;">
+                      ${l.taxNotice}
                     </td>
                   </tr>
                 </tbody>

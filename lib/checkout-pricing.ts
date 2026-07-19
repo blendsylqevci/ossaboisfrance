@@ -104,6 +104,8 @@ export function calculateOptionsTotal(
 }
 
 export type CheckoutQuote = {
+  priceBasis: "excl_vat";
+  vatIncluded: false;
   selectedSizeId: StructureSizeId;
   installationMode: InstallationMode;
   baseStructurePrice: number;
@@ -181,6 +183,8 @@ export function calculateCheckoutGrandTotal(
     ) / 100;
 
   return {
+    priceBasis: "excl_vat",
+    vatIncluded: false,
     selectedSizeId,
     installationMode: selection.installationMode,
     baseStructurePrice,

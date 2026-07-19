@@ -36,6 +36,8 @@ interface StoredSelection {
   installationMode?: 'professional' | 'ossa';
   assemblyCost?: number;
   totalPrice?: number;
+  priceBasis?: 'excl_vat';
+  vatIncluded?: false;
   priceBreakdown?: Array<{ label: string; value: number }>;
   perdhesa?: Record<string, number | string>;
 }
@@ -139,7 +141,7 @@ export const OrderSummaryView: React.FC<{ path: string }> = ({ path }) => {
         : 'Choix du montage non enregistré'
   const assemblyPrice =
     selection.installationMode === 'professional'
-      ? `Non inclus · ${euroFormatter.format(0)}`
+      ? 'Non inclus'
       : selection.installationMode === 'ossa'
         ? euroFormatter.format(assemblyCost)
         : 'À confirmer'
@@ -172,7 +174,7 @@ export const OrderSummaryView: React.FC<{ path: string }> = ({ path }) => {
           </h3>
           <div style={{ fontSize: '14px', color: 'var(--theme-elevation-600, #64748b)', display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
             <span><strong>Dimensions:</strong> {selection.size?.value || 'Non spécifié'}</span>
-            <span>• <strong>Maison configurée:</strong> {euroFormatter.format(configurationSubtotal)}</span>
+            <span>• <strong>Maison configurée HT:</strong> {euroFormatter.format(configurationSubtotal)}</span>
           </div>
         </div>
       </div>
@@ -316,7 +318,7 @@ export const OrderSummaryView: React.FC<{ path: string }> = ({ path }) => {
             color: '#22c55e', 
             fontWeight: '700' 
           }}>
-            Détail du prix enregistré
+            Détail du prix enregistré (HT)
           </h4>
           <div style={{ 
             fontSize: '14px', 
@@ -326,7 +328,7 @@ export const OrderSummaryView: React.FC<{ path: string }> = ({ path }) => {
             gap: '8px',
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ color: 'var(--theme-elevation-500, #94a3b8)', fontWeight: '500' }}>Maison configurée:</span>
+              <span style={{ color: 'var(--theme-elevation-500, #94a3b8)', fontWeight: '500' }}>Maison configurée HT:</span>
               <strong style={{ fontSize: '15px', color: 'var(--theme-elevation-900, #ffffff)' }}>{euroFormatter.format(configurationSubtotal)}</strong>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -356,7 +358,7 @@ export const OrderSummaryView: React.FC<{ path: string }> = ({ path }) => {
             textTransform: 'uppercase',
             letterSpacing: '0.05em'
           }}>
-            Total Général
+            Total Général HT
           </div>
           <div style={{ 
             fontSize: '32px', 
@@ -366,6 +368,9 @@ export const OrderSummaryView: React.FC<{ path: string }> = ({ path }) => {
             textShadow: '0 0 15px rgba(34, 197, 94, 0.25)'
           }}>
             {euroFormatter.format(grandTotal)}
+          </div>
+          <div style={{ marginTop: '6px', fontSize: '11px', color: '#86efac' }}>
+            TVA non incluse
           </div>
         </div>
       </div>

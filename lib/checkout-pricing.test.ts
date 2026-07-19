@@ -139,6 +139,8 @@ describe("checkout-pricing", () => {
       }
     );
     assert.ok(!("error" in result));
+    assert.equal(result.priceBasis, "excl_vat");
+    assert.equal(result.vatIncluded, false);
     assert.equal(result.baseStructurePrice, 100 * 130);
     assert.equal(result.optionsTotal, 10 * 120);
     assert.equal(result.truckCount, 2);

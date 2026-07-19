@@ -145,7 +145,7 @@ export const Orders: CollectionConfig = {
                   name: 'totalPrice',
                   type: 'number',
                   required: true,
-                  label: 'Total Price (€)',
+                  label: 'Total Price excl. VAT (€)',
                   admin: {
                     readOnly: true,
                     width: '25%',
@@ -154,7 +154,7 @@ export const Orders: CollectionConfig = {
                 {
                   name: 'transportCost',
                   type: 'number',
-                  label: 'Transport Cost (€)',
+                  label: 'Transport Cost excl. VAT (€)',
                   admin: {
                     readOnly: true,
                     width: '25%',

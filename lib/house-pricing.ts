@@ -5,6 +5,9 @@ export type InstallationMode = "professional" | "ossa";
 export const TRUCK_PRICE_EUR = 3_500;
 export const TRUCK_CAPACITY_GROSS_M2 = 50;
 
+// Every business rate in this module is supplied excluding VAT. VAT is not
+// added by the configurator; it is calculated later in the personalized quote.
+
 type StructureRates = Record<StructureSizeId, number>;
 
 /**

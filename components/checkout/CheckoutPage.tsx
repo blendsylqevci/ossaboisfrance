@@ -44,6 +44,8 @@ type StoredSelection = {
   installationMode?: InstallationMode;
   assemblyCost?: number;
   totalPrice?: number;
+  priceBasis?: "excl_vat";
+  vatIncluded?: false;
   priceBreakdown?: Array<{ label: string; value: number }>;
   perdhesa?: Record<string, number | string>;
 };
@@ -376,10 +378,17 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
       : "Veuillez accepter toutes les conditions ci-dessus pour envoyer votre demande.",
     summaryTitle: locale === "en" ? "Project Summary" : locale === "de" ? "Projektzusammenfassung" : locale === "nl" ? "Projectsamenvatting" : "Récapitulatif du projet",
     selectedModel: locale === "en" ? "Selected Model" : locale === "de" ? "Ausgewähltes Modell" : locale === "nl" ? "Geselecteerd model" : "Modèle choisi",
-    basePriceLabel: locale === "en" ? "Configured house" : locale === "de" ? "Konfiguriertes Haus" : locale === "nl" ? "Geconfigureerd huis" : "Maison configurée",
+    basePriceLabel: locale === "en" ? "Configured house (excl. VAT)" : locale === "de" ? "Konfiguriertes Haus (netto)" : locale === "nl" ? "Geconfigureerd huis (excl. btw)" : "Maison configurée (HT)",
     shippingCost: locale === "en" ? "Transport Estimate" : locale === "de" ? "Transportkosten-Schätzung" : locale === "nl" ? "Geschatte transportkosten" : "Estimation transport",
     assemblyCostLabel: locale === "en" ? "Assembly & Installation" : locale === "de" ? "Montage & Installation" : locale === "nl" ? "Montage & Installatie" : "Montage & Installation",
-    totalEst: locale === "en" ? "Total Estimate" : locale === "de" ? "Gesamtschätzung" : locale === "nl" ? "Totale schatting" : "Estimation totale",
+    totalEst: locale === "en" ? "Total estimate excl. VAT" : locale === "de" ? "Gesamtschätzung netto" : locale === "nl" ? "Totale schatting excl. btw" : "Estimation totale HT",
+    taxNotice: locale === "en"
+      ? "All displayed amounts exclude VAT. Applicable VAT will be calculated in the personalized quotation."
+      : locale === "de"
+        ? "Alle angezeigten Beträge sind Nettopreise zzgl. MwSt. Die MwSt. wird im persönlichen Angebot berechnet."
+        : locale === "nl"
+          ? "Alle weergegeven bedragen zijn exclusief btw. De btw wordt berekend in de persoonlijke offerte."
+          : "Tous les montants affichés sont hors taxes (HT). La TVA sera calculée dans le devis personnalisé.",
     submitButton: locale === "en" ? "Submit Project Request" : locale === "de" ? "Projektanfrage senden" : locale === "nl" ? "Projectaanvraag indienen" : "Envoyer ma demande de projet",
     submitLoading: locale === "en" ? "Processing Request..." : locale === "de" ? "Anfrage wird verarbeitet..." : locale === "nl" ? "Aanvraag wordt verwerkt..." : "Traitement en cours...",
     terms: locale === "en" 
@@ -411,10 +420,10 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
     goHome: locale === "en" ? "Back to Homepage" : locale === "de" ? "Zurück zur Startseite" : locale === "nl" ? "Terug naar startpagina" : "Retour à l'accueil",
     trust1Title: locale === "en" ? "Personalized quotation" : locale === "de" ? "Persönliches Angebot" : locale === "nl" ? "Persoonlijke offerte" : "Devis personnalisé",
     trust1Desc: locale === "en" 
-      ? "Final prices, taxes, guarantees, and contractual terms are confirmed in your quotation."
-      : locale === "de" ? "Endpreise, Steuern, Garantien und Vertragsbedingungen werden im Angebot bestätigt."
-      : locale === "nl" ? "Eindprijzen, belastingen, garanties en contractvoorwaarden worden in uw offerte bevestigd."
-      : "Les prix finaux, taxes, garanties et conditions contractuelles sont confirmés dans votre devis.",
+      ? "Displayed amounts exclude VAT. Applicable VAT, guarantees, and contractual terms are confirmed in your quotation."
+      : locale === "de" ? "Die angezeigten Beträge sind Nettopreise zzgl. MwSt.; MwSt., Garantien und Vertragsbedingungen werden im Angebot bestätigt."
+      : locale === "nl" ? "De weergegeven bedragen zijn exclusief btw; btw, garanties en contractvoorwaarden worden in uw offerte bevestigd."
+      : "Les montants affichés sont hors taxes (HT) ; la TVA, les garanties et les conditions contractuelles sont confirmées dans votre devis.",
     trust2Title: locale === "en" ? "RE2020 Energy Standards" : locale === "de" ? "RE2020 Energiestandards" : locale === "nl" ? "RE2020 energiestandaarden" : "Normes Thermiques RE2020",
     trust2Desc: locale === "en" 
       ? "Engineered for superior energy savings and insulation." 
@@ -1032,6 +1041,7 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
                       <span className="order-price-label">{t.totalEst}</span>
                       <span className="order-price-value order-total-price">{euroFormatter.format(total)}</span>
                     </div>
+                    <p className="order-tax-notice">{t.taxNotice}</p>
                   </div>
 
                   <div className="order-summary-footer">

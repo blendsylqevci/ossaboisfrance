@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           # Align with local dev (npm 11+). Node 20 + npm ci often fails when
           # package-lock.json was generated on macOS (sharp / @emnapi optional deps).

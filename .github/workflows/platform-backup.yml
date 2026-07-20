@@ -30,7 +30,7 @@ jobs:
       S3_REGION: ${{ secrets.SUPABASE_S3_REGION }}
       S3_ENDPOINT: ${{ secrets.SUPABASE_S3_ENDPOINT }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set the UTC recovery-point date
         id: snapshot

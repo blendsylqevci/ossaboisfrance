@@ -53,7 +53,7 @@ jobs:
 
       - name: Restore the latest verified media snapshot
         id: media_restore
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           path: ${{ env.MEDIA_CACHE_DIR }}
           key: ossabois-media-${{ steps.snapshot.outputs.date }}
@@ -65,7 +65,7 @@ jobs:
         run: bash scripts/sync-platform-media-cache.sh
 
       - name: Save today's verified media snapshot
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v6
         with:
           path: ${{ env.MEDIA_CACHE_DIR }}
           key: ossabois-media-${{ steps.snapshot.outputs.date }}

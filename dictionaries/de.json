@@ -186,6 +186,8 @@
       "total": "Netto-Zwischensumme Konfiguration"
     },
     "labels": {
+      "showMore": "Mehr\u2026",
+      "showLess": "Weniger",
       "configureYourHouse": "Konfigurieren Sie Ihr Haus",
       "selectSize": "Maße auswählen",
       "selected": "Ausgewählt",
@@ -196,7 +198,7 @@
       "priceOnRequest": "Preis auf Anfrage",
       "pricePending": "Wählen Sie eine Struktur oder ein Material, um Ihren Preis zu berechnen.",
       "priceUnavailable": "Bruttofläche erforderlich — Preis auf Anfrage",
-      "extrasNotice": "Information zu Transport und Montage: Der angezeigte Betrag umfasst nur das konfigurierte Haus ohne MwSt. Nach „Projekt bestätigen“ werden der obligatorische, separat berechnete Transport und die Montage durch Ossa Bois, falls gewählt, berechnet und vor dem Absenden Ihrer Angebotsanfrage in der endgültigen Übersicht ausgewiesen.",
+      "extrasNotice": "Preis ohne MwSt.: Der obligatorische Transport und die optionale Montage durch Ossa Bois werden separat vom konfigurierten Haus berechnet. Nach „Projekt bestätigen“ werden diese Leistungen berechnet und vor dem Absenden Ihrer Angebotsanfrage in der endgültigen Übersicht angezeigt.",
       "nextStep": "Nächster Schritt",
       "prevStep": "Vorheriger Schritt",
       "orderNow": "Projekt bestätigen",

@@ -186,6 +186,8 @@
       "total": "Configuration subtotal excl. VAT"
     },
     "labels": {
+      "showMore": "More\u2026",
+      "showLess": "Less",
       "configureYourHouse": "Configure your house",
       "selectSize": "Select dimensions",
       "selected": "Selected",
@@ -196,7 +198,7 @@
       "priceOnRequest": "Price on request",
       "pricePending": "Choose a structure or material to calculate your price.",
       "priceUnavailable": "Gross surface required — price on request",
-      "extrasNotice": "Transport and assembly information: the amount shown covers only the configured house, excluding VAT. After “Validate project”, mandatory transport, charged separately, and Ossa Bois assembly if selected will be calculated and displayed in the final summary before you submit your quote request.",
+      "extrasNotice": "VAT is excluded; mandatory transport and optional Ossa Bois assembly are charged separately from the configured house. After “Validate project”, these services are calculated and shown in the final summary before you submit your quote request.",
       "nextStep": "Next step",
       "prevStep": "Previous step",
       "orderNow": "Validate project",

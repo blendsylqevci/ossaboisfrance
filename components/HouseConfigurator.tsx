@@ -171,12 +171,14 @@ export function HouseConfigurator({ config, locale, dict }: HouseConfiguratorPro
   });
   const [formStatus, setFormStatus] = useState<"idle" | "success" | "error">("idle");
   const [isStructureTextExpanded, setIsStructureTextExpanded] = useState(false);
+  const [isLogisticsNoticeExpanded, setIsLogisticsNoticeExpanded] = useState(false);
   const [isPreparingCheckout, setIsPreparingCheckout] = useState(false);
 
   const scrollableRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setIsStructureTextExpanded(false);
+    setIsLogisticsNoticeExpanded(false);
   }, [config.id]);
 
   // Me kulm / France couverture: pare-pluie included in structure price — always default
@@ -1194,6 +1196,25 @@ L'équipe Ossa Bois France`;
     );
   }
 
+  function renderLogisticsNotice() {
+    return (
+      <div className={`price-extra-note-wrap${isLogisticsNoticeExpanded ? " is-expanded" : ""}`}>
+        <span className="price-extra-note" id="configurator-logistics-notice">
+          {dict.labels.extrasNotice}
+        </span>
+        <button
+          type="button"
+          className="price-extra-note-toggle"
+          aria-expanded={isLogisticsNoticeExpanded}
+          aria-controls="configurator-logistics-notice"
+          onClick={() => setIsLogisticsNoticeExpanded((expanded) => !expanded)}
+        >
+          {isLogisticsNoticeExpanded ? dict.labels.showLess : dict.labels.showMore}
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className={`house-builder-container layout-${layoutMode}`}>
       <div className={`house-product-page ${isMobileDrawerExpanded ? "drawer-expanded" : ""}`}>
@@ -1839,7 +1860,7 @@ L'équipe Ossa Bois France`;
                 {!hasSelectedStructure ? (
                   <div className="price-total price-pending" id="price-total" data-testid="price-pending" aria-live="polite">
                     <span className="price-value">{dict.labels.pricePending}</span>
-                    <span className="price-extra-note" id="configurator-logistics-notice">{dict.labels.extrasNotice}</span>
+                    {renderLogisticsNotice()}
                   </div>
                 ) : selectedSize.priceAvailable ? (
                   <div className="price-display-stack" aria-live="polite">
@@ -1860,7 +1881,7 @@ L'équipe Ossa Bois France`;
                         </svg>
                       </button>
                     </div>
-                    <span className="price-extra-note" id="configurator-logistics-notice">{dict.labels.extrasNotice}</span>
+                    {renderLogisticsNotice()}
                   </div>
                 ) : (
                   <div className="price-total price-on-request" id="price-total">

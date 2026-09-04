@@ -2443,10 +2443,19 @@ img {
 }
 
 .price-extra-note {
+  display: block;
   color: #687167;
   font-size: 13px;
   font-weight: 450;
   line-height: 1.45;
+}
+
+.price-extra-note-wrap {
+  min-width: 0;
+}
+
+.price-extra-note-toggle {
+  display: none;
 }
 
 .price-display-stack {
@@ -7827,6 +7836,52 @@ body:has(.installation-modal-backdrop) .cookie-reopen-trigger {
     z-index: 20;
   }
   
+  .price-extra-note-wrap {
+    position: relative;
+  }
+
+  .price-extra-note-wrap:not(.is-expanded) .price-extra-note {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .price-extra-note-toggle {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    border: 0;
+    border-radius: 3px;
+    background: transparent;
+    color: #3f5338;
+    padding: 0;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 650;
+    line-height: 1.45;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    cursor: pointer;
+  }
+
+  .price-extra-note-wrap:not(.is-expanded) .price-extra-note-toggle {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    padding-left: 24px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0), #ffffff 20px, #ffffff 100%);
+  }
+
+  .price-extra-note-wrap.is-expanded .price-extra-note-toggle {
+    margin-top: 2px;
+  }
+
+  .price-extra-note-toggle:focus-visible {
+    outline: 2px solid #5e6f4f;
+    outline-offset: 3px;
+  }
+
   .price-breakdown {
     position: absolute !important;
     bottom: 100% !important;

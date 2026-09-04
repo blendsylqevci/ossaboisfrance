@@ -186,6 +186,8 @@
       "total": "Subtotaal configuratie excl. btw"
     },
     "labels": {
+      "showMore": "Meer\u2026",
+      "showLess": "Minder",
       "configureYourHouse": "Configureer uw woning",
       "selectSize": "Selecteer afmetingen",
       "selected": "Geselecteerd",
@@ -196,7 +198,7 @@
       "priceOnRequest": "Prijs op aanvraag",
       "pricePending": "Kies een structuur of materiaal om uw prijs te berekenen.",
       "priceUnavailable": "Bruto-oppervlakte vereist — prijs op aanvraag",
-      "extrasNotice": "Informatie over transport en montage: het getoonde bedrag omvat alleen de geconfigureerde woning, exclusief btw. Na ‘Project valideren’ worden het verplichte, afzonderlijk berekende transport en montage door Ossa Bois, indien gekozen, berekend en vóór het verzenden van uw offerteaanvraag in het definitieve overzicht weergegeven.",
+      "extrasNotice": "Prijs exclusief btw: verplicht transport en optionele montage door Ossa Bois worden afzonderlijk van de geconfigureerde woning berekend. Na ‘Project valideren’ worden deze diensten berekend en in het definitieve overzicht getoond voordat u uw offerteaanvraag verzendt.",
       "nextStep": "Volgende stap",
       "prevStep": "Vorige stap",
       "orderNow": "Project valideren",

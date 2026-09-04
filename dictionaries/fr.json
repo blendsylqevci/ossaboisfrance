@@ -186,6 +186,8 @@
       "total": "Sous-total configuration HT"
     },
     "labels": {
+      "showMore": "Voir plus\u2026",
+      "showLess": "Voir moins",
       "configureYourHouse": "Configurez votre maison",
       "selectSize": "Sélectionnez les dimensions",
       "selected": "Sélectionné",
@@ -196,7 +198,7 @@
       "priceOnRequest": "Prix sur devis",
       "pricePending": "Choisissez une structure ou un matériau pour calculer votre prix.",
       "priceUnavailable": "Surface brute à compléter — prix sur devis",
-      "extrasNotice": "Information transport et montage : le montant affiché correspond uniquement à la configuration de la maison (HT). Après « Valider le projet », le transport obligatoire, facturé séparément, et le montage Ossa Bois, si vous le choisissez, seront calculés et affichés dans le récapitulatif final avant l’envoi de votre demande de devis.",
+      "extrasNotice": "Prix HT : le transport obligatoire et le montage Ossa Bois optionnel sont facturés séparément de la maison configurée. Après « Valider le projet », ces prestations sont calculées et affichées dans le récapitulatif final avant l’envoi de votre demande de devis.",
       "nextStep": "Étape suivante",
       "prevStep": "Étape précédente",
       "orderNow": "Valider le projet",

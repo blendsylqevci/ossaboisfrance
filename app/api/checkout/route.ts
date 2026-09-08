@@ -535,7 +535,7 @@ export async function POST(req: NextRequest) {
         step1Title: "Étape 1 : Bureau d'études",
         step1Desc: "Notre équipe technique lance l'étude de votre terrain et de l'accès au chantier. Un conseiller vous recontactera dans les meilleurs délais ouvrés.",
         step2Title: "Étape 2 : Entretien conseil",
-        step2Desc: "Un conseiller technique Ossa Bois prend contact avec vous par téléphone au <strong>{phone}</strong> pour valider les finitions.",
+        step2Desc: "Votre conseiller Ossa Bois vous accompagne pour valider les finitions. Vous pouvez joindre notre équipe au {phone}.",
         step3Title: "Étape 3 : Devis définitif",
         step3Desc: "Établissement du devis personnalisé avec les conditions contractuelles applicables.",
         footerText: "L'équipe Ossa Bois France reste à votre entière disposition pour donner vie à vos projets."
@@ -579,7 +579,7 @@ export async function POST(req: NextRequest) {
         step1Title: "Step 1: Engineering Review",
         step1Desc: "Our technical team begins reviewing your site and access conditions. An advisor will contact you as soon as practicable during business days.",
         step2Title: "Step 2: Expert Consult",
-        step2Desc: "An Ossa Bois technical advisor will contact you by phone at <strong>{phone}</strong> to confirm your finishes.",
+        step2Desc: "Your Ossa Bois advisor will help you confirm the finishes. You can reach our team at {phone}.",
         step3Title: "Step 3: Final Quote",
         step3Desc: "Preparation of your personalized quotation with the applicable contractual terms.",
         footerText: "The Ossa Bois France team remains at your complete disposal to bring your projects to life."
@@ -623,7 +623,7 @@ export async function POST(req: NextRequest) {
         step1Title: "Schritt 1: Technische Prüfung",
         step1Desc: "Unser technisches Team beginnt mit der Prüfung Ihres Grundstücks und der Baustellenzufahrt. Ein Berater meldet sich schnellstmöglich an einem Werktag bei Ihnen.",
         step2Title: "Schritt 2: Beratungsgespräch",
-        step2Desc: "Ein technischer Berater von Ossa Bois kontaktiert Sie telefonisch unter <strong>{phone}</strong>, um Details abzustimmen.",
+        step2Desc: "Ihr Ossa Bois Berater begleitet Sie bei der Auswahl der Ausführung. Sie erreichen unser Team unter {phone}.",
         step3Title: "Schritt 3: Endgültiges Angebot",
         step3Desc: "Erstellung Ihres persönlichen Angebots mit den geltenden Vertragsbedingungen.",
         footerText: "Das Team von Ossa Bois France steht Ihnen jederzeit gerne zur Verfügung, um Ihre Träume zu verwirklichen."
@@ -667,7 +667,7 @@ export async function POST(req: NextRequest) {
         step1Title: "Stap 1: Technische Analyse",
         step1Desc: "Ons technisch team start de beoordeling van uw terrein en de bereikbaarheid. Een adviseur neemt zo spoedig mogelijk op een werkdag contact met u op.",
         step2Title: "Stap 2: Adviesgesprek",
-        step2Desc: "Een technisch adviseur van Ossa Bois neemt telefonisch contact met u op via <strong>{phone}</strong> om de afwerking te bespreken.",
+        step2Desc: "Uw Ossa Bois adviseur helpt u de afwerking te bevestigen. U kunt ons team bereiken op {phone}.",
         step3Title: "Stap 3: Definitieve Offerte",
         step3Desc: "Opstellen van uw persoonlijke offerte met de toepasselijke contractvoorwaarden.",
         footerText: "Het team van Ossa Bois France staat volledig tot uw beschikking om uw project te realiseren."
@@ -777,7 +777,8 @@ export async function POST(req: NextRequest) {
     const adminOptionsList = getDetailedOptions(configDataFr, "fr");
 
     const buildOptionsHtml = (
-      list: Array<(typeof clientOptionsList)[number] & { formattedTotal: string }>
+      list: Array<(typeof clientOptionsList)[number] & { formattedTotal: string }>,
+      showCalculation = true
     ) => {
       return list.map(opt => `
         <tr style="border-bottom: 1px solid #F1F5F9;">
@@ -786,7 +787,7 @@ export async function POST(req: NextRequest) {
           </td>
           <td style="padding: 14px 16px; font-size: 13px; color: #475569; vertical-align: top;">
             <div style="font-weight: 700; color: #1E293B; margin-bottom: 2px;">${escapeHtml(opt.optionLabel)}</div>
-            <div style="font-size: 12px; color: #64748B;">${escapeHtml(opt.formattedCalculation)}</div>
+            ${showCalculation ? `<div style="font-size: 12px; color: #64748B;">${escapeHtml(opt.formattedCalculation)}</div>` : ""}
           </td>
           <td align="right" style="padding: 14px 16px; font-size: 13.5px; font-weight: 700; color: #1E293B; vertical-align: top; width: 110px;">
             ${escapeHtml(opt.formattedTotal)}
@@ -799,7 +800,8 @@ export async function POST(req: NextRequest) {
       clientOptionsList.map((option) => ({
         ...option,
         formattedTotal: clientMoneyFormatter.format(option.totalPrice),
-      }))
+      })),
+      false
     );
     const adminOptionsRowsHtml = buildOptionsHtml(
       adminOptionsList.map((option) => ({
@@ -1075,7 +1077,7 @@ export async function POST(req: NextRequest) {
       installationMode === "ossa"
         ? l.assemblyOssaDesc
         : l.assemblyProfessionalDesc;
-    const formattedStep2Desc = l.step2Desc.replace("{phone}", safeClientPhone || "...");
+    const formattedStep2Desc = l.step2Desc.replace("{phone}", '<a href="tel:+38343737000" style="color:#435139;font-weight:700;text-decoration:underline;white-space:nowrap;">+38343737000</a>');
 
     let clientEmailHtml = `
       <!DOCTYPE html>
@@ -1105,38 +1107,44 @@ export async function POST(req: NextRequest) {
             outline: none;
             text-decoration: none;
           }
-          .email-shell { width: 100% !important; max-width: 650px !important; }
-          .email-pad { padding-left: 24px !important; padding-right: 24px !important; }
+          .email-shell { width: 100% !important; max-width: 680px !important; }
+          .email-pad { padding-left: 32px !important; padding-right: 32px !important; }
+          .detail-table { table-layout: fixed; }
+          .detail-table td, .detail-table th { overflow-wrap: anywhere; }
+          .step-title { font-family: Georgia, 'Times New Roman', serif; }
           @media only screen and (max-width: 620px) {
             .email-pad { padding-left: 16px !important; padding-right: 16px !important; }
             .mobile-block { display: block !important; width: 100% !important; box-sizing: border-box !important; }
             .mobile-border { border-left: 0 !important; border-top: 1px solid #EBE9E2 !important; padding-left: 0 !important; }
             .mobile-hide { display: none !important; }
             .mobile-center { text-align: center !important; }
+            .detail-table td, .detail-table th { padding: 10px 7px !important; font-size: 11px !important; }
+            .detail-table td:last-child, .detail-table th:last-child { width: 82px !important; }
+            .hero-title { font-size: 28px !important; }
           }
         </style>
       </head>
-      <body style="font-family: system-ui, -apple-system, sans-serif; background-color: #FAF9F6; color: #1E293B; margin: 0; padding: 20px 10px; -webkit-font-smoothing: antialiased;">
+      <body style="font-family: Arial, Helvetica, sans-serif; background-color: #F0EEE8; color: #253126; margin: 0; padding: 32px 10px; -webkit-font-smoothing: antialiased;">
         <div style="display:none;font-size:1px;color:#FAF9F6;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;">${formattedPreheader}&#847; &zwnj; &nbsp; &#847; &zwnj; &nbsp;</div>
-        <table role="presentation" class="email-shell" align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 650px; background-color: #FFFFFF; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 30px rgba(94, 111, 79, 0.08); border: 1px solid #EBE9E2; margin: 0 auto;">
+        <table role="presentation" class="email-shell" align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:680px;background-color:#FFFFFF;border-radius:4px;overflow:hidden;border:1px solid #DEDCCF;margin:0 auto;">
           <!-- Brand Header Accent line -->
           <tr>
-            <td height="5" style="background: linear-gradient(90deg, #5E6F4F 0%, #C5A880 50%, #5E6F4F 100%);"></td>
+            <td height="4" bgcolor="#BAA47C" style="background-color:#BAA47C;"></td>
           </tr>
           
           <!-- Logo & Brand Header -->
           <tr>
-            <td align="center" style="padding: 32px 24px; background-color: #FAF9F6; border-bottom: 1px solid #F1ECE3;">
+            <td class="email-pad" align="left" bgcolor="#303F32" style="padding:32px;background-color:#303F32;border-bottom:1px solid #485440;">
               <table border="0" cellpadding="0" cellspacing="0" width="100%">
                 <tr>
-                  <td align="center">
-                    <span style="font-size: 24px; font-weight: 800; color: #5E6F4F; letter-spacing: 3px; text-transform: uppercase; display: block; margin: 0 0 2px 0;">OSSA BOIS</span>
-                    <span style="font-size: 10px; font-weight: 500; color: #C5A880; letter-spacing: 1.5px; text-transform: uppercase; display: block; margin-bottom: 16px;">FRANCE &bull; ECO-STRUCTURES</span>
+                  <td align="left">
+                    <span style="font-family:Georgia,'Times New Roman',serif;font-size:29px;font-weight:400;color:#FFFFFF;letter-spacing:3px;display:block;margin:0 0 9px;">OSSA BOIS</span>
+                    <span style="font-size:9px;font-weight:600;color:#D7C6A7;letter-spacing:2px;text-transform:uppercase;display:block;">FRANCE &bull; CONSTRUCTION BOIS</span>
                   </td>
                 </tr>
                 <tr>
-                  <td align="center">
-                    <div style="display: inline-block; padding: 6px 14px; background-color: #5E6F4F; border-radius: 9999px; color: #FFFFFF; font-size: 12px; font-weight: 600; letter-spacing: 0.5px;">${clientEmailSubject.split(" - ")[1] || orderRef}</div>
+                  <td align="left" style="padding-top:24px;">
+                    <div style="border-top:1px solid #66715A;padding-top:16px;color:#E6E8DD;font-size:10px;letter-spacing:1px;text-transform:uppercase;">${l.referenceLabel} &nbsp; / &nbsp; ${orderRef}</div>
                   </td>
                 </tr>
               </table>
@@ -1145,16 +1153,17 @@ export async function POST(req: NextRequest) {
 
           <!-- Hero Rendering Image -->
           <tr>
-            <td class="email-pad" style="padding: 24px 24px 16px 24px;">
+            <td class="email-pad" style="padding:32px 32px 24px;">
               <table border="0" cellpadding="0" cellspacing="0" width="100%">
                 <tr>
-                  <td style="border-radius: 8px; overflow: hidden; border: 1px solid #EBE9E2;">
+                  <td style="overflow:hidden;background-color:#F0EEE8;">
                     <img src="${safeHouseImageUrl}" alt="${safeHouseName || "Modèle"}" width="100%" style="width: 100%; height: auto; display: block; object-fit: cover;" />
                   </td>
                 </tr>
                 <tr>
                   <td style="padding-top: 20px;">
-                    <h1 style="font-size: 20px; font-weight: 700; color: #1E293B; margin: 0 0 10px 0; letter-spacing: -0.3px; line-height: 1.2;">${l.title}</h1>
+                    <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#6C795D;margin:4px 0 12px;">${safeHouseName} &nbsp; / &nbsp; ${safeSizeValue}</div>
+                    <h1 class="hero-title" style="font-family:Georgia,'Times New Roman',serif;font-size:34px;font-weight:400;color:#303F32;margin:0 0 20px;letter-spacing:-0.5px;line-height:1.18;">${l.title}</h1>
                     <p style="font-size: 14px; line-height: 1.6; color: #475569; margin: 0;">
                       ${formattedGreeting}<br/><br/>
                       ${formattedIntro}
@@ -1199,7 +1208,7 @@ export async function POST(req: NextRequest) {
           <!-- Technical metrics Block (Neto, Bruto, walls, roof) -->
           <tr>
             <td class="email-pad" style="padding: 8px 24px 16px 24px;">
-              <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #FAF9F6; border-radius: 8px; border: 1px solid #EBE9E2; padding: 16px;">
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color:#FFFFFF;border-top:1px solid #DEDCCF;border-bottom:1px solid #DEDCCF;">
                 <tr>
                   <td colspan="2" style="padding-bottom: 12px; border-bottom: 1px solid #EBE9E2;">
                     <h3 style="font-size: 13.5px; font-weight: 800; color: #5E6F4F; text-transform: uppercase; letter-spacing: 0.5px; margin: 0;">${l.dimensionsHeader}</h3>
@@ -1232,7 +1241,7 @@ export async function POST(req: NextRequest) {
           <!-- Dynamic itemized pricing breakdown -->
           <tr>
             <td class="email-pad" style="padding: 8px 24px 16px 24px;">
-              <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border: 1px solid #E5E7EB; border-radius: 8px; overflow: hidden;">
+              <table class="detail-table" border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout:fixed;border:1px solid #DEDCCF;overflow:hidden;">
                 <thead>
                   <tr style="background-color: #FAFBFB; border-bottom: 1px solid #E5E7EB;">
                     <th align="left" style="padding: 10px 14px; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase;">${l.componentHeader}</th>
@@ -1310,16 +1319,24 @@ export async function POST(req: NextRequest) {
                   <td>
                     <table border="0" cellpadding="0" cellspacing="0" width="100%" style="font-size: 13px; line-height: 1.5; color: #475569;">
                       <tr>
-                        <td style="vertical-align: top; font-weight: 700; color: #5E6F4F; width: 140px; padding-bottom: 10px;">${l.step1Title}</td>
-                        <td style="padding-bottom: 10px;">${l.step1Desc}</td>
+                        <td style="padding:18px 20px;background-color:#F7F6F1;border-left:3px solid #BAA47C;">
+                          <div class="step-title" style="font-family:Georgia,'Times New Roman',serif;font-size:19px;color:#303F32;margin-bottom:8px;">${l.step1Title}</div>
+                          <div style="font-size:13px;line-height:1.7;color:#566151;">${l.step1Desc}</div>
+                        </td>
                       </tr>
+                      <tr><td height="10" style="font-size:1px;line-height:1px;">&nbsp;</td></tr>
                       <tr>
-                        <td style="vertical-align: top; font-weight: 700; color: #5E6F4F; padding-bottom: 10px;">${l.step2Title}</td>
-                        <td style="padding-bottom: 10px;">${formattedStep2Desc}</td>
+                        <td style="padding:18px 20px;background-color:#F7F6F1;border-left:3px solid #BAA47C;">
+                          <div class="step-title" style="font-family:Georgia,'Times New Roman',serif;font-size:19px;color:#303F32;margin-bottom:8px;">${l.step2Title}</div>
+                          <div style="font-size:13px;line-height:1.7;color:#566151;">${formattedStep2Desc}</div>
+                        </td>
                       </tr>
+                      <tr><td height="10" style="font-size:1px;line-height:1px;">&nbsp;</td></tr>
                       <tr>
-                        <td style="vertical-align: top; font-weight: 700; color: #5E6F4F;">${l.step3Title}</td>
-                        <td>${l.step3Desc}</td>
+                        <td style="padding:18px 20px;background-color:#F7F6F1;border-left:3px solid #BAA47C;">
+                          <div class="step-title" style="font-family:Georgia,'Times New Roman',serif;font-size:19px;color:#303F32;margin-bottom:8px;">${l.step3Title}</div>
+                          <div style="font-size:13px;line-height:1.7;color:#566151;">${l.step3Desc}</div>
+                        </td>
                       </tr>
                     </table>
                   </td>

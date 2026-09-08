@@ -34,7 +34,7 @@ export default async function PrivacyPolicyPage({ params }: PageProps) {
           <p className="legal-intro">
             Cette politique explique comment Ossa Bois France traite les
             informations que vous transmettez par les formulaires de contact et
-            de demande professionnelle du site ossaboisfrance.com.
+            de demande professionnelle et le configurateur de projet du site ossaboisfrance.com.
           </p>
 
           <hr className="legal-divider" />
@@ -65,6 +65,19 @@ export default async function PrivacyPolicyPage({ params }: PageProps) {
               N&apos;envoyez pas de données sensibles ni de documents sans rapport
               direct avec votre projet. Supprimez les informations inutiles de
               tout PDF avant son envoi.
+            </p>
+            <p>
+              Lors de la soumission d&apos;un projet, nous traitons également les
+              choix de configuration, les surfaces, l&apos;adresse du chantier et
+              les déclarations validées. L&apos;e-mail interne de notification
+              peut inclure l&apos;adresse IP, une localisation approximative
+              (ville, région, pays) fournie par notre hébergeur, ainsi que le
+              type de terminal, le navigateur et le système estimés à partir
+              des informations de la requête. Ces données servent au suivi
+              technique de la demande et à la prévention des abus ; elles ne
+              constituent ni une localisation GPS ni une preuve d&apos;identité.
+              Elles sont réservées aux personnes autorisées et ne figurent
+              pas dans le PDF ou l&apos;e-mail récapitulatif adressé au client.
             </p>
           </section>
 

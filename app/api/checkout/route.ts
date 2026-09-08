@@ -31,6 +31,7 @@ import {
   type AcceptedCheckoutAgreements,
 } from "@/lib/checkout-legal";
 import { generateOrderPdf } from "@/lib/order-pdf";
+import { buildCheckoutAdminEmail, getOrderRequestContext } from "@/lib/checkout-admin-email";
 import {
   checkoutEmailHtmlToText,
   CHECKOUT_PDF_CALLOUT_MARKER,
@@ -803,12 +804,6 @@ export async function POST(req: NextRequest) {
       })),
       false
     );
-    const adminOptionsRowsHtml = buildOptionsHtml(
-      adminOptionsList.map((option) => ({
-        ...option,
-        formattedTotal: euroFormatter.format(option.totalPrice),
-      }))
-    );
 
     const formattedClientName = clientName.trim();
     const formattedClientPhone = clientPhone ? clientPhone.trim() : "";
@@ -838,230 +833,21 @@ export async function POST(req: NextRequest) {
         ? "Montage réalisé par Ossa Bois"
         : "Montage par le client ou une entreprise tierce — non pris en charge par Ossa Bois";
 
-    // 1. Compile Admin Notification Email (info@ossaboisfrance.com) - STRICTLY IN FRENCH
-    const adminEmailHtml = `
-      <!DOCTYPE html>
-      <html lang="fr">
-      <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Administration - Nouveau Projet Ossa Bois</title>
-        <style>
-          body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background-color: #F1F5F9;
-            color: #1E293B;
-            margin: 0;
-            padding: 0;
-            -webkit-font-smoothing: antialiased;
-          }
-          table {
-            border-collapse: collapse;
-            mso-table-lspace: 0pt;
-            mso-table-rspace: 0pt;
-          }
-          img {
-            border: 0;
-            height: auto;
-            line-height: 100%;
-            outline: none;
-            text-decoration: none;
-          }
-        </style>
-      </head>
-      <body style="font-family: system-ui, -apple-system, sans-serif; background-color: #F1F5F9; color: #1E293B; margin: 0; padding: 20px 10px; -webkit-font-smoothing: antialiased;">
-        <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 650px; background-color: #FFFFFF; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #E2E8F0; margin: 0 auto;">
-          
-          <!-- Admin Red Warning Bar -->
-          <tr>
-            <td style="background-color: #DC2626; color: #FFFFFF; text-align: center; padding: 12px 24px; font-weight: 700; font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase;">
-              ADMINISTRATION &bull; NOUVELLE COMMANDE CONFIGURATEUR
-            </td>
-          </tr>
-
-          <!-- Banner Header -->
-          <tr>
-            <td align="center" style="padding: 32px 24px; background-color: #FAFBFB; border-bottom: 1px solid #E2E8F0;">
-              <span style="font-size: 22px; font-weight: 800; color: #5E6F4F; letter-spacing: 2px; text-transform: uppercase; display: block; margin-bottom: 6px;">OSSA BOIS FRANCE</span>
-              <span style="font-size: 15px; font-weight: 700; color: #1E293B; display: block; margin-bottom: 12px;">Fiche de Synthèse Projet Client</span>
-              <div style="display: inline-block; padding: 6px 14px; background-color: #F1F5F9; border-radius: 9999px; color: #475569; font-size: 12px; font-weight: 600; letter-spacing: 0.5px;">Référence : ${orderRef}</div>
-            </td>
-          </tr>
-
-          <!-- Action Center (Quick Links) -->
-          <tr>
-            <td style="padding: 24px 24px; background-color: #F8FAFC; border-bottom: 1px solid #E2E8F0;">
-              <table border="0" cellpadding="0" cellspacing="0" width="100%">
-                <tr>
-                  <td style="font-size: 12px; font-weight: 700; color: #64748B; padding-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">
-                    Actions rapides de contact :
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
-                      <tr>
-                        <td width="48%" align="center" style="background-color: #5E6F4F; border-radius: 6px;">
-                          <a href="mailto:${safeClientEmail}?subject=Votre projet de construction Ossa Bois - Référence ${orderRef}" style="display: block; padding: 10px 4px; color: #FFFFFF; font-weight: 700; font-size: 12.5px; text-decoration: none; letter-spacing: 0.5px; text-align: center;">
-                            📧 RÉPONDRE PAR EMAIL
-                          </a>
-                        </td>
-                        <td width="4%"></td>
-                        <td width="48%" align="center" style="background-color: #1E293B; border-radius: 6px;">
-                          <a href="${phoneHref}" style="display: block; padding: 10px 4px; color: #FFFFFF; font-weight: 700; font-size: 12.5px; text-decoration: none; letter-spacing: 0.5px; text-align: center;">
-                            📞 APPELER LE CLIENT
-                          </a>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-
-          <!-- Customer & Project Matrix -->
-          <tr>
-            <td style="padding: 24px 24px 16px 24px;">
-              <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border: 1px solid #E2E8F0; border-radius: 8px; padding: 20px;">
-                <tr>
-                  <td style="border-bottom: 1px solid #E2E8F0; padding-bottom: 10px;">
-                    <h3 style="font-size: 14px; font-weight: 800; color: #1E293B; text-transform: uppercase; letter-spacing: 0.5px; margin: 0;">Coordonnées & Terrain</h3>
-                  </td>
-                </tr>
-                <tr>
-                  <td style="padding-top: 14px;">
-                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="font-size: 13.5px; line-height: 1.6;">
-                      <tr>
-                        <td style="font-weight: 600; color: #64748B; width: 130px; vertical-align: top; padding-bottom: 6px;">Nom complet :</td>
-                        <td style="font-weight: 700; color: #1E293B; vertical-align: top; padding-bottom: 6px;">${safeClientName}</td>
-                      </tr>
-                      <tr>
-                        <td style="font-weight: 600; color: #64748B; vertical-align: top; padding-bottom: 6px;">Adresse e-mail :</td>
-                        <td style="font-weight: 700; color: #1E293B; vertical-align: top; padding-bottom: 6px;"><a href="mailto:${safeClientEmail}" style="color: #2563EB; text-decoration: none;">${safeClientEmail}</a></td>
-                      </tr>
-                      <tr>
-                        <td style="font-weight: 600; color: #64748B; vertical-align: top; padding-bottom: 6px;">Téléphone :</td>
-                        <td style="font-weight: 700; color: #1E293B; vertical-align: top; padding-bottom: 6px;">${safeClientPhone || "Non communiqué"}</td>
-                      </tr>
-                      <tr>
-                        <td style="font-weight: 600; color: #64748B; vertical-align: top; padding-bottom: 6px;">Adresse chantier :</td>
-                        <td style="font-weight: 700; color: #1E293B; vertical-align: top; padding-bottom: 6px;">
-                          ${safeDelivery.streetAddress || "-"}<br/>
-                          ${safeDelivery.zipCode || ""} ${safeDelivery.city || ""}<br/>
-                          ${safeDelivery.stateRegion || "-"}, ${safeDelivery.country || "France"}
-                        </td>
-                      </tr>
-                      ${delivery.notes ? `
-                      <tr>
-                        <td colspan="2" style="padding-top: 12px;">
-                          <div style="background-color: #F8FAFC; border-radius: 6px; padding: 12px; border: 1px dashed #CBD5E1; font-style: italic; color: #475569; font-size: 13px;">
-                            <strong>Notes du client :</strong> "${safeDelivery.notes}"
-                          </div>
-                        </td>
-                      </tr>` : ""}
-                    </table>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-
-          <!-- Surfaces block -->
-          <tr>
-            <td style="padding: 0 24px 16px 24px;">
-              <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #FAFBFB; border-radius: 8px; border: 1px solid #E2E8F0; padding: 16px;">
-                <tr>
-                  <td width="50%" style="vertical-align: top;">
-                    <span style="font-size: 11px; color: #64748B; display: block; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Surface Habitable (Neto)</span>
-                    <strong style="font-size: 15px; color: #1E293B;">${configDataFr.perdhesa.neto} m²</strong>
-                  </td>
-                  <td width="50%" style="vertical-align: top; padding-left: 16px; border-left: 1px solid #E2E8F0;">
-                    <span style="font-size: 11px; color: #64748B; display: block; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Surface au sol (Bruto)</span>
-                    <strong style="font-size: 15px; color: #1E293B;">${configDataFr.perdhesa.bruto} m²</strong>
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="2" height="12"></td>
-                </tr>
-                <tr>
-                  <td width="50%" style="vertical-align: top; border-top: 1px solid #E2E8F0; padding-top: 10px;">
-                    <span style="font-size: 11px; color: #64748B; display: block; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Murs Extérieurs</span>
-                    <strong style="font-size: 15px; color: #1E293B;">${configDataFr.perdhesa.mure_te_jashtme} m²</strong>
-                  </td>
-                  <td width="50%" style="vertical-align: top; padding-left: 16px; border-left: 1px solid #E2E8F0; border-top: 1px solid #E2E8F0; padding-top: 10px;">
-                    <span style="font-size: 11px; color: #64748B; display: block; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Surface Toiture</span>
-                    <strong style="font-size: 15px; color: #1E293B;">${roofArea} m²</strong>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-
-          <!-- Dynamic Config Table -->
-          <tr>
-            <td style="padding: 0 24px 24px 24px;">
-              <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border: 1px solid #E2E8F0; border-radius: 8px; overflow: hidden;">
-                <thead>
-                  <tr style="background-color: #F8FAFC; border-bottom: 1px solid #E2E8F0;">
-                    <th align="left" style="padding: 12px 14px; font-size: 12.5px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px;">Composant</th>
-                    <th align="left" style="padding: 12px 14px; font-size: 12.5px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px;">Choix technique (FR)</th>
-                    <th align="right" style="padding: 12px 14px; font-size: 12.5px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; width: 110px;">Tarif HT</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr style="border-bottom: 1px solid #E2E8F0;">
-                    <td style="padding: 12px 14px; font-size: 13px; font-weight: 600; color: #1E293B; vertical-align: top;">Base Structure</td>
-                    <td style="padding: 12px 14px; font-size: 12.5px; color: #475569; vertical-align: top;">
-                      <div style="font-weight: 700; color: #1E293B;">Modèle ${safeHouseName}</div>
-                      <div style="font-size: 11.5px; color: #64748B;">Dimensions au sol : ${safeSizeValue}</div>
-                    </td>
-                    <td align="right" style="padding: 12px 14px; font-size: 13px; font-weight: 700; color: #1E293B; vertical-align: top;">
-                      ${euroFormatter.format(serverBasePrice)}
-                    </td>
-                  </tr>
-                  ${adminOptionsRowsHtml}
-                  <tr style="border-bottom: 1px dashed #E2E8F0; background-color: #F8FAFC;">
-                    <td style="padding: 12px 14px; font-size: 13px; font-weight: 600; color: #1E293B; vertical-align: top;">Transport</td>
-                    <td style="padding: 12px 14px; font-size: 12.5px; color: #475569; vertical-align: top;">Livraison sur site : ${truckCount} camion(s) × 3 500 € HT</td>
-                    <td align="right" style="padding: 12px 14px; font-size: 13px; font-weight: 700; color: #1E293B; vertical-align: top;">
-                      ${euroFormatter.format(serverTransportCost)}
-                    </td>
-                  </tr>
-                  <tr style="border-bottom: 1px dashed #E2E8F0; background-color: #F8FAFC;">
-                    <td style="padding: 12px 14px; font-size: 13px; font-weight: 600; color: #1E293B; vertical-align: top;">Montage</td>
-                    <td style="padding: 12px 14px; font-size: 12.5px; color: #475569; vertical-align: top;">${adminAssemblyDescription}</td>
-                    <td align="right" style="padding: 12px 14px; font-size: 13px; font-weight: 700; color: #1E293B; vertical-align: top;">
-                      ${euroFormatter.format(serverAssemblyCost)}
-                    </td>
-                  </tr>
-                  <tr style="background-color: #FAFBFB;">
-                    <td colspan="2" style="padding: 14px 14px; font-size: 13px; font-weight: 800; color: #1E293B; text-transform: uppercase;">Total validé serveur HT</td>
-                    <td align="right" style="padding: 14px 14px; font-size: 18px; font-weight: 800; color: #DC2626;">
-                      ${euroFormatter.format(total)}
-                    </td>
-                  </tr>
-                  <tr style="background-color: #FAFBFB;">
-                    <td colspan="3" style="padding: 0 14px 14px; font-size: 11.5px; color: #64748B; text-align: right;">
-                      Prix hors taxes (HT) — TVA non incluse.
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
-
-          <!-- Footer -->
-          <tr>
-            <td style="background-color: #FAFBFB; padding: 20px; text-align: center; border-top: 1px solid #E2E8F0; font-size: 11px; color: #94A3B8;">
-              Système de notification automatique configurateur &bull; Ossa Bois France.
-            </td>
-          </tr>
-
-        </table>
-      </body>
-      </html>
-    `;
+    // Internal metadata is deliberately excluded from the client email, PDF and order database.
+    const adminNotificationData = {
+      reference: orderRef,
+      submittedAt: agreementsForNotifications.acceptedAt,
+      locale,
+      customer: { name: formattedClientName, email: clientEmail, phone: formattedClientPhone },
+      delivery,
+      house: { name: houseNameClean, structure: sizeValueClean },
+      surfaces: { net: configDataFr.perdhesa.neto, gross: configDataFr.perdhesa.bruto, walls: configDataFr.perdhesa.mure_te_jashtme, roof: roofArea },
+      options: adminOptionsList,
+      pricing: { base: serverBasePrice, options: serverOptionsTotal, subtotal: configurationSubtotal, trucks: truckCount, transport: serverTransportCost, assembly: serverAssemblyCost, total },
+      assemblyDescription: adminAssemblyDescription,
+      agreementVersion: agreementsForNotifications.version,
+      request: getOrderRequestContext(req.headers),
+    };
 
     // 2. Compile Client Confirmation Email - TRANSLATED DYNAMICALLY
     const clientEmailSubject = l.subject.replace("{ref}", orderRef);
@@ -1459,12 +1245,18 @@ export async function POST(req: NextRequest) {
     let clientEmailSent = false;
 
     if (toAdminEmail) {
+      const adminEmailHtml = buildCheckoutAdminEmail({
+        ...adminNotificationData,
+        pdfAttached: Boolean(clientPdfAttachment),
+      });
       const adminEmailResult = await sendResendMail({
         to: toAdminEmail,
         from: orderFromEmail,
         replyTo: clientEmail || undefined,
         subject: `[Nouveau Projet] Configuration de Maison ${houseNameClean} - Ref ${orderRef}`,
         html: adminEmailHtml,
+        text: checkoutEmailHtmlToText(adminEmailHtml),
+        attachments: clientPdfAttachment ? [clientPdfAttachment] : undefined,
         idempotencyKey: `checkout-admin/${orderRef}`,
         event: "checkout-admin",
       });

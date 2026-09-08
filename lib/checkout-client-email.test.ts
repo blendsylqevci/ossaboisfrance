@@ -62,3 +62,16 @@ test("creates a readable plain-text fallback from the finalized HTML", () => {
   assert.match(text, /Reply <directly> to this email\./);
   assert.doesNotMatch(text, /<style>|<h1>|<td>/);
 });
+
+test("does not crash or double-decode malformed numeric entities", () => {
+  const html = `<p>Valid: &#8364;</p>
+    <p>Customer literals: &amp;#9999999999; &amp;#x110000; &amp;#39;</p>
+    <p>Malformed template entity: &#9999999999;</p>`;
+
+  assert.doesNotThrow(() => checkoutEmailHtmlToText(html));
+
+  const text = checkoutEmailHtmlToText(html);
+  assert.match(text, /Valid: €/);
+  assert.match(text, /Customer literals: &#9999999999; &#x110000; &#39;/);
+  assert.match(text, /Malformed template entity: &#9999999999;/);
+});

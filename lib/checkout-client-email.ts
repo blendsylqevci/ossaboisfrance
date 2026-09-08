@@ -8,6 +8,24 @@ function escapeEmailText(value: string): string {
     .replace(/"/g, "&quot;");
 }
 
+function decodeNumericEntity(match: string, value: string, radix: 10 | 16): string {
+  const codePoint = Number.parseInt(value, radix);
+
+  // String.fromCodePoint throws for values outside Unicode's scalar range.
+  // Preserve malformed entities as text instead of failing the checkout after
+  // the order has already been saved.
+  if (
+    !Number.isInteger(codePoint) ||
+    codePoint < 0 ||
+    codePoint > 0x10ffff ||
+    (codePoint >= 0xd800 && codePoint <= 0xdfff)
+  ) {
+    return match;
+  }
+
+  return String.fromCodePoint(codePoint);
+}
+
 /**
  * Finalizes the client template only after PDF generation has completed. The
  * callout is therefore never shown in the valid fallback where confirmation
@@ -43,18 +61,20 @@ export function checkoutEmailHtmlToText(html: string): string {
     .replace(/<\/(?:p|div|tr|h[1-6]|li)>/gi, "\n")
     .replace(/<\/t[dh]>/gi, "\t")
     .replace(/<[^>]+>/g, "")
+    // Decode once only. Numeric and named entities must be handled before
+    // &amp; so escaped customer input such as &amp;#9999999999; remains literal.
+    .replace(/&#(\d+);/g, (match, decimal: string) =>
+      decodeNumericEntity(match, decimal, 10)
+    )
+    .replace(/&#x([0-9a-f]+);/gi, (match, hexadecimal: string) =>
+      decodeNumericEntity(match, hexadecimal, 16)
+    )
     .replace(/&nbsp;/gi, " ")
-    .replace(/&amp;/gi, "&")
     .replace(/&quot;/gi, '"')
-    .replace(/&#0*39;|&apos;/gi, "'")
+    .replace(/&apos;/gi, "'")
     .replace(/&lt;/gi, "<")
     .replace(/&gt;/gi, ">")
-    .replace(/&#(\d+);/g, (_match, decimal: string) =>
-      String.fromCodePoint(Number.parseInt(decimal, 10))
-    )
-    .replace(/&#x([0-9a-f]+);/gi, (_match, hexadecimal: string) =>
-      String.fromCodePoint(Number.parseInt(hexadecimal, 16))
-    )
+    .replace(/&amp;/gi, "&")
     .replace(/\r/g, "")
     .split("\n")
     .map((line) => line.replace(/[\t ]+/g, " ").trim())

@@ -67,9 +67,11 @@ export const Users: CollectionConfig = {
     useAsTitle: 'email',
   },
   access: {
-    // Only admins may create, edit, or delete other staff accounts (prevents a
+    // Only admins may read, create, edit, unlock, or delete staff accounts (prevents a
     // low-privilege account from self-escalating or minting new admins).
     create: isAdminAccess,
+    read: isAdminAccess,
+    unlock: isAdminAccess,
     update: isAdminAccess,
     delete: isAdminAccess,
   },

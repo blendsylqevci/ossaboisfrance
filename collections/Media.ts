@@ -1,4 +1,5 @@
 import { CollectionConfig } from 'payload'
+import { isAdminAccess } from '@/lib/access'
 import { revalidateHousePaths } from '@/lib/revalidate-house'
 
 export const Media: CollectionConfig = {
@@ -22,7 +23,10 @@ export const Media: CollectionConfig = {
     defaultColumns: ['filename', 'alt', 'house', 'mediaType', 'updatedAt'],
   },
   access: {
+    create: isAdminAccess,
+    delete: isAdminAccess,
     read: () => true,
+    update: isAdminAccess,
   },
   upload: {
     staticDir: 'public/media',

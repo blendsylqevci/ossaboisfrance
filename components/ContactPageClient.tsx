@@ -134,12 +134,12 @@ export function ContactPageClient({
       : locale === "nl" ? "Dank u voor uw interesse in OSSA Bois France. Ons technisch team beoordeelt uw aanvraag en antwoordt binnen 24 tot 48 werkuren."
       : "Merci pour votre intérêt envers OSSA Bois France. Notre équipe technique étudie votre demande et vous répondra sous 24 à 48 heures ouvrées.",
     confirmationPending: locale === "en"
-      ? "Your request has been recorded. Please do not submit it again. If the confirmation email does not appear, check your spam folder or contact us at infoossabois@gmail.com."
+      ? "Your request has been recorded. Please do not submit it again. If the confirmation email does not appear, check your spam folder or contact us at info@ossaboisfrance.com."
       : locale === "de"
-        ? "Ihre Anfrage wurde gespeichert. Bitte senden Sie sie nicht erneut. Falls die Bestätigungs-E-Mail nicht erscheint, prüfen Sie Ihren Spam-Ordner oder kontaktieren Sie uns unter infoossabois@gmail.com."
+        ? "Ihre Anfrage wurde gespeichert. Bitte senden Sie sie nicht erneut. Falls die Bestätigungs-E-Mail nicht erscheint, prüfen Sie Ihren Spam-Ordner oder kontaktieren Sie uns unter info@ossaboisfrance.com."
         : locale === "nl"
-          ? "Uw aanvraag is geregistreerd. Dien deze niet opnieuw in. Verschijnt de bevestigingsmail niet, controleer dan uw spammap of neem contact op via infoossabois@gmail.com."
-          : "Votre demande est bien enregistrée. Ne la renvoyez pas. Si l'e-mail de confirmation n'apparaît pas, vérifiez vos courriers indésirables ou contactez-nous à infoossabois@gmail.com.",
+          ? "Uw aanvraag is geregistreerd. Dien deze niet opnieuw in. Verschijnt de bevestigingsmail niet, controleer dan uw spammap of neem contact op via info@ossaboisfrance.com."
+          : "Votre demande est bien enregistrée. Ne la renvoyez pas. Si l'e-mail de confirmation n'apparaît pas, vérifiez vos courriers indésirables ou contactez-nous à info@ossaboisfrance.com.",
 
     firstName: locale === "en" ? "First Name" : locale === "de" ? "Vorname" : locale === "nl" ? "Voornaam" : "Prénom",
     lastName: locale === "en" ? "Last Name" : locale === "de" ? "Nachname" : locale === "nl" ? "Achternaam" : "Nom",
@@ -369,7 +369,7 @@ export function ContactPageClient({
               <p className="address-text">50 rue Chanzy<br />28000 Chartres, France</p>
               <p className="contact-link-row">
                 <span className="link-label">Email:</span>
-                <a href="mailto:infoossabois@gmail.com">infoossabois@gmail.com</a>
+                <a href="mailto:info@ossaboisfrance.com">info@ossaboisfrance.com</a>
               </p>
             </div>
           </div>
@@ -410,7 +410,7 @@ export function ContactPageClient({
               <p>{trans.b2bDesc}</p>
               <p className="contact-link-row">
                 <span className="link-label">{trans.b2bDirect}</span>
-                <a href="mailto:infoossabois@gmail.com">infoossabois@gmail.com</a>
+                <a href="mailto:info@ossaboisfrance.com">info@ossaboisfrance.com</a>
               </p>
             </div>
           </div>

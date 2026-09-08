@@ -44,8 +44,8 @@ export default async function PrivacyPolicyPage({ params }: PageProps) {
             <p>
               Ossa Bois France, 50 rue Chanzy, 28000 Chartres, France. Pour toute
               question relative à vos données personnelles, écrivez à{" "}
-              <a href="mailto:infoossabois@gmail.com">
-                infoossabois@gmail.com
+              <a href="mailto:info@ossaboisfrance.com">
+                info@ossaboisfrance.com
               </a>
               .
             </p>
@@ -106,7 +106,7 @@ export default async function PrivacyPolicyPage({ params }: PageProps) {
               Vous pouvez demander l&apos;accès, la rectification, l&apos;effacement ou
               la limitation du traitement de vos données, et vous opposer à un
               traitement lorsque la réglementation le permet. Adressez votre
-              demande à infoossabois@gmail.com en précisant les informations
+              demande à info@ossaboisfrance.com en précisant les informations
               nécessaires pour identifier la demande concernée. Vous pouvez
               également introduire une réclamation auprès de la CNIL.
             </p>

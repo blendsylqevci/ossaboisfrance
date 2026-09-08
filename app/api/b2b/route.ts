@@ -249,7 +249,7 @@ export async function POST(req: NextRequest) {
     ]);
     const adminEmail = getResendAdminEmail();
     const replyToEmail =
-      getResendReplyToEmail() || "infoossabois@gmail.com";
+      getResendReplyToEmail() || "info@ossaboisfrance.com";
     if (!adminEmail) {
       if (process.env.NODE_ENV === "production") {
         console.error("[B2B] RESEND_ADMIN_EMAIL is required in production.");

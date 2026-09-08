@@ -1373,7 +1373,7 @@ export async function POST(req: NextRequest) {
     const toAdminEmail = getResendAdminEmail();
     const orderFromEmail = getResendOrderFromEmail();
     const replyToEmail =
-      getResendReplyToEmail() || toAdminEmail || "infoossabois@gmail.com";
+      getResendReplyToEmail() || toAdminEmail || "info@ossaboisfrance.com";
 
     let clientPdfAttachment:
       | { filename: string; content: string }

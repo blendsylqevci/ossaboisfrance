@@ -30,7 +30,7 @@ export function SiteFooter({ locale, dict }: SiteFooterProps) {
           <p>50 rue Chanzy<br />28000 Chartres</p>
           <h2>{dict?.contactUs || "Contactez-Nous"}</h2>
           <p>
-            <a href="mailto:infoossabois@gmail.com">infoossabois@gmail.com</a>
+            <a href="mailto:info@ossaboisfrance.com">info@ossaboisfrance.com</a>
           </p>
           <h2>{dict?.socialMedia || "Réseaux sociaux"}</h2>
           <div className="footer-socials" aria-label={dict?.socialMedia || "Réseaux sociaux"}>

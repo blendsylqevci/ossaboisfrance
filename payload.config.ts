@@ -1,4 +1,5 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
+import { resendAdapter } from '@payloadcms/email-resend'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
 import { buildConfig } from 'payload'
@@ -7,6 +8,8 @@ import { s3Storage } from '@payloadcms/storage-s3'
 import sharp from 'sharp'
 import { publicMediaUrl } from './lib/media-url'
 import { buildDbSsl } from './lib/db-ssl'
+import { getPublicSiteUrl } from './lib/email-templates'
+import { getResendAuthFromAddress, getResendFromName } from './lib/resend-mail'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
@@ -46,6 +49,12 @@ export default buildConfig({
     SiteSettings,
   ],
   editor: lexicalEditor({}),
+  serverURL: getPublicSiteUrl(),
+  email: resendAdapter({
+    apiKey: process.env.RESEND_API_KEY?.trim() || '',
+    defaultFromAddress: getResendAuthFromAddress(),
+    defaultFromName: getResendFromName(),
+  }),
   sharp,
   secret: process.env.PAYLOAD_SECRET || (() => {
     if (process.env.NODE_ENV === 'production') {

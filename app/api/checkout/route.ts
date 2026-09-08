@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getPayload } from "payload";
+import { createHash } from "node:crypto";
+import { getPayload, type Payload } from "payload";
 import config from "@/payload.config";
 import { mapHouseDocToConfiguratorData } from "@/lib/house-mapper";
 import { isLocale, type Locale } from "@/lib/i18n";
@@ -14,9 +15,27 @@ import {
   getClientIp,
   rateLimitResponse,
 } from "@/lib/rate-limit";
-import { escapeHtml, getResendAdminEmail, getResendOrderFromEmail, sendResendMail } from "@/lib/resend-mail";
+import {
+  escapeHtml,
+  getResendAdminEmail,
+  getResendOrderFromEmail,
+  getResendReplyToEmail,
+  sendResendMail,
+} from "@/lib/resend-mail";
 import { isValidEmail, sanitizeText } from "@/lib/form-utils";
 import { uploadOrderScreenshotToMedia } from "@/lib/upload-order-screenshot";
+import {
+  isAcceptedCheckoutAgreementSnapshot,
+  isCheckoutOrderReference,
+  validateCheckoutAgreements,
+  type AcceptedCheckoutAgreements,
+} from "@/lib/checkout-legal";
+import { generateOrderPdf } from "@/lib/order-pdf";
+import {
+  checkoutEmailHtmlToText,
+  CHECKOUT_PDF_CALLOUT_MARKER,
+  finalizeCheckoutClientEmailHtml,
+} from "@/lib/checkout-client-email";
 
 const euroFormatter = new Intl.NumberFormat("fr-FR", {
   style: "currency",
@@ -24,6 +43,60 @@ const euroFormatter = new Intl.NumberFormat("fr-FR", {
   minimumFractionDigits: 2,
   maximumFractionDigits: 2
 });
+
+export const runtime = "nodejs";
+
+type ExistingOrderRecord = {
+  id?: unknown;
+  selections?: unknown;
+};
+
+function submissionFingerprint(value: unknown): string {
+  return createHash("sha256").update(JSON.stringify(value), "utf8").digest("hex");
+}
+
+function storedSubmissionFingerprint(order: ExistingOrderRecord): string | null {
+  if (!order.selections || typeof order.selections !== "object" || Array.isArray(order.selections)) {
+    return null;
+  }
+  const value = (order.selections as Record<string, unknown>).submissionFingerprint;
+  return typeof value === "string" && /^[a-f0-9]{64}$/.test(value) ? value : null;
+}
+
+function storedAgreements(
+  order: ExistingOrderRecord,
+  locale: Locale
+): AcceptedCheckoutAgreements | null {
+  if (!order.selections || typeof order.selections !== "object" || Array.isArray(order.selections)) {
+    return null;
+  }
+  const value = (order.selections as Record<string, unknown>).agreements;
+  return isAcceptedCheckoutAgreementSnapshot(value, locale) ? value : null;
+}
+
+async function findOrderByReference(
+  payload: Payload,
+  orderRef: string
+): Promise<ExistingOrderRecord | null> {
+  const result = await payload.find({
+    collection: "orders",
+    where: { orderRef: { equals: orderRef } },
+    depth: 0,
+    limit: 1,
+    overrideAccess: true,
+  });
+  return (result.docs[0] as ExistingOrderRecord | undefined) ?? null;
+}
+
+function idempotencyConflictResponse(): NextResponse {
+  return NextResponse.json(
+    {
+      success: false,
+      error: "Cette référence appartient déjà à une autre demande.",
+    },
+    { status: 409 }
+  );
+}
 
 export async function POST(req: NextRequest) {
   const ip = getClientIp(req);
@@ -49,6 +122,7 @@ export async function POST(req: NextRequest) {
       deliveryInfo,
       total: clientTotal,
       locale: rawLocale,
+      agreements: rawAgreements,
     } = body;
     if (rawLocale !== undefined && (typeof rawLocale !== "string" || !isLocale(rawLocale))) {
       return NextResponse.json(
@@ -57,6 +131,17 @@ export async function POST(req: NextRequest) {
       );
     }
     const locale: Locale = rawLocale ?? "fr";
+    const acceptedAgreements = validateCheckoutAgreements(rawAgreements, locale);
+    if (!acceptedAgreements) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "Les confirmations obligatoires doivent être acceptées avant l'envoi.",
+        },
+        { status: 400 }
+      );
+    }
     if (!selection || typeof selection !== "object" || Array.isArray(selection)) {
       return NextResponse.json(
         { success: false, error: "Configuration invalide." },
@@ -67,8 +152,9 @@ export async function POST(req: NextRequest) {
 
     // Sanitize + validate every client-provided value before it is persisted or
     // interpolated into transactional emails (prevents HTML/attribute injection).
-    const orderRef = sanitizeText(body.orderRef, 64).replace(/[^A-Za-z0-9_-]/g, "");
-    if (!orderRef) {
+    const orderRef =
+      typeof body.orderRef === "string" ? body.orderRef.trim() : "";
+    if (!isCheckoutOrderReference(orderRef)) {
       return NextResponse.json(
         { success: false, error: "Référence de commande invalide." },
         { status: 400 }
@@ -225,6 +311,7 @@ export async function POST(req: NextRequest) {
       totalPrice: total,
       priceBasis,
       vatIncluded,
+      agreements: acceptedAgreements,
       installation: {
         mode: installationMode,
         provider:
@@ -284,29 +371,89 @@ export async function POST(req: NextRequest) {
     }
     selectionForStorage.selectedOptions = authoritativeSelectedOptions;
 
-    // Persist order in the database
-    const orderDoc = await payload.create({
-      collection: 'orders',
-      data: {
-        orderRef: orderRef,
-        house: houseDoc.id,
-        customerName: clientName,
-        customerEmail: clientEmail,
-        customerPhone: clientPhone || "",
-        totalPrice: total,
-        transportCost: serverTransportCost,
-        streetAddress: delivery.streetAddress,
-        city: delivery.city,
-        zipCode: delivery.zipCode,
-        stateRegion: delivery.stateRegion,
-        country: delivery.country,
-        clientNotes: delivery.notes,
-        selections: selectionForStorage,
-        status: 'pending',
-      }
+    const fingerprint = submissionFingerprint({
+      locale,
+      customer: {
+        name: clientName,
+        email: clientEmail.toLowerCase(),
+        phone: clientPhone,
+      },
+      delivery,
+      selection: {
+        ...selectionForStorage,
+        agreements: {
+          shipping: acceptedAgreements.shipping,
+          terms: acceptedAgreements.terms,
+          urban: acceptedAgreements.urban,
+          privacy: acceptedAgreements.privacy,
+          version: acceptedAgreements.version,
+          locale: acceptedAgreements.locale,
+          textHash: acceptedAgreements.textHash,
+          text: acceptedAgreements.text,
+        },
+      },
     });
+    selectionForStorage.submissionFingerprint = fingerprint;
 
-    console.log(`[API Checkout] Order persisted in database with ID: ${orderDoc.id}`);
+    let replayed = false;
+    let orderDoc: ExistingOrderRecord;
+    let agreementsForNotifications = acceptedAgreements;
+    const existingOrder = await findOrderByReference(payload, orderRef);
+    if (existingOrder) {
+      if (storedSubmissionFingerprint(existingOrder) !== fingerprint) {
+        return idempotencyConflictResponse();
+      }
+      const originalAgreements = storedAgreements(existingOrder, locale);
+      if (!originalAgreements) {
+        throw new Error("Stored checkout agreement snapshot is invalid.");
+      }
+      replayed = true;
+      orderDoc = existingOrder;
+      agreementsForNotifications = originalAgreements;
+    } else {
+      try {
+        orderDoc = await payload.create({
+          collection: 'orders',
+          data: {
+            orderRef: orderRef,
+            house: houseDoc.id,
+            customerName: clientName,
+            customerEmail: clientEmail,
+            customerPhone: clientPhone || "",
+            totalPrice: total,
+            transportCost: serverTransportCost,
+            streetAddress: delivery.streetAddress,
+            city: delivery.city,
+            zipCode: delivery.zipCode,
+            stateRegion: delivery.stateRegion,
+            country: delivery.country,
+            clientNotes: delivery.notes,
+            selections: selectionForStorage,
+            status: 'pending',
+          }
+        });
+      } catch (createError) {
+        // Close the check-then-create race using the collection's unique orderRef.
+        // A matching concurrent request reuses the same notification keys; an
+        // unrelated create failure retains the normal error path.
+        const concurrentOrder = await findOrderByReference(payload, orderRef);
+        if (!concurrentOrder) throw createError;
+        if (storedSubmissionFingerprint(concurrentOrder) !== fingerprint) {
+          return idempotencyConflictResponse();
+        }
+        const originalAgreements = storedAgreements(concurrentOrder, locale);
+        if (!originalAgreements) {
+          throw new Error("Stored checkout agreement snapshot is invalid.");
+        }
+        replayed = true;
+        orderDoc = concurrentOrder;
+        agreementsForNotifications = originalAgreements;
+      }
+    }
+
+    console.log(
+      `[API Checkout] Order ${replayed ? "replayed" : "persisted"} with ID: ${String(orderDoc.id ?? "unknown")}`
+    );
 
     const configuredSiteUrl =
       process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
@@ -315,7 +462,7 @@ export async function POST(req: NextRequest) {
     let houseImageUrl = "";
 
     const base64Image = selectionRecord.currentImage;
-    if (base64Image && typeof base64Image === "string") {
+    if (!replayed && base64Image && typeof base64Image === "string") {
       try {
         const uploaded = await uploadOrderScreenshotToMedia(
           payload,
@@ -352,6 +499,7 @@ export async function POST(req: NextRequest) {
       fr: {
         subject: "Votre projet de construction Ossa Bois - Référence {ref}",
         title: "Votre projet de maison en ossature bois",
+        preheader: "Votre demande Ossa Bois {ref} est bien enregistrée. Retrouvez votre configuration, l'estimation HT et les prochaines étapes.",
         greeting: "Bonjour {name},",
         intro: "Nous vous remercions chaleureusement d'avoir configuré votre future maison avec notre configurateur en ligne. Votre demande a bien été enregistrée sous la référence unique <strong>{ref}</strong>. Notre bureau d'études examine actuellement la faisabilité technique de votre projet.",
         dimensionsHeader: "Dimensions & Caractéristiques Structurelles",
@@ -371,9 +519,21 @@ export async function POST(req: NextRequest) {
         assemblyProfessionalDesc: "Montage réalisé par le client ou une entreprise tierce (non pris en charge par Ossa Bois)",
         totalEstimation: "Estimation globale du projet configuré (HT)",
         taxNotice: "Tous les montants affichés sont hors taxes (HT). La TVA n'est pas incluse et sera calculée dans le devis personnalisé.",
+        requestSummary: "Récapitulatif de la demande",
+        referenceLabel: "Référence projet",
+        modelLabel: "Modèle et structure",
+        deliveryLabel: "Adresse du projet",
+        contactLabel: "Vos coordonnées",
+        attachedPdf: "Votre récapitulatif PDF détaillé est joint à cet e-mail pour consultation et archivage.",
+        replyPrompt: "Une question ou une précision à apporter ? Répondez directement à cet e-mail : votre message sera transmis à notre équipe projet.",
+        replyCta: "Répondre à l'équipe projet",
+        websiteCta: "Découvrir Ossa Bois",
+        legalTitle: "Information importante",
+        legalNotice: "Cette estimation automatique est non contractuelle et ne constitue ni un devis définitif, ni une facture, ni une acceptation du projet. Les prix, surfaces, délais, transport, montage, garanties, TVA applicable et conditions restent soumis à l'étude technique et au devis signé par les parties.",
+        consentNotice: "Les confirmations de livraison, d'urbanisme, de conditions de vente et de traitement des données acceptées lors de l'envoi sont enregistrées avec votre demande et reproduites dans le récapitulatif PDF lorsqu'il est disponible.",
         nextStepsHeader: "Prochaines étapes de votre projet",
         step1Title: "Étape 1 : Bureau d'études",
-        step1Desc: "Notre équipe technique analyse votre terrain et l'accès au chantier sous 24 à 48 heures.",
+        step1Desc: "Notre équipe technique lance l'étude de votre terrain et de l'accès au chantier. Un conseiller vous recontactera dans les meilleurs délais ouvrés.",
         step2Title: "Étape 2 : Entretien conseil",
         step2Desc: "Un conseiller technique Ossa Bois prend contact avec vous par téléphone au <strong>{phone}</strong> pour valider les finitions.",
         step3Title: "Étape 3 : Devis définitif",
@@ -383,6 +543,7 @@ export async function POST(req: NextRequest) {
       en: {
         subject: "Your Ossa Bois construction project - Reference {ref}",
         title: "Your timber frame house project",
+        preheader: "Your Ossa Bois request {ref} has been recorded. Review your configuration, estimate excluding VAT and next steps.",
         greeting: "Hello {name},",
         intro: "Thank you for configuring your future home with our online configurator. Your request has been successfully registered under the unique reference <strong>{ref}</strong>. Our engineering office is currently reviewing the technical feasibility of your project.",
         dimensionsHeader: "Dimensions & Structural Specifications",
@@ -402,9 +563,21 @@ export async function POST(req: NextRequest) {
         assemblyProfessionalDesc: "Assembly performed by the client or a third-party company (not provided by Ossa Bois)",
         totalEstimation: "Configured project estimate excl. VAT",
         taxNotice: "All displayed amounts exclude VAT. Applicable VAT is not included and will be calculated in your personalized quotation.",
+        requestSummary: "Request summary",
+        referenceLabel: "Project reference",
+        modelLabel: "Model and structure",
+        deliveryLabel: "Project address",
+        contactLabel: "Your contact details",
+        attachedPdf: "Your detailed PDF summary is attached to this email for review and safekeeping.",
+        replyPrompt: "Have a question or an important detail to add? Reply directly to this email and your message will reach our project team.",
+        replyCta: "Reply to the project team",
+        websiteCta: "Discover Ossa Bois",
+        legalTitle: "Important information",
+        legalNotice: "This automated estimate is non-binding and is not a final quotation, invoice or project acceptance. Prices, areas, lead times, transport, assembly, warranties, applicable VAT and terms remain subject to technical review and a quotation signed by both parties.",
+        consentNotice: "The delivery, planning, sales-terms and data-processing confirmations accepted on submission are recorded with your request and reproduced in the PDF summary when available.",
         nextStepsHeader: "Next steps of your project",
         step1Title: "Step 1: Engineering Review",
-        step1Desc: "Our technical team analyzes your land and access configuration within 24 to 48 hours.",
+        step1Desc: "Our technical team begins reviewing your site and access conditions. An advisor will contact you as soon as practicable during business days.",
         step2Title: "Step 2: Expert Consult",
         step2Desc: "An Ossa Bois technical advisor will contact you by phone at <strong>{phone}</strong> to confirm your finishes.",
         step3Title: "Step 3: Final Quote",
@@ -414,6 +587,7 @@ export async function POST(req: NextRequest) {
       de: {
         subject: "Ihr Ossa Bois Bauprojekt - Referenz {ref}",
         title: "Ihr Holzrahmenhaus-Projekt",
+        preheader: "Ihre Ossa Bois Anfrage {ref} wurde erfasst. Hier finden Sie Konfiguration, Nettoschätzung und nächste Schritte.",
         greeting: "Hallo {name},",
         intro: "Vielen Dank, dass Sie Ihr zukünftiges Haus mit unserem Online-Konfigurator gestaltet haben. Ihre Anfrage wurde erfolgreich unter der eindeutigen Referenz <strong>{ref}</strong> registriert. Unser Planungsbüro prüft derzeit die technische Machbarkeit Ihres Projekts.",
         dimensionsHeader: "Abmessungen & Konstruktionsdaten",
@@ -433,9 +607,21 @@ export async function POST(req: NextRequest) {
         assemblyProfessionalDesc: "Montage durch den Kunden oder ein Drittunternehmen (nicht durch Ossa Bois)",
         totalEstimation: "Schätzung des konfigurierten Projekts (zzgl. MwSt.)",
         taxNotice: "Alle angezeigten Beträge sind Nettopreise zzgl. MwSt. Die MwSt. ist nicht enthalten und wird im persönlichen Angebot berechnet.",
+        requestSummary: "Zusammenfassung der Anfrage",
+        referenceLabel: "Projektreferenz",
+        modelLabel: "Modell und Konstruktion",
+        deliveryLabel: "Projektadresse",
+        contactLabel: "Ihre Kontaktdaten",
+        attachedPdf: "Ihre ausführliche PDF-Zusammenfassung ist dieser E-Mail zur Prüfung und Ablage beigefügt.",
+        replyPrompt: "Haben Sie eine Frage oder möchten Sie etwas ergänzen? Antworten Sie direkt auf diese E-Mail; Ihre Nachricht erreicht unser Projektteam.",
+        replyCta: "Dem Projektteam antworten",
+        websiteCta: "Ossa Bois entdecken",
+        legalTitle: "Wichtige Information",
+        legalNotice: "Diese automatische Schätzung ist unverbindlich und stellt weder ein endgültiges Angebot noch eine Rechnung oder Projektannahme dar. Preise, Flächen, Fristen, Transport, Montage, Garantien, anwendbare MwSt. und Bedingungen bleiben der technischen Prüfung und einem von beiden Parteien unterzeichneten Angebot vorbehalten.",
+        consentNotice: "Die bei der Übermittlung bestätigten Angaben zu Lieferung, Baurecht, Verkaufsbedingungen und Datenverarbeitung werden mit Ihrer Anfrage gespeichert und, sofern verfügbar, in der PDF-Zusammenfassung wiedergegeben.",
         nextStepsHeader: "Nächste Schritte Ihres Projekts",
         step1Title: "Schritt 1: Technische Prüfung",
-        step1Desc: "Unser technisches Team analysiert Ihr Grundstück und die Logistik innerhalb von 24 bis 48 Stunden.",
+        step1Desc: "Unser technisches Team beginnt mit der Prüfung Ihres Grundstücks und der Baustellenzufahrt. Ein Berater meldet sich schnellstmöglich an einem Werktag bei Ihnen.",
         step2Title: "Schritt 2: Beratungsgespräch",
         step2Desc: "Ein technischer Berater von Ossa Bois kontaktiert Sie telefonisch unter <strong>{phone}</strong>, um Details abzustimmen.",
         step3Title: "Schritt 3: Endgültiges Angebot",
@@ -445,6 +631,7 @@ export async function POST(req: NextRequest) {
       nl: {
         subject: "Uw Ossa Bois bouwproject - Referentie {ref}",
         title: "Uw houtskeletbouw project",
+        preheader: "Uw Ossa Bois-aanvraag {ref} is geregistreerd. Bekijk uw configuratie, raming excl. btw en de volgende stappen.",
         greeting: "Hallo {name},",
         intro: "Hartelijk dank voor het configureren van uw toekomstige woning met onze online configurator. Uw aanvraag is succesvol geregistreerd onder de unieke referentie <strong>{ref}</strong>. Ons studiebureau beoordeelt momenteel de technische haalbaarheid van uw project.",
         dimensionsHeader: "Afmetingen & Structurele Kenmerken",
@@ -464,9 +651,21 @@ export async function POST(req: NextRequest) {
         assemblyProfessionalDesc: "Montage uitgevoerd door de klant of een extern bedrijf (niet door Ossa Bois)",
         totalEstimation: "Raming van het geconfigureerde project excl. btw",
         taxNotice: "Alle weergegeven bedragen zijn exclusief btw. De btw is niet inbegrepen en wordt berekend in uw persoonlijke offerte.",
+        requestSummary: "Samenvatting van de aanvraag",
+        referenceLabel: "Projectreferentie",
+        modelLabel: "Model en constructie",
+        deliveryLabel: "Projectadres",
+        contactLabel: "Uw contactgegevens",
+        attachedPdf: "Uw gedetailleerde PDF-overzicht is bij deze e-mail gevoegd om te bekijken en te bewaren.",
+        replyPrompt: "Hebt u een vraag of wilt u iets aanvullen? Beantwoord deze e-mail rechtstreeks; uw bericht komt bij ons projectteam terecht.",
+        replyCta: "Antwoord aan het projectteam",
+        websiteCta: "Ontdek Ossa Bois",
+        legalTitle: "Belangrijke informatie",
+        legalNotice: "Deze automatische raming is vrijblijvend en vormt geen definitieve offerte, factuur of projectaanvaarding. Prijzen, oppervlakten, termijnen, transport, montage, garanties, toepasselijke btw en voorwaarden blijven onderworpen aan technische beoordeling en een door beide partijen ondertekende offerte.",
+        consentNotice: "De bij verzending aanvaarde bevestigingen over levering, ruimtelijke ordening, verkoopvoorwaarden en gegevensverwerking worden bij uw aanvraag bewaard en, indien beschikbaar, opgenomen in het PDF-overzicht.",
         nextStepsHeader: "Volgende stappen van uw project",
         step1Title: "Stap 1: Technische Analyse",
-        step1Desc: "Ons technisch team analyseert uw terrein en de bereikbaarheid binnen 24 tot 48 uur.",
+        step1Desc: "Ons technisch team start de beoordeling van uw terrein en de bereikbaarheid. Een adviseur neemt zo spoedig mogelijk op een werkdag contact met u op.",
         step2Title: "Stap 2: Adviesgesprek",
         step2Desc: "Een technisch adviseur van Ossa Bois neemt telefonisch contact met u op via <strong>{phone}</strong> om de afwerking te bespreken.",
         step3Title: "Stap 3: Definitieve Offerte",
@@ -478,9 +677,15 @@ export async function POST(req: NextRequest) {
     // Resolve client locale context (fallbacks to French if not defined/supported)
     const clientLocaleKey = locale;
     const l = clientEmailTranslations[clientLocaleKey];
+    const clientMoneyFormatter = new Intl.NumberFormat(
+      locale === "fr" ? "fr-FR" : locale === "de" ? "de-DE" : locale === "nl" ? "nl-NL" : "en-GB",
+      { style: "currency", currency: "EUR", minimumFractionDigits: 2, maximumFractionDigits: 2 }
+    );
 
     // Helper function to build the options row details list for client or admin email
     const getDetailedOptions = (cfgData: typeof configData, lang: string) => {
+      const optionMoneyFormatter =
+        lang === clientLocaleKey ? clientMoneyFormatter : euroFormatter;
       const list: Array<{
         categoryLabel: string;
         optionLabel: string;
@@ -538,7 +743,7 @@ export async function POST(req: NextRequest) {
                 ? " zzgl. MwSt."
                 : " excl. btw";
         if (targetCategory.priceMode === "wall_m2" || targetCategory.priceMode === "roof_m2") {
-          formattedCalculation = `${multiplier} m²${multiplierUnit} × ${euroFormatter.format(rawPrice)}${priceBasisSuffix}/m²`;
+          formattedCalculation = `${multiplier} m²${multiplierUnit} × ${optionMoneyFormatter.format(rawPrice)}${priceBasisSuffix}/m²`;
         } else {
           formattedCalculation = lang === "fr" ? "Tarif forfaitaire HT" : lang === "en" ? "Flat rate excl. VAT" : lang === "de" ? "Pauschalpreis zzgl. MwSt." : "Vaste prijs excl. btw";
         }
@@ -571,7 +776,9 @@ export async function POST(req: NextRequest) {
     const clientOptionsList = getDetailedOptions(configData, clientLocaleKey);
     const adminOptionsList = getDetailedOptions(configDataFr, "fr");
 
-    const buildOptionsHtml = (list: typeof clientOptionsList) => {
+    const buildOptionsHtml = (
+      list: Array<(typeof clientOptionsList)[number] & { formattedTotal: string }>
+    ) => {
       return list.map(opt => `
         <tr style="border-bottom: 1px solid #F1F5F9;">
           <td style="padding: 14px 16px; font-size: 13.5px; font-weight: 600; color: #1E293B; vertical-align: top;">
@@ -582,14 +789,24 @@ export async function POST(req: NextRequest) {
             <div style="font-size: 12px; color: #64748B;">${escapeHtml(opt.formattedCalculation)}</div>
           </td>
           <td align="right" style="padding: 14px 16px; font-size: 13.5px; font-weight: 700; color: #1E293B; vertical-align: top; width: 110px;">
-            ${euroFormatter.format(opt.totalPrice)}
+            ${escapeHtml(opt.formattedTotal)}
           </td>
         </tr>
       `).join("");
     };
 
-    const clientOptionsRowsHtml = buildOptionsHtml(clientOptionsList);
-    const adminOptionsRowsHtml = buildOptionsHtml(adminOptionsList);
+    const clientOptionsRowsHtml = buildOptionsHtml(
+      clientOptionsList.map((option) => ({
+        ...option,
+        formattedTotal: clientMoneyFormatter.format(option.totalPrice),
+      }))
+    );
+    const adminOptionsRowsHtml = buildOptionsHtml(
+      adminOptionsList.map((option) => ({
+        ...option,
+        formattedTotal: euroFormatter.format(option.totalPrice),
+      }))
+    );
 
     const formattedClientName = clientName.trim();
     const formattedClientPhone = clientPhone ? clientPhone.trim() : "";
@@ -846,6 +1063,7 @@ export async function POST(req: NextRequest) {
 
     // 2. Compile Client Confirmation Email - TRANSLATED DYNAMICALLY
     const clientEmailSubject = l.subject.replace("{ref}", orderRef);
+    const formattedPreheader = l.preheader.replace("{ref}", orderRef);
     const formattedGreeting = l.greeting.replace("{name}", safeClientName);
     const formattedIntro = l.intro.replace("{ref}", orderRef);
     const formattedBaseStructureDesc = l.baseStructureDesc.replace("{model}", safeHouseName).replace("{size}", safeSizeValue);
@@ -859,7 +1077,7 @@ export async function POST(req: NextRequest) {
         : l.assemblyProfessionalDesc;
     const formattedStep2Desc = l.step2Desc.replace("{phone}", safeClientPhone || "...");
 
-    const clientEmailHtml = `
+    let clientEmailHtml = `
       <!DOCTYPE html>
       <html lang="${clientLocaleKey}">
       <head>
@@ -887,10 +1105,20 @@ export async function POST(req: NextRequest) {
             outline: none;
             text-decoration: none;
           }
+          .email-shell { width: 100% !important; max-width: 650px !important; }
+          .email-pad { padding-left: 24px !important; padding-right: 24px !important; }
+          @media only screen and (max-width: 620px) {
+            .email-pad { padding-left: 16px !important; padding-right: 16px !important; }
+            .mobile-block { display: block !important; width: 100% !important; box-sizing: border-box !important; }
+            .mobile-border { border-left: 0 !important; border-top: 1px solid #EBE9E2 !important; padding-left: 0 !important; }
+            .mobile-hide { display: none !important; }
+            .mobile-center { text-align: center !important; }
+          }
         </style>
       </head>
       <body style="font-family: system-ui, -apple-system, sans-serif; background-color: #FAF9F6; color: #1E293B; margin: 0; padding: 20px 10px; -webkit-font-smoothing: antialiased;">
-        <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 650px; background-color: #FFFFFF; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 30px rgba(94, 111, 79, 0.08); border: 1px solid #EBE9E2; margin: 0 auto;">
+        <div style="display:none;font-size:1px;color:#FAF9F6;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;">${formattedPreheader}&#847; &zwnj; &nbsp; &#847; &zwnj; &nbsp;</div>
+        <table role="presentation" class="email-shell" align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 650px; background-color: #FFFFFF; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 30px rgba(94, 111, 79, 0.08); border: 1px solid #EBE9E2; margin: 0 auto;">
           <!-- Brand Header Accent line -->
           <tr>
             <td height="5" style="background: linear-gradient(90deg, #5E6F4F 0%, #C5A880 50%, #5E6F4F 100%);"></td>
@@ -917,7 +1145,7 @@ export async function POST(req: NextRequest) {
 
           <!-- Hero Rendering Image -->
           <tr>
-            <td style="padding: 24px 24px 16px 24px;">
+            <td class="email-pad" style="padding: 24px 24px 16px 24px;">
               <table border="0" cellpadding="0" cellspacing="0" width="100%">
                 <tr>
                   <td style="border-radius: 8px; overflow: hidden; border: 1px solid #EBE9E2;">
@@ -937,9 +1165,40 @@ export async function POST(req: NextRequest) {
             </td>
           </tr>
 
+          <!-- At-a-glance transaction summary -->
+          <tr>
+            <td class="email-pad" style="padding: 8px 24px 16px 24px;">
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color:#EEF2EA;border:1px solid #DDE5D8;border-radius:8px;">
+                <tr>
+                  <td colspan="2" style="padding:14px 16px 10px;font-size:12px;font-weight:800;color:#435139;text-transform:uppercase;letter-spacing:.7px;">${l.requestSummary}</td>
+                </tr>
+                <tr>
+                  <td class="mobile-block" width="50%" style="padding:4px 16px 14px;vertical-align:top;">
+                    <div style="font-size:10px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.5px;">${l.referenceLabel}</div>
+                    <div style="font-size:14px;font-weight:800;color:#1E293B;margin-top:4px;">${orderRef}</div>
+                  </td>
+                  <td class="mobile-block mobile-border" width="50%" style="padding:4px 16px 14px;vertical-align:top;border-left:1px solid #D5DFD0;">
+                    <div style="font-size:10px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.5px;">${l.modelLabel}</div>
+                    <div style="font-size:13px;font-weight:700;color:#1E293B;margin-top:4px;">${safeHouseName}<br><span style="font-weight:500;color:#475569;">${safeSizeValue}</span></div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="mobile-block" width="50%" style="padding:12px 16px 16px;vertical-align:top;border-top:1px solid #D5DFD0;">
+                    <div style="font-size:10px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.5px;">${l.deliveryLabel}</div>
+                    <div style="font-size:12.5px;line-height:1.5;color:#1E293B;margin-top:4px;">${safeDelivery.streetAddress}<br>${safeDelivery.zipCode} ${safeDelivery.city}<br>${safeDelivery.stateRegion}, ${safeDelivery.country}</div>
+                  </td>
+                  <td class="mobile-block mobile-border" width="50%" style="padding:12px 16px 16px;vertical-align:top;border-top:1px solid #D5DFD0;border-left:1px solid #D5DFD0;">
+                    <div style="font-size:10px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.5px;">${l.contactLabel}</div>
+                    <div style="font-size:12.5px;line-height:1.6;color:#1E293B;margin-top:4px;"><a href="mailto:${safeClientEmail}" style="color:#435139;text-decoration:underline;">${safeClientEmail}</a><br><a href="${phoneHref}" style="color:#435139;text-decoration:underline;">${safeClientPhone}</a></div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
           <!-- Technical metrics Block (Neto, Bruto, walls, roof) -->
           <tr>
-            <td style="padding: 8px 24px 16px 24px;">
+            <td class="email-pad" style="padding: 8px 24px 16px 24px;">
               <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #FAF9F6; border-radius: 8px; border: 1px solid #EBE9E2; padding: 16px;">
                 <tr>
                   <td colspan="2" style="padding-bottom: 12px; border-bottom: 1px solid #EBE9E2;">
@@ -972,7 +1231,7 @@ export async function POST(req: NextRequest) {
 
           <!-- Dynamic itemized pricing breakdown -->
           <tr>
-            <td style="padding: 8px 24px 16px 24px;">
+            <td class="email-pad" style="padding: 8px 24px 16px 24px;">
               <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border: 1px solid #E5E7EB; border-radius: 8px; overflow: hidden;">
                 <thead>
                   <tr style="background-color: #FAFBFB; border-bottom: 1px solid #E5E7EB;">
@@ -991,7 +1250,7 @@ export async function POST(req: NextRequest) {
                       <div style="font-size: 11.5px; color: #64748B;">${formattedBaseStructureDesc.includes(" (") ? `(${formattedBaseStructureDesc.split(" (")[1]}` : ""}</div>
                     </td>
                     <td align="right" style="padding: 12px 14px; font-size: 13.5px; font-weight: 700; color: #1E293B; vertical-align: top;">
-                      ${euroFormatter.format(serverBasePrice)}
+                      ${clientMoneyFormatter.format(serverBasePrice)}
                     </td>
                   </tr>
                   ${clientOptionsRowsHtml}
@@ -1003,7 +1262,7 @@ export async function POST(req: NextRequest) {
                       ${formattedTransportDesc}
                     </td>
                     <td align="right" style="padding: 12px 14px; font-size: 13.5px; font-weight: 700; color: #1E293B; vertical-align: top;">
-                      ${euroFormatter.format(serverTransportCost)}
+                      ${clientMoneyFormatter.format(serverTransportCost)}
                     </td>
                   </tr>
                   <tr style="border-bottom: 1px dashed #E5E7EB; background-color: #FAFBFB;">
@@ -1014,7 +1273,7 @@ export async function POST(req: NextRequest) {
                       ${formattedAssemblyDesc}
                     </td>
                     <td align="right" style="padding: 12px 14px; font-size: 13.5px; font-weight: 700; color: #1E293B; vertical-align: top;">
-                      ${euroFormatter.format(serverAssemblyCost)}
+                      ${clientMoneyFormatter.format(serverAssemblyCost)}
                     </td>
                   </tr>
                   <tr style="background-color: #FAF9F6;">
@@ -1022,7 +1281,7 @@ export async function POST(req: NextRequest) {
                       ${l.totalEstimation}
                     </td>
                     <td align="right" style="padding: 14px 14px; font-size: 18px; font-weight: 800; color: #5E6F4F;">
-                      ${euroFormatter.format(total)}
+                      ${clientMoneyFormatter.format(total)}
                     </td>
                   </tr>
                   <tr style="background-color: #FAF9F6;">
@@ -1035,9 +1294,12 @@ export async function POST(req: NextRequest) {
             </td>
           </tr>
 
+          <!-- Inserted only after PDF generation succeeds. -->
+          ${CHECKOUT_PDF_CALLOUT_MARKER}
+
           <!-- Next Steps Roadmap -->
           <tr>
-            <td style="padding: 16px 24px 28px 24px;">
+            <td class="email-pad" style="padding: 16px 24px 22px 24px;">
               <table border="0" cellpadding="0" cellspacing="0" width="100%">
                 <tr>
                   <td>
@@ -1066,6 +1328,29 @@ export async function POST(req: NextRequest) {
             </td>
           </tr>
 
+          <!-- Reply CTA and legal clarity -->
+          <tr>
+            <td class="email-pad" style="padding:0 24px 28px 24px;">
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                  <td align="center" style="padding:20px;background-color:#FAF9F6;border:1px solid #EBE9E2;border-radius:8px;">
+                    <div style="font-size:13px;line-height:1.6;color:#475569;margin:0 auto 16px;max-width:500px;">${l.replyPrompt}</div>
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center"><tr>
+                      <td bgcolor="#5E6F4F" style="border-radius:5px;"><a href="mailto:info@ossaboisfrance.com?subject=${encodeURIComponent(clientEmailSubject)}" style="display:inline-block;padding:12px 18px;font-size:13px;font-weight:800;color:#FFFFFF;text-decoration:none;border-radius:5px;">${l.replyCta}</a></td>
+                      <td width="10" class="mobile-hide">&nbsp;</td>
+                      <td class="mobile-hide" style="border:1px solid #5E6F4F;border-radius:5px;"><a href="https://ossaboisfrance.com/${clientLocaleKey}" style="display:inline-block;padding:11px 18px;font-size:13px;font-weight:800;color:#435139;text-decoration:none;border-radius:5px;">${l.websiteCta}</a></td>
+                    </tr></table>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding-top:18px;font-size:10.5px;line-height:1.55;color:#64748B;">
+                    <strong style="color:#475569;">${l.legalTitle}</strong><br>${l.legalNotice}<br><br>${l.consentNotice}
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
           <!-- Footer -->
           <tr>
             <td style="background-color: #FAFBFB; padding: 32px 24px; text-align: center; font-size: 11.5px; color: #94A3B8; border-top: 1px solid #F1ECE3;">
@@ -1087,6 +1372,71 @@ export async function POST(req: NextRequest) {
 
     const toAdminEmail = getResendAdminEmail();
     const orderFromEmail = getResendOrderFromEmail();
+    const replyToEmail =
+      getResendReplyToEmail() || toAdminEmail || "infoossabois@gmail.com";
+
+    let clientPdfAttachment:
+      | { filename: string; content: string }
+      | undefined;
+    try {
+      const pdfBuffer = await generateOrderPdf({
+        locale,
+        orderRef,
+        submittedAt: agreementsForNotifications.acceptedAt,
+        customer: {
+          name: formattedClientName,
+          email: clientEmail,
+          phone: formattedClientPhone,
+        },
+        delivery,
+        house: {
+          name: houseNameClean,
+          imageUrl: houseImageUrl,
+          structureSize: sizeValueClean,
+        },
+        surfaces: {
+          net: configData.perdhesa.neto,
+          gross: configData.perdhesa.bruto,
+          exteriorWalls: configData.perdhesa.mure_te_jashtme,
+          roof: roofArea,
+        },
+        options: clientOptionsList.map((option) => ({
+          categoryLabel: option.categoryLabel,
+          optionLabel: option.optionLabel,
+          calculation: option.formattedCalculation,
+          totalPrice: option.totalPrice,
+        })),
+        pricing: {
+          baseStructure: serverBasePrice,
+          optionsTotal: serverOptionsTotal,
+          configurationSubtotal,
+          truckCount,
+          transport: serverTransportCost,
+          installationMode,
+          assembly: serverAssemblyCost,
+          grandTotal: total,
+        },
+        agreements: agreementsForNotifications,
+        contactEmail: replyToEmail,
+      });
+
+      clientPdfAttachment = {
+        filename: `Ossa-Bois-${orderRef}.pdf`,
+        content: pdfBuffer.toString("base64"),
+      };
+    } catch (pdfError) {
+      const reason =
+        pdfError instanceof Error ? pdfError.message : "unknown PDF error";
+      console.error(
+        `[API Checkout] PDF generation failed for order ${orderRef}: ${reason}`
+      );
+    }
+
+    clientEmailHtml = finalizeCheckoutClientEmailHtml(clientEmailHtml, {
+      pdfAttached: Boolean(clientPdfAttachment),
+      attachmentCopy: l.attachedPdf,
+    });
+    const clientEmailText = checkoutEmailHtmlToText(clientEmailHtml);
 
     let adminEmailSent = false;
     let clientEmailSent = false;
@@ -1099,6 +1449,7 @@ export async function POST(req: NextRequest) {
         subject: `[Nouveau Projet] Configuration de Maison ${houseNameClean} - Ref ${orderRef}`,
         html: adminEmailHtml,
         idempotencyKey: `checkout-admin/${orderRef}`,
+        event: "checkout-admin",
       });
       adminEmailSent = adminEmailResult.ok;
       if (!adminEmailResult.ok) {
@@ -1112,10 +1463,13 @@ export async function POST(req: NextRequest) {
       const clientEmailResult = await sendResendMail({
         to: clientEmail,
         from: orderFromEmail,
-        replyTo: toAdminEmail || undefined,
+        replyTo: replyToEmail,
         subject: clientEmailSubject,
         html: clientEmailHtml,
+        text: clientEmailText,
+        attachments: clientPdfAttachment ? [clientPdfAttachment] : undefined,
         idempotencyKey: `checkout-client/${orderRef}`,
+        event: "checkout-client",
       });
       clientEmailSent = clientEmailResult.ok;
       if (!clientEmailResult.ok) {
@@ -1134,10 +1488,15 @@ export async function POST(req: NextRequest) {
     }
 
     const notificationsSent = adminEmailSent && clientEmailSent;
+    const pdfAttached = clientEmailSent && Boolean(clientPdfAttachment);
 
     return NextResponse.json({
       success: true,
+      replayed,
       orderRef,
+      adminNotificationSent: adminEmailSent,
+      clientConfirmationSent: clientEmailSent,
+      pdfAttached,
       notificationsSent,
       message: notificationsSent
         ? "Order saved and notifications sent."

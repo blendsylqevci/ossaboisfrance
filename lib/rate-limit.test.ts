@@ -1,6 +1,11 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { checkRateLimit, getClientIp, rateLimitResponse } from "./rate-limit.ts";
+import {
+  checkRateLimit,
+  checkRateLimitAsync,
+  getClientIp,
+  rateLimitResponse,
+} from "./rate-limit.ts";
 
 test("checkRateLimit allows up to the limit then blocks", () => {
   const key = `test-${Math.random()}`;
@@ -23,6 +28,39 @@ test("checkRateLimit resets after the window elapses", () => {
     /* spin */
   }
   assert.equal(checkRateLimit(key, 1, 1).allowed, true);
+});
+
+test("Redis limiter repairs a counter that lost its expiry", async () => {
+  const previousUrl = process.env.UPSTASH_REDIS_REST_URL;
+  const previousToken = process.env.UPSTASH_REDIS_REST_TOKEN;
+  const originalFetch = globalThis.fetch;
+  const commands: string[][] = [];
+
+  process.env.UPSTASH_REDIS_REST_URL = "https://redis.test";
+  process.env.UPSTASH_REDIS_REST_TOKEN = "test-token";
+  globalThis.fetch = (async (_input, init) => {
+    const command = JSON.parse(String(init?.body)) as string[];
+    commands.push(command);
+    const result = command[0] === "INCR" ? 1 : command[0] === "TTL" ? -1 : 1;
+    return new Response(JSON.stringify({ result }), { status: 200 });
+  }) as typeof fetch;
+
+  try {
+    assert.deepEqual(await checkRateLimitAsync("repair-test", 2, 60_000), {
+      allowed: true,
+    });
+    assert.deepEqual(
+      commands.map(([name]) => name),
+      ["INCR", "TTL", "EXPIRE"]
+    );
+    assert.deepEqual(commands[2], ["EXPIRE", "rl:repair-test", "60"]);
+  } finally {
+    globalThis.fetch = originalFetch;
+    if (previousUrl === undefined) delete process.env.UPSTASH_REDIS_REST_URL;
+    else process.env.UPSTASH_REDIS_REST_URL = previousUrl;
+    if (previousToken === undefined) delete process.env.UPSTASH_REDIS_REST_TOKEN;
+    else process.env.UPSTASH_REDIS_REST_TOKEN = previousToken;
+  }
 });
 
 test("getClientIp prefers trusted x-real-ip over a spoofable x-forwarded-for", () => {

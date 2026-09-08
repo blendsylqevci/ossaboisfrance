@@ -308,7 +308,7 @@
       "step3": "Wir senden Ihnen ein vollständiges vertragliches Angebot, bereit für den Bauantrag.",
       "downloadPdf": "PDF-Zusammenfassung herunterladen",
       "anyQuestion": "Haben Sie Fragen?",
-      "contactInfo": "Kontaktieren Sie uns bei Änderungen unter sylqevci@gmail.com."
+      "contactInfo": "Kontaktieren Sie uns bei Änderungen unter infoossabois@gmail.com."
     }
   },
   "contact": {
@@ -407,7 +407,7 @@
       "other": "Andere Tätigkeit"
     },
     "uploadLabel": "Dokument hochladen (Handelsregisterauszug, Präsentation, Broschüre)",
-    "uploadPlaceholder": "Zum Hochladen klicken (PDF, JPG, PNG - Max. 10MB)",
+      "uploadPlaceholder": "Zum Hochladen klicken (nur PDF - max. 10 MB)",
     "message": "Beschreiben Sie Ihr Partnerschaftsprojekt",
     "submit": "Meine Partnerschaftsanfrage einreichen",
     "loading": "Wird eingereicht...",

@@ -13,6 +13,11 @@ import {
   CHECKOUT_SELECTION_KEY,
   saveCheckoutSelection,
 } from "@/lib/checkout-selection-storage";
+import {
+  CHECKOUT_TERMS_VERSION,
+  getCheckoutConsentCopy,
+  isCheckoutOrderReference,
+} from "@/lib/checkout-legal";
 
 type StoredOption = { value?: string; label?: string; price?: string; image?: string };
 
@@ -70,6 +75,79 @@ const euroFormatter = new Intl.NumberFormat("fr-FR", {
   maximumFractionDigits: 2
 });
 
+const CHECKOUT_PENDING_SUBMISSION_KEY = "ossa_checkout_pending_submission_v1";
+
+type PendingCheckoutSubmission = {
+  fingerprint: string;
+  orderRef: string;
+};
+
+async function fingerprintSubmission(value: unknown): Promise<string> {
+  const encoded = new TextEncoder().encode(JSON.stringify(value));
+  const digest = await globalThis.crypto.subtle.digest("SHA-256", encoded);
+  return Array.from(new Uint8Array(digest), (byte) =>
+    byte.toString(16).padStart(2, "0")
+  ).join("");
+}
+
+async function getStableOrderReference(
+  value: unknown,
+  inMemory: PendingCheckoutSubmission | null
+): Promise<PendingCheckoutSubmission> {
+  const fingerprint = await fingerprintSubmission(value);
+  if (
+    inMemory?.fingerprint === fingerprint &&
+    isCheckoutOrderReference(inMemory.orderRef)
+  ) {
+    return inMemory;
+  }
+
+  try {
+    const rawPending = sessionStorage.getItem(CHECKOUT_PENDING_SUBMISSION_KEY);
+    if (rawPending) {
+      const pending = JSON.parse(rawPending) as {
+        fingerprint?: unknown;
+        orderRef?: unknown;
+      };
+      if (
+        pending.fingerprint === fingerprint &&
+        isCheckoutOrderReference(pending.orderRef)
+      ) {
+        return { fingerprint, orderRef: pending.orderRef };
+      }
+    }
+  } catch {
+    // Storage can be unavailable in privacy mode; the in-memory value above
+    // still keeps retries stable for the lifetime of this checkout page.
+  }
+
+  const randomCode = globalThis.crypto
+    .randomUUID()
+    .replace(/-/g, "")
+    .slice(0, 20)
+    .toUpperCase();
+  const orderRef = `OB-${new Date().getFullYear()}-${randomCode}`;
+
+  try {
+    sessionStorage.setItem(
+      CHECKOUT_PENDING_SUBMISSION_KEY,
+      JSON.stringify({ fingerprint, orderRef })
+    );
+  } catch {
+    // The request can still proceed if browser storage is full or unavailable.
+  }
+
+  return { fingerprint, orderRef };
+}
+
+function clearPendingOrderReference(): void {
+  try {
+    sessionStorage.removeItem(CHECKOUT_PENDING_SUBMISSION_KEY);
+  } catch {
+    // Nothing else is required after a successful server acknowledgement.
+  }
+}
+
 function getNonNegativeNumber(value: unknown): number | null {
   if (value === null || value === undefined || value === "") return null;
   const number = typeof value === "number" ? value : Number(value);
@@ -101,10 +179,13 @@ const PERDHESA_LABELS: Record<string, { fr: string; en: string; de: string; nl: 
 
 export function CheckoutPage({ locale }: CheckoutPageProps) {
   const isEn = locale === "en";
+  const consentCopy = getCheckoutConsentCopy(locale);
 
   const [selection, setSelection] = useState<StoredSelection | null>(null);
   const [success, setSuccess] = useState(false);
-  const [notificationsSent, setNotificationsSent] = useState(true);
+  const [clientConfirmationSent, setClientConfirmationSent] = useState(true);
+  const [pdfAttached, setPdfAttached] = useState(true);
+  const [submissionReplayed, setSubmissionReplayed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderRef, setOrderRef] = useState("");
   const [clientName, setClientName] = useState("");
@@ -117,6 +198,7 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
   const installationModalRef = useRef<HTMLDivElement>(null);
   const submitTriggerRef = useRef<HTMLButtonElement>(null);
   const isSubmittingRef = useRef(false);
+  const pendingSubmissionRef = useRef<PendingCheckoutSubmission | null>(null);
 
   // Agreement checkbox states
   const [agreeShipping, setAgreeShipping] = useState(false);
@@ -460,26 +542,10 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
     notIncluded: locale === "en" ? "Not included" : locale === "de" ? "Nicht enthalten" : locale === "nl" ? "Niet inbegrepen" : "Non inclus",
     pending: locale === "en" ? "Pending" : locale === "de" ? "Ausstehend" : locale === "nl" ? "In afwachting" : "À confirmer",
     trucks: (count: number) => locale === "en" ? `${count} truck${count === 1 ? "" : "s"}` : locale === "de" ? `${count} Lkw` : locale === "nl" ? `${count} vrachtwagen${count === 1 ? "" : "s"}` : `${count} camion${count === 1 ? "" : "s"}`,
-    agreeShippingText: locale === "en"
-      ? "I accept the delivery conditions by special convoy. I certify that my plot is accessible for heavy crane trucks."
-      : locale === "de" ? "Ich akzeptiere die Lieferbedingungen per Spezialtransport. Ich bestätige, dass mein Grundstück für schwere Kranwagen zugänglich ist."
-      : locale === "nl" ? "Ik accepteer de leveringsvoorwaarden per speciaal transport. Ik verklaar dat mijn grond toegankelijk is voor zware kraanwagens."
-      : "J'accepte les conditions de livraison par convoi exceptionnel. Je certifie que mon terrain est accessible aux camions grues de gros tonnage.",
-    agreeTermsText: locale === "en"
-      ? "I accept the general terms of sale and the payment terms that will be specified in the personalized quotation."
-      : locale === "de" ? "Ich akzeptiere die Allgemeinen Geschäftsbedingungen und die Zahlungsbedingungen, die im persönlichen Angebot festgelegt werden."
-      : locale === "nl" ? "Ik accepteer de algemene verkoopvoorwaarden en de betalingsvoorwaarden die in de persoonlijke offerte worden vermeld."
-      : "J'accepte les conditions générales de vente et les modalités de paiement qui seront précisées dans le devis personnalisé.",
-    agreeUrbanText: locale === "en"
-      ? "I confirm the compliance of my project with local urban planning regulations (PLU) and accept the building permit steps."
-      : locale === "de" ? "Ich bestätige die Übereinstimmung meines Projekts mit den lokalen Bauvorschriften (B-Plan) und nehme die erforderlichen Baugenehmigungsschritte zur Kenntnis."
-      : locale === "nl" ? "Ik bevestig de conformiteit van mijn project met de lokale bestemmingsplannen (PLU) en neem kennis van de vereiste bouwvergunningstappen."
-      : "Je confirme la conformité de mon projet avec les règles d'urbanisme locales (PLU) et prends connaissance des démarches de permis de construire requises.",
-    agreePrivacyText: locale === "en"
-      ? "I authorize Ossa Bois to process my personal data in order to conduct the technical and financial feasibility study of my project."
-      : locale === "de" ? "Ich ermächtige Ossa Bois, meine personenbezogenen Daten zu verarbeiten, um die technische und finanzielle Machbarkeitsstudie meines Projekts durchzuführen."
-      : locale === "nl" ? "Ik geef Ossa Bois toestemming om mijn persoonsgegevens te verwerken om de technische en financiële haalbaarheidsstudie van mijn project uit te voeren."
-      : "J'autorise Ossa Bois à traiter mes données personnelles afin de réaliser l'étude de faisabilité technique et financière de mon projet.",
+    agreeShippingText: consentCopy.shipping,
+    agreeTermsText: consentCopy.terms,
+    agreeUrbanText: consentCopy.urban,
+    agreePrivacyText: consentCopy.privacy,
     agreementsErrorText: locale === "en"
       ? "Please accept all terms and conditions above to submit your request."
       : locale === "de" ? "Bitte akzeptieren Sie alle oben genannten Bedingungen, um Ihre Anfrage zu senden."
@@ -574,6 +640,27 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
         : locale === "nl"
           ? "Uw aanvraag is opgeslagen, maar de bevestigingsmail kon niet worden verzonden. Bewaar de projectreferentie hieronder."
           : "Votre demande a bien été enregistrée, mais l'e-mail de confirmation n'a pas pu être envoyé. Conservez la référence ci-dessous.",
+    pdfConfirmation: locale === "en"
+      ? "A professional PDF summary of your complete configuration has been sent to your email address."
+      : locale === "de"
+        ? "Eine professionelle PDF-Zusammenfassung Ihrer vollständigen Konfiguration wurde an Ihre E-Mail-Adresse gesendet."
+        : locale === "nl"
+          ? "Een professioneel PDF-overzicht van uw volledige configuratie is naar uw e-mailadres verzonden."
+          : "Un récapitulatif PDF professionnel de votre configuration complète a été envoyé à votre adresse e-mail.",
+    emailConfirmationNoPdf: locale === "en"
+      ? "Your confirmation email was sent, but the PDF could not be attached. Please keep the project reference below."
+      : locale === "de"
+        ? "Ihre Bestätigungs-E-Mail wurde gesendet, aber das PDF konnte nicht angehängt werden. Bitte bewahren Sie die Projektreferenz unten auf."
+        : locale === "nl"
+          ? "Uw bevestigingsmail is verzonden, maar de PDF kon niet worden bijgevoegd. Bewaar de projectreferentie hieronder."
+          : "Votre e-mail de confirmation a été envoyé, mais le PDF n'a pas pu être joint. Conservez la référence du projet ci-dessous.",
+    replayConfirmation: locale === "en"
+      ? "We recognized an earlier submission attempt and reused the existing request instead of creating a duplicate order."
+      : locale === "de"
+        ? "Wir haben einen früheren Übermittlungsversuch erkannt und die bestehende Anfrage wiederverwendet, anstatt eine doppelte Bestellung zu erstellen."
+        : locale === "nl"
+          ? "We herkenden een eerdere verzendpoging en hebben de bestaande aanvraag hergebruikt in plaats van een dubbele bestelling aan te maken."
+          : "Nous avons reconnu une précédente tentative d'envoi et réutilisé la demande existante au lieu de créer une commande en double.",
     orderRefLabel: locale === "en" ? "Project Reference" : locale === "de" ? "Projekt-Referenz" : locale === "nl" ? "Projectreferentie" : "Référence du projet",
     goHome: locale === "en" ? "Back to Homepage" : locale === "de" ? "Zurück zur Startseite" : locale === "nl" ? "Terug naar startpagina" : "Retour à l'accueil",
     trust1Title: locale === "en" ? "Personalized quotation" : locale === "de" ? "Persönliches Angebot" : locale === "nl" ? "Persoonlijke offerte" : "Devis personnalisé",
@@ -629,15 +716,6 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
     setClientName(fullName);
     setIsSubmitting(true);
 
-    const randomCode = globalThis.crypto
-      .randomUUID()
-      .replace(/-/g, "")
-      .slice(0, 12)
-      .toUpperCase();
-    const year = new Date().getFullYear();
-    const ref = `OB-${year}-${randomCode}`;
-    setOrderRef(ref);
-
     const personalInfo = {
       fullName,
       email: data.get("email"),
@@ -653,26 +731,73 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
       notes: data.get("notes")
     };
 
+    const agreements = {
+      shipping: agreeShipping,
+      terms: agreeTerms,
+      urban: agreeUrban,
+      privacy: agreePrivacy,
+      version: CHECKOUT_TERMS_VERSION,
+    };
+    const selectionForFingerprint = { ...submittedSelection };
+    delete selectionForFingerprint.currentImage;
+    const requestWithoutReference = {
+      selection: submittedSelection,
+      personalInfo,
+      deliveryInfo,
+      total: submittedTotal,
+      locale,
+      agreements,
+    };
     try {
+      const pendingSubmission = await getStableOrderReference(
+        {
+          ...requestWithoutReference,
+          selection: selectionForFingerprint,
+        },
+        pendingSubmissionRef.current
+      );
+      pendingSubmissionRef.current = pendingSubmission;
+      const ref = pendingSubmission.orderRef;
+      setOrderRef(ref);
       const response = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          selection: submittedSelection,
-          personalInfo,
-          deliveryInfo,
+          ...requestWithoutReference,
           orderRef: ref,
-          total: submittedTotal,
-          locale
         })
       });
       const result = await response.json();
       if (result.success) {
-        setNotificationsSent(result.notificationsSent !== false);
+        const replayed = result.replayed === true;
+        const confirmationSent =
+          typeof result.clientConfirmationSent === "boolean"
+            ? result.clientConfirmationSent
+            : result.notificationsSent !== false;
+        const confirmationHasPdf =
+          typeof result.pdfAttached === "boolean"
+            ? result.pdfAttached
+            : confirmationSent;
+        setSubmissionReplayed(replayed);
+        setClientConfirmationSent(confirmationSent);
+        setPdfAttached(confirmationHasPdf);
         setSuccess(true);
-        sessionStorage.removeItem(CHECKOUT_SELECTION_KEY);
+        try {
+          sessionStorage.removeItem(CHECKOUT_SELECTION_KEY);
+        } catch {
+          // A storage cleanup failure must not turn a saved order into a failed
+          // submission or encourage the customer to submit it again.
+        }
+        clearPendingOrderReference();
+        pendingSubmissionRef.current = null;
         window.scrollTo({ top: 0, behavior: "smooth" });
       } else {
+        if (response.status === 409) {
+          // This reference belongs to a different immutable snapshot, so a
+          // subsequent deliberate retry must receive a fresh reference.
+          pendingSubmissionRef.current = null;
+          clearPendingOrderReference();
+        }
         alert(locale === "en" ? "Failed to send request. Please try again." : locale === "de" ? "Fehler beim Senden der Anfrage. Bitte versuchen Sie es erneut." : locale === "nl" ? "Verzenden van verzoek mislukt. Probeer het opnieuw." : "Échec de l'envoi de la demande. Veuillez réessayer.");
       }
     } catch (err) {
@@ -791,11 +916,18 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
             </div>
             <h3>{t.successTitle}</h3>
             <p>{t.successDesc(clientName)}</p>
-            {!notificationsSent ? (
+            {submissionReplayed ? <p role="status">{t.replayConfirmation}</p> : null}
+            {clientConfirmationSent && pdfAttached ? (
+              <p role="status">{t.pdfConfirmation}</p>
+            ) : clientConfirmationSent ? (
+              <p className="checkout-notification-warning" role="status">
+                {t.emailConfirmationNoPdf}
+              </p>
+            ) : (
               <p className="checkout-notification-warning" role="status">
                 {t.notificationWarning}
               </p>
-            ) : null}
+            )}
             
             <div className="order-ref-card">
               <div className="order-ref-label">{t.orderRefLabel}</div>

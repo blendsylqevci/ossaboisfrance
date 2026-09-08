@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Image from "next/image";
+import Link from "next/link";
 import { Locale } from "@/lib/i18n";
+import { PRIVACY_ACCEPTED_VALUE } from "@/lib/public-form-security";
 
 type B2BPageClientProps = {
   locale: Locale;
@@ -171,12 +172,26 @@ export function B2BPageClient({ locale, dict }: B2BPageClientProps) {
       : locale === "de" ? "Detaillieren Sie Ihre Bedürfnisse (Maße, bestehende Pläne, erwartete Lieferzeiten...)"
       : locale === "nl" ? "Beschrijf uw behoeften (afmetingen, bestaande plannen, verwachte levertijden...)"
       : "Détaillez vos besoins (dimensions, plans déjà existants, délais de livraison attendus...)",
-    fileUploadLabel: locale === "en" ? "Import File (Plans, PDF, CAD, ZIP...)" : locale === "de" ? "Datei importieren (Pläne, PDF, CAD, ZIP...)" : locale === "nl" ? "Bestand importeren (Plannen, PDF, CAD, ZIP...)" : "Import File (Plans, PDF, CAD, ZIP...)",
+    fileUploadLabel: locale === "en" ? "Import document (PDF only)" : locale === "de" ? "Dokument importieren (nur PDF)" : locale === "nl" ? "Document importeren (alleen PDF)" : "Importer un document (PDF uniquement)",
     fileUploadPlaceholder: locale === "en" 
       ? "Drop your files here or click to select" 
       : locale === "de" ? "Dateien hier ablegen oder zum Auswählen klicken" 
       : locale === "nl" ? "Sleep bestanden hierheen of klik om te kiezen" 
       : "Déposer vos fichiers ici ou cliquer pour choisir",
+    privacyText: dict?.configurator?.labels?.gdpr || (locale === "en"
+      ? "I accept the processing of my personal data in accordance with the privacy policy."
+      : locale === "de"
+        ? "Ich akzeptiere die Verarbeitung meiner personenbezogenen Daten gemäß der Datenschutzerklärung."
+        : locale === "nl"
+          ? "Ik accepteer de verwerking van mijn persoonsgegevens in overeenstemming met het privacybeleid."
+          : "J'accepte le traitement de mes données personnelles conformément à la politique de confidentialité."),
+    privacyPolicyLabel: locale === "en"
+      ? "Read the privacy policy"
+      : locale === "de"
+        ? "Datenschutzerklärung lesen"
+        : locale === "nl"
+          ? "Privacybeleid lezen"
+          : "Lire la politique de confidentialité",
     submitButton: locale === "en" ? "Submit Project" : locale === "de" ? "Projekt einreichen" : locale === "nl" ? "Project indienen" : "Soumettre le projet",
     submittingText: locale === "en" ? "Submitting..." : locale === "de" ? "Wird gesendet..." : locale === "nl" ? "Verzenden..." : "Envoi en cours...",
     whyTitle: locale === "en" ? "Why choose Ossa Bois France?" : locale === "de" ? "Warum Ossa Bois France wählen?" : locale === "nl" ? "Waarom kiezen voor Ossa Bois France?" : "Pourquoi choisir Ossa Bois France ?",
@@ -389,7 +404,7 @@ export function B2BPageClient({ locale, dict }: B2BPageClientProps) {
                       id="b2b-file" 
                       type="file" 
                       name="file" 
-                      accept=".pdf,.doc,.docx,.xls,.xlsx,.zip,.rar,.dwg,.dxf"
+                      accept=".pdf,application/pdf"
                       onChange={handleFileChange}
                     />
                     <div className="b2b-upload-content">
@@ -403,6 +418,24 @@ export function B2BPageClient({ locale, dict }: B2BPageClientProps) {
                       </span>
                     </div>
                   </div>
+                </div>
+
+                <div className="form-checkbox-enterprise">
+                  <label className="checkbox-container">
+                    <input
+                      type="checkbox"
+                      name="privacyAccepted"
+                      value={PRIVACY_ACCEPTED_VALUE}
+                      required
+                    />
+                    <span className="checkmark-box"></span>
+                    <span className="checkbox-text">
+                      {trans.privacyText}{" "}
+                      <Link href={`/${locale}/politique-de-confidentialite`}>
+                        {trans.privacyPolicyLabel}
+                      </Link>
+                    </span>
+                  </label>
                 </div>
 
                 <button className="button button-loading-container" type="submit" disabled={isSubmitting}>

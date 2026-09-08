@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Locale } from "@/lib/i18n";
+import { FooterContactPrefill } from "@/components/FooterContactPrefill";
 
 type SiteFooterProps = {
   locale: Locale;
@@ -28,7 +29,9 @@ export function SiteFooter({ locale, dict }: SiteFooterProps) {
           <h2>{dict?.address || "Notre Adresse"}</h2>
           <p>50 rue Chanzy<br />28000 Chartres</p>
           <h2>{dict?.contactUs || "Contactez-Nous"}</h2>
-          <p>infoossabois@gmail.com</p>
+          <p>
+            <a href="mailto:infoossabois@gmail.com">infoossabois@gmail.com</a>
+          </p>
           <h2>{dict?.socialMedia || "Réseaux sociaux"}</h2>
           <div className="footer-socials" aria-label={dict?.socialMedia || "Réseaux sociaux"}>
             <span>f</span>
@@ -37,13 +40,12 @@ export function SiteFooter({ locale, dict }: SiteFooterProps) {
           </div>
         </div>
         <div className="footer-question">
-          <form>
-            <label htmlFor="footer-email">{dict?.newsletterLabel || "Contact for any question"}</label>
-            <div className="footer-form-row">
-              <input id="footer-email" type="email" placeholder={dict?.emailPlaceholder || "E-mail"} />
-              <button type="button">{dict?.send || "Envoyer"}</button>
-            </div>
-          </form>
+          <FooterContactPrefill
+            locale={locale}
+            label={dict?.newsletterLabel || "Contact for any question"}
+            placeholder={dict?.emailPlaceholder || "E-mail"}
+            submitLabel={dict?.send || "Envoyer"}
+          />
         </div>
       </div>
       <div className="container footer-bottom">
@@ -52,8 +54,6 @@ export function SiteFooter({ locale, dict }: SiteFooterProps) {
         <Link href={`/${locale}/mentions-legales`}>Mentions Légales</Link>
         <span className="footer-links-divider">|</span>
         <Link href={`/${locale}/politique-de-confidentialite`}>Confidentialité</Link>
-        <span className="footer-links-divider">|</span>
-        <Link href={`/${locale}/cgu`}>CGU</Link>
         <span className="footer-links-divider">|</span>
         <a href="https://www.icode-ks.com" target="_blank" rel="noreferrer">{dict?.madeBy || "Made by iCode"}</a>
       </div>

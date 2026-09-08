@@ -1,17 +1,43 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { Locale } from "@/lib/i18n";
+import { isValidEmail, sanitizeText } from "@/lib/form-utils";
+import {
+  CONTACT_EMAIL_PREFILL_STORAGE_KEY,
+  PRIVACY_ACCEPTED_VALUE,
+} from "@/lib/public-form-security";
 
 type ContactPageClientProps = {
   locale: Locale;
   dict: any;
 };
 
-export function ContactPageClient({ locale, dict }: ContactPageClientProps) {
+export function ContactPageClient({
+  locale,
+  dict,
+}: ContactPageClientProps) {
+  const emailInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [confirmationSent, setConfirmationSent] = useState<boolean | null>(null);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    let storedEmail: string | null = null;
+    try {
+      storedEmail = sessionStorage.getItem(CONTACT_EMAIL_PREFILL_STORAGE_KEY);
+      sessionStorage.removeItem(CONTACT_EMAIL_PREFILL_STORAGE_KEY);
+    } catch {
+      return;
+    }
+
+    const candidate = sanitizeText(storedEmail, 254, { singleLine: true });
+    if (emailInputRef.current && isValidEmail(candidate)) {
+      emailInputRef.current.value = candidate;
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -34,15 +60,22 @@ export function ContactPageClient({ locale, dict }: ContactPageClientProps) {
           message: data.get("message"),
           locale,
           website: data.get("website"),
+          privacyAccepted:
+            data.get("privacyAccepted") === PRIVACY_ACCEPTED_VALUE,
         }),
       });
 
-      const json = (await res.json()) as { success?: boolean; error?: string };
+      const json = (await res.json()) as {
+        success?: boolean;
+        confirmationSent?: boolean;
+        error?: string;
+      };
 
       if (!res.ok || !json.success) {
         throw new Error(json.error || "Request failed");
       }
 
+      setConfirmationSent(json.confirmationSent !== false);
       setSubmitted(true);
     } catch (err) {
       setError(
@@ -100,6 +133,13 @@ export function ContactPageClient({ locale, dict }: ContactPageClientProps) {
       : locale === "de" ? "Vielen Dank für Ihr Interesse an OSSA Bois France. Unser technisches Team prüft Ihre Anfrage und wird Ihnen innerhalb von 24 bis 48 Werktagen antworten."
       : locale === "nl" ? "Dank u voor uw interesse in OSSA Bois France. Ons technisch team beoordeelt uw aanvraag en antwoordt binnen 24 tot 48 werkuren."
       : "Merci pour votre intérêt envers OSSA Bois France. Notre équipe technique étudie votre demande et vous répondra sous 24 à 48 heures ouvrées.",
+    confirmationPending: locale === "en"
+      ? "Your request has been recorded. Please do not submit it again. If the confirmation email does not appear, check your spam folder or contact us at infoossabois@gmail.com."
+      : locale === "de"
+        ? "Ihre Anfrage wurde gespeichert. Bitte senden Sie sie nicht erneut. Falls die Bestätigungs-E-Mail nicht erscheint, prüfen Sie Ihren Spam-Ordner oder kontaktieren Sie uns unter infoossabois@gmail.com."
+        : locale === "nl"
+          ? "Uw aanvraag is geregistreerd. Dien deze niet opnieuw in. Verschijnt de bevestigingsmail niet, controleer dan uw spammap of neem contact op via infoossabois@gmail.com."
+          : "Votre demande est bien enregistrée. Ne la renvoyez pas. Si l'e-mail de confirmation n'apparaît pas, vérifiez vos courriers indésirables ou contactez-nous à infoossabois@gmail.com.",
 
     firstName: locale === "en" ? "First Name" : locale === "de" ? "Vorname" : locale === "nl" ? "Voornaam" : "Prénom",
     lastName: locale === "en" ? "Last Name" : locale === "de" ? "Nachname" : locale === "nl" ? "Achternaam" : "Nom",
@@ -124,6 +164,13 @@ export function ContactPageClient({ locale, dict }: ContactPageClientProps) {
       : locale === "de" ? "Ich akzeptiere die Datenschutzrichtlinie von OSSA Bois France. Die erhobenen Daten sind vertraulich und werden ausschließlich zur Beantwortung meiner Projektanfrage verarbeitet."
       : locale === "nl" ? "Ik accepteer het privacybeleid van OSSA Bois France. De verzamelde gegevens zijn vertrouwelijk en worden uitsluitend verwerkt om mijn projectaanvraag te beantwoorden."
       : "J'accepte la politique de confidentialité de OSSA Bois France. Les données recueillies sont confidentielles et traitées uniquement pour répondre à ma demande de projet.",
+    privacyPolicyLabel: locale === "en"
+      ? "Read the privacy policy"
+      : locale === "de"
+        ? "Datenschutzerklärung lesen"
+        : locale === "nl"
+          ? "Privacybeleid lezen"
+          : "Lire la politique de confidentialité",
     
     submitBtn: locale === "en" ? "Send Request" : locale === "de" ? "Anfrage senden" : locale === "nl" ? "Aanvraag verzenden" : "Envoyer la demande",
     loadingText: locale === "en" ? "Sending..." : locale === "de" ? "Wird gesendet..." : locale === "nl" ? "Verzenden..." : "Envoi en cours...",
@@ -199,6 +246,9 @@ export function ContactPageClient({ locale, dict }: ContactPageClientProps) {
               <div className="feedback-content">
                 <h3>{trans.successTitle}</h3>
                 <p>{t.success || trans.successDesc}</p>
+                {confirmationSent === false && (
+                  <p>{trans.confirmationPending}</p>
+                )}
               </div>
             </div>
           ) : (
@@ -231,7 +281,16 @@ export function ContactPageClient({ locale, dict }: ContactPageClientProps) {
               <div className="form-row-2col">
                 <div className="form-group-enterprise">
                   <label htmlFor="contact-email">{t.email || trans.email} *</label>
-                  <input id="contact-email" type="email" name="email" required placeholder="jean.dupont@exemple.com" />
+                  <input
+                    id="contact-email"
+                    type="email"
+                    name="email"
+                    ref={emailInputRef}
+                    required
+                    maxLength={254}
+                    autoComplete="email"
+                    placeholder="jean.dupont@exemple.com"
+                  />
                 </div>
                 <div className="form-group-enterprise">
                   <label htmlFor="contact-phone">{t.phone || trans.phone}</label>
@@ -263,10 +322,18 @@ export function ContactPageClient({ locale, dict }: ContactPageClientProps) {
 
               <div className="form-checkbox-enterprise">
                 <label className="checkbox-container">
-                  <input type="checkbox" required />
+                  <input
+                    type="checkbox"
+                    name="privacyAccepted"
+                    value={PRIVACY_ACCEPTED_VALUE}
+                    required
+                  />
                   <span className="checkmark-box"></span>
                   <span className="checkbox-text">
-                    {trans.privacyText}
+                    {trans.privacyText}{" "}
+                    <Link href={`/${locale}/politique-de-confidentialite`}>
+                      {trans.privacyPolicyLabel}
+                    </Link>
                   </span>
                 </label>
               </div>
@@ -343,7 +410,7 @@ export function ContactPageClient({ locale, dict }: ContactPageClientProps) {
               <p>{trans.b2bDesc}</p>
               <p className="contact-link-row">
                 <span className="link-label">{trans.b2bDirect}</span>
-                <a href="mailto:b2b@ossaboisfrance.com">b2b@ossaboisfrance.com</a>
+                <a href="mailto:infoossabois@gmail.com">infoossabois@gmail.com</a>
               </p>
             </div>
           </div>

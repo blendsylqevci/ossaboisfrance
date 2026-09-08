@@ -35,6 +35,7 @@ const configurationOnlySelection = {
 };
 
 type SubmittedCheckoutBody = {
+  orderRef: string;
   selection: {
     installationMode?: string;
     transportCost?: number;
@@ -90,7 +91,13 @@ test.describe("Final checkout installation choice", () => {
       await route.fulfill({
         status: 200,
         contentType: "application/json",
-        body: JSON.stringify({ success: true, notificationsSent: true }),
+        body: JSON.stringify({
+          success: true,
+          adminNotificationSent: false,
+          clientConfirmationSent: true,
+          pdfAttached: true,
+          notificationsSent: false,
+        }),
       });
     });
 
@@ -143,6 +150,10 @@ test.describe("Final checkout installation choice", () => {
     expect(professionalBody.total).toBe(20_000);
     releaseCheckoutResponse();
     await expect(page.getByText("Demande envoyée avec succès !")).toBeVisible();
+    await expect(
+      page.getByText(/Un récapitulatif PDF professionnel/)
+    ).toBeVisible();
+    await expect(page.getByText(/l'e-mail de confirmation n'a pas pu être envoyé/)).toHaveCount(0);
   });
 
   test("reviews transport and Ossa Bois assembly before the final submission", async ({ page }) => {
@@ -197,5 +208,52 @@ test.describe("Final checkout installation choice", () => {
     expect(ossaBody.total).toBe(26_500);
     releaseCheckoutResponse();
     await expect(page.getByText("Demande envoyée avec succès !")).toBeVisible();
+  });
+
+  test("reuses the same order reference after an uncertain failed response", async ({ page }) => {
+    await seedCheckout(page);
+
+    const submittedReferences: string[] = [];
+    await page.route("**/api/checkout", async (route) => {
+      const body = route.request().postDataJSON() as SubmittedCheckoutBody;
+      submittedReferences.push(body.orderRef);
+      if (submittedReferences.length === 1) {
+        await route.fulfill({
+          status: 503,
+          contentType: "application/json",
+          body: JSON.stringify({ success: false, error: "Temporary response failure" }),
+        });
+        return;
+      }
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          success: true,
+          replayed: true,
+          adminNotificationSent: false,
+          clientConfirmationSent: false,
+          pdfAttached: false,
+          notificationsSent: false,
+        }),
+      });
+    });
+    page.on("dialog", (dialog) => dialog.dismiss());
+
+    await page.goto("/fr/checkout", { waitUntil: "domcontentloaded" });
+    await completeCheckoutForm(page);
+    await page.getByTestId("checkout-submit").click();
+    await page.getByTestId("installation-professional").locator("..").click();
+    await page.getByTestId("installation-confirm").click();
+
+    await page.getByTestId("checkout-submit").click();
+    await expect.poll(() => submittedReferences.length).toBe(1);
+    await expect(page.getByTestId("checkout-submit")).toBeEnabled();
+
+    await page.getByTestId("checkout-submit").click();
+    await expect.poll(() => submittedReferences.length).toBe(2);
+    expect(submittedReferences[0]).toMatch(/^OB-\d{4}-[A-F0-9]{20}$/);
+    expect(submittedReferences[1]).toBe(submittedReferences[0]);
+    await expect(page.getByText(/déjà été enregistrée/)).toBeVisible();
   });
 });

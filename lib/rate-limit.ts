@@ -103,11 +103,18 @@ export async function checkRateLimitAsync(
   const redisKey = `rl:${key}`;
   try {
     const count = Number(await redisCmd(creds, ["INCR", redisKey]));
-    if (count === 1) {
+    // Check the TTL on every request. INCR and EXPIRE are separate REST calls;
+    // if the first EXPIRE was interrupted, a later request must repair the
+    // otherwise permanent key instead of suppressing this bucket forever.
+    let ttl = Number(await redisCmd(creds, ["TTL", redisKey]));
+    if (!Number.isFinite(count) || !Number.isFinite(ttl)) {
+      throw new Error("Invalid Redis rate-limit response");
+    }
+    if (ttl < 0) {
       await redisCmd(creds, ["EXPIRE", redisKey, String(windowSec)]);
+      ttl = windowSec;
     }
     if (count > maxRequests) {
-      const ttl = Number(await redisCmd(creds, ["TTL", redisKey]));
       return { allowed: false, retryAfterSec: Math.max(1, ttl) };
     }
     return { allowed: true };

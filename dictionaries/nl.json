@@ -308,7 +308,7 @@
       "step3": "Wij sturen u een volledige contractuele offerte, gereed voor de aanvraag van de bouwvergunning.",
       "downloadPdf": "Download PDF-samenvatting",
       "anyQuestion": "Heeft u vragen?",
-      "contactInfo": "Neem bij wijzigingen contact met ons op via sylqevci@gmail.com."
+      "contactInfo": "Neem bij wijzigingen contact met ons op via infoossabois@gmail.com."
     }
   },
   "contact": {
@@ -407,7 +407,7 @@
       "other": "Andere activiteit"
     },
     "uploadLabel": "Document uploaden (Kbis, Presentatie, Brochure)",
-    "uploadPlaceholder": "Klik om te uploaden (PDF, JPG, PNG - Max 10MB)",
+      "uploadPlaceholder": "Klik om te uploaden (alleen PDF - Max 10 MB)",
     "message": "Beschrijf uw samenwerkingsproject",
     "submit": "Mijn samenwerkingsdossier indienen",
     "loading": "Indienen...",

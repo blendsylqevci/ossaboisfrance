@@ -16,7 +16,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/realisations",
     "/mentions-legales",
     "/politique-de-confidentialite",
-    "/cgu",
   ];
 
   const sitemapEntries: MetadataRoute.Sitemap = [];

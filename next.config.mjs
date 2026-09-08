@@ -4,6 +4,15 @@ import { withPayload } from "@payloadcms/next/withPayload";
 const nextConfig = {
   trailingSlash: false,
   skipTrailingSlashRedirect: true,
+  // PDFKit runs only in the Node checkout function. Keeping it external avoids
+  // bundling native/runtime internals into client or Edge output.
+  serverExternalPackages: ["pdfkit"],
+  outputFileTracingIncludes: {
+    "/api/checkout": [
+      "./public/fonts/*.otf",
+      "./public/images/brand/ossa-bois-logo.png",
+    ],
+  },
   // Raw house, planimetry, and texture sources are only read by local/dev import
   // tooling. Without this, Next traces those fs reads into serverless functions,
   // making every deployment hundreds of megabytes larger.

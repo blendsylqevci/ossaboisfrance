@@ -308,7 +308,7 @@
       "step3": "We will send you a complete contractual quote ready for building permit application.",
       "downloadPdf": "Download PDF Summary",
       "anyQuestion": "Any question?",
-      "contactInfo": "Contact us at sylqevci@gmail.com for any modifications."
+      "contactInfo": "Contact us at infoossabois@gmail.com for any modifications."
     }
   },
   "contact": {
@@ -407,7 +407,7 @@
       "other": "Other activity"
     },
     "uploadLabel": "Upload a document (Registration, Presentation, Brochure)",
-    "uploadPlaceholder": "Click to upload (PDF, JPG, PNG - Max 10MB)",
+      "uploadPlaceholder": "Click to upload (PDF only - Max 10 MB)",
     "message": "Describe your partnership project",
     "submit": "Submit my partnership file",
     "loading": "Submitting...",

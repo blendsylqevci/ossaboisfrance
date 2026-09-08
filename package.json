@@ -12,12 +12,13 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "node --experimental-strip-types --test lib/access.test.ts lib/db-ssl.test.ts lib/house-import-shared.test.ts lib/house-pricing.test.ts lib/checkout-pricing.test.ts lib/checkout-selection-storage.test.ts lib/form-utils.test.ts lib/optimize-house-upload-image.test.ts lib/planimetry-rooms.test.ts lib/platform-backup-scripts.test.ts lib/platform-health.test.ts lib/price-availability.test.ts lib/rate-limit.test.ts lib/resend-mail.test.ts",
+    "test": "node --experimental-strip-types --test lib/access.test.ts lib/auth-password-notification.test.ts lib/db-ssl.test.ts lib/house-import-shared.test.ts lib/house-pricing.test.ts lib/checkout-pricing.test.ts lib/checkout-selection-storage.test.ts lib/checkout-legal.test.ts lib/checkout-client-email.test.ts lib/email-templates.test.ts lib/form-utils.test.ts lib/optimize-house-upload-image.test.ts lib/order-pdf.test.ts lib/planimetry-rooms.test.ts lib/platform-backup-scripts.test.ts lib/platform-health.test.ts lib/price-availability.test.ts lib/public-form-rate-limit.test.ts lib/public-form-security.test.ts lib/rate-limit.test.ts lib/resend-mail.test.ts",
     "test:import": "node --experimental-strip-types --test lib/house-import-shared.test.ts",
     "test:e2e": "playwright test"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "^3.84.1",
+    "@payloadcms/email-resend": "^3.84.1",
     "@payloadcms/next": "^3.84.1",
     "@payloadcms/richtext-lexical": "^3.84.1",
     "@payloadcms/storage-s3": "^3.84.1",
@@ -30,6 +31,7 @@
     "graphql": "^16.14.0",
     "next": "16.2.6",
     "payload": "^3.84.1",
+    "pdfkit": "^0.20.2",
     "react": "19.2.1",
     "react-dom": "19.2.1",
     "resend": "^6.12.3",
@@ -37,6 +39,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.60.0",
+    "@types/pdfkit": "^0.17.6",
     "eslint": "9.39.2",
     "eslint-config-next": "16.2.6",
     "typescript": "^5.9.3"

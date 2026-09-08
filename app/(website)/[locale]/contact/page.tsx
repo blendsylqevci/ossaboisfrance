@@ -17,9 +17,16 @@ export async function generateMetadata({ params }: ContactPageProps): Promise<Me
   };
 }
 
-export default async function ContactPage({ params }: ContactPageProps) {
+export default async function ContactPage({
+  params,
+}: ContactPageProps) {
   const { locale } = await params;
   const dict = await getDictionary(locale);
 
-  return <ContactPageClient locale={locale} dict={dict} />;
+  return (
+    <ContactPageClient
+      locale={locale}
+      dict={dict}
+    />
+  );
 }

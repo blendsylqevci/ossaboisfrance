@@ -6,6 +6,7 @@ import { cookies } from "next/headers";
 import { Locale } from "@/lib/i18n";
 
 import { HeroSlider } from "@/components/HeroSlider";
+import { HeroPhotoSlider } from "@/components/HeroPhotoSlider";
 import { ReviewsCarousel } from "@/components/ReviewsCarousel";
 import { CollaboratorsCarousel } from "@/components/CollaboratorsCarousel";
 import { FeaturedProductsSection } from "@/components/FeaturedProductsSection";
@@ -211,15 +212,7 @@ export default async function HomePage({ params }: HomePageProps) {
         <section className="wp-section-carousel">
           <div className="hero-carousel-container">
             {SHOW_HERO_PHOTO_PREVIEW ? (
-              <Image
-                src="/images/hero/house-pool-preview.jpg"
-                alt={dict.home.heroTitle}
-                fill
-                sizes="100vw"
-                quality={90}
-                preload
-                style={{ objectFit: "cover", objectPosition: "center" }}
-              />
+              <HeroPhotoSlider label={dict.home.heroTitle} />
             ) : (
               <HeroSlider
               key={`${activeHeroHouse?.image ?? ""}|${activeHeroHouse?.imageBardage ?? ""}`}

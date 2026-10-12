@@ -17,6 +17,8 @@ import { getPlanimetryImageCropRight } from "@/lib/planimetry-visual-crop";
 import { siteAssets } from "@/lib/site-assets";
 import { getHomepageContent } from "@/lib/homepage-content";
 
+// Temporary photo test. Set to false to restore the original comparison slider.
+const SHOW_HERO_PHOTO_PREVIEW = true;
 
 type HomePageProps = {
   params: Promise<{ locale: Locale }>;
@@ -208,11 +210,23 @@ export default async function HomePage({ params }: HomePageProps) {
         {/* ═══════════════ SEKTION 2: HERO CAROUSEL ═══════════════ */}
         <section className="wp-section-carousel">
           <div className="hero-carousel-container">
-            <HeroSlider
+            {SHOW_HERO_PHOTO_PREVIEW ? (
+              <Image
+                src="/images/hero/house-pool-preview.jpg"
+                alt={dict.home.heroTitle}
+                fill
+                sizes="100vw"
+                quality={90}
+                preload
+                style={{ objectFit: "cover", objectPosition: "center" }}
+              />
+            ) : (
+              <HeroSlider
               key={`${activeHeroHouse?.image ?? ""}|${activeHeroHouse?.imageBardage ?? ""}`}
               house={activeHeroHouse}
               nextHouseSlug={nextHeroHouseSlug}
-            />
+              />
+            )}
           </div>
         </section>
       </div>

@@ -74,7 +74,7 @@ export default buildConfig({
       ssl: buildDbSsl(),
     },
     push: false,
-    prodMigrations: migrations,
+    prodMigrations: process.env.VERCEL_ENV === 'preview' ? undefined : migrations,
   }),
   localization: {
     locales: [

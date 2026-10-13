@@ -16,6 +16,7 @@ import { getPlanimetryRooms } from "@/lib/planimetry-rooms";
 import { getPlanimetryImageCropRight } from "@/lib/planimetry-visual-crop";
 import { siteAssets } from "@/lib/site-assets";
 import { getHomepageContent } from "@/lib/homepage-content";
+import { getHouseMarketingImage } from "@/lib/house-marketing-image";
 
 
 type HomePageProps = {
@@ -123,7 +124,7 @@ export default async function HomePage({ params }: HomePageProps) {
       categoryName: translateText(catObj?.name || 'Maison', locale),
       categorySlug: catObj?.slug || '',
       description: translateHouseDescription(doc.description || doc.subheading || '', doc.slug, locale),
-      image: imageUrl || '',
+      image: getHouseMarketingImage(doc.slug, imageUrl || ''),
       imageBardage: finalImageUrl || '',
       neto: doc.perdhesa?.neto || null,
       bruto: doc.perdhesa?.bruto || null,

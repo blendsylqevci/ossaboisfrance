@@ -58,7 +58,7 @@ export default async function MentionsLegalesPage({ params }: PageProps) {
               <p><strong>Numéro de TVA intracommunautaire :</strong> [Ex: FR 12 123456789]</p>
               <p><strong>Identifiant Unique (IDU) ADEME (Filière REP PMCB) :</strong> [Ex: FR123456_01ABCD]</p>
               <p><strong>Adresse e-mail :</strong> info@ossaboisfrance.com</p>
-              <p><strong>Téléphone :</strong> [Numéro de téléphone de l'entreprise]</p>
+              <p><strong>Téléphone :</strong> <a href="tel:+38343737000">+38343737000</a></p>
             </div>
           </section>
 

@@ -3,6 +3,8 @@ node_modules
 out
 dist
 coverage
+# Generated PDF/email previews and handover QA artifacts (not source files).
+/output/
 *.tsbuildinfo
 .env
 .env*
@@ -26,3 +28,9 @@ pnpm-debug.log*
 /playwright-report
 /blob-report
 /.playwright
+/.playwright-cli/
+/.claude/
+
+# Editor recovery files
+*.swp
+*.swo

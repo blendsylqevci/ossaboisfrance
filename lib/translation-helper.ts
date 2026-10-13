@@ -54,13 +54,13 @@ const textTranslations: Record<string, Record<Locale, string>> = {
     nl: "Regenscherm met latwerk"
   },
   "Finition de la façade": {
-    fr: "FOURNITURE ET POSE DES FINITIONS DE FAÇADE",
+    fr: "Fourniture et pose des finitions de façade",
     en: "Facade finish",
     de: "Fassadenfinish",
     nl: "Gevelafwerking"
   },
   "Isolation de la toiture par l'extérieur": {
-    fr: "Isolation de la toiture par l'extérieur",
+    fr: "Fourniture et pose de l’isolation thermique de toiture ou de toiture-terrasse",
     en: "Roof insulation from the outside",
     de: "Dachisolierung von außen",
     nl: "Dakisolatie vanaf de buitenkant"
@@ -72,7 +72,7 @@ const textTranslations: Record<string, Record<Locale, string>> = {
     nl: "Dakbedekking"
   },
   "Faux plafond": {
-    fr: "Faux plafond",
+    fr: "Fourniture et pose de l’isolation du plancher intermédiaire",
     en: "False ceiling",
     de: "Zwischendecke",
     nl: "Verlaagd plafond"

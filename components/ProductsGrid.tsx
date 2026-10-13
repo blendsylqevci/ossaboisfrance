@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { HouseMarketingPhoto } from "@/components/HouseMarketingPhoto";
+import { hasHouseMarketingImage } from "@/lib/house-marketing-image";
 import Link from "next/link";
 import { CompareSlider } from "@/components/HousesArchive";
 import { useFavorites } from "@/lib/favorites";
@@ -157,7 +159,9 @@ export function ProductsGrid({
                 <div className="mobile-product-slide" key={house.slug}>
                   <div className="prod-card">
                     <div className="prod-card-img-container relative" style={{ height: "320px" }}>
-                      {house.image && house.imageBardage && house.image !== house.imageBardage ? (
+                      {hasHouseMarketingImage(house.slug) ? (
+                  <HouseMarketingPhoto src={house.image} title={house.title} locale={locale} />
+                ) : house.image && house.imageBardage && house.image !== house.imageBardage ? (
                         <CompareSlider
                           key={`${house.image}|${house.imageBardage}`}
                           imageA={house.image}
@@ -287,7 +291,9 @@ export function ProductsGrid({
           return (
             <div className="prod-card" key={house.slug}>
               <div className="prod-card-img-container relative" style={{ height: "320px" }}>
-                {house.image && house.imageBardage && house.image !== house.imageBardage ? (
+                {hasHouseMarketingImage(house.slug) ? (
+                  <HouseMarketingPhoto src={house.image} title={house.title} locale={locale} />
+                ) : house.image && house.imageBardage && house.image !== house.imageBardage ? (
                   <CompareSlider
                     key={`${house.image}|${house.imageBardage}`}
                     imageA={house.image}

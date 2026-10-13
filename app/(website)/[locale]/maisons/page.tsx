@@ -7,6 +7,7 @@ import { translateText, translateHouseDescription } from "@/lib/translation-help
 import { Metadata } from "next";
 import { getPlanimetryRooms } from "@/lib/planimetry-rooms";
 import { getPlanimetryImageCropRight } from "@/lib/planimetry-visual-crop";
+import { getHouseMarketingImage } from "@/lib/house-marketing-image";
 
 
 // ISR: cached and revalidated on a 600s safety window; Payload house/option
@@ -132,7 +133,7 @@ export default async function HousesPage({ params }: HousesPageProps) {
       categoryName: translateText(catObj?.name || 'Maison', locale),
       categorySlug: catObj?.slug || '',
       description: translateHouseDescription(doc.description || doc.subheading || '', doc.slug, locale),
-      image: imageUrl || '',
+      image: getHouseMarketingImage(doc.slug, imageUrl || ''),
       imageBardage: finalImageUrl || '',
       neto: doc.perdhesa?.neto || null,
       bruto: doc.perdhesa?.bruto || null,

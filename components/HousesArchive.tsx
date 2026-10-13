@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import Image from "next/image";
+import { HouseMarketingPhoto } from "@/components/HouseMarketingPhoto";
+import { hasHouseMarketingImage } from "@/lib/house-marketing-image";
 import Link from "next/link";
 import { Locale } from "@/lib/i18n";
 import { useFavorites } from "@/lib/favorites";
@@ -200,7 +202,9 @@ function HouseCard({ house, locale, dict, onOpenPlanimetry }: { house: CMSHouseI
   return (
     <article className="house-archive-card reveal-on-scroll">
       <div className="house-archive-card-image">
-        {hasBothImages ? (
+        {hasHouseMarketingImage(house.slug) ? (
+          <HouseMarketingPhoto src={house.image} title={house.title} locale={locale} />
+        ) : hasBothImages ? (
           <CompareSlider
             key={`${house.image}|${house.imageBardage}`}
             imageA={house.image}

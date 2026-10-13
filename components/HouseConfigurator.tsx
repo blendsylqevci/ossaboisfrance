@@ -14,6 +14,7 @@ import { PlanimetryModal } from "@/components/PlanimetryModal";
 import { publicMediaUrl } from "@/lib/media-url";
 import { isPublishedHousePrice } from "@/lib/price-availability";
 import { CHECKOUT_CATEGORY_PAYLOAD_KEYS } from "@/lib/checkout-pricing";
+import { getHouseMarketingImage, hasHouseMarketingImage } from "@/lib/house-marketing-image";
 
 function formatPrice(value: number) {
   // Format exactly with space as thousands separator and comma for decimals
@@ -900,6 +901,22 @@ L'équipe Ossa Bois France`;
   }
 
   function renderLayerStage(className = "house-layer-stage") {
+    if (!hasSelectedStructure && hasHouseMarketingImage(config.id)) {
+      return (
+        <div
+          id={className === "house-layer-stage" ? "house-layer-stage" : undefined}
+          className={className}
+          style={{ position: "relative", width: "100%", height: "100%" }}
+        >
+          <img
+            className="house-layer is-on"
+            src={getHouseMarketingImage(config.id, config.defaultImage)}
+            alt={`${config.name} — Claire-voie / Viroc blanc lait`}
+          />
+        </div>
+      );
+    }
+
     if (!config.sliderConfig) {
       return (
         <div
@@ -1352,8 +1369,8 @@ L'équipe Ossa Bois France`;
                                   : locale === "nl"
                                   ? "Houtskeletstructuur gebouwd volgens de geldende normen en geschoord met 12 mm OSB-platen. Transport en montage worden afzonderlijk berekend bij de projectbevestiging."
                                   : "Structure en ossature bois réalisée selon les normes en vigueur, contreventée par panneaux OSB 12 mm. Le transport et le montage sont calculés séparément lors de la validation du projet.",
-                                thumbnail: "/media/konstruksioni.webp",
-                                modalImage: "/media/konstruksioni.webp",
+                                thumbnail: "/images/materials/timber-frame-structure.webp",
+                                modalImage: "/images/materials/timber-frame-structure.webp",
                                 attributes: [
                                   { name: locale === "en" ? "Material" : locale === "de" ? "Material" : locale === "nl" ? "Materiaal" : "Matériau", value: locale === "en" ? "Timber & OSB" : "Bois & OSB" },
                                   { name: locale === "en" ? "OSB bracing" : locale === "de" ? "OSB-Versteifung" : locale === "nl" ? "OSB-verstijving" : "Contreventement", value: "12 mm" },
@@ -1367,7 +1384,8 @@ L'équipe Ossa Bois France`;
                           >
                             <Image
                               className="option-mini-image"
-                              src="/media/konstruksioni.webp"
+                              style={{ objectFit: "contain" }}
+                              src="/images/materials/timber-frame-structure.webp"
                               alt=""
                               width={50}
                               height={50}
@@ -1462,12 +1480,12 @@ L'équipe Ossa Bois France`;
                     </div>
                   ) : (
                     <div className="structure-accordion-content structure-info-expanded">
-                      <div className="structure-image-preview" style={{ position: "relative", width: "100%", height: "160px", marginBottom: "14px", borderRadius: "6px", overflow: "hidden" }}>
+                      <div className="structure-image-preview" style={{ position: "relative", width: "100%", aspectRatio: "4 / 3", marginBottom: "14px", borderRadius: "6px", overflow: "hidden" }}>
                         <Image
-                          src="/media/konstruksioni.webp"
+                          src="/images/materials/timber-frame-structure.webp"
                           alt="Timber frame structure"
                           fill
-                          style={{ objectFit: "cover" }}
+                          style={{ objectFit: "contain" }}
                           sizes="(max-width: 768px) 100vw, 400px"
                         />
                       </div>

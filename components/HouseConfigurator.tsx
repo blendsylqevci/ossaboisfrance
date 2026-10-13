@@ -14,7 +14,6 @@ import { PlanimetryModal } from "@/components/PlanimetryModal";
 import { publicMediaUrl } from "@/lib/media-url";
 import { isPublishedHousePrice } from "@/lib/price-availability";
 import { CHECKOUT_CATEGORY_PAYLOAD_KEYS } from "@/lib/checkout-pricing";
-import { getHouseMarketingImage, hasHouseMarketingImage } from "@/lib/house-marketing-image";
 
 function formatPrice(value: number) {
   // Format exactly with space as thousands separator and comma for decimals
@@ -901,22 +900,6 @@ L'équipe Ossa Bois France`;
   }
 
   function renderLayerStage(className = "house-layer-stage") {
-    if (!hasSelectedStructure && hasHouseMarketingImage(config.id)) {
-      return (
-        <div
-          id={className === "house-layer-stage" ? "house-layer-stage" : undefined}
-          className={className}
-          style={{ position: "relative", width: "100%", height: "100%" }}
-        >
-          <img
-            className="house-layer is-on"
-            src={getHouseMarketingImage(config.id, config.defaultImage)}
-            alt={`${config.name} — Claire-voie / Viroc blanc lait`}
-          />
-        </div>
-      );
-    }
-
     if (!config.sliderConfig) {
       return (
         <div

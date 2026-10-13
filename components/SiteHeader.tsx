@@ -101,10 +101,10 @@ export function SiteHeader({ locale, dict }: SiteHeaderProps) {
   }, [isHouseDetailPage, houseSlug]);
 
   const houseNav = [
-    { href: "maisons#maison-toitu-terrasse", label: dict?.categories?.terrace || "Maisons à toiture terrasse" },
-    { href: "maisons#maison-sans-faitage", label: dict?.categories?.terraceEtage || "Maisons à toiture terrasse avec étage" },
     { href: "maisons#maison-plein-pied", label: dict?.categories?.plainPied || "Maisons de plain-pied" },
     { href: "maisons#maison-combles-ammenageable", label: dict?.categories?.combles || "Maisons avec combles aménageables" },
+    { href: "maisons#maison-sans-faitage", label: dict?.categories?.terraceEtage || "Maisons à toiture terrasse avec étage" },
+    { href: "maisons#maison-toitu-terrasse", label: dict?.categories?.terrace || "Maisons à toiture terrasse" },
     { href: "maisons#maison-avec-etage", label: dict?.categories?.etage || "Maisons avec étage" }
   ];
 

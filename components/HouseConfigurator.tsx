@@ -1301,7 +1301,7 @@ L'équipe Ossa Bois France`;
               </div>
               <div className="house-option-group">
                 <h3 className="option-group-title">
-                  {locale === "en" ? "Timber frame structure" : locale === "de" ? "Holzrahmenstruktur" : locale === "nl" ? "Houtskeletstructuur" : "Structure en ossature bois"}
+                  {locale === "en" ? "Timber frame structure" : locale === "de" ? "Holzrahmenstruktur" : locale === "nl" ? "Houtskeletstructuur" : "Épaisseur de l’ossature bois"}
                 </h3>
                 <div className="size-options">
                   {config.sizes.map((size) => (
@@ -1330,7 +1330,7 @@ L'équipe Ossa Bois France`;
                               
                               const category: ConfigCategory = {
                                 id: "structure",
-                                label: locale === "en" ? "Timber frame structure" : locale === "de" ? "Holzrahmenstruktur" : locale === "nl" ? "Houtskeletstructuur" : "Structure en ossature bois",
+                                label: locale === "en" ? "Timber frame structure" : locale === "de" ? "Holzrahmenstruktur" : locale === "nl" ? "Houtskeletstructuur" : "Épaisseur de l’ossature bois",
                                 description: "",
                                 inputName: "house_size",
                                 priceMode: "fixed",

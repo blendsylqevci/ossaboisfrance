@@ -12,7 +12,7 @@
       "terrace": "Maisons à toiture terrasse",
       "terraceEtage": "Maisons à toiture terrasse avec étage",
       "plainPied": "Maisons de plain-pied",
-      "combles": "Maisons avec combles aménageables",
+      "combles": "Maison avec comble",
       "etage": "Maisons avec étage"
     }
   },
@@ -134,7 +134,7 @@
     "modelCount": "Modèle",
     "startingFrom": "à partir de",
     "onQuote": "Sur devis",
-    "configureBtn": "Configurer",
+    "configureBtn": "Configurer votre maison",
     "favoritesInfoTitle": "Comment fonctionnent vos favoris ?",
     "favoritesInfoText": "Retrouvez ici les modèles que vous avez aimés. Vos favoris sont enregistrés sur cet appareil.",
     "favoritesExplanationTitle": "Comment fonctionnent les favoris locaux ?",

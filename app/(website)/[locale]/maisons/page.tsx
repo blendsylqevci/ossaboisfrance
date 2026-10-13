@@ -85,10 +85,10 @@ export default async function HousesPage({ params }: HousesPageProps) {
   ]);
 
   const categoryOrder = [
-    "maison-toitu-terrasse",
-    "maison-sans-faitage",
     "maison-plein-pied",
     "maison-combles-ammenageable",
+    "maison-sans-faitage",
+    "maison-toitu-terrasse",
     "maison-avec-etage"
   ];
 

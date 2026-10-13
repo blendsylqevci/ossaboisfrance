@@ -6,31 +6,31 @@ import { Locale } from "./i18n";
 const textTranslations: Record<string, Record<Locale, string>> = {
   // Configurator Categories
   "Structure en ossature bois": {
-    fr: "Structure en ossature bois",
+    fr: "Épaisseur de l’ossature bois",
     en: "Timber frame structure",
     de: "Holzrahmenstruktur",
     nl: "Houtskeletstructuur"
   },
   "Isolation intermédiaire": {
-    fr: "Isolation intermédiaire",
+    fr: "Fourniture et Pose de l’isolation intermédiaire",
     en: "Intermediary insulation",
     de: "Zwischenisolierung",
     nl: "Tussenisolatie"
   },
   "Isolation extérieure": {
-    fr: "Isolation extérieure",
+    fr: "Fourniture et pose de l’isolation extérieure",
     en: "Exterior insulation",
     de: "Außenisolierung",
     nl: "Buitenisolatie"
   },
   "Étanchéité toiture terrasse avec couvertine": {
-    fr: "Isolation toiture terrasse",
+    fr: "FOURNITURE ET POSE DE L’ISOLATION DE TOITURE-TERRASSE",
     en: "Flat roof insulation",
     de: "Flachdach-Dämmung",
     nl: "Plat dak isolatie"
   },
   "Isolation toiture terrasse": {
-    fr: "Isolation toiture terrasse",
+    fr: "FOURNITURE ET POSE DE L’ISOLATION DE TOITURE-TERRASSE",
     en: "Flat roof insulation",
     de: "Flachdach-Dämmung",
     nl: "Plat dak isolatie"
@@ -42,7 +42,7 @@ const textTranslations: Record<string, Record<Locale, string>> = {
     nl: "Waterdichting"
   },
   "Étanchéité toiture terrasse avec couverture": {
-    fr: "Étanchéité toiture terrasse avec couverture",
+    fr: "FOURNITURE ET POSE DU SYSTÈME D’ÉTANCHÉITÉ DE LA TOITURE-TERRASSE ET DES COUVERTINES",
     en: "Flat roof waterproofing with covering",
     de: "Flachdachabdichtung mit Abdeckung",
     nl: "Platdakwaterdichting met afdekkap"
@@ -54,7 +54,7 @@ const textTranslations: Record<string, Record<Locale, string>> = {
     nl: "Regenscherm met latwerk"
   },
   "Finition de la façade": {
-    fr: "Finition de la façade",
+    fr: "FOURNITURE ET POSE DES FINITIONS DE FAÇADE",
     en: "Facade finish",
     de: "Fassadenfinish",
     nl: "Gevelafwerking"

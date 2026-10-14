@@ -1,224 +1,116 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useFavorites } from "@/lib/favorites";
+import type { Locale } from "@/lib/i18n";
+import styles from "./HeroSlider.module.css";
 
 type SliderHouse = {
   slug: string;
   title: string;
   image: string;
-  imageBardage: string;
 };
 
-type HeroSliderProps = {
-  house: SliderHouse | null;
-  nextHouseSlug: string | null;
+const labels = {
+  fr: { carousel: "Modèles de maisons", previous: "Modèle précédent", next: "Modèle suivant", show: "Afficher", save: "Enregistrer", pause: "Mettre en pause", play: "Reprendre le défilement" },
+  en: { carousel: "House models", previous: "Previous model", next: "Next model", show: "Show", save: "Save", pause: "Pause slideshow", play: "Resume slideshow" },
+  de: { carousel: "Hausmodelle", previous: "Vorheriges Modell", next: "Nächstes Modell", show: "Anzeigen", save: "Speichern", pause: "Diashow pausieren", play: "Diashow fortsetzen" },
+  nl: { carousel: "Woningmodellen", previous: "Vorig model", next: "Volgend model", show: "Toon", save: "Bewaren", pause: "Diavoorstelling pauzeren", play: "Diavoorstelling hervatten" },
 };
 
-export function HeroSlider({ house, nextHouseSlug }: HeroSliderProps) {
-  const [pos, setPos] = useState(50);
-  const [hasInteracted, setHasInteracted] = useState(false);
-  const [secondaryReady, setSecondaryReady] = useState(false);
-  const [secondaryFailed, setSecondaryFailed] = useState(false);
-  
-  const containerRef = useRef<HTMLDivElement>(null);
-  const dragging = useRef(false);
-
+export function HeroSlider({ houses, locale }: { houses: SliderHouse[]; locale: Locale }) {
+  const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [interacting, setInteracting] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(true);
+  const touchStart = useRef<number | null>(null);
   const { isFavorite, handleToggle } = useFavorites();
+  const text = labels[locale];
+  const house = houses[index] ?? houses[0];
+  const multiple = houses.length > 1;
 
-  // The server renders the current cookie-selected house. Store only the next
-  // slug so the following full refresh advances the hero without a flash.
   useEffect(() => {
-    if (!nextHouseSlug) return;
-
-    try {
-      const secure = window.location.protocol === "https:" ? "; Secure" : "";
-      document.cookie = `hero_house_slug=${encodeURIComponent(nextHouseSlug)}; path=/; max-age=604800; SameSite=Lax${secure}`;
-    } catch (error) {
-      console.warn("Failed to rotate the homepage hero:", error);
-    }
-  }, [nextHouseSlug]);
-
-  // Preserve the original visual cue, but start only after the second image is
-  // ready so the movement can never reveal an unloaded half.
-  useEffect(() => {
-    if (!secondaryReady || hasInteracted) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    let animationFrame = 0;
-    let cancelled = false;
-    const timer = globalThis.setTimeout(() => {
-      const duration = 2600;
-      const startTime = Date.now();
-
-      const animate = () => {
-        if (cancelled) return;
-
-        const elapsed = Date.now() - startTime;
-        if (elapsed >= duration) {
-          setPos(50);
-          return;
-        }
-
-        const progress = elapsed / duration;
-        const damping = Math.pow(1 - progress, 1.5);
-        setPos(50 + Math.sin(progress * Math.PI * 4) * 12 * damping);
-        animationFrame = requestAnimationFrame(animate);
-      };
-
-      animationFrame = requestAnimationFrame(animate);
-    }, 1200);
-
-    return () => {
-      cancelled = true;
-      globalThis.clearTimeout(timer);
-      if (animationFrame) cancelAnimationFrame(animationFrame);
-    };
-  }, [secondaryReady, hasInteracted]);
-
-  // 3. Slider Interaction Handlers
-  const updatePos = useCallback((clientX: number) => {
-    const el = containerRef.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    const x = clientX - rect.left;
-    const pct = Math.max(0, Math.min(100, (x / rect.width) * 100));
-    setPos(pct);
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReducedMotion(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
   }, []);
 
-  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    setHasInteracted(true);
-    dragging.current = true;
-    e.currentTarget.setPointerCapture(e.pointerId);
-    updatePos(e.clientX);
-  };
+  useEffect(() => {
+    if (!multiple || paused || interacting || reducedMotion) return;
+    const timer = window.setInterval(() => {
+      setIndex((current) => (current + 1) % houses.length);
+    }, 7000);
+    return () => window.clearInterval(timer);
+  }, [houses.length, multiple, paused, interacting, reducedMotion]);
 
-  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!dragging.current) return;
-    updatePos(e.clientX);
-  };
-
-  const onPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
-    dragging.current = false;
-    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
-      e.currentTarget.releasePointerCapture(e.pointerId);
-    }
-  };
-
-  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
-    e.preventDefault();
-    setHasInteracted(true);
-    setPos((current) =>
-      Math.max(0, Math.min(100, current + (e.key === "ArrowRight" ? 5 : -5)))
-    );
-  };
+  function move(direction: number) {
+    if (!multiple) return;
+    setPaused(true);
+    setIndex((current) => (current + direction + houses.length) % houses.length);
+  }
 
   if (!house) return null;
 
   return (
-    <div
-      ref={containerRef}
-      className="hero-compare-slider"
-      role="slider"
-      tabIndex={0}
-      aria-label={`${house.title} image comparison`}
-      aria-valuemin={0}
-      aria-valuemax={100}
-      aria-valuenow={Math.round(pos)}
-      aria-busy={!secondaryReady && !secondaryFailed}
-      aria-disabled={secondaryFailed || undefined}
-      data-house-slug={house.slug}
-      data-next-house-slug={nextHouseSlug ?? undefined}
-      onPointerDown={secondaryFailed ? undefined : onPointerDown}
-      onPointerMove={secondaryFailed ? undefined : onPointerMove}
-      onPointerUp={secondaryFailed ? undefined : onPointerUp}
-      onPointerCancel={secondaryFailed ? undefined : onPointerUp}
-      onKeyDown={secondaryFailed ? undefined : onKeyDown}
-    >
-      {/* Bottom Image — Bardage */}
-      <div className="hero-slider-img-wrapper">
-        <Image
-          className="hero-slider-img"
-          src={house.imageBardage}
-          alt={`${house.title} — Bardage`}
-          fill
-          sizes="100vw"
-          quality={90}
-          preload
-          style={{ objectFit: "cover" }}
-          draggable={false}
-        />
+    <div className={styles.carousel} role="region" aria-roledescription="carousel"
+      aria-label={text.carousel} data-house-slug={house.slug} data-multiple={multiple}
+      onMouseEnter={() => setInteracting(true)} onMouseLeave={() => setInteracting(false)}
+      onFocusCapture={() => setInteracting(true)}
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setInteracting(false);
+      }}
+      onKeyDown={(event) => {
+        if (multiple && (event.key === "ArrowLeft" || event.key === "ArrowRight")) {
+          event.preventDefault();
+          move(event.key === "ArrowRight" ? 1 : -1);
+        }
+      }}
+      onTouchStart={(event) => { touchStart.current = event.touches[0]?.clientX ?? null; }}
+      onTouchCancel={() => { touchStart.current = null; }}
+      onTouchEnd={(event) => {
+        const end = event.changedTouches[0]?.clientX;
+        if (touchStart.current !== null && end !== undefined && Math.abs(end - touchStart.current) > 60) {
+          move(end < touchStart.current ? 1 : -1);
+        }
+        touchStart.current = null;
+      }}>
+      <div className={styles.slide} role="group" aria-roledescription="slide"
+        aria-label={`${index + 1} / ${houses.length} — ${house.title}`}>
+        <Image key={house.image} src={house.image} alt={house.title} fill sizes="100vw"
+          quality={90} preload={index === 0} loading={index === 0 ? undefined : "eager"}
+          className={styles.photo} draggable={false} />
       </div>
-
-      {/* Top Image — Enduit (Clipped) */}
-      <div
-        className="hero-slider-clip"
-        style={{
-          clipPath: `inset(0 ${100 - pos}% 0 0)`,
-          opacity: secondaryReady ? 1 : 0,
-        }}
-      >
-        <div className="hero-slider-img-wrapper">
-          <Image
-            className="hero-slider-img"
-            src={house.image}
-            alt={`${house.title} — Enduit`}
-            fill
-            sizes="100vw"
-            quality={90}
-            loading="eager"
-            fetchPriority="low"
-            onLoad={() => setSecondaryReady(true)}
-            onError={() => setSecondaryFailed(true)}
-            style={{ objectFit: "cover" }}
-            draggable={false}
-          />
-        </div>
-      </div>
-
-      {/* Divider Bar */}
-      <div className="hero-slider-divider" style={{ left: `${pos}%` }}>
-        <div className="hero-slider-divider-line" />
-        <div className="hero-slider-handle">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="9 18 15 12 9 6" />
-          </svg>
-        </div>
-      </div>
-
-      {/* Labels */}
-      {secondaryReady ? (
-        <>
-          <span className="hero-slider-label hero-slider-label-left" style={{ opacity: pos > 15 ? 1 : 0 }}>Enduit</span>
-          <span className="hero-slider-label hero-slider-label-right" style={{ opacity: pos < 85 ? 1 : 0 }}>Bardage</span>
-        </>
-      ) : null}
-      
-      {/* Badge indicating active house name (hidden on desktop via CSS, shown on mobile) */}
-      <div className="hero-slider-badge">
-        <span>{house.title}</span>
-        <button 
-          className="hero-slider-favorite-btn"
-          onPointerDown={(e) => e.stopPropagation()}
-          onClick={(e) => {
-            e.stopPropagation();
-            handleToggle(house.slug);
-          }}
-          aria-label="Save House"
-        >
-          <svg 
-            className={`heart-icon ${isFavorite(house.slug) ? "is-fav" : ""}`}
-            viewBox="0 0 24 24"
-          >
+      <div className={styles.shade} />
+      <div className={styles.caption} aria-live={paused || reducedMotion ? "polite" : "off"}>
+        <Link href={`/${locale}/maisons/${house.slug}`} className={styles.model}>{house.title}</Link>
+        <button type="button" className={styles.favorite} onClick={() => handleToggle(house.slug)}
+          aria-label={`${text.save} — ${house.title}`} aria-pressed={isFavorite(house.slug)}>
+          <svg viewBox="0 0 24 24" fill={isFavorite(house.slug) ? "currentColor" : "none"}
+            stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
           </svg>
         </button>
       </div>
+      {multiple && <>
+        <button type="button" className={`${styles.arrow} ${styles.previous}`} aria-label={text.previous} onClick={() => move(-1)}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="m14 6-6 6 6 6" /></svg>
+        </button>
+        <button type="button" className={`${styles.arrow} ${styles.next}`} aria-label={text.next} onClick={() => move(1)}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="m10 6 6 6-6 6" /></svg>
+        </button>
+        <div className={styles.controls}>
+          {houses.map((item, slideIndex) => <button key={item.slug} type="button"
+            className={`${styles.dot} ${slideIndex === index ? styles.active : ""}`}
+            aria-label={`${text.show} — ${item.title}`} aria-current={slideIndex === index ? "true" : undefined}
+            onClick={() => { setPaused(true); setIndex(slideIndex); }} />)}
+          {!reducedMotion && <button type="button" className={styles.play} aria-label={paused ? text.play : text.pause}
+            onClick={() => setPaused((value) => !value)}>{paused ? "▶" : "Ⅱ"}</button>}
+        </div>
+      </>}
     </div>
   );
 }

@@ -4609,9 +4609,10 @@ body:has(.installation-modal-backdrop) .cookie-reopen-trigger {
 
 @media (max-width: 767px) {
   .hero-carousel-container {
-    height: 44vh;
-    min-height: 280px;
-    max-height: 380px;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    min-height: 0;
+    max-height: none;
   }
 
   /* Make house name badge smaller on mobile */

@@ -1,0 +1,86 @@
+.carousel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #e3e5df;
+  touch-action: pan-y;
+}
+
+.slide { position: absolute; inset: 0; }
+.photo { object-fit: cover; object-position: center; }
+.shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(12, 20, 12, .28), transparent 48%, transparent 75%, rgba(12, 20, 12, .3));
+}
+.caption {
+  position: absolute;
+  bottom: 28px;
+  left: 32px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: #fff;
+}
+.model {
+  color: inherit;
+  text-decoration: none;
+  font-size: 28px;
+  font-weight: 600;
+  text-shadow: 0 1px 8px #0006;
+}
+.favorite, .arrow, .play {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid #ffffff80;
+  border-radius: 50%;
+  background: #18201855;
+  color: #fff;
+  cursor: pointer;
+}
+.favorite svg, .arrow svg { width: 22px; height: 22px; }
+.arrow { position: absolute; top: 60%; transform: translateY(-50%); }
+.previous { left: 24px; }
+.next { right: 24px; }
+.controls {
+  position: absolute;
+  bottom: 28px;
+  right: 32px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.dot {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.dot::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #ffffff80; }
+.active::after { background: #fff; box-shadow: 0 0 0 3px #ffffff40; }
+.play { margin-left: 8px; }
+.carousel button:focus-visible, .model:focus-visible { outline: 2px solid white; outline-offset: 4px; }
+
+@media (max-width: 991px) {
+  .shade { background: linear-gradient(transparent 65%, #0c140c55); }
+  .caption { left: 16px; bottom: 16px; gap: 10px; }
+  .model { font-size: 22px; }
+  .controls { right: 16px; bottom: 16px; }
+  .arrow { top: 50%; }
+  .previous { left: 12px; }
+  .next { right: 12px; }
+}
+
+@media (max-width: 600px) {
+  .carousel[data-multiple="true"] .caption { bottom: 50px; }
+  .controls { left: 16px; right: auto; bottom: 8px; }
+  .favorite, .arrow, .play { width: 36px; height: 36px; }
+}

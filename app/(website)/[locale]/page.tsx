@@ -2,7 +2,6 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Metadata } from "next";
-import { cookies } from "next/headers";
 import { Locale } from "@/lib/i18n";
 
 import { HeroSlider } from "@/components/HeroSlider";
@@ -17,6 +16,7 @@ import { getPlanimetryImageCropRight } from "@/lib/planimetry-visual-crop";
 import { siteAssets } from "@/lib/site-assets";
 import { getHomepageContent } from "@/lib/homepage-content";
 import { getHouseMarketingImage } from "@/lib/house-marketing-image";
+import { homepageHeroModelSlugs } from "@/lib/homepage-hero-models";
 
 
 type HomePageProps = {
@@ -135,43 +135,12 @@ export default async function HomePage({ params }: HomePageProps) {
     };
   });
 
-  // Filter houses that have both images for the Hero Slider comparison
-  const sliderHouses = allHouses
-    .filter((h) => h.image && h.imageBardage && h.image !== h.imageBardage)
-    .map((h) => ({
-      slug: h.slug,
-      title: h.title,
-      categoryName: h.categoryName,
-      image: h.image,
-      imageBardage: h.imageBardage,
-    }));
-
-  // Select the cookie-requested house on the server so a refresh never flashes
-  // the previous image during hydration. The client stores only the next slug.
-  const cookieStore = await cookies();
-  const encodedHeroSlug = cookieStore.get("hero_house_slug")?.value;
-  let requestedHeroSlug: string | undefined;
-  if (encodedHeroSlug) {
-    try {
-      requestedHeroSlug = decodeURIComponent(encodedHeroSlug);
-    } catch {
-      requestedHeroSlug = undefined;
-    }
-  }
-  const defaultHeroSlug = "maison-2-etage-me-atike";
-
-  let initialIdx = requestedHeroSlug
-    ? sliderHouses.findIndex((house) => house.slug === requestedHeroSlug)
-    : -1;
-  if (initialIdx === -1) {
-    initialIdx = sliderHouses.findIndex((house) => house.slug === defaultHeroSlug);
-  }
-  if (initialIdx === -1) initialIdx = 0;
-
-  const activeHeroHouse = sliderHouses[initialIdx] ?? null;
-  const nextHeroHouseSlug = sliderHouses.length
-    ? sliderHouses[(initialIdx + 1) % sliderHouses.length].slug
-    : null;
+  const sliderHouses = homepageHeroModelSlugs.flatMap((slug) => {
+    const house = allHouses.find((item) => item.slug === slug);
+    return house?.image
+      ? [{ slug: house.slug, title: house.title, image: house.image }]
+      : [];
+  });
 
   // Construct localized client reviews by merging text with static media links
   const carouselReviews = (dict.home.clientReviews || []).map((rev: any, index: number) => ({
@@ -209,11 +178,7 @@ export default async function HomePage({ params }: HomePageProps) {
         {/* ═══════════════ SEKTION 2: HERO CAROUSEL ═══════════════ */}
         <section className="wp-section-carousel">
           <div className="hero-carousel-container">
-            <HeroSlider
-              key={`${activeHeroHouse?.image ?? ""}|${activeHeroHouse?.imageBardage ?? ""}`}
-              house={activeHeroHouse}
-              nextHouseSlug={nextHeroHouseSlug}
-            />
+            <HeroSlider houses={sliderHouses} locale={locale} />
           </div>
         </section>
       </div>

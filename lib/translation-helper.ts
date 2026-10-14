@@ -24,13 +24,13 @@ const textTranslations: Record<string, Record<Locale, string>> = {
     nl: "Buitenisolatie"
   },
   "Étanchéité toiture terrasse avec couvertine": {
-    fr: "FOURNITURE ET POSE DE L’ISOLATION DE TOITURE-TERRASSE",
+    fr: "Fourniture et pose de l’isolation de toiture-terrasse",
     en: "Flat roof insulation",
     de: "Flachdach-Dämmung",
     nl: "Plat dak isolatie"
   },
   "Isolation toiture terrasse": {
-    fr: "FOURNITURE ET POSE DE L’ISOLATION DE TOITURE-TERRASSE",
+    fr: "Fourniture et pose de l’isolation de toiture-terrasse",
     en: "Flat roof insulation",
     de: "Flachdach-Dämmung",
     nl: "Plat dak isolatie"
@@ -42,7 +42,7 @@ const textTranslations: Record<string, Record<Locale, string>> = {
     nl: "Waterdichting"
   },
   "Étanchéité toiture terrasse avec couverture": {
-    fr: "FOURNITURE ET POSE DU SYSTÈME D’ÉTANCHÉITÉ DE LA TOITURE-TERRASSE ET DES COUVERTINES",
+    fr: "Fourniture et pose du système d’étanchéité de la toiture-terrasse et des couvertines",
     en: "Flat roof waterproofing with covering",
     de: "Flachdachabdichtung mit Abdeckung",
     nl: "Platdakwaterdichting met afdekkap"

@@ -41,7 +41,7 @@ export function HouseMarketingPhoto({ src, title, locale }: {
       <button ref={triggerRef} type="button" className={styles.trigger}
         aria-label={`${text.open} — ${title}`} aria-haspopup="dialog"
         onClick={() => setOpen(true)}>
-        <Image src={src} alt={`${title} — Claire-voie / Viroc blanc lait`} fill
+        <Image src={src} alt={title} fill
           sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
           quality={90} style={{ objectFit: "cover" }} />
       </button>
@@ -55,7 +55,7 @@ export function HouseMarketingPhoto({ src, title, locale }: {
             onClick={() => setOpen(false)} autoFocus>×</button>
           {/* Load the full image only when the visitor opens it. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className={styles.photo} src={src} alt={`${title} — Claire-voie / Viroc blanc lait`} />
+          <img className={styles.photo} src={src} alt={title} />
         </dialog>, document.body
       )}
     </>

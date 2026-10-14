@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { HouseMarketingPhoto } from "@/components/HouseMarketingPhoto";
-import { hasHouseMarketingImage } from "@/lib/house-marketing-image";
+import { hasHouseMarketingImage, hasHouseMarketingComparison } from "@/lib/house-marketing-image";
 import Link from "next/link";
 import { CompareSlider } from "@/components/HousesArchive";
 import { useFavorites } from "@/lib/favorites";
@@ -159,7 +159,7 @@ export function ProductsGrid({
                 <div className="mobile-product-slide" key={house.slug}>
                   <div className="prod-card">
                     <div className="prod-card-img-container relative" style={{ height: "320px" }}>
-                      {hasHouseMarketingImage(house.slug) ? (
+                      {hasHouseMarketingImage(house.slug) && !hasHouseMarketingComparison(house.slug) ? (
                   <HouseMarketingPhoto src={house.image} title={house.title} locale={locale} />
                 ) : house.image && house.imageBardage && house.image !== house.imageBardage ? (
                         <CompareSlider
@@ -168,6 +168,7 @@ export function ProductsGrid({
                           imageB={house.imageBardage}
                           altA={`${house.title} — Enduit`}
                           altB={`${house.title} — Bardage`}
+                    locale={locale}
                         />
                       ) : house.image ? (
                         <Image
@@ -291,7 +292,7 @@ export function ProductsGrid({
           return (
             <div className="prod-card" key={house.slug}>
               <div className="prod-card-img-container relative" style={{ height: "320px" }}>
-                {hasHouseMarketingImage(house.slug) ? (
+                {hasHouseMarketingImage(house.slug) && !hasHouseMarketingComparison(house.slug) ? (
                   <HouseMarketingPhoto src={house.image} title={house.title} locale={locale} />
                 ) : house.image && house.imageBardage && house.image !== house.imageBardage ? (
                   <CompareSlider
@@ -300,6 +301,7 @@ export function ProductsGrid({
                     imageB={house.imageBardage}
                     altA={`${house.title} — Enduit`}
                     altB={`${house.title} — Bardage`}
+                    locale={locale}
                   />
                 ) : house.image ? (
                   <Image

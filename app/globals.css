@@ -1060,6 +1060,11 @@ img {
   pointer-events: none;
 }
 
+.compare-slider-control {
+  position: absolute;
+  inset: 0;
+}
+
 .compare-img-full {
   position: absolute;
   inset: 0;
@@ -1141,8 +1146,15 @@ img {
   -webkit-backdrop-filter: blur(6px);
   padding: 3px 10px;
   border-radius: 4px;
-  pointer-events: none;
+  border: 0;
+  cursor: zoom-in;
+  pointer-events: auto;
   transition: opacity 0.2s ease;
+}
+
+.compare-label:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
 }
 
 .compare-label-left {

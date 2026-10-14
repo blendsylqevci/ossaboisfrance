@@ -12,10 +12,12 @@ const labels: Record<string, { open: string; close: string }> = {
   nl: { open: "Foto vergroten", close: "Sluiten" },
 };
 
-export function HouseMarketingPhoto({ src, title, locale }: {
+export function HouseMarketingPhoto({ src, title, locale, label, className }: {
   src: string;
   title: string;
   locale: string;
+  label?: string;
+  className?: string;
 }) {
   const [open, setOpen] = useState(false);
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -38,12 +40,13 @@ export function HouseMarketingPhoto({ src, title, locale }: {
 
   return (
     <>
-      <button ref={triggerRef} type="button" className={styles.trigger}
+      <button ref={triggerRef} type="button" className={className || styles.trigger}
         aria-label={`${text.open} — ${title}`} aria-haspopup="dialog"
-        onClick={() => setOpen(true)}>
-        <Image src={src} alt={title} fill
+        onPointerDown={(event) => event.stopPropagation()}
+        onClick={(event) => { event.stopPropagation(); setOpen(true); }}>
+        {label || <Image src={src} alt={title} fill
           sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          quality={90} style={{ objectFit: "cover" }} />
+          quality={90} style={{ objectFit: "cover" }} />}
       </button>
       {open && createPortal(
         <dialog ref={dialogRef} className={styles.dialog} aria-label={title}

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import Image from "next/image";
 import { HouseMarketingPhoto } from "@/components/HouseMarketingPhoto";
-import { hasHouseMarketingImage } from "@/lib/house-marketing-image";
+import { hasHouseMarketingImage, hasHouseMarketingComparison } from "@/lib/house-marketing-image";
 import Link from "next/link";
 import { Locale } from "@/lib/i18n";
 import { useFavorites } from "@/lib/favorites";
@@ -42,7 +42,7 @@ type HousesArchiveProps = {
   dict: any;
 };
 
-export function CompareSlider({ imageA, imageB, altA, altB }: { imageA: string; imageB: string; altA: string; altB: string }) {
+export function CompareSlider({ imageA, imageB, altA, altB, locale = "fr" }: { imageA: string; imageB: string; altA: string; altB: string; locale?: string }) {
   const [pos, setPos] = useState(50);
   const [secondaryRequested, setSecondaryRequested] = useState(false);
   const [secondaryReady, setSecondaryReady] = useState(false);
@@ -118,77 +118,81 @@ export function CompareSlider({ imageA, imageB, altA, altB }: { imageA: string; 
   };
 
   return (
-    <div
-      ref={containerRef}
-      className="compare-slider"
-      role="slider"
-      tabIndex={0}
-      aria-label={`${altA} / ${altB}`}
-      aria-valuemin={0}
-      aria-valuemax={100}
-      aria-valuenow={Math.round(pos)}
-      aria-busy={secondaryRequested && !secondaryReady && !secondaryFailed}
-      onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
-      onPointerUp={onPointerUp}
-      onPointerCancel={onPointerUp}
-      onKeyDown={onKeyDown}
-    >
-      {/* Bottom layer — Bardage (full) */}
-      <Image
-        className="compare-img compare-img-full"
-        src={imageB}
-        alt={altB}
-        width={900}
-        height={600}
-        sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
-        quality={90}
-        draggable={false}
-      />
+    <div ref={containerRef} className="compare-slider">
+      <div
+        className="compare-slider-control"
+        role="slider"
+        tabIndex={0}
+        aria-label={`${altA} / ${altB}`}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={Math.round(pos)}
+        aria-busy={secondaryRequested && !secondaryReady && !secondaryFailed}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+        onKeyDown={onKeyDown}
+      >
+        {/* Bottom layer — Bardage (full) */}
+        <Image
+          className="compare-img compare-img-full"
+          src={imageB}
+          alt={altB}
+          width={900}
+          height={600}
+          sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          quality={90}
+          draggable={false}
+        />
 
-      {/* Top layer — Enduit (clipped) */}
-      {secondaryRequested ? (
-        <div
-          className="compare-clip"
-          style={{
-            clipPath: `inset(0 ${100 - pos}% 0 0)`,
-            opacity: secondaryReady ? 1 : 0,
-          }}
-        >
-          <Image
-            className="compare-img"
-            src={imageA}
-            alt={altA}
-            width={900}
-            height={600}
-            sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            quality={90}
-            loading="lazy"
-            onLoad={() => setSecondaryReady(true)}
-            onError={() => setSecondaryFailed(true)}
-            draggable={false}
-          />
-        </div>
-      ) : null}
+        {/* Top layer — Enduit (clipped) */}
+        {secondaryRequested ? (
+          <div
+            className="compare-clip"
+            style={{
+              clipPath: `inset(0 ${100 - pos}% 0 0)`,
+              opacity: secondaryReady ? 1 : 0,
+            }}
+          >
+            <Image
+              className="compare-img"
+              src={imageA}
+              alt={altA}
+              width={900}
+              height={600}
+              sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              quality={90}
+              loading="lazy"
+              onLoad={() => setSecondaryReady(true)}
+              onError={() => setSecondaryFailed(true)}
+              draggable={false}
+            />
+          </div>
+        ) : null}
 
-      {/* Divider line */}
-      <div className="compare-divider" style={{ left: `${pos}%` }}>
-        <div className="compare-divider-line" />
-        <div className="compare-handle">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="9 18 15 12 9 6" />
-          </svg>
+        {/* Divider line */}
+        <div className="compare-divider" style={{ left: `${pos}%` }}>
+          <div className="compare-divider-line" />
+          <div className="compare-handle">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </div>
         </div>
+
       </div>
 
       {/* Labels */}
       {secondaryReady ? (
         <>
-          <span className="compare-label compare-label-left" style={{ opacity: pos > 15 ? 1 : 0 }}>Enduit</span>
-          <span className="compare-label compare-label-right" style={{ opacity: pos < 85 ? 1 : 0 }}>Bardage</span>
+          <HouseMarketingPhoto src={imageA} title={altA} locale={locale}
+            label="Enduit" className="compare-label compare-label-left" />
+          <HouseMarketingPhoto src={imageB} title={altB} locale={locale}
+            label="Bardage" className="compare-label compare-label-right" />
         </>
       ) : null}
     </div>
@@ -202,7 +206,7 @@ function HouseCard({ house, locale, dict, onOpenPlanimetry }: { house: CMSHouseI
   return (
     <article className="house-archive-card reveal-on-scroll">
       <div className="house-archive-card-image">
-        {hasHouseMarketingImage(house.slug) ? (
+        {hasHouseMarketingImage(house.slug) && !hasHouseMarketingComparison(house.slug) ? (
           <HouseMarketingPhoto src={house.image} title={house.title} locale={locale} />
         ) : hasBothImages ? (
           <CompareSlider
@@ -211,6 +215,7 @@ function HouseCard({ house, locale, dict, onOpenPlanimetry }: { house: CMSHouseI
             imageB={house.imageBardage}
             altA={`${house.title} — Enduit`}
             altB={`${house.title} — Bardage`}
+            locale={locale}
           />
         ) : house.image ? (
           <Image 

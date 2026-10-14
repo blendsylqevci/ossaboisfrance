@@ -1134,6 +1134,10 @@ img {
 
 .compare-label {
   position: absolute;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
   bottom: 12px;
   z-index: 2;
   font-size: 11px;
@@ -1149,7 +1153,15 @@ img {
   border: 0;
   cursor: zoom-in;
   pointer-events: auto;
-  transition: opacity 0.2s ease;
+  transition: background-color 0.2s ease;
+}
+
+.compare-label:hover {
+  background: rgba(0, 0, 0, 0.75);
+}
+
+.compare-label svg {
+  flex-shrink: 0;
 }
 
 .compare-label:focus-visible {

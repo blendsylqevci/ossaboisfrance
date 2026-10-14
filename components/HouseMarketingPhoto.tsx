@@ -42,9 +42,17 @@ export function HouseMarketingPhoto({ src, title, locale, label, className }: {
     <>
       <button ref={triggerRef} type="button" className={className || styles.trigger}
         aria-label={`${text.open} — ${title}`} aria-haspopup="dialog"
+        title={label ? text.open : undefined}
         onPointerDown={(event) => event.stopPropagation()}
         onClick={(event) => { event.stopPropagation(); setOpen(true); }}>
-        {label || <Image src={src} alt={title} fill
+        {label ? <>
+          <span>{label}</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+            aria-hidden="true" focusable="false">
+            <path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5" />
+          </svg>
+        </> : <Image src={src} alt={title} fill
           sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
           quality={90} style={{ objectFit: "cover" }} />}
       </button>

@@ -40,6 +40,10 @@ const marketingImages: Readonly<Record<string, MarketingImage>> = {
     enduit: "/images/marketing/elegance-enduit-luxury-20261015-4k.webp",
     bardage: "/images/marketing/elegance-bardage-luxury-20261015-4k.webp",
   },
+  "orenda": {
+    enduit: "/images/marketing/orenda-enduit-luxury-20261015-4k.webp",
+    bardage: "/images/marketing/orenda-bardage-luxury-20261015-4k.webp",
+  },
   "els-house-comble": {
     enduit: "/images/marketing/els-house-summer-enduit-roof-wrap.webp",
     bardage: "/images/marketing/els-house-summer-bardage.webp",

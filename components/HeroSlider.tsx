@@ -30,6 +30,7 @@ export function HeroSlider({ houses, locale }: { houses: SliderHouse[]; locale: 
   const text = labels[locale];
   const house = houses[index] ?? houses[0];
   const multiple = houses.length > 1;
+  const nextHouse = multiple ? houses[(index + 1) % houses.length] : null;
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -43,7 +44,7 @@ export function HeroSlider({ houses, locale }: { houses: SliderHouse[]; locale: 
     if (!multiple || paused || interacting || reducedMotion) return;
     const timer = window.setInterval(() => {
       setIndex((current) => (current + 1) % houses.length);
-    }, 7000);
+    }, 4000);
     return () => window.clearInterval(timer);
   }, [houses.length, multiple, paused, interacting, reducedMotion]);
 
@@ -84,6 +85,8 @@ export function HeroSlider({ houses, locale }: { houses: SliderHouse[]; locale: 
           quality={90} preload={index === 0} loading={index === 0 ? undefined : "eager"}
           className={styles.photo} draggable={false} />
       </div>
+      {nextHouse && <Image src={nextHouse.image} alt="" aria-hidden="true" fill
+        sizes="100vw" quality={90} loading="eager" style={{ visibility: "hidden" }} />}
       <div className={styles.shade} />
       <div className={styles.caption} aria-live={paused || reducedMotion ? "polite" : "off"}>
         <Link href={`/${locale}/maisons/${house.slug}`} className={styles.model}>{house.title}</Link>

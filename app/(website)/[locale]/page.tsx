@@ -16,7 +16,7 @@ import { getPlanimetryImageCropRight } from "@/lib/planimetry-visual-crop";
 import { siteAssets } from "@/lib/site-assets";
 import { getHomepageContent } from "@/lib/homepage-content";
 import { getHouseMarketingImage, getHouseMarketingBardageImage } from "@/lib/house-marketing-image";
-import { homepageHeroModelSlugs } from "@/lib/homepage-hero-models";
+import { homepageHeroModels } from "@/lib/homepage-hero-models";
 
 
 type HomePageProps = {
@@ -135,10 +135,10 @@ export default async function HomePage({ params }: HomePageProps) {
     };
   });
 
-  const sliderHouses = homepageHeroModelSlugs.flatMap((slug) => {
+  const sliderHouses = homepageHeroModels.flatMap(({ slug, image }) => {
     const house = allHouses.find((item) => item.slug === slug);
-    return house?.image
-      ? [{ slug: house.slug, title: house.title, image: house.image }]
+    return house && image
+      ? [{ slug: house.slug, title: house.title, image }]
       : [];
   });
 

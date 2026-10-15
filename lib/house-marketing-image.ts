@@ -16,10 +16,30 @@ const marketingImages: Readonly<Record<string, MarketingImage>> = {
     enduit: "/images/marketing/a-frame-autumn-enduit-4k.webp",
     bardage: "/images/marketing/a-frame-autumn-bardage-original.webp",
   },
-  "ambre-me-kulm": "/images/marketing/ambre-summer-luxury.webp",
-  "emeraude-me-kulm": "/images/marketing/emeraude-summer-luxury.webp",
-  "asebra-avec-toit": "/images/marketing/asebra-summer-luxury.webp",
-  "france-comble": "/images/marketing/france-summer-luxury.webp",
+  "ambre-me-kulm": {
+    enduit: "/images/marketing/ambre-summer-luxury.webp",
+    bardage: "/images/marketing/ambre-bardage-luxury-20261015-4k.webp",
+  },
+  "emeraude-me-kulm": {
+    enduit: "/images/marketing/emeraude-enduit-luxury-20261015-4k.webp",
+    bardage: "/images/marketing/emeraude-bardage-luxury-20261015-4k.webp",
+  },
+  "asebra-avec-toit": {
+    enduit: "/images/marketing/asebra-enduit-aligned-20261015-4k.webp",
+    bardage: "/images/marketing/asebra-bardage-luxury-20261015-4k.webp",
+  },
+  "france-comble": {
+    enduit: "/images/marketing/france-enduit-summer-kitchen-20261015-4k.webp",
+    bardage: "/images/marketing/france-bardage-summer-kitchen-20261015-4k.webp",
+  },
+  "azura-comble": {
+    enduit: "/images/marketing/azura-enduit-luxury-20261015-4k.webp",
+    bardage: "/images/marketing/azura-bardage-luxury-20261015-4k.webp",
+  },
+  "elegance-comble": {
+    enduit: "/images/marketing/elegance-enduit-luxury-20261015-4k.webp",
+    bardage: "/images/marketing/elegance-bardage-luxury-20261015-4k.webp",
+  },
   "els-house-comble": {
     enduit: "/images/marketing/els-house-summer-enduit-roof-wrap.webp",
     bardage: "/images/marketing/els-house-summer-bardage.webp",

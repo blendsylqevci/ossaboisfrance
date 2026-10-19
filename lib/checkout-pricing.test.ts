@@ -159,6 +159,44 @@ describe("checkout-pricing", () => {
     assert.equal(result.transportCost, 7_000);
     assert.equal(result.assemblyCost, 6_500);
     assert.equal(result.grandTotal, 28_500);
+    assert.equal(result.assemblyQuoteRequired, false);
+  });
+
+  it("accepts Ossa assembly outside the published tiers as a separate quote", () => {
+    for (const grossArea of [59.3, 79.99, 200.01, 245]) {
+      const config = { ...mockConfig, perdhesa: { ...mockConfig.perdhesa, bruto: grossArea } };
+      const result = calculateCheckoutGrandTotal(config, {
+        size: { value: "60x160" },
+        installationMode: "ossa",
+        assemblyCost: 1,
+        assemblyQuoteRequired: false,
+      });
+      assert.ok(!("error" in result));
+      assert.equal(result.installationMode, "ossa");
+      assert.equal(result.assemblyCost, null);
+      assert.equal(result.assemblyQuoteRequired, true);
+      assert.equal(result.grandTotal, result.configurationSubtotal + result.transportCost);
+      assert.ok(isCheckoutTotalValid(result.grandTotal, result.grandTotal));
+      assert.equal(isCheckoutTotalValid(result.grandTotal + 1, result.grandTotal), false);
+
+      const professional = calculateCheckoutGrandTotal(config, {
+        size: { value: "60x160" }, installationMode: "professional",
+      });
+      assert.ok(!("error" in professional));
+      assert.equal(professional.assemblyCost, 0);
+      assert.equal(professional.assemblyQuoteRequired, false);
+    }
+  });
+
+  it("does not let a client replace a published assembly rate with a quote request", () => {
+    const result = calculateCheckoutGrandTotal(mockConfig, {
+      size: { value: "60x160" }, installationMode: "ossa",
+      assemblyCost: null, assemblyQuoteRequired: true,
+    });
+    assert.ok(!("error" in result));
+    assert.equal(result.assemblyCost, 6_500);
+    assert.equal(result.assemblyQuoteRequired, false);
+    assert.equal(result.grandTotal, 26_500);
   });
 
   it("ignores every client-authored cost and recalculates the quote", () => {

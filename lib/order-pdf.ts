@@ -3,6 +3,8 @@ import path from "node:path";
 import PDFDocument from "pdfkit";
 import sharp from "sharp";
 import type { Locale } from "@/lib/i18n";
+import { getAssemblyQuoteCopy } from "./assembly-quote-copy.ts";
+import { getAssemblyCost, isValidGrossArea } from "./house-pricing.ts";
 import {
   isAcceptedCheckoutAgreementSnapshot,
   type AcceptedCheckoutAgreements,
@@ -82,7 +84,7 @@ export type OrderPdfData = {
     truckCount: number;
     transport: number;
     installationMode: "ossa" | "professional";
-    assembly: number;
+    assembly: number | null;
     grandTotal: number;
   };
   agreements: OrderPdfAgreements;
@@ -450,6 +452,7 @@ export function validateOrderPdfData(data: OrderPdfData): void {
 
   for (const [name, value] of Object.entries(data.pricing)) {
     if (name === "installationMode") continue;
+    if (name === "assembly" && value === null) continue;
     assertNonNegativeFinite(`pricing.${name}`, value);
   }
   if (
@@ -465,8 +468,14 @@ export function validateOrderPdfData(data: OrderPdfData): void {
   if (data.pricing.installationMode === "professional" && data.pricing.assembly !== 0) {
     throw new TypeError("Professional assembly must not be charged in an order PDF.");
   }
-  if (data.pricing.installationMode === "ossa" && data.pricing.assembly <= 0) {
+  if (data.pricing.installationMode === "ossa" && data.pricing.assembly !== null && data.pricing.assembly <= 0) {
     throw new TypeError("Ossa Bois assembly must have a positive amount in an order PDF.");
+  }
+  if (data.pricing.assembly === null && (
+    !isValidGrossArea(data.surfaces.gross) ||
+    getAssemblyCost(data.surfaces.gross, "ossa") !== null
+  )) {
+    throw new TypeError("Assembly requires a published price for this surface.");
   }
 
   const optionSum = data.options.reduce((sum, option) => sum + option.totalPrice, 0);
@@ -480,7 +489,7 @@ export function validateOrderPdfData(data: OrderPdfData): void {
     throw new TypeError("Order PDF configuration subtotal is inconsistent.");
   }
   if (!sameCents(
-    data.pricing.configurationSubtotal + data.pricing.transport + data.pricing.assembly,
+    data.pricing.configurationSubtotal + data.pricing.transport + (data.pricing.assembly ?? 0),
     data.pricing.grandTotal
   )) {
     throw new TypeError("Order PDF grand total is inconsistent.");
@@ -502,7 +511,8 @@ export function validateOrderPdfData(data: OrderPdfData): void {
   }
 }
 
-function formatMoney(value: number, locale: Locale): string {
+function formatMoney(value: number | null, locale: Locale): string {
+  if (value === null) return getAssemblyQuoteCopy(locale).price;
   const localeCode = locale === "fr" ? "fr-FR" : locale === "de" ? "de-DE" : locale === "nl" ? "nl-NL" : "en-GB";
   return new Intl.NumberFormat(localeCode, {
     style: "currency",
@@ -837,7 +847,7 @@ export async function generateOrderPdf(data: OrderPdfData): Promise<Buffer> {
       component: string,
       selection: string,
       calculation: string,
-      amount: number,
+      amount: number | null,
       index: number
     ) => {
       doc.font(medium).fontSize(9.2);
@@ -1100,7 +1110,13 @@ export async function generateOrderPdf(data: OrderPdfData): Promise<Buffer> {
     );
     drawSummaryRow(copy.optionsSubtotal, data.pricing.optionsTotal);
     drawSummaryRow(copy.configurationSubtotal, data.pricing.configurationSubtotal);
-    drawSummaryRow(copy.total, data.pricing.grandTotal, true, copy.exclVat);
+    const assemblyQuoteCopy = getAssemblyQuoteCopy(data.locale);
+    drawSummaryRow(
+      data.pricing.assembly === null ? assemblyQuoteCopy.estimate : copy.total,
+      data.pricing.grandTotal,
+      true,
+      data.pricing.assembly === null ? assemblyQuoteCopy.notice : copy.exclVat
+    );
     doc.y += 14;
 
     if (data.delivery.notes) {

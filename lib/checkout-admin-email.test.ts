@@ -58,6 +58,18 @@ test("admin email renders detailed budget, internal context and attachment truth
   assert.ok(result.includes("37&#") || result.includes("37 140,25"));
   assert.ok(buildCheckoutAdminEmail({ ...exampleOrder, pdfAttached: false }).includes("Non disponible — vérifier"));
 });
+
+test("admin email distinguishes assembly on request from a zero-price service", () => {
+  const result = buildCheckoutAdminEmail({
+    ...exampleOrder,
+    pricing: { ...exampleOrder.pricing, assembly: null, total: 30_640.25 },
+  });
+  assert.ok(result.includes("Sur devis"));
+  assert.ok(result.includes("Estimation HT hors montage"));
+  assert.ok(result.includes("le montage sera chiffré séparément"));
+  assert.ok(!result.includes("TOTAL ESTIMATIF HT"));
+  assert.ok(!result.includes("6 500,00"));
+});
 test("admin template escapes user content and never renders a raw user agent", () => {
   const result = buildCheckoutAdminEmail({ ...exampleOrder, customer: { ...exampleOrder.customer, name: '<img src=x onerror="bad">' }, request: { ...exampleOrder.request, location: "<script>bad</script>" } });
   assert.ok(!result.includes("<script>"));

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { getAssemblyQuoteCopy } from "@/lib/assembly-quote-copy";
 
 import {
   getAssemblyCost,
@@ -55,11 +56,12 @@ type StoredSelection = Record<string, unknown> & {
   truckCount?: number;
   transportCost?: number;
   installationMode?: InstallationMode;
-  assemblyCost?: number;
+  assemblyCost?: number | null;
   installation?: {
     mode: InstallationMode;
     label: string;
-    cost: number;
+    cost: number | null;
+    requiresQuote?: boolean;
   };
   totalPrice?: number;
   priceBasis?: "excl_vat";
@@ -416,6 +418,8 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
   const installationMode = installationConfirmedInCheckout
     ? selection?.installationMode
     : undefined;
+  const assemblyQuoteRequired = installationMode === "ossa" && selection?.assemblyCost === null;
+  const assemblyQuoteCopy = getAssemblyQuoteCopy(locale);
   const transportCost = installationMode
     ? storedTransportCost
     : 0;
@@ -448,6 +452,7 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
   const pendingAssemblyCost = pendingInstallationMode
     ? getAssemblyCost(grossArea, pendingInstallationMode)
     : null;
+  const pendingAssemblyQuoteRequired = pendingInstallationMode === "ossa" && pendingAssemblyCost === null;
 
   const formatTransportCost = (value: number) => {
     if (value === 0) return "0.00 €";
@@ -691,7 +696,7 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
         : t.pendingAssemblyTitle;
   const assemblyCardDescription =
     installationMode === "ossa"
-      ? t.assemblyDesc
+      ? assemblyQuoteRequired ? assemblyQuoteCopy.notice : t.assemblyDesc
       : installationMode === "professional"
         ? t.professionalAssemblyDesc
         : t.pendingAssemblyDesc;
@@ -699,7 +704,7 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
     installationMode === "professional"
       ? t.notIncluded
       : installationMode === "ossa"
-        ? formatTransportCost(assemblyCost)
+        ? assemblyQuoteRequired ? assemblyQuoteCopy.price : formatTransportCost(assemblyCost)
         : t.pending;
   const transportLabel = truckCount ? `${t.shippingCost} (${t.trucks(truckCount)})` : t.shippingCost;
 
@@ -834,14 +839,13 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
       !selection ||
       !pendingInstallationMode ||
       !pendingTransportQuote ||
-      pendingAssemblyCost === null ||
       isSubmittingRef.current
     ) {
       return;
     }
 
     const submittedTotal = Math.round(
-      (configurationSubtotal + pendingTransportQuote.cost + pendingAssemblyCost) * 100
+      (configurationSubtotal + pendingTransportQuote.cost + (pendingAssemblyCost ?? 0)) * 100
     ) / 100;
     const installationLabel =
       pendingInstallationMode === "ossa"
@@ -854,10 +858,12 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
       transportCost: pendingTransportQuote.cost,
       installationMode: pendingInstallationMode,
       assemblyCost: pendingAssemblyCost,
+      assemblyQuoteRequired: pendingAssemblyQuoteRequired,
       installation: {
         mode: pendingInstallationMode,
         label: installationLabel,
         cost: pendingAssemblyCost,
+        requiresQuote: pendingAssemblyQuoteRequired,
       },
       totalPrice: submittedTotal,
       priceBasis: "excl_vat",
@@ -1388,7 +1394,7 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
                     <div className="order-divider" />
                     
                     <div className="order-price-row order-total-row" data-testid="checkout-total">
-                      <span className="order-price-label">{t.totalEst}</span>
+                      <span className="order-price-label">{assemblyQuoteRequired ? assemblyQuoteCopy.estimate : t.totalEst}</span>
                       <span className="order-price-value order-total-price">{euroFormatter.format(total)}</span>
                     </div>
                     <p className="order-tax-notice">{t.taxNotice}</p>
@@ -1397,7 +1403,7 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
                   <div className="order-summary-footer">
                     {installationMode ? (
                       <div className="checkout-final-review-notice" data-testid="checkout-review-ready" role="status">
-                        {t.reviewReadyText}
+                        {assemblyQuoteRequired ? assemblyQuoteCopy.notice : t.reviewReadyText}
                       </div>
                     ) : (
                       <div className="checkout-pre-validation-notice" data-testid="checkout-logistics-notice" role="note">
@@ -1635,7 +1641,7 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
                 </span>
               </label>
 
-              <label className={`installation-option${pendingInstallationMode === "ossa" ? " selected" : ""}${ossaAssemblyCost === null ? " disabled" : ""}`}>
+              <label className={`installation-option${pendingInstallationMode === "ossa" ? " selected" : ""}`}>
                 <input
                   type="radio"
                   name="installation_mode"
@@ -1643,7 +1649,6 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
                   data-testid="installation-ossa"
                   checked={pendingInstallationMode === "ossa"}
                   onChange={() => setPendingInstallationMode("ossa")}
-                  disabled={ossaAssemblyCost === null}
                 />
                 <span className="installation-option-check" aria-hidden="true" />
                 <span className="installation-option-copy">
@@ -1657,7 +1662,7 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
               </label>
             </div>
 
-            {pendingInstallationMode && pendingTransportQuote && pendingAssemblyCost !== null ? (
+            {pendingInstallationMode && pendingTransportQuote ? (
               <div className="installation-quote-summary" data-testid="installation-quote" aria-live="polite">
                 <div>
                   <span>{t.modalTransport} ({t.trucks(pendingTransportQuote.truckCount)})</span>
@@ -1668,20 +1673,21 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
                   <strong>
                     {pendingInstallationMode === "professional"
                       ? t.modalExcluded
-                      : formatTransportCost(pendingAssemblyCost)}
+                      : pendingAssemblyCost === null ? assemblyQuoteCopy.price : formatTransportCost(pendingAssemblyCost)}
                   </strong>
                 </div>
                 <div className="installation-quote-total">
-                  <span>{t.modalTotal}</span>
+                  <span>{pendingAssemblyQuoteRequired ? assemblyQuoteCopy.estimate : t.modalTotal}</span>
                   <strong>
                     {euroFormatter.format(
                       configurationSubtotal +
                         pendingTransportQuote.cost +
-                        pendingAssemblyCost
+                        (pendingAssemblyCost ?? 0)
                     )}
                   </strong>
                 </div>
                 <p className="installation-tax-note">{t.taxNotice}</p>
+                {pendingAssemblyQuoteRequired ? <p className="installation-tax-note">{assemblyQuoteCopy.notice}</p> : null}
               </div>
             ) : null}
 
@@ -1704,7 +1710,6 @@ export function CheckoutPage({ locale }: CheckoutPageProps) {
                 disabled={
                   !pendingInstallationMode ||
                   !pendingTransportQuote ||
-                  pendingAssemblyCost === null ||
                   isSubmitting
                 }
               >

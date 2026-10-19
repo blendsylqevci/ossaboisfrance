@@ -1,4 +1,5 @@
 import { isIP } from "node:net";
+import { getAssemblyQuoteCopy } from "./assembly-quote-copy.ts";
 
 const unavailable = "Non disponible";
 const html = (value: unknown): string => String(value ?? "").replace(/[&<>"']/g, char =>
@@ -62,7 +63,7 @@ export type AdminOrderEmailData = {
   house: { name: string; structure: string };
   surfaces: { net: number; gross: number; walls: number; roof: number };
   options: Array<{ categoryLabel: string; optionLabel: string; formattedCalculation: string; totalPrice: number }>;
-  pricing: { base: number; options: number; subtotal: number; trucks: number; transport: number; assembly: number; total: number };
+  pricing: { base: number; options: number; subtotal: number; trucks: number; transport: number; assembly: number | null; total: number };
   assemblyDescription: string;
   agreementVersion: string;
   request: OrderRequestContext;
@@ -70,7 +71,9 @@ export type AdminOrderEmailData = {
 };
 
 export function buildCheckoutAdminEmail(data: AdminOrderEmailData): string {
-  const money = (amount: number) => html(new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(amount));
+  const assemblyPending = data.pricing.assembly === null;
+  const assemblyQuoteCopy = getAssemblyQuoteCopy("fr");
+  const money = (amount: number | null) => amount === null ? html(assemblyQuoteCopy.price) : html(new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(amount));
   const date = new Date(data.submittedAt);
   const submitted = Number.isFinite(date.getTime())
     ? new Intl.DateTimeFormat("fr-FR", { dateStyle: "long", timeStyle: "short", timeZone: "Europe/Paris" }).format(date) + " (Paris)"
@@ -78,7 +81,7 @@ export function buildCheckoutAdminEmail(data: AdminOrderEmailData): string {
   const field = (label: string, value: unknown) => `<tr><th align="left" style="width:38%;padding:11px 12px;border-bottom:1px solid #E9E8E0;font-size:12px;color:#65705F;font-weight:400;vertical-align:top;">${html(label)}</th><td style="padding:11px 12px;border-bottom:1px solid #E9E8E0;font-size:13px;color:#283729;word-break:break-word;">${html(value || "Non communiqué")}</td></tr>`;
   const section = (title: string, content: string) => `<tr><td class="pad" style="padding:12px 32px 20px;"><h2 style="font-family:Georgia,serif;font-size:23px;font-weight:400;color:#304131;margin:0 0 16px;">${html(title)}</h2>${content}</td></tr>`;
   const fields = (rows: string) => `<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border:1px solid #E3E2D8;table-layout:fixed;">${rows}</table>`;
-  const item = (category: string, choice: string, calculation: string, total: number) => `<tr><td style="padding:13px 10px;border-bottom:1px solid #E9E8E0;vertical-align:top;"><strong style="font-size:13px;">${html(category)}</strong><div style="font-size:13px;color:#52604D;margin-top:5px;">${html(choice)}</div>${calculation ? `<div style="font-size:11px;color:#74806E;margin-top:5px;">${html(calculation)}</div>` : ""}</td><td align="right" style="padding:13px 10px;border-bottom:1px solid #E9E8E0;width:105px;vertical-align:top;font-size:13px;font-weight:700;">${money(total)}</td></tr>`;
+  const item = (category: string, choice: string, calculation: string, total: number | null) => `<tr><td style="padding:13px 10px;border-bottom:1px solid #E9E8E0;vertical-align:top;"><strong style="font-size:13px;">${html(category)}</strong><div style="font-size:13px;color:#52604D;margin-top:5px;">${html(choice)}</div>${calculation ? `<div style="font-size:11px;color:#74806E;margin-top:5px;">${html(calculation)}</div>` : ""}</td><td align="right" style="padding:13px 10px;border-bottom:1px solid #E9E8E0;width:105px;vertical-align:top;font-size:13px;font-weight:700;">${money(total)}</td></tr>`;
   const address = [data.delivery.streetAddress, [data.delivery.zipCode, data.delivery.city].filter(Boolean).join(" "), data.delivery.stateRegion, data.delivery.country].filter(Boolean).join(" · ");
   return `<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Nouveau projet — ${html(data.reference)}</title>
 <style>table{border-collapse:collapse;mso-table-lspace:0;mso-table-rspace:0}td,th{overflow-wrap:anywhere}a{color:#43573C}@media(max-width:620px){.pad{padding-left:18px!important;padding-right:18px!important}.total{font-size:30px!important}}</style></head>
@@ -94,8 +97,8 @@ export function buildCheckoutAdminEmail(data: AdminOrderEmailData): string {
 <p style="font-size:14px;line-height:1.7;margin:0;color:#606C59;">${html(data.customer.name)} a transmis sa configuration <strong>${html(data.house.name)}</strong>. Vérifiez les choix et les conditions du chantier avant de préparer le devis définitif.</p>
 <p style="font-size:11px;color:#7B8575;margin:14px 0 0;">Enregistré le ${html(submitted)} · Langue : ${html(data.locale.toUpperCase())}</p></td></tr>
 <tr><td class="pad" style="padding:0 32px 24px;"><table role="presentation" width="100%"><tr><td style="padding:24px;background:#F4F3EC;border-left:3px solid #BAA47C;">
-<div style="font-size:10px;letter-spacing:1px;color:#68765C;">ESTIMATION DU PROJET HORS TAXES</div><div class="total" style="font-family:Georgia,serif;font-size:38px;color:#303F32;margin:8px 0;">${money(data.pricing.total)}</div>
-<div style="font-size:11px;line-height:1.6;color:#6B7464;">Montant calculé côté serveur · TVA non incluse<br>Demande de devis, sans confirmation de paiement ni acceptation contractuelle.</div></td></tr></table></td></tr>
+<div style="font-size:10px;letter-spacing:1px;color:#68765C;">${assemblyPending ? html(assemblyQuoteCopy.estimate) : "ESTIMATION DU PROJET HORS TAXES"}</div><div class="total" style="font-family:Georgia,serif;font-size:38px;color:#303F32;margin:8px 0;">${money(data.pricing.total)}</div>
+<div style="font-size:11px;line-height:1.6;color:#6B7464;">${assemblyPending ? html(assemblyQuoteCopy.notice) + "<br>" : ""}Montant calculé côté serveur · TVA non incluse<br>Demande de devis, sans confirmation de paiement ni acceptation contractuelle.</div></td></tr></table></td></tr>
 ${section("01 — Client & chantier", fields(
   field("Client", data.customer.name) + field("E-mail", data.customer.email) + field("Téléphone", data.customer.phone) +
   field("Adresse du chantier", address) + field("Notes du client", data.delivery.notes || "Aucune note") +
@@ -109,7 +112,7 @@ ${data.options.map(option => item(option.categoryLabel, option.optionLabel, opti
 ${item("Sous-total maison configurée", "Structure + options", "", data.pricing.subtotal)}
 ${item("Transport", data.pricing.trucks + " camion(s) × 3 500 € HT", "Prestation supplémentaire", data.pricing.transport)}
 ${item("Montage", data.assemblyDescription, "Prestation supplémentaire si retenue", data.pricing.assembly)}
-<tr style="background:#303F32;color:white;"><td style="padding:16px 10px;font-weight:700;font-size:13px;">TOTAL ESTIMATIF HT</td><td align="right" style="padding:16px 10px;font-weight:700;font-size:14px;">${money(data.pricing.total)}</td></tr></table>`)}
+<tr style="background:#303F32;color:white;"><td style="padding:16px 10px;font-weight:700;font-size:13px;">${assemblyPending ? html(assemblyQuoteCopy.estimate) : "TOTAL ESTIMATIF HT"}</td><td align="right" style="padding:16px 10px;font-weight:700;font-size:14px;">${money(data.pricing.total)}</td></tr></table>`)}
 ${section("04 — Informations techniques de la demande", fields(
   field("Adresse IP", data.request.ip) + field("Localisation IP approximative", data.request.location) +
   field("Type de terminal estimé", data.request.device) + field("Navigateur estimé", data.request.browser) + field("Système estimé", data.request.os)) +

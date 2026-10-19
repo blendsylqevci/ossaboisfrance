@@ -4,6 +4,7 @@ import { getPayload, type Payload } from "payload";
 import config from "@/payload.config";
 import { mapHouseDocToConfiguratorData } from "@/lib/house-mapper";
 import { isLocale, type Locale } from "@/lib/i18n";
+import { getAssemblyQuoteCopy } from "@/lib/assembly-quote-copy";
 import {
   calculateCheckoutGrandTotal,
   CHECKOUT_CATEGORY_PAYLOAD_KEYS,
@@ -264,6 +265,7 @@ export async function POST(req: NextRequest) {
       truckCount,
       transportCost: serverTransportCost,
       assemblyCost: serverAssemblyCost,
+      assemblyQuoteRequired,
       priceBasis,
       vatIncluded,
     } = pricing;
@@ -309,6 +311,7 @@ export async function POST(req: NextRequest) {
       transportCost: serverTransportCost,
       installationMode,
       assemblyCost: serverAssemblyCost,
+      assemblyQuoteRequired,
       totalPrice: total,
       priceBasis,
       vatIncluded,
@@ -319,6 +322,7 @@ export async function POST(req: NextRequest) {
           installationMode === "ossa" ? "ossa_bois" : "client_or_third_party",
         performedByOssa: installationMode === "ossa",
         cost: serverAssemblyCost,
+        requiresQuote: assemblyQuoteRequired,
       },
     };
     const authoritativeSelectedOptions: Array<Record<string, unknown>> = [];
@@ -863,6 +867,7 @@ export async function POST(req: NextRequest) {
       installationMode === "ossa"
         ? l.assemblyOssaDesc
         : l.assemblyProfessionalDesc;
+    const assemblyQuoteCopy = getAssemblyQuoteCopy(locale);
     const formattedStep2Desc = l.step2Desc.replace("{phone}", '<a href="tel:+38343737000" style="color:#435139;font-weight:700;text-decoration:underline;white-space:nowrap;">+38343737000</a>');
 
     let clientEmailHtml = `
@@ -1065,15 +1070,15 @@ export async function POST(req: NextRequest) {
                       ${l.assembly}
                     </td>
                     <td style="padding: 12px 14px; font-size: 12.5px; color: #475569; vertical-align: top;">
-                      ${formattedAssemblyDesc}
+                      ${formattedAssemblyDesc}${assemblyQuoteRequired ? `<br>${escapeHtml(assemblyQuoteCopy.notice)}` : ""}
                     </td>
                     <td align="right" style="padding: 12px 14px; font-size: 13.5px; font-weight: 700; color: #1E293B; vertical-align: top;">
-                      ${clientMoneyFormatter.format(serverAssemblyCost)}
+                      ${serverAssemblyCost === null ? escapeHtml(assemblyQuoteCopy.price) : clientMoneyFormatter.format(serverAssemblyCost)}
                     </td>
                   </tr>
                   <tr style="background-color: #FAF9F6;">
                     <td colspan="2" style="padding: 14px 14px; font-size: 13px; font-weight: 800; color: #1E293B; text-transform: uppercase;">
-                      ${l.totalEstimation}
+                      ${assemblyQuoteRequired ? escapeHtml(assemblyQuoteCopy.estimate) : l.totalEstimation}
                     </td>
                     <td align="right" style="padding: 14px 14px; font-size: 18px; font-weight: 800; color: #5E6F4F;">
                       ${clientMoneyFormatter.format(total)}

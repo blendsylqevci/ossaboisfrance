@@ -113,7 +113,8 @@ export type CheckoutQuote = {
   configurationSubtotal: number;
   truckCount: number;
   transportCost: number;
-  assemblyCost: number;
+  assemblyCost: number | null;
+  assemblyQuoteRequired: boolean;
   grandTotal: number;
 };
 
@@ -172,14 +173,13 @@ export function calculateCheckoutGrandTotal(
     configData.perdhesa.bruto,
     selection.installationMode
   );
-  if (assemblyCost === null) {
-    return { error: "Assembly pricing is unavailable for this gross area." };
-  }
+  // An unpriced Ossa service remains a quote request, never a free service.
+  const assemblyQuoteRequired = selection.installationMode === "ossa" && assemblyCost === null;
 
   const configurationSubtotal = baseStructurePrice + serverOptionsTotal;
   const grandTotal =
     Math.round(
-      (configurationSubtotal + transport.cost + assemblyCost) * 100
+      (configurationSubtotal + transport.cost + (assemblyCost ?? 0)) * 100
     ) / 100;
 
   return {
@@ -193,6 +193,7 @@ export function calculateCheckoutGrandTotal(
     truckCount: transport.truckCount,
     transportCost: transport.cost,
     assemblyCost,
+    assemblyQuoteRequired,
     grandTotal,
   };
 }

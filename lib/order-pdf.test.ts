@@ -135,6 +135,27 @@ test("validateOrderPdfData rejects an assembly charge in professional mode", () 
   );
 });
 
+test("order PDF accepts unpriced Ossa assembly and generates a summary in every locale", async () => {
+  for (const locale of LOCALES) {
+    const data = makeOrderData(locale);
+    data.surfaces.gross = 59.3;
+    data.pricing.installationMode = "ossa";
+    data.pricing.assembly = null;
+    assert.doesNotThrow(() => validateOrderPdfData(data));
+    const pdf = await generateOrderPdf(data);
+    assert.equal(pdf.subarray(0, 5).toString("ascii"), "%PDF-");
+    assert.ok(pdf.byteLength < MAX_ORDER_PDF_BYTES);
+  }
+});
+
+test("order PDF rejects null assembly for a professional or an existing priced tier", () => {
+  const data = makeOrderData();
+  data.pricing.assembly = null;
+  assert.throws(() => validateOrderPdfData(data), /Professional assembly/);
+  data.pricing.installationMode = "ossa";
+  assert.throws(() => validateOrderPdfData(data), /published price/);
+});
+
 test("validateOrderPdfData fails closed for incomplete legal confirmations", () => {
   const data = makeOrderData();
   const malformed = data as unknown as {

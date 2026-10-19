@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { useField, useFormFields } from '@payloadcms/ui'
+import { getAssemblyQuoteCopy } from '@/lib/assembly-quote-copy'
 
 interface StoredSelection {
   house?: {
@@ -34,7 +35,7 @@ interface StoredSelection {
   truckCount?: number;
   transportCost?: number;
   installationMode?: 'professional' | 'ossa';
-  assemblyCost?: number;
+  assemblyCost?: number | null;
   totalPrice?: number;
   priceBasis?: 'excl_vat';
   vatIncluded?: false;
@@ -116,6 +117,8 @@ export const OrderSummaryView: React.FC<{ path: string }> = ({ path }) => {
     getNonNegativeNumber(transportCostValue) ??
     0
   const assemblyCost = getNonNegativeNumber(selection.assemblyCost) ?? 0
+  const assemblyPending = selection.installationMode === 'ossa' && selection.assemblyCost === null
+  const assemblyQuoteCopy = getAssemblyQuoteCopy('fr')
   const truckCount = getPositiveInteger(selection.truckCount)
   const hasAuthoritativeBreakdown =
     selection.configurationSubtotal !== undefined ||
@@ -143,7 +146,7 @@ export const OrderSummaryView: React.FC<{ path: string }> = ({ path }) => {
     selection.installationMode === 'professional'
       ? 'Non inclus'
       : selection.installationMode === 'ossa'
-        ? euroFormatter.format(assemblyCost)
+        ? assemblyPending ? assemblyQuoteCopy.price : euroFormatter.format(assemblyCost)
         : 'À confirmer'
 
   return (
@@ -358,7 +361,7 @@ export const OrderSummaryView: React.FC<{ path: string }> = ({ path }) => {
             textTransform: 'uppercase',
             letterSpacing: '0.05em'
           }}>
-            Total Général HT
+            {assemblyPending ? assemblyQuoteCopy.estimate : 'Total Général HT'}
           </div>
           <div style={{ 
             fontSize: '32px', 
@@ -369,6 +372,7 @@ export const OrderSummaryView: React.FC<{ path: string }> = ({ path }) => {
           }}>
             {euroFormatter.format(grandTotal)}
           </div>
+          {assemblyPending ? <p style={{ maxWidth: '300px', fontSize: '12px' }}>{assemblyQuoteCopy.notice}</p> : null}
           <div style={{ marginTop: '6px', fontSize: '11px', color: '#86efac' }}>
             TVA non incluse
           </div>

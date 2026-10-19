@@ -13,12 +13,13 @@ const nextConfig = {
       "./public/images/brand/ossa-bois-logo.png",
     ],
   },
-  // Raw house, planimetry, and texture sources are only read by local/dev import
-  // tooling. Without this, Next traces those fs reads into serverless functions,
-  // making every deployment hundreds of megabytes larger.
+  // Raw sources are only read by local/dev import tooling. Marketing photos are
+  // served as public assets, never read from disk by a serverless function.
+  // Exclude them from broad fs traces while retaining the PDF fonts and logo.
   outputFileTracingExcludes: {
     "/*": [
       "./public/images/houses/**/*",
+      "./public/images/marketing/**/*",
       "./public/planimetries-raw/**/*",
       "./public/textures-raw/**/*",
     ],

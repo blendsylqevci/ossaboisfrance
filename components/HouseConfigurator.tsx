@@ -2005,6 +2005,7 @@ L'équipe Ossa Bois France`;
         onClose={() => setPlanimetryOpen(false)}
         locale={locale}
         title={config.name}
+        houseSlug={config.id}
         imageSrc={config.planimetry || publicMediaUrl("asebra-me-atike_default.jpg")}
         imageAlt={`Planimétrie - ${config.name}`}
       />

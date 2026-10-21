@@ -1,12 +1,14 @@
 "use client";
 
 import type { Locale } from "@/lib/i18n";
+import { getHousePlanimetryImage } from "@/lib/house-planimetry-image";
 
 export type PlanimetryModalProps = {
   open: boolean;
   onClose: () => void;
   locale: Locale;
   title: string;
+  houseSlug: string;
   imageSrc: string;
   imageAlt: string;
 };
@@ -15,10 +17,12 @@ export function PlanimetryModal({
   open,
   onClose,
   title,
+  houseSlug,
   imageSrc,
   imageAlt,
 }: PlanimetryModalProps) {
-  if (!open || !imageSrc) return null;
+  const displayImageSrc = getHousePlanimetryImage(houseSlug, imageSrc);
+  if (!open || !displayImageSrc) return null;
 
   return (
     <div
@@ -39,9 +43,9 @@ export function PlanimetryModal({
         </button>
 
         <div className="planimetry-modal-media material-modal-media">
-          {/* Native img: full CDN PNG, modal height follows image aspect ratio */}
+          {/* Full-resolution plan; modal height follows the image aspect ratio. */}
           <img
-            src={imageSrc}
+            src={displayImageSrc}
             alt={imageAlt}
             className="planimetry-modal-image modal-image-el"
             decoding="async"

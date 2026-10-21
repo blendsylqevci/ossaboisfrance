@@ -679,6 +679,7 @@ export function HousesArchive({ locale, initialHouses, initialCategories, dict }
         onClose={() => setActivePlanimetry(null)}
         locale={locale}
         title={activePlanimetry?.title ?? ""}
+        houseSlug={activePlanimetry?.slug ?? ""}
         imageSrc={
           activePlanimetry?.planimetry ||
           publicMediaUrl("asebra-me-atike_default.jpg")

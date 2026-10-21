@@ -56,6 +56,7 @@ export function ProductsGrid({
       onClose={() => setActivePlanimetry(null)}
       locale={locale as "fr" | "en" | "de" | "nl"}
       title={activePlanimetry?.title ?? ""}
+      houseSlug={activePlanimetry?.slug ?? ""}
       imageSrc={
         activePlanimetry?.planimetry ||
         publicMediaUrl("asebra-me-atike_default.jpg")

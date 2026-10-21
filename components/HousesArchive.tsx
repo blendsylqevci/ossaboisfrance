@@ -42,7 +42,7 @@ type HousesArchiveProps = {
   dict: any;
 };
 
-export function CompareSlider({ imageA, imageB, altA, altB, locale = "fr" }: { imageA: string; imageB: string; altA: string; altB: string; locale?: string }) {
+export function CompareSlider({ imageA, imageB, altA, altB, locale = "fr", house }: { imageA: string; imageB: string; altA: string; altB: string; locale?: string; house?: Pick<CMSHouseItem, "slug" | "title" | "planimetry"> }) {
   const [pos, setPos] = useState(50);
   const [secondaryRequested, setSecondaryRequested] = useState(false);
   const [secondaryReady, setSecondaryReady] = useState(false);
@@ -189,9 +189,9 @@ export function CompareSlider({ imageA, imageB, altA, altB, locale = "fr" }: { i
       {/* Labels */}
       {secondaryReady ? (
         <>
-          <HouseMarketingPhoto src={imageA} title={altA} locale={locale}
+          <HouseMarketingPhoto src={imageA} title={altA} locale={locale} house={house}
             label="Enduit" className="compare-label compare-label-left" />
-          <HouseMarketingPhoto src={imageB} title={altB} locale={locale}
+          <HouseMarketingPhoto src={imageB} title={altB} locale={locale} house={house}
             label="Bardage" className="compare-label compare-label-right" />
         </>
       ) : null}
@@ -207,7 +207,7 @@ function HouseCard({ house, locale, dict, onOpenPlanimetry }: { house: CMSHouseI
     <article className="house-archive-card reveal-on-scroll">
       <div className="house-archive-card-image">
         {hasHouseMarketingImage(house.slug) && !hasHouseMarketingComparison(house.slug) ? (
-          <HouseMarketingPhoto src={house.image} title={house.title} locale={locale} />
+          <HouseMarketingPhoto src={house.image} title={house.title} locale={locale} house={house} />
         ) : hasBothImages ? (
           <CompareSlider
             key={`${house.image}|${house.imageBardage}`}
@@ -216,6 +216,7 @@ function HouseCard({ house, locale, dict, onOpenPlanimetry }: { house: CMSHouseI
             altA={`${house.title} — Enduit`}
             altB={`${house.title} — Bardage`}
             locale={locale}
+            house={house}
           />
         ) : house.image ? (
           <Image 

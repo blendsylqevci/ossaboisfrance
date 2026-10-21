@@ -161,7 +161,7 @@ export function ProductsGrid({
                   <div className="prod-card">
                     <div className="prod-card-img-container relative" style={{ height: "320px" }}>
                       {hasHouseMarketingImage(house.slug) && !hasHouseMarketingComparison(house.slug) ? (
-                  <HouseMarketingPhoto src={house.image} title={house.title} locale={locale} />
+                  <HouseMarketingPhoto src={house.image} title={house.title} locale={locale} house={house} />
                 ) : house.image && house.imageBardage && house.image !== house.imageBardage ? (
                         <CompareSlider
                           key={`${house.image}|${house.imageBardage}`}
@@ -170,6 +170,7 @@ export function ProductsGrid({
                           altA={`${house.title} — Enduit`}
                           altB={`${house.title} — Bardage`}
                     locale={locale}
+                    house={house}
                         />
                       ) : house.image ? (
                         <Image
@@ -294,7 +295,7 @@ export function ProductsGrid({
             <div className="prod-card" key={house.slug}>
               <div className="prod-card-img-container relative" style={{ height: "320px" }}>
                 {hasHouseMarketingImage(house.slug) && !hasHouseMarketingComparison(house.slug) ? (
-                  <HouseMarketingPhoto src={house.image} title={house.title} locale={locale} />
+                  <HouseMarketingPhoto src={house.image} title={house.title} locale={locale} house={house} />
                 ) : house.image && house.imageBardage && house.image !== house.imageBardage ? (
                   <CompareSlider
                     key={`${house.image}|${house.imageBardage}`}
@@ -303,6 +304,7 @@ export function ProductsGrid({
                     altA={`${house.title} — Enduit`}
                     altB={`${house.title} — Bardage`}
                     locale={locale}
+                    house={house}
                   />
                 ) : house.image ? (
                   <Image

@@ -19,6 +19,7 @@ const nextConfig = {
   outputFileTracingExcludes: {
     "/*": [
       "./public/images/houses/**/*",
+      "./public/images/planimetries/**/*",
       "./public/images/marketing/**/*",
       "./public/planimetries-raw/**/*",
       "./public/textures-raw/**/*",

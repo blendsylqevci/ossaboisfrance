@@ -108,7 +108,7 @@ const nextConfig = {
         // These public assets keep their original bytes and dimensions. A
         // bounded browser cache speeds repeat visits while still allowing a
         // future deployment to replace a file at the same path within a day.
-        source: "/(fonts|images/brand|images/site|images/hero|media)/:path*",
+        source: "/(fonts|images/brand|images/site|images/hero|images/planimetries|media)/:path*",
         headers: [
           {
             key: "Cache-Control",

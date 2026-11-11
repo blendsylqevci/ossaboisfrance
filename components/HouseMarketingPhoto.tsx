@@ -105,7 +105,10 @@ export function HouseMarketingPhoto({ src, title, locale, label, className, hous
             onClick={() => setOpen(false)} autoFocus>×</button>
           {/* Load the full image only when the visitor opens it. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img key={photo.src} className={styles.photo} src={photo.src} alt={photo.title} />
+          <img key={photo.src} className={styles.photo} src={photo.src} alt={photo.title}
+            width={photo.src.startsWith("/images/planimetries/") ? 3504 : undefined}
+            height={photo.src.startsWith("/images/planimetries/") ? 2336 : undefined}
+            loading="eager" decoding="async" fetchPriority="high" />
           {multiple ? <div className={styles.controls}>
             <button type="button" className={styles.navigation} aria-label={text.previous} onClick={() => move(-1)}>
               <span aria-hidden="true">‹</span><span className={styles.navigationText}>{text.previous}</span>

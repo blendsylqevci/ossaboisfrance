@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { ProductsGrid } from "./ProductsGrid";
+import { sortHousesForArchive } from "@/lib/house-archive-order";
 
 type Category = {
   id: string;
@@ -85,9 +86,9 @@ export function FeaturedProductsSection({
 
   const activeCategory = activeCategories[currentIndex];
   const activeCategoryHouses = activeCategory
-    ? allHouses
-        .filter((house) => house.categorySlug === activeCategory.slug)
-        .slice(0, 6)
+    ? sortHousesForArchive(
+        allHouses.filter((house) => house.categorySlug === activeCategory.slug)
+      ).slice(0, 6)
     : [];
 
   return (

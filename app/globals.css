@@ -8986,6 +8986,15 @@ body:has(.installation-modal-backdrop) .cookie-reopen-trigger {
   transform: scale(0.95);
 }
 
+.card-planimetry-btn:disabled,
+.card-planimetry-btn:disabled:hover {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  color: #9ca3af;
+  background: rgba(255, 255, 255, 0.9);
+}
+
 .hero-slider-favorite-btn {
   pointer-events: auto;
   background: none;
@@ -9911,6 +9920,17 @@ body:has(.installation-modal-backdrop) .cookie-reopen-trigger {
 .house-stage-controls .house-stage-zoom-trigger:active,
 .house-stage-controls .configurator-planimetry-btn:active {
   transform: translateY(0) scale(0.95);
+}
+
+.house-stage-controls .configurator-planimetry-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.house-stage-controls .configurator-planimetry-btn:disabled svg {
+  stroke: #9ca3af !important;
 }
 
 @media (max-width: 991px) {

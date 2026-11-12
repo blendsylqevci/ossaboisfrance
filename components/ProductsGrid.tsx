@@ -7,7 +7,7 @@ import { hasHouseMarketingImage, hasHouseMarketingComparison } from "@/lib/house
 import Link from "next/link";
 import { CompareSlider } from "@/components/HousesArchive";
 import { useFavorites } from "@/lib/favorites";
-import { publicMediaUrl } from "@/lib/media-url";
+import { hasHousePlanimetry } from "@/lib/house-planimetry-image";
 import { PlanimetryModal } from "@/components/PlanimetryModal";
 import type { PlanimetryRoom } from "@/lib/planimetry-rooms";
 
@@ -57,10 +57,7 @@ export function ProductsGrid({
       locale={locale as "fr" | "en" | "de" | "nl"}
       title={activePlanimetry?.title ?? ""}
       houseSlug={activePlanimetry?.slug ?? ""}
-      imageSrc={
-        activePlanimetry?.planimetry ||
-        publicMediaUrl("asebra-me-atike_default.jpg")
-      }
+      imageSrc={activePlanimetry?.planimetry || ""}
       imageAlt={`Planimétrie - ${activePlanimetry?.title ?? ""}`}
     />
   );
@@ -186,6 +183,7 @@ export function ProductsGrid({
                       
                       <button
                         className="card-planimetry-btn"
+                        disabled={!hasHousePlanimetry(house.slug, house.planimetry)}
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
@@ -320,6 +318,7 @@ export function ProductsGrid({
                 
                 <button
                   className="card-planimetry-btn"
+                  disabled={!hasHousePlanimetry(house.slug, house.planimetry)}
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();

@@ -11,7 +11,7 @@ import {
   safeLocalStorageSet,
 } from "@/lib/checkout-selection-storage";
 import { PlanimetryModal } from "@/components/PlanimetryModal";
-import { publicMediaUrl } from "@/lib/media-url";
+import { hasHousePlanimetry } from "@/lib/house-planimetry-image";
 import { isPublishedHousePrice } from "@/lib/price-availability";
 import { CHECKOUT_CATEGORY_PAYLOAD_KEYS } from "@/lib/checkout-pricing";
 
@@ -1227,6 +1227,7 @@ L'équipe Ossa Bois France`;
               <button
                 type="button"
                 className="configurator-planimetry-btn"
+                disabled={!hasHousePlanimetry(config.id, config.planimetry)}
                 onClick={() => setPlanimetryOpen(true)}
                 aria-label="View floor plan"
               >
@@ -2006,7 +2007,7 @@ L'équipe Ossa Bois France`;
         locale={locale}
         title={config.name}
         houseSlug={config.id}
-        imageSrc={config.planimetry || publicMediaUrl("asebra-me-atike_default.jpg")}
+        imageSrc={config.planimetry || ""}
         imageAlt={`Planimétrie - ${config.name}`}
       />
       {showSaveToast && (

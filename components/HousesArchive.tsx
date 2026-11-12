@@ -8,7 +8,8 @@ import Link from "next/link";
 import { Locale } from "@/lib/i18n";
 import { useFavorites } from "@/lib/favorites";
 import { useSavedConfigurations } from "@/lib/saved-configs";
-import { publicMediaUrl } from "@/lib/media-url";
+import { hasHousePlanimetry } from "@/lib/house-planimetry-image";
+import { sortHousesForArchive } from "@/lib/house-archive-order";
 import { PlanimetryModal } from "@/components/PlanimetryModal";
 import type { PlanimetryRoom } from "@/lib/planimetry-rooms";
 import { useSearchParams } from "next/navigation";
@@ -201,6 +202,7 @@ export function CompareSlider({ imageA, imageB, altA, altB, locale = "fr", house
 
 function HouseCard({ house, locale, dict, onOpenPlanimetry }: { house: CMSHouseItem; locale: Locale; dict: any; onOpenPlanimetry?: (house: CMSHouseItem) => void }) {
   const hasBothImages = !!house.image && !!house.imageBardage && house.image !== house.imageBardage;
+  const planimetryAvailable = hasHousePlanimetry(house.slug, house.planimetry);
   const { isFavorite, handleToggle } = useFavorites();
 
   return (
@@ -231,6 +233,7 @@ function HouseCard({ house, locale, dict, onOpenPlanimetry }: { house: CMSHouseI
 
         <button
           className="card-planimetry-btn"
+          disabled={!planimetryAvailable}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -647,9 +650,9 @@ export function HousesArchive({ locale, initialHouses, initialCategories, dict }
         )}
  
         {initialCategories.map((category) => {
-          const houses = initialHouses.filter((house) => {
-            const matchesCategory = house.categorySlug === category.slug;
-            if (!matchesCategory) return false;
+          const houses = sortHousesForArchive(
+            initialHouses.filter((house) => house.categorySlug === category.slug)
+          ).filter((house) => {
             if (showOnlyFavorites) return isFavorite(house.slug);
             if (showSavedConfigurations) return hasSavedConfig(house.slug);
             return true;
@@ -681,10 +684,7 @@ export function HousesArchive({ locale, initialHouses, initialCategories, dict }
         locale={locale}
         title={activePlanimetry?.title ?? ""}
         houseSlug={activePlanimetry?.slug ?? ""}
-        imageSrc={
-          activePlanimetry?.planimetry ||
-          publicMediaUrl("asebra-me-atike_default.jpg")
-        }
+        imageSrc={activePlanimetry?.planimetry || ""}
         imageAlt={`Planimétrie - ${activePlanimetry?.title ?? ""}`}
       />
     </section>

@@ -31,6 +31,14 @@ export function getHousePlanimetryImage(slug: string, fallback: string): string 
   return getHousePlanimetryPages(slug, fallback)[0]?.src || "";
 }
 
+export function hasGeneratedHousePlanimetry(slug: string): boolean {
+  return Boolean((floorPlans as Record<string, HousePlanimetryPage[]>)[slug]?.length || planimetryImages[slug]);
+}
+
+export function hasHousePlanimetry(slug: string, source?: string | null): boolean {
+  return hasGeneratedHousePlanimetry(slug) || Boolean(source?.trim());
+}
+
 export type HousePlanimetryPage = {
   src: string;
   level: "ground" | "upper" | null;

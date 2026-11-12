@@ -1,3 +1,5 @@
+import floorPlans from "./house-planimetry-floors.json";
+
 /** Approved 3D floor-plan visuals; other houses retain their existing plans. */
 const planimetryImages: Readonly<Record<string, string>> = {
   "a-frame-house": "/images/planimetries/a-frame-house-photoreal-20261021.webp",
@@ -26,5 +28,28 @@ const planimetryImages: Readonly<Record<string, string>> = {
 };
 
 export function getHousePlanimetryImage(slug: string, fallback: string): string {
-  return planimetryImages[slug] || fallback;
+  return getHousePlanimetryPages(slug, fallback)[0]?.src || "";
+}
+
+export type HousePlanimetryPage = {
+  src: string;
+  level: "ground" | "upper" | null;
+};
+
+export function getHousePlanimetryPages(slug: string, fallback: string): HousePlanimetryPage[] {
+  const pages = (floorPlans as Record<string, HousePlanimetryPage[]>)[slug];
+  if (pages?.length) return pages;
+  const src = planimetryImages[slug] || fallback;
+  return src ? [{ src, level: null }] : [];
+}
+
+const floorLabels: Record<string, { ground: string; upper: string }> = {
+  fr: { ground: "Rez-de-chaussée", upper: "Étage" },
+  en: { ground: "Ground floor", upper: "First floor" },
+  de: { ground: "Erdgeschoss", upper: "Obergeschoss" },
+  nl: { ground: "Begane grond", upper: "Verdieping" },
+};
+
+export function getHousePlanimetryLevelLabel(level: HousePlanimetryPage["level"], locale: string): string {
+  return level ? (floorLabels[locale] || floorLabels.fr)[level] : "";
 }

@@ -1,0 +1,94 @@
+{
+  "asebra-avec-toit": [
+    {
+      "src": "/images/planimetries/asebra-luxury-supplied-20261111.webp",
+      "level": null
+    }
+  ],
+  "asebra-avec-attique": [
+    {
+      "src": "/images/planimetries/asebra-luxury-supplied-20261111.webp",
+      "level": null
+    }
+  ],
+  "france-comble": [
+    {
+      "src": "/images/planimetries/france-ground-luxury-supplied-20261111.webp",
+      "level": "ground"
+    },
+    {
+      "src": "/images/planimetries/france-upper-luxury-supplied-20261111.webp",
+      "level": "upper"
+    }
+  ],
+  "france-etage-avec-attique": [
+    {
+      "src": "/images/planimetries/france-ground-luxury-supplied-20261111.webp",
+      "level": "ground"
+    },
+    {
+      "src": "/images/planimetries/france-upper-luxury-supplied-20261111.webp",
+      "level": "upper"
+    }
+  ],
+  "els-house-comble": [
+    {
+      "src": "/images/planimetries/els-ground-luxury-supplied-20261111.webp",
+      "level": "ground"
+    },
+    {
+      "src": "/images/planimetries/els-upper-luxury-supplied-20261111.webp",
+      "level": "upper"
+    }
+  ],
+  "azura-comble": [
+    {
+      "src": "/images/planimetries/azura-ground-luxury-supplied-20261111.webp",
+      "level": "ground"
+    },
+    {
+      "src": "/images/planimetries/azura-upper-luxury-supplied-20261111.webp",
+      "level": "upper"
+    }
+  ],
+  "elegance-comble": [
+    {
+      "src": "/images/planimetries/elegance-ground-luxury-supplied-20261111.webp",
+      "level": "ground"
+    },
+    {
+      "src": "/images/planimetries/elegance-upper-luxury-supplied-20261111.webp",
+      "level": "upper"
+    }
+  ],
+  "orenda": [
+    {
+      "src": "/images/planimetries/orenda-ground-luxury-supplied-20261111.webp",
+      "level": "ground"
+    },
+    {
+      "src": "/images/planimetries/orenda-upper-luxury-supplied-20261111.webp",
+      "level": "upper"
+    }
+  ],
+  "nina-house": [
+    {
+      "src": "/images/planimetries/nina-ground-luxury-supplied-20261111.webp",
+      "level": "ground"
+    },
+    {
+      "src": "/images/planimetries/nina-upper-luxury-supplied-20261111.webp",
+      "level": "upper"
+    }
+  ],
+  "dianne": [
+    {
+      "src": "/images/planimetries/dianne-ground-luxury-supplied-20261111.webp",
+      "level": "ground"
+    },
+    {
+      "src": "/images/planimetries/dianne-upper-luxury-supplied-20261111.webp",
+      "level": "upper"
+    }
+  ]
+}

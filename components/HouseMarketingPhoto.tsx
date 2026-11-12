@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
-import { getHousePlanimetryImage } from "@/lib/house-planimetry-image";
+import { getHousePlanimetryPages, getHousePlanimetryLevelLabel } from "@/lib/house-planimetry-image";
 import styles from "./HouseMarketingPhoto.module.css";
 
 const labels: Record<string, { open: string; close: string; previous: string; next: string; plan: string }> = {
@@ -27,10 +27,13 @@ export function HouseMarketingPhoto({ src, title, locale, label, className, hous
   const triggerRef = useRef<HTMLButtonElement>(null);
   const touchStart = useRef<number | null>(null);
   const text = labels[locale] || labels.fr;
-  const planSrc = house ? getHousePlanimetryImage(house.slug, house.planimetry || "") : "";
+  const plans = house ? getHousePlanimetryPages(house.slug, house.planimetry || "") : [];
   const photos = [
     { src, title },
-    ...(house && planSrc && planSrc !== src ? [{ src: planSrc, title: `${text.plan} — ${house.title}` }] : []),
+    ...plans.filter((plan) => plan.src !== src).map((plan) => ({
+      src: plan.src,
+      title: `${text.plan} — ${house?.title}${plan.level ? ` — ${getHousePlanimetryLevelLabel(plan.level, locale)}` : ""}`,
+    })),
   ];
   const photo = photos[photoIndex] || photos[0];
   const multiple = photos.length > 1;

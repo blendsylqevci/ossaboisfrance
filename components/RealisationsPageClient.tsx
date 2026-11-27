@@ -22,7 +22,7 @@ type RealisationsPageClientProps = {
 const projectsData: Project[] = [{
   id: "geneve",
   title: "Project A Geneve",
-  category: "Avec étage",
+  category: "Projet finie",
   location: "Genève",
   images: Array.from({ length: 17 }, (_, index) =>
     `/images/realisations/geneve/${String(index + 1).padStart(2, "0")}.jpg`
@@ -31,7 +31,7 @@ const projectsData: Project[] = [{
   id: "chantier-de",
   title: "Montage sur chantier",
   location: "49.306007, 9.138114",
-  category: "Montage",
+  category: "Montage sur le site",
   mapUrl: "https://maps.google.com/?q=49.306007,9.138114",
   video: "/images/realisations/chantier-de/montage.mp4",
   images: Array.from({ length: 9 }, (_, index) =>
@@ -40,27 +40,22 @@ const projectsData: Project[] = [{
 }];
 
 export function RealisationsPageClient({ locale, dict }: RealisationsPageClientProps) {
-  const [activeCategory, setActiveCategory] = useState("Tous");
+  const [activeCategory, setActiveCategory] = useState("Projet finie");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const t = dict?.realisations || {};
 
-  // Localized filter categories names
-  const categoryLabels: Record<string, string> = {
-    "Tous": t.filters?.all || (locale === "en" ? "All projects" : locale === "de" ? "Alle Projekte" : locale === "nl" ? "Alle projecten" : "Tous les projets"),
-    "Toiture terrasse": t.filters?.terrace || (locale === "en" ? "Flat Roof" : locale === "de" ? "Dachterrasse" : locale === "nl" ? "Dakterras" : "Toiture terrasse"),
-    "Avec étage": t.filters?.stage || (locale === "en" ? "Two-story" : locale === "de" ? "Mit Etage" : locale === "nl" ? "Met verdieping" : "Avec étage"),
-    "Combles aménageables": t.filters?.classic || (locale === "en" ? "Convertible Loft" : locale === "de" ? "Ausbaubares Dachgeschoss" : locale === "nl" ? "Inrichtbare zolder" : "Combles aménageables")
+  const categoryLabels: Record<string, Record<Locale, string>> = {
+    "Projet finie": { fr: "Projet finie", en: "Completed project", de: "Abgeschlossenes Projekt", nl: "Afgerond project" },
+    "Projet en cours": { fr: "Projet en cours", en: "Project in progress", de: "Laufendes Projekt", nl: "Lopend project" },
+    "Montage sur le site": { fr: "Montage sur le site", en: "On-site assembly", de: "Montage vor Ort", nl: "Montage op locatie" },
+    "Fabrication en usine": { fr: "Fabrication en usine", en: "Factory production", de: "Fertigung im Werk", nl: "Productie in de fabriek" },
+    "Certification des nos produits": { fr: "Certification des nos produits", en: "Product certification", de: "Produktzertifizierung", nl: "Productcertificering" },
   };
 
-  const categories = ["Tous", "Toiture terrasse", "Avec étage", "Combles aménageables", "Montage"];
-
-  // Helper function to translate category name
-  const translateCategory = (cat: string) => {
-    if (cat === "Montage" && locale === "en") return "Assembly";
-    return categoryLabels[cat] || cat;
-  };
+  const categories = Object.keys(categoryLabels);
+  const translateCategory = (category: string) => categoryLabels[category][locale];
 
   // Helper function to translate model titles and details
   const translateTitle = (title: string) => {
@@ -103,9 +98,7 @@ export function RealisationsPageClient({ locale, dict }: RealisationsPageClientP
     nextLabel: locale === "en" ? "Next image" : locale === "de" ? "Nächstes Bild" : locale === "nl" ? "Volgende afbeelding" : "Image suivante"
   };
 
-  const filteredProjects = activeCategory === "Tous"
-    ? projectsData
-    : projectsData.filter((project) => project.category === activeCategory);
+  const filteredProjects = projectsData.filter((project) => project.category === activeCategory);
 
   useEffect(() => {
     document.body.style.overflow = selectedProject ? "hidden" : "";

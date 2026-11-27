@@ -10,6 +10,8 @@ type Project = {
   category: string;
   location: string;
   images: string[];
+  mapUrl?: string;
+  video?: string;
 };
 
 type RealisationsPageClientProps = {
@@ -24,6 +26,16 @@ const projectsData: Project[] = [{
   location: "Genève",
   images: Array.from({ length: 17 }, (_, index) =>
     `/images/realisations/geneve/${String(index + 1).padStart(2, "0")}.jpg`
+  ),
+}, {
+  id: "chantier-de",
+  title: "Montage sur chantier",
+  location: "49.306007, 9.138114",
+  category: "Montage",
+  mapUrl: "https://maps.google.com/?q=49.306007,9.138114",
+  video: "/images/realisations/chantier-de/montage.mp4",
+  images: Array.from({ length: 9 }, (_, index) =>
+    `/images/realisations/chantier-de/${String(index + 1).padStart(2, "0")}.jpg`
   ),
 }];
 
@@ -42,15 +54,19 @@ export function RealisationsPageClient({ locale, dict }: RealisationsPageClientP
     "Combles aménageables": t.filters?.classic || (locale === "en" ? "Convertible Loft" : locale === "de" ? "Ausbaubares Dachgeschoss" : locale === "nl" ? "Inrichtbare zolder" : "Combles aménageables")
   };
 
-  const categories = ["Tous", "Toiture terrasse", "Avec étage", "Combles aménageables"];
+  const categories = ["Tous", "Toiture terrasse", "Avec étage", "Combles aménageables", "Montage"];
 
   // Helper function to translate category name
   const translateCategory = (cat: string) => {
+    if (cat === "Montage" && locale === "en") return "Assembly";
     return categoryLabels[cat] || cat;
   };
 
   // Helper function to translate model titles and details
   const translateTitle = (title: string) => {
+    if (title === "Montage sur chantier") {
+      return { en: "On-site assembly", de: "Montage vor Ort", nl: "Montage op locatie", fr: title }[locale] || title;
+    }
     let output = title;
     if (locale === "en") {
       output = output.replace("Maison ", "House ");
@@ -194,7 +210,7 @@ export function RealisationsPageClient({ locale, dict }: RealisationsPageClientP
                   <circle cx="8.5" cy="8.5" r="1.5"/>
                   <polyline points="21 15 16 10 5 21"/>
                 </svg>
-                {trans.viewAlbum} ({trans.photosCount(project.images.length)})
+                {trans.viewAlbum} ({trans.photosCount(project.images.length)}{project.video && (locale === "fr" ? " + 1 vidéo" : " + 1 video")})
               </span>
             </div>
           </div>
@@ -245,7 +261,12 @@ export function RealisationsPageClient({ locale, dict }: RealisationsPageClientP
                 <p className="lightbox-meta-details">
                   <span>{translateCategory(selectedProject.category)}</span>
                   <span className="dot-sep">•</span>
-                  <span>{translateLocation(selectedProject.location)}</span>
+                  {selectedProject.mapUrl ? (
+                    <a href={selectedProject.mapUrl} target="_blank" rel="noopener noreferrer">Google Maps ↗</a>
+                  ) : <span>{translateLocation(selectedProject.location)}</span>}
+                  {selectedProject.video && (
+                    <a href={selectedProject.video} target="_blank" rel="noopener noreferrer">▶ {locale === "fr" ? "Vidéo" : "Video"}</a>
+                  )}
                 </p>
               </div>
               <div className="lightbox-info-right">

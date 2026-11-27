@@ -34,8 +34,8 @@ const projectsData: Project[] = [{
   category: "Montage sur le site",
   mapUrl: "https://maps.google.com/?q=49.306007,9.138114",
   video: "/images/realisations/chantier-de/montage.mp4",
-  images: Array.from({ length: 9 }, (_, index) =>
-    `/images/realisations/chantier-de/${String(index + 1).padStart(2, "0")}.jpg`
+  images: Array.from({ length: 8 }, (_, index) =>
+    `/images/realisations/chantier-de/${String(index + 1).padStart(2, "0")}.webp`
   ),
 }];
 

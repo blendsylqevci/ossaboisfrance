@@ -9,7 +9,6 @@ type Project = {
   title: string;
   category: string;
   location: string;
-  area: string;
   images: string[];
 };
 
@@ -18,7 +17,15 @@ type RealisationsPageClientProps = {
   dict: any;
 };
 
-const projectsData: Project[] = [];
+const projectsData: Project[] = [{
+  id: "geneve",
+  title: "Project A Geneve",
+  category: "Avec étage",
+  location: "Genève",
+  images: Array.from({ length: 17 }, (_, index) =>
+    `/images/realisations/geneve/${String(index + 1).padStart(2, "0")}.jpg`
+  ),
+}];
 
 export function RealisationsPageClient({ locale, dict }: RealisationsPageClientProps) {
   const [activeCategory, setActiveCategory] = useState("Tous");
@@ -180,8 +187,6 @@ export function RealisationsPageClient({ locale, dict }: RealisationsPageClientP
               <h3 className="gallery-item-title">{translateTitle(project.title)}</h3>
               <div className="gallery-item-meta">
                 <span>{translateLocation(project.location)}</span>
-                <span className="meta-separator">•</span>
-                <span>{project.area}</span>
               </div>
               <span className="gallery-view-album">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="album-icon">
@@ -241,8 +246,6 @@ export function RealisationsPageClient({ locale, dict }: RealisationsPageClientP
                   <span>{translateCategory(selectedProject.category)}</span>
                   <span className="dot-sep">•</span>
                   <span>{translateLocation(selectedProject.location)}</span>
-                  <span className="dot-sep">•</span>
-                  <span>{selectedProject.area}</span>
                 </p>
               </div>
               <div className="lightbox-info-right">
